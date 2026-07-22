@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx --yes create-next-app@latest . --typescript --tailwind --app --eslint --src-dir --import-alias \"@/*\" --use-npm --no-turbopack)",
+      "Bash(npx --yes create-next-app@latest tigerszone-tmp --typescript --tailwind --app --eslint --src-dir --import-alias \"@/*\" --use-npm --no-turbopack)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(xargs -I{} stat -c \"%Y %n\" {})",
+      "Read(//c/Users/tobia/AppData/Local/Packages/**)",
+      "Read(//c/Users/tobia/AppData/Roaming/**)",
+      "Read(//c/Users/tobia/AppData/Local/Temp/claude/**)",
+      "Bash(taskkill //PID 31936 //F)",
+      "Bash(tasklist //FI \"PID eq 32188\")",
+      "Bash(tasklist //FI \"IMAGENAME eq node.exe\")",
+      "Bash(node -e \"const i = require\\('lucide-react'\\); console.log\\(typeof i.Instagram\\)\")"
+    ]
+  }
+}
