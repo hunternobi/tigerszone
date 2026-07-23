@@ -1,14 +1,16 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { getAllGames } from "@/lib/games";
+import { getAllUsersWithGroups } from "@/lib/adminUsers";
 import GameResultForm from "@/components/GameResultForm";
+import AdminUserTable from "@/components/AdminUserTable";
 
 export default async function AdminPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
   if (session.user.role !== "admin") redirect("/");
 
-  const games = await getAllGames();
+  const [games, users] = await Promise.all([getAllGames(), getAllUsersWithGroups()]);
 
   return (
     <section className="mx-auto max-w-5xl px-6 py-16">
@@ -22,6 +24,14 @@ export default async function AdminPage() {
         {games.map((game) => (
           <GameResultForm key={game._id} game={game} />
         ))}
+      </div>
+
+      <h2 className="mt-16 text-2xl font-bold text-white">Benutzerverwaltung</h2>
+      <p className="mt-2 text-white/70">
+        Alle registrierten Nutzer und ihre Gruppenmitgliedschaften.
+      </p>
+      <div className="mt-6">
+        <AdminUserTable users={users} />
       </div>
     </section>
   );
