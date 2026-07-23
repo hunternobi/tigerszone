@@ -17,6 +17,9 @@ export default function Header() {
     ? [
         { href: "/gruppen", label: "Gruppen" },
         { href: "/profile", label: "Profil" },
+        ...(session.user.role === "admin" || session.user.role === "redakteur"
+          ? [{ href: "/redaktion", label: "Redaktion" }]
+          : []),
         ...(session.user.role === "admin" ? [{ href: "/admin", label: "Admin" }] : []),
       ]
     : [];

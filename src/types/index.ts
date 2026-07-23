@@ -1,4 +1,4 @@
-export type UserRole = "user" | "admin";
+export type UserRole = "user" | "redakteur" | "admin";
 
 export interface User {
   _id: string;
@@ -73,6 +73,15 @@ export interface Sponsor {
   logoUrl: string;
   linkUrl: string;
   order: number;
+}
+
+export interface BlogPost {
+  _id: string;
+  title: string;
+  content: string;
+  publishedAt: string;
+  authorName: string;
+  createdAt: string;
 }
 
 export interface WatchParty {

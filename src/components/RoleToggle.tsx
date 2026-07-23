@@ -34,6 +34,9 @@ export default function RoleToggle({ userId, role }: { userId: string; role: Use
         <option className="text-black" value="user">
           Nutzer
         </option>
+        <option className="text-black" value="redakteur">
+          Redakteur
+        </option>
         <option className="text-black" value="admin">
           Admin
         </option>

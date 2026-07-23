@@ -9,6 +9,8 @@ function formatDate(iso: string): string {
   });
 }
 
+const ROLE_LABELS = { user: "Nutzer", redakteur: "Redakteur", admin: "Admin" } as const;
+
 export default function AdminUserTable({
   users,
   currentUserId,
@@ -40,7 +42,7 @@ export default function AdminUserTable({
               <td className="py-3 pr-4">
                 {user._id === currentUserId ? (
                   <span className="rounded-full bg-tigers-accent px-3 py-1 text-xs font-semibold text-white">
-                    {user.role === "admin" ? "Admin" : "Nutzer"} (du)
+                    {ROLE_LABELS[user.role]} (du)
                   </span>
                 ) : (
                   <RoleToggle userId={user._id} role={user.role} />
