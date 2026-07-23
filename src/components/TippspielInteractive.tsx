@@ -9,12 +9,21 @@ import { SCORING } from "@/lib/constants";
 import { getTeamName } from "@/lib/teams";
 import type { Game } from "@/types";
 import { formatGameDate, formatGameTime } from "@/utils/format";
+import type { LeaderboardEntry } from "@/components/Leaderboard";
 
 interface TippspielInteractiveProps {
   games: Game[];
+  globalEntries: LeaderboardEntry[];
+  groupEntries: LeaderboardEntry[];
+  hasActiveGroup: boolean;
 }
 
-export default function TippspielInteractive({ games }: TippspielInteractiveProps) {
+export default function TippspielInteractive({
+  games,
+  globalEntries,
+  groupEntries,
+  hasActiveGroup,
+}: TippspielInteractiveProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const selectedGame = games.find((game) => game._id === selectedId) ?? null;
 
@@ -122,7 +131,11 @@ export default function TippspielInteractive({ games }: TippspielInteractiveProp
           </div>
 
           <aside className="space-y-6">
-            <LeaderboardWidget />
+            <LeaderboardWidget
+              globalEntries={globalEntries}
+              groupEntries={groupEntries}
+              hasActiveGroup={hasActiveGroup}
+            />
 
             <div className="glass-panel p-6">
               <h3 className="mb-4 text-lg font-bold text-white">Regeln</h3>

@@ -1,8 +1,23 @@
 import TippspielInteractive from "@/components/TippspielInteractive";
 import { getUpcomingGames } from "@/lib/games";
+import { getActiveGroupId } from "@/app/gruppen/actions";
+import { getGlobalLeaderboard, getGroupLeaderboard } from "@/lib/leaderboard";
 
-export default function TippspielPage() {
-  const upcomingGames = getUpcomingGames(3);
+export default async function TippspielPage() {
+  const activeGroupId = await getActiveGroupId();
 
-  return <TippspielInteractive games={upcomingGames} />;
+  const [upcomingGames, globalEntries, groupEntries] = await Promise.all([
+    getUpcomingGames(3),
+    getGlobalLeaderboard(3),
+    activeGroupId ? getGroupLeaderboard(activeGroupId) : Promise.resolve([]),
+  ]);
+
+  return (
+    <TippspielInteractive
+      games={upcomingGames}
+      globalEntries={globalEntries}
+      groupEntries={groupEntries}
+      hasActiveGroup={Boolean(activeGroupId)}
+    />
+  );
 }

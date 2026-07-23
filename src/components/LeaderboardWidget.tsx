@@ -1,26 +1,22 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import Leaderboard, { type LeaderboardEntry } from "@/components/Leaderboard";
 
-const GLOBAL_ENTRIES: LeaderboardEntry[] = [
-  { userId: "1", name: "Manuel S.", points: 142 },
-  { userId: "2", name: "Julia F.", points: 138 },
-  { userId: "3", name: "Tobias E.", points: 127 },
-  { userId: "4", name: "Lukas H.", points: 119 },
-  { userId: "5", name: "Sabine W.", points: 108 },
-];
-
-const GROUP_ENTRIES: LeaderboardEntry[] = [
-  { userId: "1", name: "Tobias E.", points: 127 },
-  { userId: "2", name: "Michael K.", points: 121 },
-  { userId: "3", name: "Anna P.", points: 96 },
-  { userId: "4", name: "David R.", points: 84 },
-];
+interface LeaderboardWidgetProps {
+  globalEntries: LeaderboardEntry[];
+  groupEntries: LeaderboardEntry[];
+  hasActiveGroup: boolean;
+}
 
 type Tab = "global" | "gruppe";
 
-export default function LeaderboardWidget() {
+export default function LeaderboardWidget({
+  globalEntries,
+  groupEntries,
+  hasActiveGroup,
+}: LeaderboardWidgetProps) {
   const [tab, setTab] = useState<Tab>("global");
 
   return (
@@ -47,9 +43,16 @@ export default function LeaderboardWidget() {
       </div>
 
       {tab === "global" ? (
-        <Leaderboard entries={GLOBAL_ENTRIES.slice(0, 3)} title="Gesamtrangliste" medals />
+        <Leaderboard entries={globalEntries} title="Gesamtrangliste" medals />
+      ) : hasActiveGroup ? (
+        <Leaderboard entries={groupEntries} title="Gruppenrangliste" />
       ) : (
-        <Leaderboard entries={GROUP_ENTRIES} title="Gruppenrangliste" />
+        <div className="glass-panel p-6 text-center text-sm text-white/60">
+          Keine aktive Gruppe.{" "}
+          <Link href="/gruppen" className="text-tigers-secondary hover:underline">
+            Gruppe erstellen oder beitreten
+          </Link>
+        </div>
       )}
     </div>
   );

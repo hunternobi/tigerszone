@@ -13,8 +13,8 @@ const scriptFont = Sacramento({ weight: "400", subsets: ["latin"] });
 
 const INSTAGRAM_POSTS = ["https://www.instagram.com/p/DVG8cgaDHBf/"];
 
-export default function Home() {
-  const nextGame = getUpcomingGames(1)[0];
+export default async function Home() {
+  const nextGame = (await getUpcomingGames(1))[0];
   const daysUntilGame = nextGame
     ? Math.max(
         0,
