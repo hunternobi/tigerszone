@@ -31,7 +31,7 @@ export default async function AdminPage() {
         Alle registrierten Nutzer und ihre Gruppenmitgliedschaften.
       </p>
       <div className="mt-6">
-        <AdminUserTable users={users} />
+        <AdminUserTable users={users} currentUserId={session.user.id} />
       </div>
     </section>
   );

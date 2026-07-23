@@ -1,4 +1,5 @@
 import type { AdminUserRow } from "@/lib/adminUsers";
+import RoleToggle from "@/components/RoleToggle";
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString("de-DE", {
@@ -8,7 +9,13 @@ function formatDate(iso: string): string {
   });
 }
 
-export default function AdminUserTable({ users }: { users: AdminUserRow[] }) {
+export default function AdminUserTable({
+  users,
+  currentUserId,
+}: {
+  users: AdminUserRow[];
+  currentUserId: string;
+}) {
   if (users.length === 0) {
     return <p className="glass-panel p-6 text-sm text-white/60">Noch keine Nutzer registriert.</p>;
   }
@@ -31,12 +38,12 @@ export default function AdminUserTable({ users }: { users: AdminUserRow[] }) {
               <td className="py-3 pr-4 font-semibold text-white">{user.name}</td>
               <td className="py-3 pr-4 text-white/70">{user.email}</td>
               <td className="py-3 pr-4">
-                {user.role === "admin" ? (
+                {user._id === currentUserId ? (
                   <span className="rounded-full bg-tigers-accent px-3 py-1 text-xs font-semibold text-white">
-                    Admin
+                    {user.role === "admin" ? "Admin" : "Nutzer"} (du)
                   </span>
                 ) : (
-                  <span className="text-white/60">Nutzer</span>
+                  <RoleToggle userId={user._id} role={user.role} />
                 )}
               </td>
               <td className="py-3 pr-4 text-white/70">{formatDate(user.createdAt)}</td>
