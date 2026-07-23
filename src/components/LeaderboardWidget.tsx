@@ -46,10 +46,11 @@ export default function LeaderboardWidget() {
         </button>
       </div>
 
-      <Leaderboard
-        entries={tab === "global" ? GLOBAL_ENTRIES : GROUP_ENTRIES}
-        title={tab === "global" ? "Gesamtrangliste" : "Gruppenrangliste"}
-      />
+      {tab === "global" ? (
+        <Leaderboard entries={GLOBAL_ENTRIES.slice(0, 3)} title="Gesamtrangliste" medals />
+      ) : (
+        <Leaderboard entries={GROUP_ENTRIES} title="Gruppenrangliste" />
+      )}
     </div>
   );
 }

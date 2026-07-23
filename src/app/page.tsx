@@ -4,7 +4,6 @@ import FadingBackground from "@/components/FadingBackground";
 import GlassButtonExact from "@/components/GlassButtonExact";
 import InstagramEmbed from "@/components/InstagramEmbed";
 import Reveal from "@/components/Reveal";
-import SponsorBar from "@/components/SponsorBar";
 import { SITE_DESCRIPTION, SITE_NAME } from "@/lib/constants";
 import { getUpcomingGames } from "@/lib/games";
 import { getTeamName } from "@/lib/teams";
@@ -26,7 +25,7 @@ export default function Home() {
   return (
     <>
       <FadingBackground src="/images/hero-stadium.jpg">
-      <section className="relative min-h-screen overflow-hidden px-6 py-24">
+      <section className="relative min-h-[130vh] overflow-hidden px-6 py-24">
         <div className="absolute inset-0 bg-gradient-to-b from-tigers-primary/70 via-tigers-primary/60 to-tigers-primary" />
 
         <div className="relative mx-auto flex min-h-[calc(100vh-12rem)] max-w-4xl flex-col justify-center text-center">
@@ -91,11 +90,9 @@ export default function Home() {
       </section>
       </FadingBackground>
 
-      <SponsorBar />
-
       <section className="relative overflow-hidden border-t border-white/10 bg-tigers-primary px-6 py-16 text-center">
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <span className="select-none text-[6rem] font-black whitespace-nowrap text-white opacity-55 blur-[1.5px] sm:text-[10rem] lg:text-[13rem]">
+          <span className="select-none text-[6rem] font-black whitespace-nowrap text-white opacity-35 blur-[1.5px] sm:text-[10rem] lg:text-[13rem]">
             2026/27
           </span>
         </div>

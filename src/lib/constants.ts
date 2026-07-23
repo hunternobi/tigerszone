@@ -13,8 +13,8 @@ export const NAV_LINKS = [
 ] as const;
 
 export const SCORING = {
-  WINNER: 3,
-  EXACT_SCORE: 2,
-  GOAL_DIFF_OR_OT: 1,
+  WINNER: 2,
+  EXACT_SCORE: 3,
+  GOAL_DIFF_OR_OT: 2,
   DERBY_MULTIPLIER: 2,
 } as const;

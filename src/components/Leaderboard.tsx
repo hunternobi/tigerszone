@@ -7,9 +7,12 @@ export interface LeaderboardEntry {
 interface LeaderboardProps {
   entries: LeaderboardEntry[];
   title?: string;
+  medals?: boolean;
 }
 
-export default function Leaderboard({ entries, title = "Rangliste" }: LeaderboardProps) {
+const MEDALS = ["🥇", "🥈", "🥉"];
+
+export default function Leaderboard({ entries, title = "Rangliste", medals = false }: LeaderboardProps) {
   return (
     <div className="glass-panel p-6">
       <h3 className="mb-4 text-lg font-bold text-white">{title}</h3>
@@ -23,7 +26,9 @@ export default function Leaderboard({ entries, title = "Rangliste" }: Leaderboar
               className="flex items-center justify-between rounded-lg px-3 py-2 odd:bg-white/5"
             >
               <span className="flex items-center gap-3 text-white">
-                <span className="text-tigers-secondary">{index + 1}.</span>
+                <span className={medals ? "text-lg" : "text-tigers-secondary"}>
+                  {medals ? MEDALS[index] : `${index + 1}.`}
+                </span>
                 {entry.name}
               </span>
               <span className="font-semibold text-white">{entry.points} Pkt.</span>
