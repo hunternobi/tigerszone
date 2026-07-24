@@ -83,6 +83,7 @@ export default function TippspielInteractive({
                   <GlassButtonExact
                     href="#tippabgabe"
                     size="0.75rem"
+                    wrapperClassName="self-start"
                     onClick={(e) => {
                       if (window.matchMedia("(min-width: 1024px)").matches) {
                         e.preventDefault();

@@ -7,7 +7,6 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { COMMUNITY_LINK, NAV_LINKS, SITE_NAME } from "@/lib/constants";
-import GlassButtonExact from "@/components/GlassButtonExact";
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -63,13 +62,13 @@ export default function Header() {
           {status === "authenticated" ? (
             <>
               <span className="text-sm text-white/70">Hallo, {session.user.name}</span>
-              <GlassButtonExact
+              <button
                 type="button"
-                size="0.875rem"
                 onClick={() => signOut({ callbackUrl: "/" })}
+                className="rounded-full border border-white/20 px-5 py-2 text-sm font-medium text-white transition hover:bg-white/10"
               >
                 Abmelden
-              </GlassButtonExact>
+              </button>
             </>
           ) : (
             <Link
