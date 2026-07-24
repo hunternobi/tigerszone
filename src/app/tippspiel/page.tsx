@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import TippspielInteractive from "@/components/TippspielInteractive";
 import { getUpcomingGames } from "@/lib/games";
-import { getActiveGroupId } from "@/app/gruppen/actions";
-import { getGlobalLeaderboard, getGroupLeaderboard } from "@/lib/leaderboard";
+import { getActiveGroupId, getMyGroups } from "@/app/gruppen/actions";
+import { getGlobalLeaderboard, getGroupLeaderboard, type GroupLeaderboardData } from "@/lib/leaderboard";
 
 export const metadata: Metadata = {
   title: "Tippspiel",
@@ -12,20 +12,26 @@ export const metadata: Metadata = {
 };
 
 export default async function TippspielPage() {
-  const activeGroupId = await getActiveGroupId();
+  const [activeGroupId, myGroups] = await Promise.all([getActiveGroupId(), getMyGroups()]);
 
-  const [upcomingGames, globalEntries, groupEntries] = await Promise.all([
+  const [upcomingGames, globalEntries, groupLeaderboards] = await Promise.all([
     getUpcomingGames(3),
     getGlobalLeaderboard(3),
-    activeGroupId ? getGroupLeaderboard(activeGroupId) : Promise.resolve([]),
+    Promise.all<GroupLeaderboardData>(
+      myGroups.map(async (group) => ({
+        groupId: group._id,
+        groupName: group.name,
+        entries: await getGroupLeaderboard(group._id),
+      }))
+    ),
   ]);
 
   return (
     <TippspielInteractive
       games={upcomingGames}
       globalEntries={globalEntries}
-      groupEntries={groupEntries}
-      hasActiveGroup={Boolean(activeGroupId)}
+      groupLeaderboards={groupLeaderboards}
+      activeGroupId={activeGroupId}
     />
   );
 }

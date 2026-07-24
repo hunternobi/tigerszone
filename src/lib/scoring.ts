@@ -15,39 +15,22 @@ interface ScoringInput {
 }
 
 export function calculatePoints(input: ScoringInput): number {
-  const {
-    predictedHome,
-    predictedAway,
-    predictedOvertime,
-    actualHome,
-    actualAway,
-    actualOvertime,
-    isDerby,
-  } = input;
+  const { predictedHome, predictedAway, actualHome, actualAway, isDerby } = input;
 
   const predictedWinner = Math.sign(predictedHome - predictedAway);
   const actualWinner = Math.sign(actualHome - actualAway);
   const winnerCorrect = predictedWinner === actualWinner;
 
-  let points = 0;
-
-  if (winnerCorrect) {
-    points += SCORING.WINNER;
-  }
-
   const exactScore = predictedHome === actualHome && predictedAway === actualAway;
-  if (exactScore) {
-    points += SCORING.EXACT_SCORE;
-  }
-
   const correctGoalDiff = predictedHome - predictedAway === actualHome - actualAway;
-  const correctOvertimeCall =
-    predictedOvertime !== undefined &&
-    actualOvertime !== undefined &&
-    predictedOvertime === actualOvertime;
 
-  if (winnerCorrect && (correctGoalDiff || correctOvertimeCall)) {
-    points += SCORING.GOAL_DIFF_OR_OT;
+  let points = 0;
+  if (exactScore) {
+    points = SCORING.EXACT_SCORE;
+  } else if (winnerCorrect && correctGoalDiff) {
+    points = SCORING.GOAL_DIFF;
+  } else if (winnerCorrect) {
+    points = SCORING.WINNER;
   }
 
   if (isDerby) {

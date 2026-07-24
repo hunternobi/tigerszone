@@ -12,6 +12,7 @@ export default function AdminGroupTable({ groups }: { groups: AdminGroupRow[] })
         <thead>
           <tr className="border-b border-white/10 text-white/50">
             <th className="py-2 pr-4 font-medium">Name</th>
+            <th className="py-2 pr-4 font-medium">Sichtbarkeit</th>
             <th className="py-2 pr-4 font-medium">Ersteller</th>
             <th className="py-2 pr-4 font-medium">Mitglieder</th>
             <th className="py-2 font-medium"></th>
@@ -21,6 +22,9 @@ export default function AdminGroupTable({ groups }: { groups: AdminGroupRow[] })
           {groups.map((group) => (
             <tr key={group._id} className="border-b border-white/5 last:border-0">
               <td className="py-3 pr-4 font-semibold text-white">{group.name}</td>
+              <td className="py-3 pr-4 text-white/70">
+                {group.isPublic ? "Öffentlich" : "Privat"}
+              </td>
               <td className="py-3 pr-4 text-white/70">{group.ownerName}</td>
               <td className="py-3 pr-4 text-white/70">{group.memberCount}</td>
               <td className="py-3 text-right">

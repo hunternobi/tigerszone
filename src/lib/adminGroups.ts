@@ -9,13 +9,14 @@ export interface AdminGroupRow {
   name: string;
   ownerName: string;
   memberCount: number;
+  isPublic: boolean;
 }
 
 export async function getAllGroups(): Promise<AdminGroupRow[]> {
   await dbConnect();
 
   const groups = await GroupModel.find().sort({ createdAt: -1 }).lean<
-    { _id: Types.ObjectId; name: string; ownerUserId: Types.ObjectId }[]
+    { _id: Types.ObjectId; name: string; ownerUserId: Types.ObjectId; isPublic: boolean }[]
   >();
   if (groups.length === 0) return [];
 
@@ -37,5 +38,6 @@ export async function getAllGroups(): Promise<AdminGroupRow[]> {
     name: group.name,
     ownerName: ownerNameById.get(group.ownerUserId.toString()) ?? "Unbekannt",
     memberCount: countMap.get(group._id.toString()) ?? 0,
+    isPublic: group.isPublic,
   }));
 }

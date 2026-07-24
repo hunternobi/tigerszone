@@ -5,6 +5,12 @@ import { UserModel } from "@/models/User";
 import { GroupMemberModel } from "@/models/GroupMember";
 import type { LeaderboardEntry } from "@/components/Leaderboard";
 
+export interface GroupLeaderboardData {
+  groupId: string;
+  groupName: string;
+  entries: LeaderboardEntry[];
+}
+
 async function sumPointsForUsers(userIds: Types.ObjectId[]): Promise<Map<string, number>> {
   if (userIds.length === 0) return new Map();
 

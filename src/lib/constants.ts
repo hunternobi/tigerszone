@@ -17,7 +17,7 @@ export const COMMUNITY_LINK = { href: "/community", label: "Community" } as cons
 
 export const SCORING = {
   WINNER: 2,
-  EXACT_SCORE: 3,
-  GOAL_DIFF_OR_OT: 2,
+  GOAL_DIFF: 4,
+  EXACT_SCORE: 5,
   DERBY_MULTIPLIER: 2,
 } as const;

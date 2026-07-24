@@ -6,6 +6,7 @@ import { createGroup } from "@/app/gruppen/actions";
 
 export default function CreateGroupForm() {
   const [name, setName] = useState("");
+  const [isPublic, setIsPublic] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
@@ -14,12 +15,13 @@ export default function CreateGroupForm() {
     e.preventDefault();
     setError(null);
     startTransition(async () => {
-      const result = await createGroup(name);
+      const result = await createGroup(name, isPublic);
       if (!result.success) {
         setError(result.error ?? "Gruppe konnte nicht erstellt werden.");
         return;
       }
       setName("");
+      setIsPublic(false);
       router.refresh();
     });
   }
@@ -34,6 +36,33 @@ export default function CreateGroupForm() {
         placeholder="Gruppenname"
         className="glass-panel-sm mt-4 w-full px-4 py-2 text-white focus:outline-none"
       />
+
+      <div className="mt-4 flex gap-2">
+        <button
+          type="button"
+          onClick={() => setIsPublic(false)}
+          className={`glass-pill glass-interactive flex-1 px-4 py-2 text-xs font-semibold text-white ${
+            !isPublic ? "glass-pill-primary" : ""
+          }`}
+        >
+          Privat
+        </button>
+        <button
+          type="button"
+          onClick={() => setIsPublic(true)}
+          className={`glass-pill glass-interactive flex-1 px-4 py-2 text-xs font-semibold text-white ${
+            isPublic ? "glass-pill-primary" : ""
+          }`}
+        >
+          Öffentlich
+        </button>
+      </div>
+      <p className="mt-2 text-xs text-white/50">
+        {isPublic
+          ? "Jeder Nutzer kann direkt beitreten."
+          : "Beitritt nur über den Einladungslink."}
+      </p>
+
       {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
       <button
         type="submit"

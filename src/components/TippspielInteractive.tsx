@@ -10,19 +10,20 @@ import { getTeamName } from "@/lib/teams";
 import type { Game } from "@/types";
 import { formatGameDate, formatGameTime } from "@/utils/format";
 import type { LeaderboardEntry } from "@/components/Leaderboard";
+import type { GroupLeaderboardData } from "@/lib/leaderboard";
 
 interface TippspielInteractiveProps {
   games: Game[];
   globalEntries: LeaderboardEntry[];
-  groupEntries: LeaderboardEntry[];
-  hasActiveGroup: boolean;
+  groupLeaderboards: GroupLeaderboardData[];
+  activeGroupId: string | null;
 }
 
 export default function TippspielInteractive({
   games,
   globalEntries,
-  groupEntries,
-  hasActiveGroup,
+  groupLeaderboards,
+  activeGroupId,
 }: TippspielInteractiveProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const selectedGame = games.find((game) => game._id === selectedId) ?? null;
@@ -138,8 +139,8 @@ export default function TippspielInteractive({
           <aside className="space-y-6">
             <LeaderboardWidget
               globalEntries={globalEntries}
-              groupEntries={groupEntries}
-              hasActiveGroup={hasActiveGroup}
+              groupLeaderboards={groupLeaderboards}
+              activeGroupId={activeGroupId}
             />
 
             <div className="glass-panel p-4 sm:p-6">
@@ -150,16 +151,16 @@ export default function TippspielInteractive({
                   Tippabgabe endet mit Spielbeginn
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-tigers-secondary" />+
-                  {SCORING.WINNER} für richtigen Sieger
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-tigers-secondary" />
+                  {SCORING.WINNER} Punkte für den richtigen Sieger
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-tigers-secondary" />+
-                  {SCORING.EXACT_SCORE} für richtigen Spielstand
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-tigers-secondary" />
+                  {SCORING.GOAL_DIFF} Punkte für die richtige Tordifferenz
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-tigers-secondary" />+
-                  {SCORING.GOAL_DIFF_OR_OT} für richtige Tordifferenz
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-tigers-secondary" />
+                  {SCORING.EXACT_SCORE} Punkte für das richtige Ergebnis
                 </li>
               </ul>
             </div>
