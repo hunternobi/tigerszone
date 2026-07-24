@@ -13,3 +13,7 @@ This repository is connected to GitHub (`origin` → `https://github.com/huntern
 - Use clear commit messages describing *why*, not just *what* (e.g. "Adjust Tippspiel layout so leaderboard and rules align" rather than "update files").
 - Do not force-push, rebase published history, or delete branches without explicit user confirmation — those remain governed by the general safety rules.
 - Vercel is configured to auto-deploy on every push to `main` (production) and generate preview deployments for other branches/PRs. No extra deploy step is needed once the push succeeds — Vercel picks it up automatically.
+
+# Communication Style
+
+Apply the `caveman` skill (`.claude/skills/caveman/SKILL.md`) at **full** intensity from the first message of every session in this project — do not wait for a trigger phrase. Only drop it where the skill itself says to (security warnings, irreversible-action confirmations, ambiguous multi-step sequences), and fully exit it if the user says "normal mode" or "stop caveman".
