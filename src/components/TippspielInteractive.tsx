@@ -80,7 +80,12 @@ export default function TippspielInteractive({
 
                   <a
                     href="#tippabgabe"
-                    onClick={() => setSelectedId(game._id)}
+                    onClick={(e) => {
+                      if (window.matchMedia("(min-width: 1024px)").matches) {
+                        e.preventDefault();
+                      }
+                      setSelectedId(game._id);
+                    }}
                     className="glass-pill glass-pill-primary glass-interactive px-4 py-2 text-center text-xs font-semibold text-white"
                   >
                     Jetzt Tippen
