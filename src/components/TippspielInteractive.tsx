@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Calendar, Clock } from "lucide-react";
 import FadingBackground from "@/components/FadingBackground";
+import GlassButtonExact from "@/components/GlassButtonExact";
 import LeaderboardWidget from "@/components/LeaderboardWidget";
 import PredictionForm from "@/components/PredictionForm";
 import { SCORING } from "@/lib/constants";
@@ -79,18 +80,18 @@ export default function TippspielInteractive({
                     </div>
                   </div>
 
-                  <a
+                  <GlassButtonExact
                     href="#tippabgabe"
+                    size="0.75rem"
                     onClick={(e) => {
                       if (window.matchMedia("(min-width: 1024px)").matches) {
                         e.preventDefault();
                       }
                       setSelectedId(game._id);
                     }}
-                    className="glass-pill glass-pill-primary glass-interactive px-4 py-2 text-center text-xs font-semibold text-white"
                   >
                     Jetzt Tippen
-                  </a>
+                  </GlassButtonExact>
                 </div>
               ))}
             </div>

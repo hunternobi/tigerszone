@@ -5,6 +5,7 @@ import { useEffect, useState, useTransition, type FormEvent } from "react";
 import { useSession } from "next-auth/react";
 import { getMyPrediction, submitPrediction } from "@/app/tippspiel/actions";
 import { getTeamName } from "@/lib/teams";
+import GlassButtonExact from "@/components/GlassButtonExact";
 import type { Game } from "@/types";
 
 interface PredictionFormProps {
@@ -113,13 +114,9 @@ export default function PredictionForm({ game }: PredictionFormProps) {
       {error && <p className="mt-3 text-center text-sm text-red-400">{error}</p>}
 
       <div className="mt-4 flex justify-center">
-        <button
-          type="submit"
-          disabled={deadlinePassed || isPending || !canSubmit}
-          className="rounded-full bg-tigers-secondary px-5 py-2 text-sm font-semibold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
-        >
+        <GlassButtonExact type="submit" size="0.875rem" disabled={deadlinePassed || isPending || !canSubmit}>
           {isPending ? "Speichert…" : saved ? "Tipp gespeichert" : "Tipp abgeben"}
-        </button>
+        </GlassButtonExact>
       </div>
     </form>
   );

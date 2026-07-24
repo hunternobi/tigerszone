@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import FadingBackground from "@/components/FadingBackground";
+import GlassButtonExact from "@/components/GlassButtonExact";
 import { getAllBlogPosts } from "@/lib/blogPosts";
 
 export const metadata: Metadata = {
@@ -76,14 +77,9 @@ export default async function SpieltagsblogPage() {
             Ein besonderer Dank geht an unsere Freunde von der TigersCorner, die sich hier mit
             einbringen – lasst gerne auch bei ihnen Support da.
           </p>
-          <a
-            href="http://tigers-corner.de/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="glass-pill glass-pill-primary glass-interactive mt-6 inline-block px-6 py-3 font-semibold text-white"
-          >
+          <GlassButtonExact href="http://tigers-corner.de/" size="1rem" wrapperClassName="mt-6">
             Zur TigersCorner
-          </a>
+          </GlassButtonExact>
         </div>
       </section>
     </>

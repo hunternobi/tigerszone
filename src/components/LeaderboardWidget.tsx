@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, type ChangeEvent } from "react";
 import Leaderboard, { type LeaderboardEntry } from "@/components/Leaderboard";
 import { setActiveGroup } from "@/app/gruppen/actions";
+import GlassButtonExact from "@/components/GlassButtonExact";
 import type { GroupLeaderboardData } from "@/lib/leaderboard";
 
 interface LeaderboardWidgetProps {
@@ -37,24 +38,24 @@ export default function LeaderboardWidget({
   return (
     <div>
       <div className="mb-3 flex gap-2">
-        <button
+        <GlassButtonExact
           type="button"
+          size="0.875rem"
+          wrapperClassName="flex-1"
+          className={`block w-full text-center ${tab === "global" ? "" : "opacity-60"}`}
           onClick={() => setTab("global")}
-          className={`glass-pill glass-interactive flex-1 px-4 py-2 text-sm font-semibold text-white ${
-            tab === "global" ? "glass-pill-primary" : ""
-          }`}
         >
           Global
-        </button>
-        <button
+        </GlassButtonExact>
+        <GlassButtonExact
           type="button"
+          size="0.875rem"
+          wrapperClassName="flex-1"
+          className={`block w-full text-center ${tab === "gruppe" ? "" : "opacity-60"}`}
           onClick={() => setTab("gruppe")}
-          className={`glass-pill glass-interactive flex-1 px-4 py-2 text-sm font-semibold text-white ${
-            tab === "gruppe" ? "glass-pill-primary" : ""
-          }`}
         >
           Gruppe
-        </button>
+        </GlassButtonExact>
       </div>
 
       {tab === "global" ? (

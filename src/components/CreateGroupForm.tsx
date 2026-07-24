@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition, type FormEvent } from "react";
 import { createGroup } from "@/app/gruppen/actions";
+import GlassButtonExact from "@/components/GlassButtonExact";
 
 export default function CreateGroupForm() {
   const [name, setName] = useState("");
@@ -64,13 +65,15 @@ export default function CreateGroupForm() {
       </p>
 
       {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
-      <button
+      <GlassButtonExact
         type="submit"
+        size="0.875rem"
+        wrapperClassName="mt-4 block w-full"
+        className="block w-full text-center"
         disabled={isPending || name.trim().length < 2}
-        className="mt-4 w-full rounded-full bg-tigers-secondary px-5 py-2 text-sm font-semibold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isPending ? "Wird erstellt…" : "Gruppe erstellen"}
-      </button>
+      </GlassButtonExact>
     </form>
   );
 }
