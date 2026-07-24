@@ -1,5 +1,6 @@
 import { Calendar, Clock } from "lucide-react";
 import { Sacramento } from "next/font/google";
+import { auth } from "@/auth";
 import FadingBackground from "@/components/FadingBackground";
 import GlassButtonExact from "@/components/GlassButtonExact";
 import InstagramEmbed from "@/components/InstagramEmbed";
@@ -14,6 +15,7 @@ const scriptFont = Sacramento({ weight: "400", subsets: ["latin"] });
 const INSTAGRAM_POSTS = ["https://www.instagram.com/p/DVG8cgaDHBf/"];
 
 export default async function Home() {
+  const session = await auth();
   const nextGame = (await getUpcomingGames(1))[0];
   const daysUntilGame = nextGame
     ? Math.max(
@@ -104,8 +106,12 @@ export default async function Home() {
               Werde Teil der TigersZone-Community, erlebe Eishockey neu, nimm am Tippspiel teil
               und kämpfe um Ruhm und Ehre!
             </p>
-            <GlassButtonExact href="/register" wrapperClassName="mt-6" size="1rem">
-              Jetzt Registrieren
+            <GlassButtonExact
+              href={session?.user ? "/profile" : "/register"}
+              wrapperClassName="mt-6"
+              size="1rem"
+            >
+              {session?.user ? "Bereits registriert" : "Jetzt Registrieren"}
             </GlassButtonExact>
           </Reveal>
         </div>
