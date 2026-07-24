@@ -1,5 +1,6 @@
 import type { AdminUserRow } from "@/lib/adminUsers";
 import RoleToggle from "@/components/RoleToggle";
+import DeleteUserButton from "@/components/DeleteUserButton";
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString("de-DE", {
@@ -31,7 +32,8 @@ export default function AdminUserTable({
             <th className="py-2 pr-4 font-medium">E-Mail</th>
             <th className="py-2 pr-4 font-medium">Rolle</th>
             <th className="py-2 pr-4 font-medium">Registriert am</th>
-            <th className="py-2 font-medium">Gruppen</th>
+            <th className="py-2 pr-4 font-medium">Gruppen</th>
+            <th className="py-2 font-medium"></th>
           </tr>
         </thead>
         <tbody>
@@ -49,8 +51,13 @@ export default function AdminUserTable({
                 )}
               </td>
               <td className="py-3 pr-4 text-white/70">{formatDate(user.createdAt)}</td>
-              <td className="py-3 text-white/70">
+              <td className="py-3 pr-4 text-white/70">
                 {user.groups.length > 0 ? user.groups.join(", ") : "—"}
+              </td>
+              <td className="py-3 text-right">
+                {user._id !== currentUserId && (
+                  <DeleteUserButton userId={user._id} userName={user.name} />
+                )}
               </td>
             </tr>
           ))}

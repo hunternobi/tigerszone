@@ -56,3 +56,19 @@ export async function createBlogPost(
 
   return { success: true };
 }
+
+export async function deleteBlogPost(postId: string): Promise<ActionResult> {
+  try {
+    await requireEditor();
+  } catch {
+    return { success: false, error: "Nicht autorisiert." };
+  }
+
+  await dbConnect();
+  await BlogPostModel.deleteOne({ _id: postId });
+
+  revalidatePath("/spieltagsblog");
+  revalidatePath("/redaktion");
+
+  return { success: true };
+}

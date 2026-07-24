@@ -6,23 +6,23 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
-import { NAV_LINKS, SITE_NAME } from "@/lib/constants";
+import { COMMUNITY_LINK, NAV_LINKS, SITE_NAME } from "@/lib/constants";
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
   const { data: session, status } = useSession();
 
-  const authLinks = session
-    ? [
-        { href: "/gruppen", label: "Gruppen" },
-        { href: "/profile", label: "Profil" },
-        ...(session.user.role === "admin" || session.user.role === "redakteur"
-          ? [{ href: "/redaktion", label: "Redaktion" }]
-          : []),
-        ...(session.user.role === "admin" ? [{ href: "/admin", label: "Admin" }] : []),
-      ]
-    : [];
+  const isEditor = session?.user.role === "admin" || session?.user.role === "redakteur";
+
+  const navLinks = [
+    ...NAV_LINKS,
+    ...(session ? [{ href: "/gruppen", label: "Gruppen" }] : []),
+    COMMUNITY_LINK,
+    ...(isEditor ? [{ href: "/redaktion", label: "Redaktion" }] : []),
+    ...(session ? [{ href: "/profile", label: "Profil" }] : []),
+    ...(session?.user.role === "admin" ? [{ href: "/admin", label: "Admin" }] : []),
+  ];
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-tigers-primary/90 backdrop-blur">
@@ -40,7 +40,7 @@ export default function Header() {
         </Link>
 
         <nav className="hidden items-center gap-2 md:flex">
-          {[...NAV_LINKS, ...authLinks].map((link) => {
+          {navLinks.map((link) => {
             const isActive = link.href === "/" ? pathname === "/" : pathname?.startsWith(link.href);
             return (
               <Link
@@ -92,7 +92,7 @@ export default function Header() {
 
       {mobileOpen && (
         <nav className="flex flex-col gap-1 border-t border-white/10 px-6 py-4 md:hidden">
-          {[...NAV_LINKS, ...authLinks].map((link) => {
+          {navLinks.map((link) => {
             const isActive = link.href === "/" ? pathname === "/" : pathname?.startsWith(link.href);
             return (
               <Link

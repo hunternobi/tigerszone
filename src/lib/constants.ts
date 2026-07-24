@@ -11,8 +11,9 @@ export const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/tippspiel", label: "Tippspiel" },
   { href: "/spieltagsblog", label: "Spieltagsblog" },
-  { href: "/community", label: "Community" },
 ] as const;
+
+export const COMMUNITY_LINK = { href: "/community", label: "Community" } as const;
 
 export const SCORING = {
   WINNER: 2,

@@ -5,6 +5,9 @@ import { auth } from "@/auth";
 import { dbConnect } from "@/lib/mongodb";
 import { GameModel } from "@/models/Game";
 import { UserModel } from "@/models/User";
+import { GroupModel } from "@/models/Group";
+import { GroupMemberModel } from "@/models/GroupMember";
+import { PredictionModel } from "@/models/Prediction";
 import { recomputeGamePoints } from "@/lib/scoring";
 import type { Overtime, UserRole } from "@/types";
 
@@ -81,6 +84,56 @@ export async function setUserRole(userId: string, role: UserRole): Promise<Actio
   }
 
   revalidatePath("/admin");
+
+  return { success: true };
+}
+
+export async function deleteGroup(groupId: string): Promise<ActionResult> {
+  try {
+    await requireAdmin();
+  } catch {
+    return { success: false, error: "Nicht autorisiert." };
+  }
+
+  await dbConnect();
+  await GroupMemberModel.deleteMany({ groupId });
+  await GroupModel.deleteOne({ _id: groupId });
+
+  revalidatePath("/admin");
+  revalidatePath("/gruppen");
+  revalidatePath("/tippspiel");
+
+  return { success: true };
+}
+
+export async function deleteUser(userId: string): Promise<ActionResult> {
+  let session;
+  try {
+    session = await requireAdmin();
+  } catch {
+    return { success: false, error: "Nicht autorisiert." };
+  }
+
+  if (session.user.id === userId) {
+    return { success: false, error: "Du kannst dich nicht selbst löschen." };
+  }
+
+  await dbConnect();
+
+  const ownedGroups = await GroupModel.find({ ownerUserId: userId }).select("_id");
+  const ownedGroupIds = ownedGroups.map((group) => group._id);
+  if (ownedGroupIds.length > 0) {
+    await GroupMemberModel.deleteMany({ groupId: { $in: ownedGroupIds } });
+    await GroupModel.deleteMany({ _id: { $in: ownedGroupIds } });
+  }
+
+  await GroupMemberModel.deleteMany({ userId });
+  await PredictionModel.deleteMany({ userId });
+  await UserModel.deleteOne({ _id: userId });
+
+  revalidatePath("/admin");
+  revalidatePath("/gruppen");
+  revalidatePath("/tippspiel");
 
   return { success: true };
 }

@@ -3,8 +3,10 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { getAllGames } from "@/lib/games";
 import { getAllUsersWithGroups } from "@/lib/adminUsers";
+import { getAllGroups } from "@/lib/adminGroups";
 import GameResultForm from "@/components/GameResultForm";
 import AdminUserTable from "@/components/AdminUserTable";
+import AdminGroupTable from "@/components/AdminGroupTable";
 
 export const metadata: Metadata = {
   title: "Admin",
@@ -16,7 +18,11 @@ export default async function AdminPage() {
   if (!session?.user) redirect("/login");
   if (session.user.role !== "admin") redirect("/");
 
-  const [games, users] = await Promise.all([getAllGames(), getAllUsersWithGroups()]);
+  const [games, users, groups] = await Promise.all([
+    getAllGames(),
+    getAllUsersWithGroups(),
+    getAllGroups(),
+  ]);
 
   return (
     <section className="mx-auto max-w-5xl px-6 py-16">
@@ -38,6 +44,12 @@ export default async function AdminPage() {
       </p>
       <div className="mt-6">
         <AdminUserTable users={users} currentUserId={session.user.id} />
+      </div>
+
+      <h2 className="mt-16 text-2xl font-bold text-white">Gruppen</h2>
+      <p className="mt-2 text-white/70">Alle Tippgruppen mit Ersteller und Mitgliederzahl.</p>
+      <div className="mt-6">
+        <AdminGroupTable groups={groups} />
       </div>
     </section>
   );

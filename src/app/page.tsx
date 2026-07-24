@@ -111,7 +111,7 @@ export default async function Home() {
               wrapperClassName="mt-6"
               size="1rem"
             >
-              {session?.user ? "Bereits registriert" : "Jetzt Registrieren"}
+              {session?.user ? "Bereits Registriert" : "Jetzt Registrieren"}
             </GlassButtonExact>
           </Reveal>
         </div>
