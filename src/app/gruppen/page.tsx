@@ -1,8 +1,14 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { getActiveGroupId, getMyGroups } from "./actions";
 import CreateGroupForm from "@/components/CreateGroupForm";
 import GroupList from "@/components/GroupList";
+
+export const metadata: Metadata = {
+  title: "Tippgruppen",
+  robots: { index: false, follow: false },
+};
 
 export default async function GruppenPage() {
   const session = await auth();

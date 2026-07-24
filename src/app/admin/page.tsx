@@ -1,9 +1,15 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { getAllGames } from "@/lib/games";
 import { getAllUsersWithGroups } from "@/lib/adminUsers";
 import GameResultForm from "@/components/GameResultForm";
 import AdminUserTable from "@/components/AdminUserTable";
+
+export const metadata: Metadata = {
+  title: "Admin",
+  robots: { index: false, follow: false },
+};
 
 export default async function AdminPage() {
   const session = await auth();

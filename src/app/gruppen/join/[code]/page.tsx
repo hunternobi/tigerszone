@@ -1,7 +1,13 @@
+import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { getGroupPreview } from "@/app/gruppen/actions";
 import JoinGroupButton from "@/components/JoinGroupButton";
+
+export const metadata: Metadata = {
+  title: "Gruppe beitreten",
+  robots: { index: false, follow: false },
+};
 
 interface JoinGroupPageProps {
   params: Promise<{ code: string }>;

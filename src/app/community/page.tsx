@@ -1,3 +1,11 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Community",
+  description: "Meme der Woche und Watch Party Finder für Straubing Tigers Fans.",
+  alternates: { canonical: "/community" },
+};
+
 export default function CommunityPage() {
   return (
     <section className="mx-auto max-w-5xl px-6 py-16">

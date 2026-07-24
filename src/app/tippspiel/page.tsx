@@ -1,7 +1,15 @@
+import type { Metadata } from "next";
 import TippspielInteractive from "@/components/TippspielInteractive";
 import { getUpcomingGames } from "@/lib/games";
 import { getActiveGroupId } from "@/app/gruppen/actions";
 import { getGlobalLeaderboard, getGroupLeaderboard } from "@/lib/leaderboard";
+
+export const metadata: Metadata = {
+  title: "Tippspiel",
+  description:
+    "Tippe die nächsten Spiele der Straubing Tigers, sammle Punkte und miss dich mit anderen Fans in der Rangliste.",
+  alternates: { canonical: "/tippspiel" },
+};
 
 export default async function TippspielPage() {
   const activeGroupId = await getActiveGroupId();

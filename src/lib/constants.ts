@@ -1,3 +1,5 @@
+export const SITE_URL = "https://tigerszone.vercel.app";
+
 export const SITE_NAME = "TigersZone";
 
 export const SITE_CLAIM = "Das TigersZone-Tippspiel für die Straubing Tigers";

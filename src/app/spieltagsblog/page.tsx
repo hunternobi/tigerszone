@@ -1,6 +1,14 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import FadingBackground from "@/components/FadingBackground";
 import { getAllBlogPosts } from "@/lib/blogPosts";
+
+export const metadata: Metadata = {
+  title: "Spieltagsblog",
+  description:
+    "Berichte, Vorschauen und Rückblicke rund um die Spiele der Straubing Tigers – geschrieben von Fans für Fans.",
+  alternates: { canonical: "/spieltagsblog" },
+};
 
 function formatPostDate(iso: string): string {
   return new Date(iso).toLocaleDateString("de-DE", {
