@@ -25,7 +25,7 @@ export default async function Home() {
   return (
     <>
       <FadingBackground src="/images/hero-stadium.jpg">
-      <section className="relative min-h-[130vh] overflow-hidden px-6 py-24">
+      <section className="relative min-h-screen overflow-hidden px-4 py-16 sm:min-h-[130vh] sm:px-6 sm:py-24">
         <div className="absolute inset-0 bg-gradient-to-b from-tigers-primary/70 via-tigers-primary/60 to-tigers-primary" />
 
         <div className="relative mx-auto flex min-h-[calc(100vh-12rem)] max-w-4xl flex-col justify-center text-center">
@@ -47,7 +47,7 @@ export default async function Home() {
 
           {nextGame && (
             <Reveal>
-              <div className="glass-panel mx-auto mt-16 max-w-2xl p-8 text-left">
+              <div className="glass-panel mx-auto mt-10 max-w-2xl p-5 text-left sm:mt-16 sm:p-8">
                 <h2 className="text-center text-2xl font-bold text-white">Nächstes Spiel</h2>
                 <p className="mt-2 text-center text-sm text-white/60">
                   Bereit für die nächste Herausforderung? Stelle deine Prognose und sammle Punkte!
@@ -90,9 +90,9 @@ export default async function Home() {
       </section>
       </FadingBackground>
 
-      <section className="relative overflow-hidden border-t border-white/10 bg-tigers-primary px-6 py-16 text-center">
+      <section className="relative overflow-hidden border-t border-white/10 bg-tigers-primary px-4 py-12 text-center sm:px-6 sm:py-16">
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <span className="select-none text-[6rem] font-black whitespace-nowrap text-white opacity-35 blur-[1.5px] sm:text-[10rem] lg:text-[13rem]">
+          <span className="select-none text-[3.5rem] font-black whitespace-nowrap text-white opacity-35 blur-[1.5px] sm:text-[10rem] lg:text-[13rem]">
             2026/27
           </span>
         </div>
@@ -111,7 +111,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="border-t border-white/10 bg-tigers-primary px-6 py-16">
+      <section className="border-t border-white/10 bg-tigers-primary px-4 py-12 sm:px-6 sm:py-16">
         <Reveal>
           <div className="mx-auto max-w-6xl text-center">
             <h2 className="text-3xl font-bold text-white">Folge uns auf Instagram</h2>
@@ -126,7 +126,7 @@ export default async function Home() {
                 </div>
               ))}
 
-              <div className="glass-panel flex flex-col justify-center p-8 text-left sm:w-80">
+              <div className="glass-panel flex flex-col justify-center p-5 text-left sm:w-80 sm:p-8">
                 <h3 className="text-center text-xl font-bold text-white">
                   Werde Teil der Tigers-Zone
                 </h3>

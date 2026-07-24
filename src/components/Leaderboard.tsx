@@ -14,7 +14,7 @@ const MEDALS = ["🥇", "🥈", "🥉"];
 
 export default function Leaderboard({ entries, title = "Rangliste", medals = false }: LeaderboardProps) {
   return (
-    <div className="glass-panel p-6">
+    <div className="glass-panel p-4 sm:p-6">
       <h3 className="mb-4 text-lg font-bold text-white">{title}</h3>
       {entries.length === 0 ? (
         <p className="text-sm text-white/60">Noch keine Einträge vorhanden.</p>

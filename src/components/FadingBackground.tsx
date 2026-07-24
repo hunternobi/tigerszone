@@ -27,7 +27,7 @@ export default function FadingBackground({
     <div ref={ref} className="relative overflow-hidden">
       <motion.div
         style={{ opacity: bgOpacity, filter: blurPx ? `blur(${blurPx}px)` : undefined }}
-        className="pointer-events-none absolute inset-0 -z-10 scale-105"
+        className="pointer-events-none absolute inset-0 -z-10 max-sm:h-[70vh] scale-105"
       >
         <Image src={src} alt={alt} fill priority className="object-cover object-center" />
       </motion.div>

@@ -29,7 +29,7 @@ export default function TippspielInteractive({
 
   return (
     <FadingBackground src="/images/tippabgabe-bg.jpg" opacity={0.55} blurPx={1.5}>
-      <section className="mx-auto max-w-6xl px-6 py-16">
+      <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-16">
         <div className="grid gap-10 lg:grid-cols-[1fr_300px]">
           <div>
             <h1 className="text-3xl font-bold text-white">Tippspiel</h1>
@@ -89,11 +89,11 @@ export default function TippspielInteractive({
               ))}
             </div>
 
-            <div id="tippabgabe" className="glass-panel mt-12 scroll-mt-24 p-8">
+            <div id="tippabgabe" className="glass-panel mt-8 scroll-mt-24 p-4 sm:mt-12 sm:p-8">
               <h2 className="text-center text-2xl font-bold text-white">Tippabgabe</h2>
 
               {selectedGame ? (
-                <div className="mt-8 glass-panel-sm p-6">
+                <div className="mt-8 glass-panel-sm p-4 sm:p-6">
                   {selectedGame.competition === "Vorbereitung" ? (
                     <span className="inline-block rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-semibold text-white/60">
                       Vorbereitungsspiel
@@ -137,7 +137,7 @@ export default function TippspielInteractive({
               hasActiveGroup={hasActiveGroup}
             />
 
-            <div className="glass-panel p-6">
+            <div className="glass-panel p-4 sm:p-6">
               <h3 className="mb-4 text-lg font-bold text-white">Regeln</h3>
               <ul className="space-y-2 text-sm text-white/80">
                 <li className="flex items-start gap-2">

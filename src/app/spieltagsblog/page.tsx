@@ -24,21 +24,21 @@ export default async function SpieltagsblogPage() {
   return (
     <>
       <FadingBackground src="/images/Fans.jpg" opacity={0.55} blurPx={1.5}>
-        <section className="mx-auto max-w-5xl px-6 py-16">
+        <section className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-16">
           <h1 className="text-3xl font-bold text-white">Spieltagsblog</h1>
           <p className="mt-3 text-white/70">
             Berichte, Vorschauen und Rückblicke rund um die Spiele der Straubing Tigers.
           </p>
 
           {posts.length === 0 ? (
-            <p className="glass-panel mt-8 p-8 text-center text-white/60">
+            <p className="glass-panel mt-8 p-5 text-center text-white/60 sm:p-8">
               Noch keine Beiträge vorhanden.
             </p>
           ) : (
             posts.map((post) => (
-              <article key={post._id} className="glass-panel mt-8 p-8">
+              <article key={post._id} className="glass-panel mt-8 p-5 sm:p-8">
                 <div className="flex flex-wrap items-start justify-between gap-3">
-                  <h2 className="text-2xl font-bold text-white sm:text-3xl">{post.title}</h2>
+                  <h2 className="text-xl font-bold text-white sm:text-3xl">{post.title}</h2>
                   <span className="shrink-0 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-semibold text-white/70">
                     {formatPostDate(post.publishedAt)}
                   </span>
@@ -59,7 +59,7 @@ export default async function SpieltagsblogPage() {
         </section>
       </FadingBackground>
 
-      <section className="relative overflow-hidden border-t border-white/10 bg-tigers-primary px-6 py-16 text-center">
+      <section className="relative overflow-hidden border-t border-white/10 bg-tigers-primary px-4 py-12 text-center sm:px-6 sm:py-16">
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <Image
             src="/images/tigers_corner_logo_transparent.png"
