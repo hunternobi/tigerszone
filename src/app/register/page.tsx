@@ -1,28 +1,55 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
-import { registerAction, type RegisterState } from "./actions";
-
-const initialState: RegisterState = {};
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useState, useTransition, type FormEvent } from "react";
+import { registerAction } from "./actions";
 
 export default function RegisterPage() {
-  const [state, formAction, pending] = useActionState(registerAction, initialState);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+
+  function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    setError(null);
+    startTransition(async () => {
+      const result = await registerAction(name, email, password);
+      if (!result.success) {
+        setError(result.error ?? "Registrierung fehlgeschlagen.");
+        return;
+      }
+
+      const signInResult = await signIn("credentials", { email, password, redirect: false });
+      if (signInResult?.error) {
+        setError("Konto erstellt. Bitte logge dich manuell ein.");
+        return;
+      }
+
+      router.push("/");
+      router.refresh();
+    });
+  }
 
   return (
     <section className="mx-auto max-w-md px-6 py-16">
       <h1 className="text-3xl font-bold text-white">Registrieren</h1>
       <p className="mt-2 text-white/70">Werde Teil der TigersZone-Community und tippe mit.</p>
 
-      <form action={formAction} className="glass-panel mt-8 flex flex-col gap-4 p-6">
+      <form onSubmit={handleSubmit} className="glass-panel mt-8 flex flex-col gap-4 p-6">
         <div>
           <label htmlFor="name" className="mb-1 block text-sm font-medium text-white/80">
             Name
           </label>
           <input
             id="name"
-            name="name"
             type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
             required
             className="glass-panel-sm w-full px-4 py-2 text-white focus:outline-none"
           />
@@ -33,8 +60,9 @@ export default function RegisterPage() {
           </label>
           <input
             id="email"
-            name="email"
             type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             required
             className="glass-panel-sm w-full px-4 py-2 text-white focus:outline-none"
           />
@@ -45,22 +73,23 @@ export default function RegisterPage() {
           </label>
           <input
             id="password"
-            name="password"
             type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             required
             minLength={8}
             className="glass-panel-sm w-full px-4 py-2 text-white focus:outline-none"
           />
         </div>
 
-        {state?.error && <p className="text-sm text-red-400">{state.error}</p>}
+        {error && <p className="text-sm text-red-400">{error}</p>}
 
         <button
           type="submit"
-          disabled={pending}
+          disabled={isPending}
           className="mt-2 rounded-full bg-tigers-secondary px-5 py-2 text-sm font-semibold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {pending ? "Wird erstellt…" : "Konto erstellen"}
+          {isPending ? "Wird erstellt…" : "Konto erstellen"}
         </button>
       </form>
 
