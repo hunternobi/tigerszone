@@ -27,8 +27,8 @@ export default async function JoinGroupPage({ params }: JoinGroupPageProps) {
     <section className="mx-auto max-w-md px-6 py-16 text-center">
       <h1 className="text-2xl font-bold text-white">Gruppe beitreten</h1>
       <p className="mt-3 text-white/70">
-        Du wurdest eingeladen, der Gruppe <strong className="text-white">{preview.name}</strong>{" "}
-        beizutreten.
+        <strong className="text-white">{preview.ownerName}</strong> hat dich eingeladen, der
+        Tippspiel-Gruppe <strong className="text-white">{preview.name}</strong> beizutreten.
       </p>
       <div className="mt-6 flex justify-center">
         <JoinGroupButton inviteCode={code} />

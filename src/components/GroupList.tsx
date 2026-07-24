@@ -27,6 +27,7 @@ export default function GroupList({ groups, activeGroupId }: GroupListProps) {
       {groups.map((group) => {
         const isActive = group._id === activeGroupId;
         const inviteLink = `/gruppen/join/${group.inviteCode}`;
+        const inviteText = `${group.ownerName} hat dich eingeladen, der Tippspiel-Gruppe ${group.name} beizutreten. Link: `;
 
         return (
           <div
@@ -56,10 +57,14 @@ export default function GroupList({ groups, activeGroupId }: GroupListProps) {
             </div>
             <button
               type="button"
-              onClick={() => navigator.clipboard.writeText(`${window.location.origin}${inviteLink}`)}
-              className="mt-3 w-full truncate rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-left text-xs text-white/60 transition hover:bg-white/10"
+              onClick={() =>
+                navigator.clipboard.writeText(`${inviteText}${window.location.origin}${inviteLink}`)
+              }
+              className="mt-3 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-left text-xs text-white/60 transition hover:bg-white/10"
             >
-              {inviteLink} (klicken zum Kopieren)
+              {inviteText}
+              {inviteLink}
+              <span className="text-white/40"> (klicken zum Kopieren)</span>
             </button>
           </div>
         );

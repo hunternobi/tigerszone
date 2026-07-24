@@ -8,6 +8,7 @@ import { auth } from "@/auth";
 import { dbConnect } from "@/lib/mongodb";
 import { GroupModel } from "@/models/Group";
 import { GroupMemberModel } from "@/models/GroupMember";
+import { UserModel } from "@/models/User";
 
 const ACTIVE_GROUP_COOKIE = "activeGroupId";
 
@@ -109,6 +110,7 @@ export interface MyGroup {
   inviteCode: string;
   memberCount: number;
   isOwner: boolean;
+  ownerName: string;
 }
 
 export async function getMyGroups(): Promise<MyGroup[]> {
@@ -132,19 +134,35 @@ export async function getMyGroups(): Promise<MyGroup[]> {
   ]);
   const countMap = new Map(counts.map((entry) => [entry._id.toString(), entry.count]));
 
+  const ownerIds = groups.map((group) => group.ownerUserId);
+  const owners = await UserModel.find({ _id: { $in: ownerIds } })
+    .select("name")
+    .lean<{ _id: Types.ObjectId; name: string }[]>();
+  const ownerNameById = new Map(owners.map((owner) => [owner._id.toString(), owner.name]));
+
   return groups.map((group) => ({
     _id: group._id.toString(),
     name: group.name,
     inviteCode: group.inviteCode,
     memberCount: countMap.get(group._id.toString()) ?? 1,
     isOwner: group.ownerUserId.toString() === session.user.id,
+    ownerName: ownerNameById.get(group.ownerUserId.toString()) ?? "Unbekannt",
   }));
 }
 
-export async function getGroupPreview(inviteCode: string): Promise<{ name: string } | null> {
+export async function getGroupPreview(
+  inviteCode: string
+): Promise<{ name: string; ownerName: string } | null> {
   await dbConnect();
   const group = await GroupModel.findOne({ inviteCode: inviteCode.trim() }).lean<{
     name: string;
+    ownerUserId: Types.ObjectId;
   } | null>();
-  return group ? { name: group.name } : null;
+  if (!group) return null;
+
+  const owner = await UserModel.findById(group.ownerUserId).select("name").lean<{
+    name: string;
+  } | null>();
+
+  return { name: group.name, ownerName: owner?.name ?? "Unbekannt" };
 }
