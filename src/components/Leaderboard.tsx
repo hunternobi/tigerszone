@@ -17,7 +17,7 @@ export default function Leaderboard({ entries, title = "Rangliste", medals = fal
     <div className="glass-panel p-4 sm:p-6">
       <h3 className="mb-4 text-lg font-bold text-white">{title}</h3>
       {entries.length === 0 ? (
-        <p className="text-sm text-white/60">Noch keine Einträge vorhanden.</p>
+        <p className="text-sm text-white">Noch keine Einträge vorhanden.</p>
       ) : (
         <ol className="space-y-2">
           {entries.map((entry, index) => (

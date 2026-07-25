@@ -27,7 +27,7 @@ export default async function AdminPage() {
   return (
     <section className="mx-auto max-w-5xl px-6 py-16">
       <h1 className="text-3xl font-bold text-white">Admin-Bereich</h1>
-      <p className="mt-3 text-white/70">
+      <p className="mt-3 text-white">
         Ergebnisse eintragen oder korrigieren. Die Punkteauswertung aller Tipps läuft danach
         automatisch.
       </p>
@@ -39,7 +39,7 @@ export default async function AdminPage() {
       </div>
 
       <h2 className="mt-16 text-2xl font-bold text-white">Benutzerverwaltung</h2>
-      <p className="mt-2 text-white/70">
+      <p className="mt-2 text-white">
         Alle registrierten Nutzer und ihre Gruppenmitgliedschaften.
       </p>
       <div className="mt-6">
@@ -47,7 +47,7 @@ export default async function AdminPage() {
       </div>
 
       <h2 className="mt-16 text-2xl font-bold text-white">Gruppen</h2>
-      <p className="mt-2 text-white/70">Alle Tippgruppen mit Ersteller und Mitgliederzahl.</p>
+      <p className="mt-2 text-white">Alle Tippgruppen mit Ersteller und Mitgliederzahl.</p>
       <div className="mt-6">
         <AdminGroupTable groups={groups} />
       </div>

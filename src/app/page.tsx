@@ -39,7 +39,7 @@ export default async function Home() {
               {SITE_NAME}
             </span>
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-white/70">{SITE_DESCRIPTION}</p>
+          <p className="mx-auto mt-6 max-w-2xl text-lg text-white">{SITE_DESCRIPTION}</p>
 
           <div className="mt-8 flex justify-center">
             <GlassButtonExact href="/tippspiel" size="0.9rem">
@@ -51,8 +51,9 @@ export default async function Home() {
             <Reveal>
               <div className="glass-panel mx-auto mt-10 max-w-2xl p-5 text-left sm:mt-16 sm:p-8">
                 <h2 className="text-center text-2xl font-bold text-white">Nächstes Spiel</h2>
-                <p className="mt-2 text-center text-sm text-white/60">
-                  Bereit für die nächste Herausforderung? Stelle deine Prognose und sammle Punkte!
+                <p className="mt-2 text-center text-sm text-white">
+                  Bereit für den nächsten Spieltag? Tippe und zeig deinen Mitstreitern, wer
+                  wirklich Ahnung vom Eishockey hat!
                 </p>
 
                 <div className="mt-6 flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
@@ -63,7 +64,7 @@ export default async function Home() {
                     <p className="mt-1 text-xl font-bold text-white">
                       {getTeamName(nextGame.homeTeamId)} vs. {getTeamName(nextGame.awayTeamId)}
                     </p>
-                    <div className="mt-2 flex flex-wrap gap-4 text-sm text-white/60">
+                    <div className="mt-2 flex flex-wrap gap-4 text-sm text-white">
                       <span className="flex items-center gap-1">
                         <Calendar size={14} /> {formatGameDate(nextGame.kickoff)}
                       </span>
@@ -75,7 +76,7 @@ export default async function Home() {
 
                   <div className="text-center">
                     <p className="text-3xl font-bold text-tigers-secondary">{daysUntilGame}</p>
-                    <p className="text-xs text-white/60">Tage bis zum Spiel</p>
+                    <p className="text-xs text-white">Tage bis zum Spiel</p>
                     <GlassButtonExact
                       href="/tippspiel"
                       wrapperClassName="mt-3"
@@ -102,7 +103,7 @@ export default async function Home() {
         <div className="relative">
           <Reveal>
             <h2 className="text-3xl font-bold text-white">Bereit für die neue Saison?</h2>
-            <p className="mx-auto mt-3 max-w-xl text-white/70">
+            <p className="mx-auto mt-3 max-w-xl text-white">
               Werde Teil der TigersZone-Community, erlebe Eishockey neu, nimm am Tippspiel teil
               und kämpfe um Ruhm und Ehre!
             </p>
@@ -121,8 +122,9 @@ export default async function Home() {
         <Reveal>
           <div className="mx-auto max-w-6xl text-center">
             <h2 className="text-3xl font-bold text-white">Folge uns auf Instagram</h2>
-            <p className="mx-auto mt-2 max-w-xl text-white/70">
-              Bleibe auf dem Laufenden mit den neuesten Updates, Memes und Fan-Content
+            <p className="mx-auto mt-2 max-w-xl text-white">
+              Bleibe auf dem Laufenden mit den neuesten Memes, Designs und Fanbeiträgen rund um
+              den besten Eishockeyverein der Welt
             </p>
 
             <div className="mt-10 flex flex-col items-stretch justify-center gap-6 sm:flex-row">
@@ -136,23 +138,19 @@ export default async function Home() {
                 <h3 className="text-center text-xl font-bold text-white">
                   Werde Teil der Tigers-Zone
                 </h3>
-                <p className="mt-3 text-center text-sm text-white/70">
-                  Folg&apos; uns auf Instagram für Memes, coole Fan-Momente und die neuesten
-                  Updates rund um unsere Jungs.
+                <p className="mt-3 text-center text-sm text-white">
+                  Folg&apos; uns auf Instagram, um die volle Bandbreite der Tigers mitzuerleben
+                  und immer auf dem Laufenden zu bleiben.
                 </p>
 
-                <ul className="mx-auto mt-4 w-fit space-y-2 text-sm text-white/80">
+                <ul className="mx-auto mt-4 w-fit space-y-2 text-sm text-white">
                   <li className="flex items-center gap-2">
                     <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-tigers-secondary" />
-                    Exklusive Spieler-Interviews
+                    Epische Designs
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-tigers-secondary" />
                     Fan-Momente &amp; Memes
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-tigers-secondary" />
-                    Live-Updates zu Spielen
                   </li>
                 </ul>
 

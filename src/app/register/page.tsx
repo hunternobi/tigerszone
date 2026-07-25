@@ -40,7 +40,7 @@ function RegisterForm() {
   return (
     <form onSubmit={handleSubmit} className="glass-panel mt-8 flex flex-col gap-4 p-6">
       <div>
-        <label htmlFor="name" className="mb-1 block text-sm font-medium text-white/80">
+        <label htmlFor="name" className="mb-1 block text-sm font-medium text-white">
           Name
         </label>
         <input
@@ -53,7 +53,7 @@ function RegisterForm() {
         />
       </div>
       <div>
-        <label htmlFor="email" className="mb-1 block text-sm font-medium text-white/80">
+        <label htmlFor="email" className="mb-1 block text-sm font-medium text-white">
           E-Mail
         </label>
         <input
@@ -66,7 +66,7 @@ function RegisterForm() {
         />
       </div>
       <div>
-        <label htmlFor="password" className="mb-1 block text-sm font-medium text-white/80">
+        <label htmlFor="password" className="mb-1 block text-sm font-medium text-white">
           Passwort
         </label>
         <input
@@ -99,7 +99,7 @@ function LoginLink() {
   const href = callbackUrl ? `/login?callbackUrl=${encodeURIComponent(callbackUrl)}` : "/login";
 
   return (
-    <p className="mt-4 text-center text-sm text-white/60">
+    <p className="mt-4 text-center text-sm text-white">
       Schon registriert?{" "}
       <Link href={href} className="text-tigers-secondary hover:underline">
         Jetzt einloggen
@@ -112,7 +112,7 @@ export default function RegisterPage() {
   return (
     <section className="mx-auto max-w-md px-6 py-16">
       <h1 className="text-3xl font-bold text-white">Registrieren</h1>
-      <p className="mt-2 text-white/70">Werde Teil der TigersZone-Community und tippe mit.</p>
+      <p className="mt-2 text-white">Werde Teil der TigersZone-Community und tippe mit.</p>
 
       <Suspense fallback={null}>
         <RegisterForm />

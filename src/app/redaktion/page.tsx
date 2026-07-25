@@ -20,7 +20,7 @@ export default async function RedaktionPage() {
   return (
     <section className="mx-auto max-w-4xl px-6 py-16">
       <h1 className="text-3xl font-bold text-white">Redaktion</h1>
-      <p className="mt-3 text-white/70">
+      <p className="mt-3 text-white">
         Neue Spieltagsblog-Beiträge verfassen und veröffentlichen.
       </p>
 
@@ -34,7 +34,7 @@ export default async function RedaktionPage() {
           <div key={post._id} className="glass-panel-sm flex items-center justify-between gap-4 p-4">
             <div>
               <p className="font-semibold text-white">{post.title}</p>
-              <p className="text-xs text-white/50">
+              <p className="text-xs text-white">
                 {new Date(post.publishedAt).toLocaleDateString("de-DE")} · {post.authorName}
               </p>
             </div>

@@ -37,7 +37,7 @@ export default function CreateBlogPostForm() {
   return (
     <form onSubmit={handleSubmit} className="glass-panel flex flex-col gap-4 p-6">
       <div>
-        <label htmlFor="title" className="mb-1 block text-sm font-medium text-white/80">
+        <label htmlFor="title" className="mb-1 block text-sm font-medium text-white">
           Titel
         </label>
         <input
@@ -50,7 +50,7 @@ export default function CreateBlogPostForm() {
       </div>
 
       <div>
-        <label htmlFor="publishedAt" className="mb-1 block text-sm font-medium text-white/80">
+        <label htmlFor="publishedAt" className="mb-1 block text-sm font-medium text-white">
           Datum
         </label>
         <input
@@ -64,7 +64,7 @@ export default function CreateBlogPostForm() {
       </div>
 
       <div>
-        <label htmlFor="content" className="mb-1 block text-sm font-medium text-white/80">
+        <label htmlFor="content" className="mb-1 block text-sm font-medium text-white">
           Inhalt
         </label>
         <textarea

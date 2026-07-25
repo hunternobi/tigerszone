@@ -15,7 +15,7 @@ export default function GroupList({ groups, activeGroupId }: GroupListProps) {
 
   if (groups.length === 0) {
     return (
-      <p className="glass-panel p-6 text-sm text-white/60">
+      <p className="glass-panel p-6 text-sm text-white">
         Du bist noch in keiner Gruppe. Erstelle rechts deine erste Gruppe oder nutze einen
         Einladungslink von einem Freund.
       </p>
@@ -38,11 +38,11 @@ export default function GroupList({ groups, activeGroupId }: GroupListProps) {
               <div>
                 <div className="flex items-center gap-2">
                   <p className="font-bold text-white">{group.name}</p>
-                  <span className="rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-white/60 uppercase">
+                  <span className="rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-white uppercase">
                     {group.isPublic ? "Öffentlich" : "Privat"}
                   </span>
                 </div>
-                <p className="text-xs text-white/50">
+                <p className="text-xs text-white">
                   {group.memberCount} Mitglieder{group.isOwner ? " · Ersteller" : ""}
                 </p>
               </div>
@@ -61,7 +61,7 @@ export default function GroupList({ groups, activeGroupId }: GroupListProps) {
               </button>
             </div>
             {group.isPublic ? (
-              <p className="mt-3 text-xs text-white/40">
+              <p className="mt-3 text-xs text-white">
                 Öffentliche Gruppe – sichtbar in „Öffentliche Gruppen&quot; für alle Nutzer.
               </p>
             ) : (
@@ -70,11 +70,11 @@ export default function GroupList({ groups, activeGroupId }: GroupListProps) {
                 onClick={() =>
                   navigator.clipboard.writeText(`${inviteText}${window.location.origin}${inviteLink}`)
                 }
-                className="mt-3 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-left text-xs text-white/60 transition hover:bg-white/10"
+                className="mt-3 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-left text-xs text-white transition hover:bg-white/10"
               >
                 {inviteText}
                 {inviteLink}
-                <span className="text-white/40"> (klicken zum Kopieren)</span>
+                <span className="text-white"> (klicken zum Kopieren)</span>
               </button>
             )}
           </div>

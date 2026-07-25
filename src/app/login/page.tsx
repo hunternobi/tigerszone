@@ -31,7 +31,7 @@ function LoginForm() {
   return (
     <form onSubmit={handleSubmit} className="glass-panel mt-8 flex flex-col gap-4 p-6">
       <div>
-        <label htmlFor="email" className="mb-1 block text-sm font-medium text-white/80">
+        <label htmlFor="email" className="mb-1 block text-sm font-medium text-white">
           E-Mail
         </label>
         <input
@@ -44,7 +44,7 @@ function LoginForm() {
         />
       </div>
       <div>
-        <label htmlFor="password" className="mb-1 block text-sm font-medium text-white/80">
+        <label htmlFor="password" className="mb-1 block text-sm font-medium text-white">
           Passwort
         </label>
         <input
@@ -74,7 +74,7 @@ export default function LoginPage() {
   return (
     <section className="mx-auto max-w-md px-6 py-16">
       <h1 className="text-3xl font-bold text-white">Login</h1>
-      <p className="mt-2 text-white/70">Melde dich an, um mitzutippen.</p>
+      <p className="mt-2 text-white">Melde dich an, um mitzutippen.</p>
 
       <Suspense fallback={null}>
         <LoginForm />
@@ -93,7 +93,7 @@ function RegisterLink() {
   const href = callbackUrl ? `/register?callbackUrl=${encodeURIComponent(callbackUrl)}` : "/register";
 
   return (
-    <p className="mt-4 text-center text-sm text-white/60">
+    <p className="mt-4 text-center text-sm text-white">
       Noch kein Konto?{" "}
       <Link href={href} className="text-tigers-secondary hover:underline">
         Jetzt registrieren

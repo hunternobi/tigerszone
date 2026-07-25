@@ -61,7 +61,7 @@ export default function LeaderboardWidget({
       {tab === "global" ? (
         <Leaderboard entries={globalEntries} title="Gesamtrangliste" medals />
       ) : groupLeaderboards.length === 0 ? (
-        <div className="glass-panel p-6 text-center text-sm text-white/60">
+        <div className="glass-panel p-6 text-center text-sm text-white">
           Keine aktive Gruppe.{" "}
           <Link href="/gruppen" className="text-tigers-secondary hover:underline">
             Gruppe erstellen oder beitreten

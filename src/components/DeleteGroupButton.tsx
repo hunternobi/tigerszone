@@ -23,7 +23,7 @@ export default function DeleteGroupButton({ groupId, groupName }: { groupId: str
       onClick={handleDelete}
       disabled={isPending}
       aria-label="Gruppe löschen"
-      className="rounded-full p-2 text-white/50 transition hover:bg-white/10 hover:text-red-400 disabled:opacity-50"
+      className="rounded-full p-2 text-white transition hover:bg-white/10 hover:text-red-400 disabled:opacity-50"
     >
       <Trash2 size={16} />
     </button>

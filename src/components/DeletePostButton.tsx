@@ -23,7 +23,7 @@ export default function DeletePostButton({ postId }: { postId: string }) {
       onClick={handleDelete}
       disabled={isPending}
       aria-label="Beitrag löschen"
-      className="rounded-full p-2 text-white/50 transition hover:bg-white/10 hover:text-red-400 disabled:opacity-50"
+      className="rounded-full p-2 text-white transition hover:bg-white/10 hover:text-red-400 disabled:opacity-50"
     >
       <Trash2 size={16} />
     </button>

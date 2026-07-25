@@ -8,14 +8,14 @@ interface MemeOfTheWeekProps {
 
 export default function MemeOfTheWeek({ memes, onVote }: MemeOfTheWeekProps) {
   if (memes.length === 0) {
-    return <p className="text-sm text-white/60">Diese Woche wurden noch keine Memes eingereicht.</p>;
+    return <p className="text-sm text-white">Diese Woche wurden noch keine Memes eingereicht.</p>;
   }
 
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {memes.map((meme) => (
         <div key={meme._id} className="glass-panel-sm glass-interactive overflow-hidden">
-          <div className="flex aspect-square items-center justify-center text-white/30">
+          <div className="flex aspect-square items-center justify-center text-white">
             Meme-Bild
           </div>
           <div className="flex items-center justify-between border-t border-white/10 p-3">
@@ -24,7 +24,7 @@ export default function MemeOfTheWeek({ memes, onVote }: MemeOfTheWeekProps) {
                 <Trophy size={16} /> Gewinner
               </span>
             ) : (
-              <span className="text-sm text-white/50">Woche vom {meme.weekOf}</span>
+              <span className="text-sm text-white">Woche vom {meme.weekOf}</span>
             )}
             <button
               type="button"

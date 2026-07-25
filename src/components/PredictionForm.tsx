@@ -66,7 +66,7 @@ export default function PredictionForm({ game }: PredictionFormProps) {
 
   if (status !== "authenticated") {
     return (
-      <p className="text-center text-sm text-white/60">
+      <p className="text-center text-sm text-white">
         Bitte{" "}
         <Link href="/login" className="text-tigers-secondary hover:underline">
           einloggen
@@ -94,7 +94,7 @@ export default function PredictionForm({ game }: PredictionFormProps) {
           aria-label={`Tipp Heimtore ${getTeamName(game.homeTeamId)}`}
           className="glass-panel-sm h-14 w-14 shrink-0 text-center text-xl font-bold text-white focus:outline-none disabled:opacity-50"
         />
-        <span className="text-xl font-bold text-white/60">:</span>
+        <span className="text-xl font-bold text-white">:</span>
         <input
           type="text"
           inputMode="numeric"

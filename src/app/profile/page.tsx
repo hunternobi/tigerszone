@@ -16,10 +16,10 @@ export default async function ProfilePage() {
       <h1 className="text-3xl font-bold text-white">Profil</h1>
 
       <div className="glass-panel mt-8 p-6">
-        <p className="text-sm text-white/60">Name</p>
+        <p className="text-sm text-white">Name</p>
         <p className="text-lg font-semibold text-white">{session.user.name}</p>
 
-        <p className="mt-4 text-sm text-white/60">E-Mail</p>
+        <p className="mt-4 text-sm text-white">E-Mail</p>
         <p className="text-lg font-semibold text-white">{session.user.email}</p>
 
         {session.user.role === "admin" && (

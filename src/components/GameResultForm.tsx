@@ -45,7 +45,7 @@ export default function GameResultForm({ game }: { game: Game }) {
   return (
     <form onSubmit={handleSubmit} className="glass-panel-sm flex flex-wrap items-center gap-4 p-5">
       <div className="min-w-[220px] flex-1">
-        <p className="text-xs tracking-wide text-white/50 uppercase">
+        <p className="text-xs tracking-wide text-white uppercase">
           {game.competition === "Vorbereitung"
             ? "Vorbereitung"
             : `DEL${game.matchday ? ` · ${game.matchday}` : ""}`}{" "}
@@ -64,7 +64,7 @@ export default function GameResultForm({ game }: { game: Game }) {
         aria-label="Tore Heimteam"
         className="glass-panel-sm h-10 w-12 text-center text-white focus:outline-none"
       />
-      <span className="text-white/60">:</span>
+      <span className="text-white">:</span>
       <input
         type="text"
         inputMode="numeric"
@@ -90,7 +90,7 @@ export default function GameResultForm({ game }: { game: Game }) {
         </option>
       </select>
 
-      <label className="flex items-center gap-2 text-sm text-white/70">
+      <label className="flex items-center gap-2 text-sm text-white">
         <input
           type="checkbox"
           checked={isDerby}

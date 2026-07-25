@@ -58,7 +58,7 @@ export default function CreateGroupForm() {
           Öffentlich
         </button>
       </div>
-      <p className="mt-2 text-xs text-white/50">
+      <p className="mt-2 text-xs text-white">
         {isPublic
           ? "Jeder Nutzer kann direkt beitreten."
           : "Beitritt nur über den Einladungslink."}

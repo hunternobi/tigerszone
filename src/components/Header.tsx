@@ -49,7 +49,7 @@ export default function Header() {
                 className={`rounded-full px-5 py-2 text-sm font-medium transition ${
                   isActive
                     ? "bg-white/15 text-white"
-                    : "text-white/80 hover:bg-white/10 hover:text-white"
+                    : "text-white hover:bg-white/10 hover:text-white"
                 }`}
               >
                 {link.label}
@@ -61,7 +61,7 @@ export default function Header() {
         <div className="hidden items-center gap-3 md:flex">
           {status === "authenticated" ? (
             <>
-              <span className="text-sm text-white/70">Hallo, {session.user.name}</span>
+              <span className="text-sm text-white">Hallo, {session.user.name}</span>
               <button
                 type="button"
                 onClick={() => signOut({ callbackUrl: "/" })}
@@ -99,7 +99,7 @@ export default function Header() {
                 key={link.href}
                 href={link.href}
                 className={`rounded-full px-4 py-2 text-sm font-medium transition ${
-                  isActive ? "bg-white/15 text-white" : "text-white/80 hover:bg-white/10 hover:text-white"
+                  isActive ? "bg-white/15 text-white" : "text-white hover:bg-white/10 hover:text-white"
                 }`}
                 onClick={() => setMobileOpen(false)}
               >

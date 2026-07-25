@@ -57,7 +57,7 @@ export default function SponsorBar() {
   return (
     <section className="mx-auto max-w-7xl px-6 py-16 text-center">
       <h2 className="text-3xl font-bold text-white">Unsere Partner</h2>
-      <p className="mt-2 text-white/70">
+      <p className="mt-2 text-white">
         Gemeinsam mit starken Partnern machen wir TigersZone möglich
       </p>
 
@@ -75,7 +75,7 @@ export default function SponsorBar() {
                 key={`${sponsor._id}-${i}`}
                 ref={i === 0 ? tileRef : undefined}
                 href={sponsor.linkUrl}
-                className="glass-panel-sm glass-interactive flex h-24 w-40 shrink-0 items-center justify-center text-white/50 hover:text-white/80 sm:w-48"
+                className="glass-panel-sm glass-interactive flex h-24 w-40 shrink-0 items-center justify-center text-white hover:text-white sm:w-48"
               >
                 {sponsor.name}
               </a>

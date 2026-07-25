@@ -34,7 +34,7 @@ export default function GroupDashboard({
               className={`glass-panel-sm glass-interactive w-full px-4 py-3 text-left text-sm font-medium transition ${
                 group._id === activeGroupId
                   ? "text-white ring-2 ring-tigers-secondary"
-                  : "text-white/80"
+                  : "text-white"
               }`}
             >
               {group.name}

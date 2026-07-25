@@ -27,12 +27,12 @@ export default async function SpieltagsblogPage() {
       <FadingBackground src="/images/Fans.jpg" opacity={0.55} blurPx={1.5}>
         <section className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-16">
           <h1 className="text-3xl font-bold text-white">Spieltagsblog</h1>
-          <p className="mt-3 text-white/70">
+          <p className="mt-3 text-white">
             Berichte, Vorschauen und Rückblicke rund um die Spiele der Straubing Tigers.
           </p>
 
           {posts.length === 0 ? (
-            <p className="glass-panel mt-8 p-5 text-center text-white/60 sm:p-8">
+            <p className="glass-panel mt-8 p-5 text-center text-white sm:p-8">
               Noch keine Beiträge vorhanden.
             </p>
           ) : (
@@ -40,12 +40,12 @@ export default async function SpieltagsblogPage() {
               <article key={post._id} className="glass-panel mt-8 p-5 sm:p-8">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <h2 className="text-xl font-bold text-white sm:text-3xl">{post.title}</h2>
-                  <span className="shrink-0 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-semibold text-white/70">
+                  <span className="shrink-0 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-semibold text-white">
                     {formatPostDate(post.publishedAt)}
                   </span>
                 </div>
 
-                <div className="mt-6 space-y-4 text-white/80">
+                <div className="mt-6 space-y-4 text-white">
                   {post.content.split("\n\n").map((paragraph, index) => (
                     <p key={index} className="whitespace-pre-line">
                       {paragraph}
@@ -53,7 +53,7 @@ export default async function SpieltagsblogPage() {
                   ))}
                 </div>
 
-                <p className="mt-4 text-right text-xs text-white/40">von {post.authorName}</p>
+                <p className="mt-4 text-right text-xs text-white">von {post.authorName}</p>
               </article>
             ))
           )}
@@ -73,7 +73,7 @@ export default async function SpieltagsblogPage() {
 
         <div className="relative">
           <h2 className="text-3xl font-bold text-white">Über den Autor</h2>
-          <p className="mx-auto mt-3 max-w-xl text-white/70">
+          <p className="mx-auto mt-3 max-w-xl text-white">
             Ein besonderer Dank geht an unsere Freunde von der TigersCorner, die sich hier mit
             einbringen – lasst gerne auch bei ihnen Support da.
           </p>

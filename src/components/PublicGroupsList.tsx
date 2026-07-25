@@ -13,7 +13,7 @@ export default function PublicGroupsList({ groups }: { groups: PublicGroup[] }) 
   return (
     <div className="mt-8">
       <h2 className="text-lg font-bold text-white">Öffentliche Gruppen</h2>
-      <p className="mt-1 text-sm text-white/60">
+      <p className="mt-1 text-sm text-white">
         Diesen Gruppen kannst du ohne Einladungslink direkt beitreten.
       </p>
       <div className="mt-4 space-y-3">
@@ -24,7 +24,7 @@ export default function PublicGroupsList({ groups }: { groups: PublicGroup[] }) 
           >
             <div>
               <p className="font-bold text-white">{group.name}</p>
-              <p className="text-xs text-white/50">
+              <p className="text-xs text-white">
                 {group.memberCount} Mitglieder · Ersteller: {group.ownerName}
               </p>
             </div>

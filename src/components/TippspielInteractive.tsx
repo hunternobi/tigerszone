@@ -35,7 +35,7 @@ export default function TippspielInteractive({
         <div className="grid gap-10 lg:grid-cols-[1fr_300px]">
           <div>
             <h1 className="text-3xl font-bold text-white">Tippspiel</h1>
-            <p className="mt-3 text-white/70">
+            <p className="mt-3 text-white">
               Die nächsten 3 anstehenden Spiele der Straubing Tigers. Klick bei einem Spiel auf
               „Jetzt Tippen”, um direkt zur Tippabgabe zu springen.
             </p>
@@ -48,11 +48,11 @@ export default function TippspielInteractive({
                 >
                   <div>
                     {game.competition === "Vorbereitung" ? (
-                      <span className="inline-block rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-white/60">
+                      <span className="inline-block rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-white">
                         Vorbereitung
                       </span>
                     ) : (
-                      <span className="inline-block rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-white/60">
+                      <span className="inline-block rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-white">
                         DEL{game.matchday ? ` · ${game.matchday}` : ""}
                       </span>
                     )}
@@ -65,12 +65,12 @@ export default function TippspielInteractive({
                     <p className="mt-2 text-sm leading-tight font-bold text-white">
                       {getTeamName(game.homeTeamId)}
                     </p>
-                    <p className="text-xs text-white/50">vs.</p>
+                    <p className="text-xs text-white">vs.</p>
                     <p className="text-sm leading-tight font-bold text-white">
                       {getTeamName(game.awayTeamId)}
                     </p>
 
-                    <div className="mt-2 space-y-1 text-[11px] text-white/60">
+                    <div className="mt-2 space-y-1 text-[11px] text-white">
                       <span className="flex items-center gap-1">
                         <Calendar size={12} /> {formatGameDate(game.kickoff)}
                       </span>
@@ -103,11 +103,11 @@ export default function TippspielInteractive({
               {selectedGame ? (
                 <div className="mt-8 glass-panel-sm p-4 sm:p-6">
                   {selectedGame.competition === "Vorbereitung" ? (
-                    <span className="inline-block rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-semibold text-white/60">
+                    <span className="inline-block rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-semibold text-white">
                       Vorbereitungsspiel
                     </span>
                   ) : (
-                    <span className="inline-block rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-semibold text-white/60">
+                    <span className="inline-block rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-semibold text-white">
                       DEL{selectedGame.matchday ? ` · Spieltag ${selectedGame.matchday}` : ""}
                     </span>
                   )}
@@ -121,7 +121,7 @@ export default function TippspielInteractive({
                     <PredictionForm game={selectedGame} />
                   </div>
 
-                  <div className="mt-4 flex flex-wrap justify-center gap-4 text-sm text-white/60">
+                  <div className="mt-4 flex flex-wrap justify-center gap-4 text-sm text-white">
                     <span className="flex items-center gap-1">
                       <Calendar size={14} /> {formatGameDate(selectedGame.kickoff)}
                     </span>
@@ -131,7 +131,7 @@ export default function TippspielInteractive({
                   </div>
                 </div>
               ) : (
-                <p className="mt-8 text-center text-sm text-white/50">
+                <p className="mt-8 text-center text-sm text-white">
                   Wähle oben eines der drei Spiele aus, um deinen Tipp abzugeben.
                 </p>
               )}
@@ -147,7 +147,7 @@ export default function TippspielInteractive({
 
             <div className="glass-panel p-4 sm:p-6">
               <h3 className="mb-4 text-lg font-bold text-white">Regeln</h3>
-              <ul className="space-y-2 text-sm text-white/80">
+              <ul className="space-y-2 text-sm text-white">
                 <li className="flex items-start gap-2">
                   <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-tigers-secondary" />
                   Tippabgabe endet mit Spielbeginn

@@ -32,7 +32,7 @@ export default function PredictionCountdown({ kickoff }: { kickoff: string }) {
 
   return (
     <p
-      className={`text-center text-xs font-semibold ${isUrgent ? "text-red-400" : "text-white/60"}`}
+      className={`text-center text-xs font-semibold ${isUrgent ? "text-red-400" : "text-white"}`}
     >
       {formatRemaining(remaining)}
     </p>

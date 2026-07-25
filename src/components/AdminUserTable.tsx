@@ -20,14 +20,14 @@ export default function AdminUserTable({
   currentUserId: string;
 }) {
   if (users.length === 0) {
-    return <p className="glass-panel p-6 text-sm text-white/60">Noch keine Nutzer registriert.</p>;
+    return <p className="glass-panel p-6 text-sm text-white">Noch keine Nutzer registriert.</p>;
   }
 
   return (
     <div className="glass-panel overflow-x-auto p-6">
       <table className="w-full min-w-[640px] border-collapse text-left text-sm">
         <thead>
-          <tr className="border-b border-white/10 text-white/50">
+          <tr className="border-b border-white/10 text-white">
             <th className="py-2 pr-4 font-medium">Name</th>
             <th className="py-2 pr-4 font-medium">E-Mail</th>
             <th className="py-2 pr-4 font-medium">Rolle</th>
@@ -40,7 +40,7 @@ export default function AdminUserTable({
           {users.map((user) => (
             <tr key={user._id} className="border-b border-white/5 last:border-0">
               <td className="py-3 pr-4 font-semibold text-white">{user.name}</td>
-              <td className="py-3 pr-4 text-white/70">{user.email}</td>
+              <td className="py-3 pr-4 text-white">{user.email}</td>
               <td className="py-3 pr-4">
                 {user._id === currentUserId ? (
                   <span className="rounded-full bg-tigers-accent px-3 py-1 text-xs font-semibold text-white">
@@ -50,8 +50,8 @@ export default function AdminUserTable({
                   <RoleToggle userId={user._id} role={user.role} />
                 )}
               </td>
-              <td className="py-3 pr-4 text-white/70">{formatDate(user.createdAt)}</td>
-              <td className="py-3 pr-4 text-white/70">
+              <td className="py-3 pr-4 text-white">{formatDate(user.createdAt)}</td>
+              <td className="py-3 pr-4 text-white">
                 {user.groups.length > 0 ? user.groups.join(", ") : "—"}
               </td>
               <td className="py-3 text-right">

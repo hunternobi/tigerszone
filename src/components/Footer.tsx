@@ -22,8 +22,8 @@ export default function Footer() {
       <div className="mx-auto grid max-w-7xl gap-10 px-6 py-14 md:grid-cols-3">
         <div>
           <h3 className="mb-3 text-lg font-bold text-tigers-secondary">{SITE_NAME}</h3>
-          <p className="text-sm text-white/70">{SITE_DESCRIPTION}</p>
-          <p className="mt-4 flex items-center gap-2 text-sm text-white/50">
+          <p className="text-sm text-white">{SITE_DESCRIPTION}</p>
+          <p className="mt-4 flex items-center gap-2 text-sm text-white">
             <Feather size={16} />
             Made with passion for Tigers fans
           </p>
@@ -34,7 +34,7 @@ export default function Footer() {
           <ul className="space-y-2">
             {QUICK_LINKS.map((link) => (
               <li key={link.href}>
-                <Link href={link.href} className="text-sm text-white/70 hover:text-white">
+                <Link href={link.href} className="text-sm text-white hover:text-white">
                   {link.label}
                 </Link>
               </li>
@@ -47,7 +47,7 @@ export default function Footer() {
           <ul className="space-y-2">
             {LEGAL_LINKS.map((link) => (
               <li key={link.href}>
-                <Link href={link.href} className="text-sm text-white/70 hover:text-white">
+                <Link href={link.href} className="text-sm text-white hover:text-white">
                   {link.label}
                 </Link>
               </li>
@@ -56,7 +56,7 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="border-t border-white/10 px-6 py-6 text-center text-xs text-white/50">
+      <div className="border-t border-white/10 px-6 py-6 text-center text-xs text-white">
         <p>
           {SITE_NAME} ist eine unabhängige Fan-Plattform und nicht offiziell mit dem Straubing
           Tigers Eishockey Club verbunden. Alle Marken und Logos sind Eigentum ihrer jeweiligen
