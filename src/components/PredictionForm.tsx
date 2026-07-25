@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react";
 import { getMyPrediction, submitPrediction } from "@/app/tippspiel/actions";
 import { getTeamName } from "@/lib/teams";
 import GlassButtonExact from "@/components/GlassButtonExact";
+import PredictionCountdown from "@/components/PredictionCountdown";
 import type { Game } from "@/types";
 
 interface PredictionFormProps {
@@ -118,6 +119,12 @@ export default function PredictionForm({ game }: PredictionFormProps) {
           {isPending ? "Speichert…" : saved ? "Tipp gespeichert" : "Tipp abgeben"}
         </GlassButtonExact>
       </div>
+
+      {game.status === "scheduled" && (
+        <div className="mt-3">
+          <PredictionCountdown kickoff={game.kickoff} />
+        </div>
+      )}
     </form>
   );
 }
