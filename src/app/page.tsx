@@ -42,8 +42,8 @@ export default async function Home() {
           <p className="mx-auto mt-6 max-w-2xl text-lg text-white/70">{SITE_DESCRIPTION}</p>
 
           <div className="mt-8 flex justify-center">
-            <GlassButtonExact href="/community" size="0.9rem">
-              Community Entdecken
+            <GlassButtonExact href="/tippspiel" size="0.9rem">
+              Zum Tippspiel
             </GlassButtonExact>
           </div>
 
