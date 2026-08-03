@@ -83,7 +83,7 @@ export default function RootLayout({
         />
         <SessionProvider>
           <Header />
-          <main className="flex-1">{children}</main>
+          <main className="flex-1 pt-[72px]">{children}</main>
           <Footer />
         </SessionProvider>
         <Analytics />
