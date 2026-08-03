@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useState, type ChangeEvent } from "react";
+import { useState } from "react";
 import Leaderboard, { type LeaderboardEntry } from "@/components/Leaderboard";
 import { setActiveGroup } from "@/app/gruppen/actions";
 import GlassButtonExact from "@/components/GlassButtonExact";
+import GroupSelect from "@/components/GroupSelect";
 import type { GroupLeaderboardData } from "@/lib/leaderboard";
 
 interface LeaderboardWidgetProps {
@@ -29,8 +30,7 @@ export default function LeaderboardWidget({
 
   const selectedGroup = groupLeaderboards.find((group) => group.groupId === selectedGroupId);
 
-  function handleGroupChange(e: ChangeEvent<HTMLSelectElement>) {
-    const groupId = e.target.value;
+  function handleGroupChange(groupId: string) {
     setSelectedGroupId(groupId);
     setActiveGroup(groupId);
   }
@@ -70,17 +70,14 @@ export default function LeaderboardWidget({
       ) : (
         <div>
           {groupLeaderboards.length > 1 && (
-            <select
-              value={selectedGroupId ?? ""}
+            <GroupSelect
+              options={groupLeaderboards.map((group) => ({
+                groupId: group.groupId,
+                groupName: group.groupName,
+              }))}
+              value={selectedGroupId}
               onChange={handleGroupChange}
-              className="glass-panel-sm mb-3 w-full rounded-lg bg-transparent px-3 py-2 text-sm text-white"
-            >
-              {groupLeaderboards.map((group) => (
-                <option key={group.groupId} value={group.groupId} className="text-black">
-                  {group.groupName}
-                </option>
-              ))}
-            </select>
+            />
           )}
           <Leaderboard
             entries={selectedGroup?.entries ?? []}
