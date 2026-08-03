@@ -20,3 +20,9 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
     .lean<BlogPostDocument[]>();
   return docs.map(serializeBlogPost);
 }
+
+export async function getBlogPostById(id: string): Promise<BlogPost | null> {
+  await dbConnect();
+  const doc = await BlogPostModel.findById(id).lean<BlogPostDocument | null>();
+  return doc ? serializeBlogPost(doc) : null;
+}

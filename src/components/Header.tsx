@@ -40,9 +40,7 @@ export default function Header() {
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "border-b border-white/10 bg-tigers-primary/40 backdrop-blur-xl"
-          : "border-b border-transparent bg-transparent"
+        scrolled ? "bg-tigers-primary/50 backdrop-blur-xl" : "bg-tigers-primary/30 backdrop-blur-md"
       }`}
     >
       <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-6">

@@ -3,6 +3,7 @@ import Image from "next/image";
 import FadingBackground from "@/components/FadingBackground";
 import GlassButtonExact from "@/components/GlassButtonExact";
 import { getAllBlogPosts } from "@/lib/blogPosts";
+import { formatExcerpt, formatPostDate } from "@/utils/format";
 
 export const metadata: Metadata = {
   title: "Spieltagsblog",
@@ -11,16 +12,9 @@ export const metadata: Metadata = {
   alternates: { canonical: "/spieltagsblog" },
 };
 
-function formatPostDate(iso: string): string {
-  return new Date(iso).toLocaleDateString("de-DE", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  });
-}
-
 export default async function SpieltagsblogPage() {
   const posts = await getAllBlogPosts();
+  const [latestPost, ...olderPosts] = posts;
 
   return (
     <>
@@ -31,34 +25,65 @@ export default async function SpieltagsblogPage() {
             Berichte, Vorschauen und Rückblicke rund um die Spiele der Straubing Tigers.
           </p>
 
-          {posts.length === 0 ? (
+          {!latestPost ? (
             <p className="glass-panel mt-8 p-5 text-center text-white sm:p-8">
               Noch keine Beiträge vorhanden.
             </p>
           ) : (
-            posts.map((post) => (
-              <article key={post._id} className="glass-panel mt-8 p-5 sm:p-8">
-                <div className="flex flex-wrap items-start justify-between gap-3">
-                  <h2 className="text-xl font-bold text-white sm:text-3xl">{post.title}</h2>
-                  <span className="shrink-0 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-semibold text-white">
-                    {formatPostDate(post.publishedAt)}
-                  </span>
-                </div>
+            <article className="glass-panel mt-8 p-5 sm:p-8">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <h2 className="text-xl font-bold text-white sm:text-3xl">{latestPost.title}</h2>
+                <span className="shrink-0 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-semibold text-white">
+                  {formatPostDate(latestPost.publishedAt)}
+                </span>
+              </div>
 
-                <div className="mt-6 space-y-4 text-white">
-                  {post.content.split("\n\n").map((paragraph, index) => (
-                    <p key={index} className="whitespace-pre-line">
-                      {paragraph}
-                    </p>
-                  ))}
-                </div>
+              <div className="mt-6 space-y-4 text-white">
+                {latestPost.content.split("\n\n").map((paragraph, index) => (
+                  <p key={index} className="whitespace-pre-line">
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
 
-                <p className="mt-4 text-right text-xs text-white">von {post.authorName}</p>
-              </article>
-            ))
+              <p className="mt-4 text-right text-xs text-white">von {latestPost.authorName}</p>
+            </article>
           )}
         </section>
       </FadingBackground>
+
+      {olderPosts.length > 0 && (
+        <section className="border-t border-white/10 bg-tigers-primary px-4 py-12 sm:px-6 sm:py-16">
+          <div className="mx-auto max-w-6xl">
+            <h2 className="text-2xl font-bold text-white sm:text-3xl">Spieltagsarchiv</h2>
+
+            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {olderPosts.map((post) => (
+                <article
+                  key={post._id}
+                  className="glass-panel-sm glass-interactive flex flex-col p-5 sm:p-6"
+                >
+                  <span className="w-fit shrink-0 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-semibold text-white">
+                    {formatPostDate(post.publishedAt)}
+                  </span>
+
+                  <h3 className="mt-4 text-lg font-bold text-white">{post.title}</h3>
+                  <p className="mt-2 flex-1 text-sm text-white">
+                    {formatExcerpt(post.content)}
+                  </p>
+
+                  <div className="mt-4 flex items-center justify-between gap-3 border-t border-white/10 pt-4">
+                    <span className="text-xs text-white">von {post.authorName}</span>
+                    <GlassButtonExact href={`/spieltagsblog/${post._id}`} size="0.75rem">
+                      Weiterlesen
+                    </GlassButtonExact>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <section className="relative overflow-hidden border-t border-white/10 bg-tigers-primary px-4 py-12 text-center sm:px-6 sm:py-16">
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
