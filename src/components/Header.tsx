@@ -3,27 +3,17 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { COMMUNITY_LINK, NAV_LINKS, SITE_NAME } from "@/lib/constants";
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
   const { data: session, status } = useSession();
 
   const isEditor = session?.user.role === "admin" || session?.user.role === "redakteur";
-
-  useEffect(() => {
-    function onScroll() {
-      setScrolled(window.scrollY > 8);
-    }
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   const navLinks = [
     ...NAV_LINKS,
@@ -38,11 +28,7 @@ export default function Header() {
   const mobileHidden = navLinks.slice(3);
 
   return (
-    <header
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-tigers-primary/50 backdrop-blur-xl" : "bg-tigers-primary/30 backdrop-blur-md"
-      }`}
-    >
+    <header className="fixed inset-x-0 top-0 z-50 bg-tigers-primary">
       <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-6">
         <Link href="/" className="flex items-center gap-2">
           <Image
@@ -124,7 +110,7 @@ export default function Header() {
       </div>
 
       {mobileOpen && (
-        <nav className="flex flex-col gap-1 border-t border-white/10 bg-tigers-primary/80 px-6 py-4 backdrop-blur-xl md:hidden">
+        <nav className="flex flex-col gap-1 bg-tigers-primary px-6 py-4 md:hidden">
           {mobileHidden.map((link) => {
             const isActive = pathname?.startsWith(link.href);
             return (

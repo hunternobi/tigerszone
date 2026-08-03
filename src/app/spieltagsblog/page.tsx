@@ -49,41 +49,39 @@ export default async function SpieltagsblogPage() {
               <p className="mt-4 text-right text-xs text-white">von {latestPost.authorName}</p>
             </article>
           )}
+
+          {olderPosts.length > 0 && (
+            <div className="mt-12">
+              <h2 className="text-2xl font-bold text-white sm:text-3xl">Spieltagsarchiv</h2>
+
+              <div className="mt-8 grid gap-6 sm:grid-cols-2">
+                {olderPosts.map((post) => (
+                  <article
+                    key={post._id}
+                    className="glass-panel-sm glass-interactive flex flex-col p-5 sm:p-6"
+                  >
+                    <span className="w-fit shrink-0 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-semibold text-white">
+                      {formatPostDate(post.publishedAt)}
+                    </span>
+
+                    <h3 className="mt-4 text-lg font-bold text-white">{post.title}</h3>
+                    <p className="mt-2 flex-1 text-sm text-white">
+                      {formatExcerpt(post.content)}
+                    </p>
+
+                    <div className="mt-4 flex items-center justify-between gap-3 border-t border-white/10 pt-4">
+                      <span className="text-xs text-white">von {post.authorName}</span>
+                      <GlassButtonExact href={`/spieltagsblog/${post._id}`} size="0.75rem">
+                        Weiterlesen
+                      </GlassButtonExact>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          )}
         </section>
       </FadingBackground>
-
-      {olderPosts.length > 0 && (
-        <section className="border-t border-white/10 bg-tigers-primary px-4 py-12 sm:px-6 sm:py-16">
-          <div className="mx-auto max-w-6xl">
-            <h2 className="text-2xl font-bold text-white sm:text-3xl">Spieltagsarchiv</h2>
-
-            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {olderPosts.map((post) => (
-                <article
-                  key={post._id}
-                  className="glass-panel-sm glass-interactive flex flex-col p-5 sm:p-6"
-                >
-                  <span className="w-fit shrink-0 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-semibold text-white">
-                    {formatPostDate(post.publishedAt)}
-                  </span>
-
-                  <h3 className="mt-4 text-lg font-bold text-white">{post.title}</h3>
-                  <p className="mt-2 flex-1 text-sm text-white">
-                    {formatExcerpt(post.content)}
-                  </p>
-
-                  <div className="mt-4 flex items-center justify-between gap-3 border-t border-white/10 pt-4">
-                    <span className="text-xs text-white">von {post.authorName}</span>
-                    <GlassButtonExact href={`/spieltagsblog/${post._id}`} size="0.75rem">
-                      Weiterlesen
-                    </GlassButtonExact>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
 
       <section className="relative overflow-hidden border-t border-white/10 bg-tigers-primary px-4 py-12 text-center sm:px-6 sm:py-16">
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
