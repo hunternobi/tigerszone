@@ -3,17 +3,27 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { COMMUNITY_LINK, NAV_LINKS, SITE_NAME } from "@/lib/constants";
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
   const { data: session, status } = useSession();
 
   const isEditor = session?.user.role === "admin" || session?.user.role === "redakteur";
+
+  useEffect(() => {
+    function onScroll() {
+      setScrolled(window.scrollY > 8);
+    }
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const navLinks = [
     ...NAV_LINKS,
@@ -24,8 +34,17 @@ export default function Header() {
     ...(session?.user.role === "admin" ? [{ href: "/admin", label: "Admin" }] : []),
   ];
 
+  const mobileVisible = navLinks.slice(0, 3);
+  const mobileHidden = navLinks.slice(3);
+
   return (
-    <header className="sticky top-0 z-50 border-b border-white/10 bg-tigers-primary/90 backdrop-blur">
+    <header
+      className={`sticky top-0 z-50 transition-all duration-300 ${
+        scrolled
+          ? "border-b border-white/10 bg-tigers-primary/40 backdrop-blur-xl"
+          : "border-b border-transparent bg-transparent"
+      }`}
+    >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         <Link href="/" className="flex items-center gap-2">
           <Image
@@ -41,15 +60,13 @@ export default function Header() {
 
         <nav className="hidden items-center gap-2 md:flex">
           {navLinks.map((link) => {
-            const isActive = link.href === "/" ? pathname === "/" : pathname?.startsWith(link.href);
+            const isActive = pathname?.startsWith(link.href);
             return (
               <Link
                 key={link.href}
                 href={link.href}
                 className={`rounded-full px-5 py-2 text-sm font-medium transition ${
-                  isActive
-                    ? "bg-white/15 text-white"
-                    : "text-white hover:bg-white/10 hover:text-white"
+                  isActive ? "text-white" : "text-white/60 hover:text-white"
                 }`}
               >
                 {link.label}
@@ -80,26 +97,44 @@ export default function Header() {
           )}
         </div>
 
-        <button
-          type="button"
-          className="text-white md:hidden"
-          onClick={() => setMobileOpen((open) => !open)}
-          aria-label="Menü umschalten"
-        >
-          {mobileOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        <div className="flex items-center gap-0.5 md:hidden">
+          <nav className="flex items-center gap-0.5">
+            {mobileVisible.map((link, index) => {
+              const isActive = pathname?.startsWith(link.href);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`rounded-full px-2 py-1.5 text-xs font-medium transition sm:px-3 sm:text-sm ${
+                    index === 2 ? "hidden sm:inline-block" : ""
+                  } ${isActive ? "text-white" : "text-white/60 hover:text-white"}`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
+          </nav>
+          <button
+            type="button"
+            className="ml-1 p-1 text-white"
+            onClick={() => setMobileOpen((open) => !open)}
+            aria-label="Menü umschalten"
+          >
+            {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+          </button>
+        </div>
       </div>
 
       {mobileOpen && (
-        <nav className="flex flex-col gap-1 border-t border-white/10 px-6 py-4 md:hidden">
-          {navLinks.map((link) => {
-            const isActive = link.href === "/" ? pathname === "/" : pathname?.startsWith(link.href);
+        <nav className="flex flex-col gap-1 border-t border-white/10 bg-tigers-primary/80 px-6 py-4 backdrop-blur-xl md:hidden">
+          {mobileHidden.map((link) => {
+            const isActive = pathname?.startsWith(link.href);
             return (
               <Link
                 key={link.href}
                 href={link.href}
                 className={`rounded-full px-4 py-2 text-sm font-medium transition ${
-                  isActive ? "bg-white/15 text-white" : "text-white hover:bg-white/10 hover:text-white"
+                  isActive ? "bg-white/15 text-white" : "text-white/60 hover:bg-white/10 hover:text-white"
                 }`}
                 onClick={() => setMobileOpen(false)}
               >

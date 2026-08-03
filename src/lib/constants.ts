@@ -8,7 +8,6 @@ export const SITE_DESCRIPTION =
   "Die ultimative Fan-Plattform für die Straubing Tigers. Tritt dem Tippspiel bei, lese dich durch die Spieltagsblogs und werde teil der größten Eishockey-Community Bayerns.";
 
 export const NAV_LINKS = [
-  { href: "/", label: "Home" },
   { href: "/tippspiel", label: "Tippspiel" },
   { href: "/spieltagsblog", label: "Spieltagsblog" },
 ] as const;
