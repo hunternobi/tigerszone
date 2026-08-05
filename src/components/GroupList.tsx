@@ -43,7 +43,7 @@ export default function GroupList({ groups, leaderboards }: GroupListProps) {
                   </span>
                 </div>
                 <p className="text-xs text-white">
-                  {group.memberCount} Mitglieder{group.isOwner ? " · Head Coach 🕴️" : ""}
+                  {group.memberCount} Mitglieder{group.isOwner ? " · Head Coach 👔" : ""}
                 </p>
               </div>
               <ChevronDown
