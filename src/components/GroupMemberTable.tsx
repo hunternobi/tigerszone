@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { useSession } from "next-auth/react";
@@ -89,58 +90,62 @@ export default function GroupMemberTable({
               <li
                 key={entry.userId}
                 onContextMenu={(e) => handleContextMenu(e, entry)}
-                className={`flex items-center justify-between rounded-lg px-3 py-2 odd:bg-white/5 ${
+                className={`flex items-start justify-between gap-3 rounded-lg px-3 py-2 odd:bg-white/5 ${
                   manageable ? "cursor-context-menu" : ""
                 }`}
               >
-                <span className="flex flex-wrap items-center gap-2 text-white">
+                <span className="flex min-w-0 flex-1 flex-wrap items-center gap-2 text-white">
                   <span className="text-tigers-secondary">{index + 1}.</span>
                   {entry.name}
                   <RoleBadge role={entry.role} />
                 </span>
-                <span className="font-semibold text-white">{entry.points} Pkt.</span>
+                <span className="shrink-0 font-semibold whitespace-nowrap text-white">
+                  {entry.points} Pkt.
+                </span>
               </li>
             );
           })}
         </ol>
       )}
 
-      {menu && (
-        <div
-          ref={menuRef}
-          style={{ position: "fixed", top: menu.y, left: menu.x }}
-          className="glass-panel-sm z-50 min-w-[220px] space-y-0.5 p-1"
-        >
-          {viewerRole === "owner" && menu.role !== "assistant" && (
-            <button
-              type="button"
-              disabled={isPending}
-              onClick={() => runAction(() => promoteToAssistant(groupId, menu.userId))}
-              className="block w-full rounded-lg px-3 py-2 text-left text-sm text-white transition hover:bg-white/10 disabled:opacity-50"
-            >
-              📝 Zum Assistant-Coach befördern
-            </button>
-          )}
-          {viewerRole === "owner" && menu.role === "assistant" && (
-            <button
-              type="button"
-              disabled={isPending}
-              onClick={() => runAction(() => demoteAssistant(groupId, menu.userId))}
-              className="block w-full rounded-lg px-3 py-2 text-left text-sm text-white transition hover:bg-white/10 disabled:opacity-50"
-            >
-              Assistant-Coach-Status entfernen
-            </button>
-          )}
-          <button
-            type="button"
-            disabled={isPending}
-            onClick={() => runAction(() => kickGroupMember(groupId, menu.userId))}
-            className="block w-full rounded-lg px-3 py-2 text-left text-sm text-red-400 transition hover:bg-white/10 disabled:opacity-50"
+      {menu &&
+        createPortal(
+          <div
+            ref={menuRef}
+            style={{ position: "fixed", top: menu.y, left: menu.x }}
+            className="glass-panel-sm z-50 min-w-[220px] space-y-0.5 p-1"
           >
-            Aus der Gruppe entfernen
-          </button>
-        </div>
-      )}
+            {viewerRole === "owner" && menu.role !== "assistant" && (
+              <button
+                type="button"
+                disabled={isPending}
+                onClick={() => runAction(() => promoteToAssistant(groupId, menu.userId))}
+                className="block w-full rounded-lg px-3 py-2 text-left text-sm text-white transition hover:bg-white/10 disabled:opacity-50"
+              >
+                📝 Zum Assistant-Coach befördern
+              </button>
+            )}
+            {viewerRole === "owner" && menu.role === "assistant" && (
+              <button
+                type="button"
+                disabled={isPending}
+                onClick={() => runAction(() => demoteAssistant(groupId, menu.userId))}
+                className="block w-full rounded-lg px-3 py-2 text-left text-sm text-white transition hover:bg-white/10 disabled:opacity-50"
+              >
+                Assistant-Coach-Status entfernen
+              </button>
+            )}
+            <button
+              type="button"
+              disabled={isPending}
+              onClick={() => runAction(() => kickGroupMember(groupId, menu.userId))}
+              className="block w-full rounded-lg px-3 py-2 text-left text-sm text-red-400 transition hover:bg-white/10 disabled:opacity-50"
+            >
+              Aus der Gruppe entfernen
+            </button>
+          </div>,
+          document.body
+        )}
     </div>
   );
 }

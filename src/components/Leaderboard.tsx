@@ -39,16 +39,18 @@ export default function Leaderboard({ entries, title = "Rangliste", medals = fal
           {entries.map((entry, index) => (
             <li
               key={entry.userId}
-              className="flex items-center justify-between rounded-lg px-3 py-2 odd:bg-white/5"
+              className="flex items-start justify-between gap-3 rounded-lg px-3 py-2 odd:bg-white/5"
             >
-              <span className="flex items-center gap-3 text-white">
+              <span className="flex min-w-0 flex-1 flex-wrap items-center gap-2 text-white">
                 <span className={medals ? "text-lg" : "text-tigers-secondary"}>
                   {medals ? MEDALS[index] : `${index + 1}.`}
                 </span>
                 {entry.name}
                 <RoleBadge role={entry.role} />
               </span>
-              <span className="font-semibold text-white">{entry.points} Pkt.</span>
+              <span className="shrink-0 font-semibold whitespace-nowrap text-white">
+                {entry.points} Pkt.
+              </span>
             </li>
           ))}
         </ol>
