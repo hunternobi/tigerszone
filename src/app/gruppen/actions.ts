@@ -143,6 +143,7 @@ export interface MyGroup {
   isOwner: boolean;
   ownerName: string;
   isPublic: boolean;
+  viewerRole: "owner" | "assistant" | "member";
 }
 
 export async function getMyGroups(): Promise<MyGroup[]> {
@@ -151,10 +152,14 @@ export async function getMyGroups(): Promise<MyGroup[]> {
 
   await dbConnect();
   const memberships = await GroupMemberModel.find({ userId: session.user.id }).lean<
-    { groupId: Types.ObjectId }[]
+    { groupId: Types.ObjectId; role: "member" | "assistant" }[]
   >();
   const groupIds = memberships.map((membership) => membership.groupId);
   if (groupIds.length === 0) return [];
+
+  const viewerRoleByGroup = new Map(
+    memberships.map((membership) => [membership.groupId.toString(), membership.role])
+  );
 
   const groups = await GroupModel.find({ _id: { $in: groupIds } }).lean<
     {
@@ -178,15 +183,19 @@ export async function getMyGroups(): Promise<MyGroup[]> {
     .lean<{ _id: Types.ObjectId; name: string }[]>();
   const ownerNameById = new Map(owners.map((owner) => [owner._id.toString(), owner.name]));
 
-  return groups.map((group) => ({
-    _id: group._id.toString(),
-    name: group.name,
-    inviteCode: group.inviteCode,
-    memberCount: countMap.get(group._id.toString()) ?? 1,
-    isOwner: group.ownerUserId.toString() === session.user.id,
-    ownerName: ownerNameById.get(group.ownerUserId.toString()) ?? "Unbekannt",
-    isPublic: group.isPublic,
-  }));
+  return groups.map((group) => {
+    const isOwner = group.ownerUserId.toString() === session.user.id;
+    return {
+      _id: group._id.toString(),
+      name: group.name,
+      inviteCode: group.inviteCode,
+      memberCount: countMap.get(group._id.toString()) ?? 1,
+      isOwner,
+      ownerName: ownerNameById.get(group.ownerUserId.toString()) ?? "Unbekannt",
+      isPublic: group.isPublic,
+      viewerRole: isOwner ? "owner" : (viewerRoleByGroup.get(group._id.toString()) ?? "member"),
+    };
+  });
 }
 
 export interface PublicGroup {
@@ -247,4 +256,91 @@ export async function getGroupPreview(
   } | null>();
 
   return { name: group.name, ownerName: owner?.name ?? "Unbekannt" };
+}
+
+export async function promoteToAssistant(
+  groupId: string,
+  targetUserId: string
+): Promise<ActionResult> {
+  const session = await auth();
+  if (!session?.user) return { success: false, error: "Bitte melde dich an." };
+
+  await dbConnect();
+  const group = await GroupModel.findById(groupId).select("ownerUserId").lean<{
+    ownerUserId: Types.ObjectId;
+  } | null>();
+  if (!group) return { success: false, error: "Gruppe nicht gefunden." };
+  if (group.ownerUserId.toString() !== session.user.id) {
+    return { success: false, error: "Nur der Head Coach kann befördern." };
+  }
+  if (targetUserId === session.user.id || targetUserId === group.ownerUserId.toString()) {
+    return { success: false, error: "Ungültige Auswahl." };
+  }
+
+  await GroupMemberModel.updateOne({ groupId, userId: targetUserId }, { role: "assistant" });
+
+  revalidatePath("/gruppen");
+  revalidatePath("/tippspiel");
+  return { success: true };
+}
+
+export async function demoteAssistant(
+  groupId: string,
+  targetUserId: string
+): Promise<ActionResult> {
+  const session = await auth();
+  if (!session?.user) return { success: false, error: "Bitte melde dich an." };
+
+  await dbConnect();
+  const group = await GroupModel.findById(groupId).select("ownerUserId").lean<{
+    ownerUserId: Types.ObjectId;
+  } | null>();
+  if (!group) return { success: false, error: "Gruppe nicht gefunden." };
+  if (group.ownerUserId.toString() !== session.user.id) {
+    return { success: false, error: "Nur der Head Coach kann degradieren." };
+  }
+
+  await GroupMemberModel.updateOne({ groupId, userId: targetUserId }, { role: "member" });
+
+  revalidatePath("/gruppen");
+  revalidatePath("/tippspiel");
+  return { success: true };
+}
+
+export async function kickGroupMember(
+  groupId: string,
+  targetUserId: string
+): Promise<ActionResult> {
+  const session = await auth();
+  if (!session?.user) return { success: false, error: "Bitte melde dich an." };
+
+  await dbConnect();
+  const group = await GroupModel.findById(groupId).select("ownerUserId").lean<{
+    ownerUserId: Types.ObjectId;
+  } | null>();
+  if (!group) return { success: false, error: "Gruppe nicht gefunden." };
+
+  const isOwner = group.ownerUserId.toString() === session.user.id;
+  if (!isOwner) {
+    const membership = await GroupMemberModel.findOne({
+      groupId,
+      userId: session.user.id,
+    }).select("role").lean<{ role: "member" | "assistant" } | null>();
+    if (!membership || membership.role !== "assistant") {
+      return { success: false, error: "Keine Berechtigung." };
+    }
+  }
+
+  if (targetUserId === group.ownerUserId.toString()) {
+    return { success: false, error: "Der Head Coach kann nicht entfernt werden." };
+  }
+  if (targetUserId === session.user.id) {
+    return { success: false, error: "Du kannst dich nicht selbst entfernen." };
+  }
+
+  await GroupMemberModel.deleteOne({ groupId, userId: targetUserId });
+
+  revalidatePath("/gruppen");
+  revalidatePath("/tippspiel");
+  return { success: true };
 }

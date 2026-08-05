@@ -2,6 +2,7 @@ export interface LeaderboardEntry {
   userId: string;
   name: string;
   points: number;
+  role?: "owner" | "assistant" | "member";
 }
 
 interface LeaderboardProps {
@@ -11,6 +12,21 @@ interface LeaderboardProps {
 }
 
 const MEDALS = ["🥇", "🥈", "🥉"];
+
+const ROLE_BADGES = {
+  owner: { emoji: "📣", label: "Head Coach" },
+  assistant: { emoji: "📝", label: "Assistant Coach" },
+} as const;
+
+export function RoleBadge({ role }: { role?: "owner" | "assistant" | "member" }) {
+  if (role !== "owner" && role !== "assistant") return null;
+  const badge = ROLE_BADGES[role];
+  return (
+    <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] font-semibold text-white">
+      {badge.emoji} {badge.label}
+    </span>
+  );
+}
 
 export default function Leaderboard({ entries, title = "Rangliste", medals = false }: LeaderboardProps) {
   return (
@@ -30,6 +46,7 @@ export default function Leaderboard({ entries, title = "Rangliste", medals = fal
                   {medals ? MEDALS[index] : `${index + 1}.`}
                 </span>
                 {entry.name}
+                <RoleBadge role={entry.role} />
               </span>
               <span className="font-semibold text-white">{entry.points} Pkt.</span>
             </li>

@@ -3,6 +3,7 @@ import { dbConnect } from "@/lib/mongodb";
 import { PredictionModel } from "@/models/Prediction";
 import { UserModel } from "@/models/User";
 import { GroupMemberModel } from "@/models/GroupMember";
+import { GroupModel } from "@/models/Group";
 import type { LeaderboardEntry } from "@/components/Leaderboard";
 
 export interface GroupLeaderboardData {
@@ -49,9 +50,19 @@ export async function getGlobalLeaderboard(limit: number): Promise<LeaderboardEn
 export async function getGroupLeaderboard(groupId: string): Promise<LeaderboardEntry[]> {
   await dbConnect();
 
-  const members = await GroupMemberModel.find({ groupId }).lean<{ userId: Types.ObjectId }[]>();
+  const group = await GroupModel.findById(groupId).select("ownerUserId").lean<{
+    ownerUserId: Types.ObjectId;
+  } | null>();
+  if (!group) return [];
+
+  const members = await GroupMemberModel.find({ groupId }).lean<
+    { userId: Types.ObjectId; role: "member" | "assistant" }[]
+  >();
   const memberIds = members.map((member) => member.userId);
   if (memberIds.length === 0) return [];
+
+  const roleByUser = new Map(members.map((member) => [member.userId.toString(), member.role]));
+  const ownerId = group.ownerUserId.toString();
 
   const users = await UserModel.find({ _id: { $in: memberIds } })
     .select("name")
@@ -59,10 +70,14 @@ export async function getGroupLeaderboard(groupId: string): Promise<LeaderboardE
   const pointsByUser = await sumPointsForUsers(memberIds);
 
   return users
-    .map((user) => ({
-      userId: user._id.toString(),
-      name: user.name,
-      points: pointsByUser.get(user._id.toString()) ?? 0,
-    }))
+    .map((user) => {
+      const id = user._id.toString();
+      return {
+        userId: id,
+        name: user.name,
+        points: pointsByUser.get(id) ?? 0,
+        role: id === ownerId ? "owner" : (roleByUser.get(id) ?? "member"),
+      } satisfies LeaderboardEntry;
+    })
     .sort((a, b) => b.points - a.points);
 }

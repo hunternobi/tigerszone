@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import type { MyGroup } from "@/app/gruppen/actions";
-import Leaderboard, { type LeaderboardEntry } from "@/components/Leaderboard";
+import GroupMemberTable from "@/components/GroupMemberTable";
+import type { LeaderboardEntry } from "@/components/Leaderboard";
 
 interface GroupListProps {
   groups: MyGroup[];
@@ -42,7 +43,7 @@ export default function GroupList({ groups, leaderboards }: GroupListProps) {
                   </span>
                 </div>
                 <p className="text-xs text-white">
-                  {group.memberCount} Mitglieder{group.isOwner ? " · Ersteller" : ""}
+                  {group.memberCount} Mitglieder{group.isOwner ? " · Head Coach 📣" : ""}
                 </p>
               </div>
               <ChevronDown
@@ -74,9 +75,11 @@ export default function GroupList({ groups, leaderboards }: GroupListProps) {
 
             {isExpanded && (
               <div className="mt-4">
-                <Leaderboard
+                <GroupMemberTable
+                  groupId={group._id}
                   entries={leaderboards[group._id] ?? []}
                   title={`Rangliste: ${group.name}`}
+                  viewerRole={group.viewerRole}
                 />
               </div>
             )}
