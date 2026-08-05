@@ -24,7 +24,7 @@ export default function FadingBackground({
   const bgOpacity = useTransform(scrollYProgress, [0, 1], [opacity, 0]);
 
   return (
-    <div ref={ref} className="relative -mt-[72px] overflow-hidden">
+    <div ref={ref} className="relative -mt-[88px] overflow-hidden">
       <motion.div
         style={{ opacity: bgOpacity, filter: blurPx ? `blur(${blurPx}px)` : undefined }}
         className="pointer-events-none absolute inset-0 -z-10 max-sm:h-[70vh] scale-105"
@@ -32,7 +32,7 @@ export default function FadingBackground({
         <Image src={src} alt={alt} fill priority className="object-cover object-center" />
       </motion.div>
 
-      <div className="relative z-10 pt-[72px]">{children}</div>
+      <div className="relative z-10 pt-[88px]">{children}</div>
     </div>
   );
 }
