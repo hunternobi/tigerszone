@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent } from "react";
 import { createPortal } from "react-dom";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { useSession } from "next-auth/react";
@@ -96,7 +97,9 @@ export default function GroupMemberTable({
               >
                 <span className="flex min-w-0 flex-1 flex-wrap items-center gap-2 text-white">
                   <span className="text-tigers-secondary">{index + 1}.</span>
-                  {entry.name}
+                  <Link href={`/spieler/${entry.userId}`} className="hover:underline">
+                    {entry.name}
+                  </Link>
                   <RoleBadge role={entry.role} />
                 </span>
                 <span className="shrink-0 font-semibold whitespace-nowrap text-white">
@@ -122,7 +125,7 @@ export default function GroupMemberTable({
                 onClick={() => runAction(() => promoteToAssistant(groupId, menu.userId))}
                 className="block w-full rounded-lg px-3 py-2 text-left text-sm text-white transition hover:bg-white/10 disabled:opacity-50"
               >
-                📝 Zum Assistant-Coach befördern
+                📝 Zum Assistant Coach befördern
               </button>
             )}
             {viewerRole === "owner" && menu.role === "assistant" && (
@@ -132,7 +135,7 @@ export default function GroupMemberTable({
                 onClick={() => runAction(() => demoteAssistant(groupId, menu.userId))}
                 className="block w-full rounded-lg px-3 py-2 text-left text-sm text-white transition hover:bg-white/10 disabled:opacity-50"
               >
-                Assistant-Coach-Status entfernen
+                Assistant Coach Status entfernen
               </button>
             )}
             <button

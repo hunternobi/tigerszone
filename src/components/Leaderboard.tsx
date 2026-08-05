@@ -14,7 +14,7 @@ interface LeaderboardProps {
 const MEDALS = ["🥇", "🥈", "🥉"];
 
 const ROLE_BADGES = {
-  owner: { emoji: "📣", label: "Head Coach" },
+  owner: { emoji: "🕴️", label: "Head Coach" },
   assistant: { emoji: "📝", label: "Assistant Coach" },
 } as const;
 
