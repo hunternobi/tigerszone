@@ -10,14 +10,12 @@ import type { LeaderboardEntry } from "@/components/Leaderboard";
 
 interface GruppenPageClientProps {
   groups: MyGroup[];
-  activeGroupId: string | null;
   leaderboards: Record<string, LeaderboardEntry[]>;
   publicGroups: PublicGroup[];
 }
 
 export default function GruppenPageClient({
   groups,
-  activeGroupId,
   leaderboards,
   publicGroups,
 }: GruppenPageClientProps) {
@@ -71,11 +69,7 @@ export default function GruppenPageClient({
                 : "Keine Gruppen gefunden."}
             </p>
           ) : (
-            <GroupList
-              groups={filteredGroups}
-              activeGroupId={activeGroupId}
-              leaderboards={leaderboards}
-            />
+            <GroupList groups={filteredGroups} leaderboards={leaderboards} />
           )}
         </div>
       </div>

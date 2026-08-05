@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
-import { getActiveGroupId, getMyGroups, getPublicGroups } from "./actions";
+import { getMyGroups, getPublicGroups } from "./actions";
 import GruppenPageClient from "@/components/GruppenPageClient";
 import { getGroupLeaderboard, type GroupLeaderboardData } from "@/lib/leaderboard";
 import type { LeaderboardEntry } from "@/components/Leaderboard";
@@ -15,11 +15,7 @@ export default async function GruppenPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const [groups, activeGroupId, publicGroups] = await Promise.all([
-    getMyGroups(),
-    getActiveGroupId(),
-    getPublicGroups(),
-  ]);
+  const [groups, publicGroups] = await Promise.all([getMyGroups(), getPublicGroups()]);
 
   const leaderboardEntries = await Promise.all(
     groups.map(async (group): Promise<GroupLeaderboardData> => ({
@@ -36,17 +32,12 @@ export default async function GruppenPage() {
     <section className="mx-auto max-w-5xl px-6 py-16">
       <h1 className="text-3xl font-bold text-white">Tippgruppen</h1>
       <p className="mt-3 text-white">
-        Erstelle eigene Gruppen oder tritt per Einladungslink bei. Die aktive Gruppe bestimmt
-        deine Gruppen-Rangliste im Tippspiel.
+        Erstelle eigene Gruppen oder tritt per Einladungslink bei. Im Tippspiel kannst du
+        zwischen deinen Gruppen wechseln.
       </p>
 
       <div className="mt-8">
-        <GruppenPageClient
-          groups={groups}
-          activeGroupId={activeGroupId}
-          leaderboards={leaderboards}
-          publicGroups={publicGroups}
-        />
+        <GruppenPageClient groups={groups} leaderboards={leaderboards} publicGroups={publicGroups} />
       </div>
     </section>
   );
