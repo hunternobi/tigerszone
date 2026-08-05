@@ -28,8 +28,8 @@ export default function Header() {
   const mobileHidden = navLinks.slice(3);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6">
-      <div className="glass-panel-sm mx-auto flex h-[72px] max-w-7xl items-center justify-between px-6">
+    <header className="glass-bar fixed inset-x-0 top-0 z-50">
+      <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-4 sm:px-6">
         <Link href="/" className="flex items-center gap-2">
           <Image
             src="/images/TigersZone_Logo.png"
@@ -110,7 +110,7 @@ export default function Header() {
       </div>
 
       {mobileOpen && (
-        <nav className="glass-panel-sm mx-auto mt-2 flex max-w-7xl flex-col gap-1 px-6 py-4 md:hidden">
+        <nav className="mx-auto flex max-w-7xl flex-col gap-1 border-t border-white/10 px-4 py-4 sm:px-6 md:hidden">
           {mobileHidden.map((link) => {
             const isActive = pathname?.startsWith(link.href);
             return (

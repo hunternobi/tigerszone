@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { getActiveGroupId, getMyGroups, getPublicGroups } from "./actions";
-import CreateGroupForm from "@/components/CreateGroupForm";
-import GroupList from "@/components/GroupList";
-import PublicGroupsList from "@/components/PublicGroupsList";
+import GruppenPageClient from "@/components/GruppenPageClient";
+import { getGroupLeaderboard, type GroupLeaderboardData } from "@/lib/leaderboard";
+import type { LeaderboardEntry } from "@/components/Leaderboard";
 
 export const metadata: Metadata = {
   title: "Tippgruppen",
@@ -21,6 +21,17 @@ export default async function GruppenPage() {
     getPublicGroups(),
   ]);
 
+  const leaderboardEntries = await Promise.all(
+    groups.map(async (group): Promise<GroupLeaderboardData> => ({
+      groupId: group._id,
+      groupName: group.name,
+      entries: await getGroupLeaderboard(group._id),
+    }))
+  );
+  const leaderboards: Record<string, LeaderboardEntry[]> = Object.fromEntries(
+    leaderboardEntries.map((entry) => [entry.groupId, entry.entries])
+  );
+
   return (
     <section className="mx-auto max-w-5xl px-6 py-16">
       <h1 className="text-3xl font-bold text-white">Tippgruppen</h1>
@@ -29,12 +40,13 @@ export default async function GruppenPage() {
         deine Gruppen-Rangliste im Tippspiel.
       </p>
 
-      <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_320px]">
-        <div>
-          <GroupList groups={groups} activeGroupId={activeGroupId} />
-          <PublicGroupsList groups={publicGroups} />
-        </div>
-        <CreateGroupForm />
+      <div className="mt-8">
+        <GruppenPageClient
+          groups={groups}
+          activeGroupId={activeGroupId}
+          leaderboards={leaderboards}
+          publicGroups={publicGroups}
+        />
       </div>
     </section>
   );
