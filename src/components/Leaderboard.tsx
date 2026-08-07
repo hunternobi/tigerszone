@@ -1,4 +1,5 @@
-import { BriefcaseIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
+import { FaUserTie } from "react-icons/fa";
+import { MdOutlineEditNote } from "react-icons/md";
 
 export interface LeaderboardEntry {
   userId: string;
@@ -16,8 +17,8 @@ interface LeaderboardProps {
 const MEDALS = ["🥇", "🥈", "🥉"];
 
 const ROLE_BADGES = {
-  owner: { Icon: BriefcaseIcon, label: "Head Coach" },
-  assistant: { Icon: PencilSquareIcon, label: "Assistant Coach" },
+  owner: { Icon: FaUserTie, label: "Head Coach" },
+  assistant: { Icon: MdOutlineEditNote, label: "Assistant Coach" },
 } as const;
 
 export function RoleBadge({ role }: { role?: "owner" | "assistant" | "member" }) {

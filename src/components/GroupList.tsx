@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import { BriefcaseIcon } from "@heroicons/react/24/outline";
+import { FaUserTie } from "react-icons/fa";
 import type { MyGroup } from "@/app/gruppen/actions";
 import GroupMemberTable from "@/components/GroupMemberTable";
 import type { LeaderboardEntry } from "@/components/Leaderboard";
@@ -48,7 +48,7 @@ export default function GroupList({ groups, leaderboards }: GroupListProps) {
                   {group.isOwner && (
                     <>
                       {" "}
-                      · Head Coach <BriefcaseIcon className="h-3 w-3" />
+                      · Head Coach <FaUserTie className="h-3 w-3" />
                     </>
                   )}
                 </p>
