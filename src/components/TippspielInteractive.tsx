@@ -37,8 +37,8 @@ export default function TippspielInteractive({
           <div>
             <h1 className="text-3xl font-bold text-white">Tippspiel</h1>
             <p className="mt-3 text-white">
-              Tippe alle Spiele der Straubing Tigers - messe dich mit deinen Freunden und spiele
-              um Ruhm und Punkte!
+              Tippe alle Spiele der Straubing Tigers - messe dich mit deinen Freunden und kämpfe
+              wie unsere Tigers um jeden Punkt!
             </p>
 
             {nextGame && (
