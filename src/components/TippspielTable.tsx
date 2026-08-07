@@ -4,7 +4,7 @@ import { useState, useTransition, type ChangeEvent } from "react";
 import Link from "next/link";
 import { submitPrediction } from "@/app/tippspiel/actions";
 import { getTeamName } from "@/lib/teams";
-import { formatGameDate } from "@/utils/format";
+import { formatGameDate, formatPostDate } from "@/utils/format";
 import type { Game } from "@/types";
 
 interface PredictionInfo {
@@ -75,10 +75,15 @@ function TippspielRow({ index, game, initial, disabled }: TippspielRowProps) {
 
   return (
     <div className="rounded-lg px-2 py-2 odd:bg-white/5 sm:px-3">
-      <div className="grid grid-cols-[2.5rem_minmax(0,1fr)_2.25rem_auto_2.25rem_minmax(0,1fr)] items-center gap-1.5 sm:grid-cols-[6.5rem_minmax(0,1fr)_2.75rem_auto_2.75rem_minmax(0,1fr)_8rem] sm:gap-3">
+      <div className="flex items-baseline justify-between gap-2">
         <span className="text-[10px] whitespace-nowrap text-white/60 sm:text-xs">
           {index}. Spieltag
         </span>
+        <span className="text-[10px] whitespace-nowrap text-white/50 sm:text-xs">
+          {formatPostDate(game.kickoff)}
+        </span>
+      </div>
+      <div className="mt-1 grid grid-cols-[minmax(0,1fr)_2.25rem_auto_2.25rem_minmax(0,1fr)] items-center gap-1.5 sm:gap-2.5">
         <span className="truncate text-right text-xs font-medium text-white sm:text-sm">
           {getTeamName(game.homeTeamId)}
         </span>
@@ -106,13 +111,7 @@ function TippspielRow({ index, game, initial, disabled }: TippspielRowProps) {
         <span className="truncate text-left text-xs font-medium text-white sm:text-sm">
           {getTeamName(game.awayTeamId)}
         </span>
-        <span className="hidden text-right text-xs whitespace-nowrap text-white/60 sm:block">
-          {formatGameDate(game.kickoff)}
-        </span>
       </div>
-      <p className="mt-1 text-center text-[10px] text-white/50 sm:hidden">
-        {formatGameDate(game.kickoff)}
-      </p>
       {status === "error" && (
         <p className="mt-1 text-center text-[10px] text-red-400">
           Tipp konnte nicht gespeichert werden.

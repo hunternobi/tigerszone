@@ -9,6 +9,7 @@ interface FadingBackgroundProps {
   alt?: string;
   opacity?: number;
   blurPx?: number;
+  overlayClassName?: string;
   children: ReactNode;
 }
 
@@ -17,6 +18,7 @@ export default function FadingBackground({
   alt = "",
   opacity = 1,
   blurPx = 0,
+  overlayClassName,
   children,
 }: FadingBackgroundProps) {
   const ref = useRef<HTMLDivElement>(null);
@@ -31,6 +33,13 @@ export default function FadingBackground({
       >
         <Image src={src} alt={alt} fill priority className="object-cover object-center" />
       </motion.div>
+
+      {overlayClassName && (
+        <motion.div
+          style={{ opacity: bgOpacity }}
+          className={`pointer-events-none fixed inset-0 -z-10 ${overlayClassName}`}
+        />
+      )}
 
       <div className="relative z-10 pt-[72px]">{children}</div>
     </div>

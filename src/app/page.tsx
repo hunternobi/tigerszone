@@ -26,10 +26,11 @@ export default async function Home() {
 
   return (
     <>
-      <FadingBackground src="/images/hero-stadium.jpg">
+      <FadingBackground
+        src="/images/hero-stadium.jpg"
+        overlayClassName="bg-gradient-to-b from-tigers-primary/70 via-tigers-primary/60 to-tigers-primary"
+      >
       <section className="relative min-h-screen overflow-hidden px-4 py-16 sm:min-h-[130vh] sm:px-6 sm:py-24">
-        <div className="absolute inset-0 bg-gradient-to-b from-tigers-primary/70 via-tigers-primary/60 to-tigers-primary" />
-
         <div className="relative mx-auto flex min-h-[calc(100vh-12rem)] max-w-4xl flex-col justify-center text-center">
           <h1 className="text-4xl font-bold text-white sm:text-5xl">
             Willkommen in der
