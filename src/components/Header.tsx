@@ -3,17 +3,34 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { COMMUNITY_LINK, NAV_LINKS, SITE_NAME } from "@/lib/constants";
 
+const MOBILE_NAV_LINKS = [
+  { href: "/tippspiel", label: "Tippspiel" },
+  { href: "/spieltagsblog", label: "Spieltagsblog" },
+  { href: "/gruppen", label: "Gruppen" },
+];
+const MOBILE_HREFS = new Set(MOBILE_NAV_LINKS.map((link) => link.href));
+
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
   const { data: session, status } = useSession();
 
   const isEditor = session?.user.role === "admin" || session?.user.role === "redakteur";
+
+  useEffect(() => {
+    function onScroll() {
+      setScrolled(window.scrollY > 8);
+    }
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const navLinks = [
     ...NAV_LINKS,
@@ -24,11 +41,12 @@ export default function Header() {
     ...(session?.user.role === "admin" ? [{ href: "/admin", label: "Admin" }] : []),
   ];
 
-  const mobileVisible = navLinks.slice(0, 3);
-  const mobileHidden = navLinks.slice(3);
+  const mobileHidden = navLinks.filter((link) => !MOBILE_HREFS.has(link.href));
 
   return (
-    <header className="glass-bar fixed inset-x-0 top-0 z-50">
+    <header
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${scrolled ? "glass-bar" : ""}`}
+    >
       <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-4 sm:px-6">
         <Link href="/" className="flex items-center gap-2">
           <Image
@@ -81,32 +99,30 @@ export default function Header() {
           )}
         </div>
 
-        <div className="flex items-center gap-0.5 md:hidden">
-          <nav className="flex items-center gap-0.5">
-            {mobileVisible.map((link, index) => {
-              const isActive = pathname?.startsWith(link.href);
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`rounded-full px-2 py-1.5 text-xs font-medium transition sm:px-3 sm:text-sm ${
-                    index === 2 ? "hidden sm:inline-block" : ""
-                  } ${isActive ? "text-white" : "text-white/60 hover:text-white"}`}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
-          </nav>
-          <button
-            type="button"
-            className="ml-1 p-1 text-white"
-            onClick={() => setMobileOpen((open) => !open)}
-            aria-label="Menü umschalten"
-          >
-            {mobileOpen ? <X size={22} /> : <Menu size={22} />}
-          </button>
-        </div>
+        <nav className="flex flex-1 items-center justify-center gap-0.5 md:hidden">
+          {MOBILE_NAV_LINKS.map((link) => {
+            const isActive = pathname?.startsWith(link.href);
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`rounded-full px-1.5 py-1.5 text-[11px] font-medium whitespace-nowrap transition sm:px-3 sm:text-sm ${
+                  isActive ? "text-white" : "text-white/60 hover:text-white"
+                }`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
+        </nav>
+        <button
+          type="button"
+          className="p-1 text-white md:hidden"
+          onClick={() => setMobileOpen((open) => !open)}
+          aria-label="Menü umschalten"
+        >
+          {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+        </button>
       </div>
 
       {mobileOpen && (

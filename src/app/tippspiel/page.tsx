@@ -1,21 +1,31 @@
 import type { Metadata } from "next";
+import { auth } from "@/auth";
 import TippspielInteractive from "@/components/TippspielInteractive";
-import { getUpcomingGames } from "@/lib/games";
+import type { ResultEntry } from "@/components/TippspielTable";
+import { getAllGames } from "@/lib/games";
 import { getActiveGroupId, getMyGroups } from "@/app/gruppen/actions";
 import { getGlobalLeaderboard, getGroupLeaderboard, type GroupLeaderboardData } from "@/lib/leaderboard";
+import { getUserPredictionHistory } from "@/lib/predictions";
 
 export const metadata: Metadata = {
   title: "Tippspiel",
   description:
-    "Tippe die nächsten Spiele der Straubing Tigers, sammle Punkte und miss dich mit anderen Fans in der Rangliste.",
+    "Tippe alle Spiele der Straubing Tigers, sammle Punkte und miss dich mit anderen Fans in der Rangliste.",
   alternates: { canonical: "/tippspiel" },
 };
 
 export default async function TippspielPage() {
-  const [activeGroupId, myGroups] = await Promise.all([getActiveGroupId(), getMyGroups()]);
+  const session = await auth();
+  const isAuthenticated = Boolean(session?.user);
 
-  const [upcomingGames, globalEntries, groupLeaderboards] = await Promise.all([
-    getUpcomingGames(3),
+  const [activeGroupId, myGroups, allGames, history] = await Promise.all([
+    getActiveGroupId(),
+    getMyGroups(),
+    getAllGames(),
+    isAuthenticated ? getUserPredictionHistory(session!.user.id) : Promise.resolve(null),
+  ]);
+
+  const [globalEntries, groupLeaderboards] = await Promise.all([
     getGlobalLeaderboard(3),
     Promise.all<GroupLeaderboardData>(
       myGroups.map(async (group) => ({
@@ -26,9 +36,41 @@ export default async function TippspielPage() {
     ),
   ]);
 
+  const vorbereitungGames = allGames.filter((game) => game.competition === "Vorbereitung");
+  const hauptrundeGames = allGames.filter((game) => game.competition === "DEL");
+
+  const predictions: Record<string, { predictedHome: number; predictedAway: number }> = {};
+  const results: ResultEntry[] = [];
+
+  if (history) {
+    for (const entry of history.entries) {
+      predictions[entry.gameId] = {
+        predictedHome: entry.predictedHome,
+        predictedAway: entry.predictedAway,
+      };
+      if (entry.status === "finished") {
+        results.push({
+          gameId: entry.gameId,
+          homeTeamId: entry.homeTeamId,
+          awayTeamId: entry.awayTeamId,
+          kickoff: entry.kickoff,
+          predictedHome: entry.predictedHome,
+          predictedAway: entry.predictedAway,
+          homeScore: entry.homeScore,
+          awayScore: entry.awayScore,
+          pointsAwarded: entry.pointsAwarded,
+        });
+      }
+    }
+  }
+
   return (
     <TippspielInteractive
-      games={upcomingGames}
+      vorbereitungGames={vorbereitungGames}
+      hauptrundeGames={hauptrundeGames}
+      predictions={predictions}
+      results={results}
+      isAuthenticated={isAuthenticated}
       globalEntries={globalEntries}
       groupLeaderboards={groupLeaderboards}
       activeGroupId={activeGroupId}

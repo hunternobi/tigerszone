@@ -31,3 +31,7 @@ export function getTeamById(id: string): Team | undefined {
 export function getTeamName(id: string): string {
   return getTeamById(id)?.name ?? id;
 }
+
+export function getTeamShortName(id: string): string {
+  return getTeamById(id)?.shortName ?? id;
+}

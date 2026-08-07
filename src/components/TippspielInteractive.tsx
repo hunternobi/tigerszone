@@ -1,34 +1,32 @@
-"use client";
-
-import { useState } from "react";
-import { Calendar, Clock } from "lucide-react";
 import FadingBackground from "@/components/FadingBackground";
-import GlassButtonExact from "@/components/GlassButtonExact";
 import LeaderboardWidget from "@/components/LeaderboardWidget";
-import PredictionForm from "@/components/PredictionForm";
+import TippspielTable, { type ResultEntry } from "@/components/TippspielTable";
 import { SCORING } from "@/lib/constants";
-import { getTeamName } from "@/lib/teams";
 import type { Game } from "@/types";
-import { formatGameDate, formatGameTime } from "@/utils/format";
 import type { LeaderboardEntry } from "@/components/Leaderboard";
 import type { GroupLeaderboardData } from "@/lib/leaderboard";
 
 interface TippspielInteractiveProps {
-  games: Game[];
+  vorbereitungGames: Game[];
+  hauptrundeGames: Game[];
+  predictions: Record<string, { predictedHome: number; predictedAway: number }>;
+  results: ResultEntry[];
+  isAuthenticated: boolean;
   globalEntries: LeaderboardEntry[];
   groupLeaderboards: GroupLeaderboardData[];
   activeGroupId: string | null;
 }
 
 export default function TippspielInteractive({
-  games,
+  vorbereitungGames,
+  hauptrundeGames,
+  predictions,
+  results,
+  isAuthenticated,
   globalEntries,
   groupLeaderboards,
   activeGroupId,
 }: TippspielInteractiveProps) {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const selectedGame = games.find((game) => game._id === selectedId) ?? null;
-
   return (
     <FadingBackground src="/images/tippabgabe-bg.jpg" opacity={0.55} blurPx={1.5}>
       <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-16">
@@ -36,105 +34,18 @@ export default function TippspielInteractive({
           <div>
             <h1 className="text-3xl font-bold text-white">Tippspiel</h1>
             <p className="mt-3 text-white">
-              Die nächsten 3 anstehenden Spiele der Straubing Tigers. Klick bei einem Spiel auf
-              „Jetzt Tippen”, um direkt zur Tippabgabe zu springen.
+              Trag deinen Tipp direkt in der Tabelle ein – Vorbereitung und Hauptrunde,
+              chronologisch sortiert.
             </p>
 
-            <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
-              {games.map((game) => (
-                <div
-                  key={game._id}
-                  className="glass-panel-sm glass-interactive flex flex-col justify-between gap-3 p-4"
-                >
-                  <div>
-                    {game.competition === "Vorbereitung" ? (
-                      <span className="inline-block rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-white">
-                        Vorbereitung
-                      </span>
-                    ) : (
-                      <span className="inline-block rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-white">
-                        DEL{game.matchday ? ` · ${game.matchday}` : ""}
-                      </span>
-                    )}
-                    {game.isDerby && (
-                      <span className="mt-1 inline-block rounded-full bg-tigers-accent px-3 py-1 text-[10px] font-semibold text-white">
-                        Derby
-                      </span>
-                    )}
-
-                    <p className="mt-2 text-sm leading-tight font-bold text-white">
-                      {getTeamName(game.homeTeamId)}
-                    </p>
-                    <p className="text-xs text-white">vs.</p>
-                    <p className="text-sm leading-tight font-bold text-white">
-                      {getTeamName(game.awayTeamId)}
-                    </p>
-
-                    <div className="mt-2 space-y-1 text-[11px] text-white">
-                      <span className="flex items-center gap-1">
-                        <Calendar size={12} /> {formatGameDate(game.kickoff)}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Clock size={12} /> {formatGameTime(game.kickoff)} Uhr
-                      </span>
-                    </div>
-                  </div>
-
-                  <GlassButtonExact
-                    href="#tippabgabe"
-                    size="0.75rem"
-                    wrapperClassName="self-start"
-                    onClick={(e) => {
-                      if (window.matchMedia("(min-width: 1024px)").matches) {
-                        e.preventDefault();
-                      }
-                      setSelectedId(game._id);
-                    }}
-                  >
-                    Jetzt Tippen
-                  </GlassButtonExact>
-                </div>
-              ))}
-            </div>
-
-            <div id="tippabgabe" className="glass-panel mt-8 scroll-mt-24 p-4 sm:mt-12 sm:p-8">
-              <h2 className="text-center text-2xl font-bold text-white">Tippabgabe</h2>
-
-              {selectedGame ? (
-                <div className="mt-8 glass-panel-sm p-4 sm:p-6">
-                  {selectedGame.competition === "Vorbereitung" ? (
-                    <span className="inline-block rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-semibold text-white">
-                      Vorbereitungsspiel
-                    </span>
-                  ) : (
-                    <span className="inline-block rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-semibold text-white">
-                      DEL{selectedGame.matchday ? ` · Spieltag ${selectedGame.matchday}` : ""}
-                    </span>
-                  )}
-                  {selectedGame.isDerby && (
-                    <span className="ml-2 inline-block rounded-full bg-tigers-accent px-3 py-1 text-xs font-semibold text-white">
-                      Derby · Doppelte Punkte
-                    </span>
-                  )}
-
-                  <div className="mt-4">
-                    <PredictionForm game={selectedGame} />
-                  </div>
-
-                  <div className="mt-4 flex flex-wrap justify-center gap-4 text-sm text-white">
-                    <span className="flex items-center gap-1">
-                      <Calendar size={14} /> {formatGameDate(selectedGame.kickoff)}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Clock size={14} /> {formatGameTime(selectedGame.kickoff)} Uhr
-                    </span>
-                  </div>
-                </div>
-              ) : (
-                <p className="mt-8 text-center text-sm text-white">
-                  Wähle oben eines der drei Spiele aus, um deinen Tipp abzugeben.
-                </p>
-              )}
+            <div className="mt-8">
+              <TippspielTable
+                vorbereitungGames={vorbereitungGames}
+                hauptrundeGames={hauptrundeGames}
+                predictions={predictions}
+                results={results}
+                isAuthenticated={isAuthenticated}
+              />
             </div>
           </div>
 
