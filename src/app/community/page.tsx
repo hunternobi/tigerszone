@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Faq from "@/components/Faq";
+import FadingBackground from "@/components/FadingBackground";
 
 export const metadata: Metadata = {
   title: "Community",
@@ -9,15 +10,17 @@ export const metadata: Metadata = {
 
 export default function CommunityPage() {
   return (
-    <section className="mx-auto max-w-5xl px-6 py-16">
-      <h1 className="text-3xl font-bold text-white">Community</h1>
-      <p className="mt-3 text-white">
-        Meme der Woche und Watch Party Finder folgen hier (siehe Spezifikation 4.4 &amp; 4.5).
-      </p>
+    <FadingBackground src="/images/Community_.jpg" opacity={0.55} blurPx={1.5}>
+      <section className="mx-auto max-w-5xl px-6 py-16">
+        <h1 className="text-3xl font-bold text-white">Community</h1>
+        <p className="mt-3 text-white">
+          Meme der Woche und Watch Party Finder folgen hier (siehe Spezifikation 4.4 &amp; 4.5).
+        </p>
 
-      <div className="mt-12">
-        <Faq />
-      </div>
-    </section>
+        <div className="mt-12">
+          <Faq />
+        </div>
+      </section>
+    </FadingBackground>
   );
 }
