@@ -2,10 +2,9 @@
 
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import { FaUserTie } from "react-icons/fa";
 import type { MyGroup } from "@/app/gruppen/actions";
 import GroupMemberTable from "@/components/GroupMemberTable";
-import type { LeaderboardEntry } from "@/components/Leaderboard";
+import { RoleBadge, type LeaderboardEntry } from "@/components/Leaderboard";
 
 interface GroupListProps {
   groups: MyGroup[];
@@ -43,14 +42,9 @@ export default function GroupList({ groups, leaderboards }: GroupListProps) {
                     {group.isPublic ? "Öffentlich" : "Privat"}
                   </span>
                 </div>
-                <p className="flex items-center gap-1 text-xs text-white">
+                <p className="flex items-center gap-1.5 text-xs text-white">
                   {group.memberCount} Mitglieder
-                  {group.isOwner && (
-                    <>
-                      {" "}
-                      · Head Coach <FaUserTie className="h-3 w-3" />
-                    </>
-                  )}
+                  {group.isOwner && <RoleBadge role="owner" />}
                 </p>
               </div>
               <ChevronDown
