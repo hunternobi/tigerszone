@@ -3,7 +3,7 @@
 import { useState, useTransition, type ChangeEvent } from "react";
 import Link from "next/link";
 import { submitPrediction } from "@/app/tippspiel/actions";
-import { getTeamShortName, getTeamName } from "@/lib/teams";
+import { getTeamName } from "@/lib/teams";
 import { formatGameDate } from "@/utils/format";
 import type { Game } from "@/types";
 
@@ -74,48 +74,49 @@ function TippspielRow({ index, game, initial, disabled }: TippspielRowProps) {
   }
 
   return (
-    <div className="grid grid-cols-[1.5rem_minmax(0,1fr)_2.25rem_auto_2.25rem_minmax(0,1fr)] items-center gap-1.5 rounded-lg px-2 py-2 odd:bg-white/5 sm:grid-cols-[3.5rem_minmax(0,1fr)_2.75rem_auto_2.75rem_minmax(0,1fr)] sm:gap-2 sm:px-3">
-      <span className="text-[10px] text-white/60 sm:text-xs">
-        <span className="sm:hidden">{index}.</span>
-        <span className="hidden sm:inline">{index}. Spieltag</span>
-      </span>
-      <span
-        className="truncate text-right text-xs font-medium text-white sm:text-sm"
-        title={getTeamName(game.homeTeamId)}
-      >
-        {getTeamShortName(game.homeTeamId)}
-      </span>
-      <input
-        type="text"
-        inputMode="numeric"
-        value={home}
-        onChange={handleChange(setHome)}
-        onBlur={() => trySave(home, away)}
-        disabled={disabled || isPending}
-        aria-label={`Tipp Heimtore ${getTeamName(game.homeTeamId)}`}
-        className="h-8 w-full rounded-lg border border-white/15 bg-white/5 text-center text-sm font-semibold text-white focus:border-tigers-secondary focus:outline-none disabled:opacity-40"
-      />
-      <span className="text-center text-xs text-white/60 sm:text-sm">:</span>
-      <input
-        type="text"
-        inputMode="numeric"
-        value={away}
-        onChange={handleChange(setAway)}
-        onBlur={() => trySave(home, away)}
-        disabled={disabled || isPending}
-        aria-label={`Tipp Auswärtstore ${getTeamName(game.awayTeamId)}`}
-        className="h-8 w-full rounded-lg border border-white/15 bg-white/5 text-center text-sm font-semibold text-white focus:border-tigers-secondary focus:outline-none disabled:opacity-40"
-      />
-      <span
-        className="truncate text-left text-xs font-medium text-white sm:text-sm"
-        title={getTeamName(game.awayTeamId)}
-      >
-        {getTeamShortName(game.awayTeamId)}
-      </span>
-      {status === "error" && (
-        <span className="col-span-6 text-right text-[10px] text-red-400">
-          Tipp konnte nicht gespeichert werden.
+    <div className="rounded-lg px-2 py-2 odd:bg-white/5 sm:px-3">
+      <div className="grid grid-cols-[2.5rem_minmax(0,1fr)_2.25rem_auto_2.25rem_minmax(0,1fr)] items-center gap-1.5 sm:grid-cols-[6.5rem_minmax(0,1fr)_2.75rem_auto_2.75rem_minmax(0,1fr)_8rem] sm:gap-3">
+        <span className="text-[10px] whitespace-nowrap text-white/60 sm:text-xs">
+          {index}. Spieltag
         </span>
+        <span className="truncate text-right text-xs font-medium text-white sm:text-sm">
+          {getTeamName(game.homeTeamId)}
+        </span>
+        <input
+          type="text"
+          inputMode="numeric"
+          value={home}
+          onChange={handleChange(setHome)}
+          onBlur={() => trySave(home, away)}
+          disabled={disabled || isPending}
+          aria-label={`Tipp Heimtore ${getTeamName(game.homeTeamId)}`}
+          className="h-8 w-full rounded-lg border border-white/15 bg-white/5 text-center text-sm font-semibold text-white focus:border-tigers-secondary focus:outline-none disabled:opacity-40"
+        />
+        <span className="text-center text-xs text-white/60 sm:text-sm">:</span>
+        <input
+          type="text"
+          inputMode="numeric"
+          value={away}
+          onChange={handleChange(setAway)}
+          onBlur={() => trySave(home, away)}
+          disabled={disabled || isPending}
+          aria-label={`Tipp Auswärtstore ${getTeamName(game.awayTeamId)}`}
+          className="h-8 w-full rounded-lg border border-white/15 bg-white/5 text-center text-sm font-semibold text-white focus:border-tigers-secondary focus:outline-none disabled:opacity-40"
+        />
+        <span className="truncate text-left text-xs font-medium text-white sm:text-sm">
+          {getTeamName(game.awayTeamId)}
+        </span>
+        <span className="hidden text-right text-xs whitespace-nowrap text-white/60 sm:block">
+          {formatGameDate(game.kickoff)}
+        </span>
+      </div>
+      <p className="mt-1 text-center text-[10px] text-white/50 sm:hidden">
+        {formatGameDate(game.kickoff)}
+      </p>
+      {status === "error" && (
+        <p className="mt-1 text-center text-[10px] text-red-400">
+          Tipp konnte nicht gespeichert werden.
+        </p>
       )}
     </div>
   );
@@ -198,7 +199,7 @@ export default function TippspielTable({
               >
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-semibold text-white">
-                    {getTeamShortName(entry.homeTeamId)} vs. {getTeamShortName(entry.awayTeamId)}
+                    {getTeamName(entry.homeTeamId)} vs. {getTeamName(entry.awayTeamId)}
                   </p>
                   <p className="text-[11px] text-white/60">{formatGameDate(entry.kickoff)}</p>
                 </div>
