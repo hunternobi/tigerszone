@@ -47,7 +47,10 @@ export async function getGlobalLeaderboard(limit: number): Promise<LeaderboardEn
   }));
 }
 
-export async function getGroupLeaderboard(groupId: string): Promise<LeaderboardEntry[]> {
+export async function getGroupLeaderboard(
+  groupId: string,
+  limit?: number
+): Promise<LeaderboardEntry[]> {
   await dbConnect();
 
   const group = await GroupModel.findById(groupId).select("ownerUserId").lean<{
@@ -69,7 +72,7 @@ export async function getGroupLeaderboard(groupId: string): Promise<LeaderboardE
     .lean<{ _id: Types.ObjectId; name: string }[]>();
   const pointsByUser = await sumPointsForUsers(memberIds);
 
-  return users
+  const sorted = users
     .map((user) => {
       const id = user._id.toString();
       return {
@@ -80,4 +83,6 @@ export async function getGroupLeaderboard(groupId: string): Promise<LeaderboardE
       } satisfies LeaderboardEntry;
     })
     .sort((a, b) => b.points - a.points);
+
+  return limit ? sorted.slice(0, limit) : sorted;
 }

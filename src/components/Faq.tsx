@@ -1,0 +1,102 @@
+"use client";
+
+import { useState, type ReactNode } from "react";
+import { ChevronDown } from "lucide-react";
+
+interface FaqItem {
+  question: string;
+  answer: ReactNode;
+}
+
+const FAQ_ITEMS: FaqItem[] = [
+  {
+    question: '„Name" – ist das mein Klarname oder mein Nutzername?',
+    answer:
+      "Das ist dein Benutzername (nicht dein Klarname). Er kann aktuell nicht nachträglich geändert werden, und jeder Benutzername wird nur einmal vergeben.",
+  },
+  {
+    question: 'Kann ich anonym bleiben (z. B. als „Anonym123")?',
+    answer:
+      "Nein, aktuell ist keine Anonymisierung geplant – dein Benutzername ist für andere Mitglieder sichtbar.",
+  },
+  {
+    question: "Ich habe mein Passwort vergessen, was mache ich jetzt?",
+    answer:
+      "Aktuell gibt es dafür noch keine automatische Funktion im Login-Bereich. Melde dich einfach bei uns über Instagram oder E-Mail (siehe unten), dann helfen wir dir persönlich weiter.",
+  },
+  {
+    question: "Kann ich meinen Tipp nachträglich ändern?",
+    answer: "Ja, dein Tipp kann bis zum Eröffnungsbully beliebig oft geändert werden.",
+  },
+  {
+    question: "Kann ich mehreren Gruppen beitreten?",
+    answer:
+      'Ja, das ist möglich. Im Reiter „Gruppen" siehst du die Gesamtstände all deiner Gruppen, im Reiter „Tippspiel" die Top 5 der gerade ausgewählten Gruppe.',
+  },
+  {
+    question: "Welche Rechte haben Head Coach und Assistant Coach in einer Gruppe?",
+    answer:
+      "Jede Gruppe hat einen Head Coach (den Ersteller) und kann einen Assistant Coach haben. Beide können Mitglieder aus der Gruppe entfernen und den Gruppennamen ändern.",
+  },
+  {
+    question: "Weitere Fragen oder Anregungen?",
+    answer: (
+      <>
+        Schreib uns auf Instagram{" "}
+        <a
+          href="https://www.instagram.com/tigerszoneofficial"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-tigers-secondary hover:underline"
+        >
+          @tigerszoneofficial
+        </a>{" "}
+        oder per Mail an{" "}
+        <a
+          href="mailto:tigerszoneofficial@gmail.com"
+          className="text-tigers-secondary hover:underline"
+        >
+          tigerszoneofficial@gmail.com
+        </a>
+        .
+      </>
+    ),
+  },
+];
+
+function FaqRow({ item }: { item: FaqItem }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="glass-panel-sm overflow-hidden">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="flex w-full items-center justify-between gap-4 p-4 text-left sm:p-5"
+        aria-expanded={open}
+      >
+        <span className="font-semibold text-white">{item.question}</span>
+        <ChevronDown
+          size={18}
+          className={`shrink-0 text-white transition-transform ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+      {open && (
+        <div className="px-4 pb-4 text-sm text-white sm:px-5 sm:pb-5">{item.answer}</div>
+      )}
+    </div>
+  );
+}
+
+export default function Faq() {
+  return (
+    <div id="faq" className="scroll-mt-24">
+      <h2 className="text-2xl font-bold text-white sm:text-3xl">Häufige Fragen</h2>
+      <div className="mt-6 space-y-3">
+        {FAQ_ITEMS.map((item) => (
+          <FaqRow key={item.question} item={item} />
+        ))}
+      </div>
+    </div>
+  );
+}

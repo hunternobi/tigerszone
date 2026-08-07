@@ -7,6 +7,7 @@ const QUICK_LINKS = [
   { href: "/tippspiel", label: "Tippspiel" },
   { href: "/community", label: "Community" },
   { href: "/profile", label: "Profil" },
+  { href: "/community#faq", label: "FAQ" },
 ];
 
 const LEGAL_LINKS = [

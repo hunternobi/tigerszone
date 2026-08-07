@@ -31,7 +31,7 @@ export default async function TippspielPage() {
       myGroups.map(async (group) => ({
         groupId: group._id,
         groupName: group.name,
-        entries: await getGroupLeaderboard(group._id),
+        entries: await getGroupLeaderboard(group._id, 5),
       }))
     ),
   ]);

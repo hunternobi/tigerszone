@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+import Faq from "@/components/Faq";
 
 export const metadata: Metadata = {
   title: "Community",
-  description: "Meme der Woche und Watch Party Finder für Straubing Tigers Fans.",
+  description: "Häufige Fragen rund um TigersZone – Meme der Woche und Watch Party Finder folgen.",
   alternates: { canonical: "/community" },
 };
 
@@ -13,6 +14,10 @@ export default function CommunityPage() {
       <p className="mt-3 text-white">
         Meme der Woche und Watch Party Finder folgen hier (siehe Spezifikation 4.4 &amp; 4.5).
       </p>
+
+      <div className="mt-12">
+        <Faq />
+      </div>
     </section>
   );
 }

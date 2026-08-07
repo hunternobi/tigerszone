@@ -1,4 +1,5 @@
-import { Calendar, Clock } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, Calendar, Clock } from "lucide-react";
 import { Sacramento } from "next/font/google";
 import { auth } from "@/auth";
 import FadingBackground from "@/components/FadingBackground";
@@ -164,6 +165,16 @@ export default async function Home() {
             </div>
           </div>
         </Reveal>
+      </section>
+
+      <section className="border-t border-white/10 bg-tigers-primary px-4 py-8 text-center sm:px-6">
+        <Link
+          href="/community#faq"
+          className="inline-flex items-center gap-2 text-sm font-medium text-tigers-secondary hover:underline"
+        >
+          Fragen? Schau in unserem FAQ-Bereich vorbei
+          <ArrowRight size={16} />
+        </Link>
       </section>
     </>
   );

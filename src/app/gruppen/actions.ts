@@ -307,6 +307,39 @@ export async function demoteAssistant(
   return { success: true };
 }
 
+export async function renameGroup(groupId: string, name: string): Promise<ActionResult> {
+  const session = await auth();
+  if (!session?.user) return { success: false, error: "Bitte melde dich an." };
+
+  const trimmed = name.trim();
+  if (trimmed.length < 2) {
+    return { success: false, error: "Gruppenname muss mindestens 2 Zeichen lang sein." };
+  }
+
+  await dbConnect();
+  const group = await GroupModel.findById(groupId).select("ownerUserId").lean<{
+    ownerUserId: Types.ObjectId;
+  } | null>();
+  if (!group) return { success: false, error: "Gruppe nicht gefunden." };
+
+  const isOwner = group.ownerUserId.toString() === session.user.id;
+  if (!isOwner) {
+    const membership = await GroupMemberModel.findOne({
+      groupId,
+      userId: session.user.id,
+    }).select("role").lean<{ role: "member" | "assistant" } | null>();
+    if (!membership || membership.role !== "assistant") {
+      return { success: false, error: "Keine Berechtigung." };
+    }
+  }
+
+  await GroupModel.updateOne({ _id: groupId }, { name: trimmed });
+
+  revalidatePath("/gruppen");
+  revalidatePath("/tippspiel");
+  return { success: true };
+}
+
 export async function kickGroupMember(
   groupId: string,
   targetUserId: string
