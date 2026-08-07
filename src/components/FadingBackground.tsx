@@ -10,6 +10,7 @@ interface FadingBackgroundProps {
   opacity?: number;
   blurPx?: number;
   overlayClassName?: string;
+  scaleClassName?: string;
   children: ReactNode;
 }
 
@@ -19,6 +20,7 @@ export default function FadingBackground({
   opacity = 1,
   blurPx = 0,
   overlayClassName,
+  scaleClassName = "scale-105",
   children,
 }: FadingBackgroundProps) {
   const ref = useRef<HTMLDivElement>(null);
@@ -29,7 +31,7 @@ export default function FadingBackground({
     <div ref={ref} className="relative -mt-[72px] overflow-hidden">
       <motion.div
         style={{ opacity: bgOpacity, filter: blurPx ? `blur(${blurPx}px)` : undefined }}
-        className="pointer-events-none fixed inset-0 -z-10 scale-105"
+        className={`pointer-events-none fixed inset-0 -z-10 ${scaleClassName}`}
       >
         <Image src={src} alt={alt} fill priority className="object-cover object-center" />
       </motion.div>
