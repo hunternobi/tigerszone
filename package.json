@@ -11,6 +11,7 @@
     "seed:blogposts": "node --env-file=.env.local scripts/seed-blogposts.mjs"
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
     "@vercel/analytics": "^2.0.1",
     "bcryptjs": "^3.0.3",
     "framer-motion": "^12.42.2",

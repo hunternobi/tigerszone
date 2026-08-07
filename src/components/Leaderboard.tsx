@@ -1,3 +1,5 @@
+import { BriefcaseIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
+
 export interface LeaderboardEntry {
   userId: string;
   name: string;
@@ -14,16 +16,17 @@ interface LeaderboardProps {
 const MEDALS = ["🥇", "🥈", "🥉"];
 
 const ROLE_BADGES = {
-  owner: { emoji: "👔", label: "Head Coach" },
-  assistant: { emoji: "📝", label: "Assistant Coach" },
+  owner: { Icon: BriefcaseIcon, label: "Head Coach" },
+  assistant: { Icon: PencilSquareIcon, label: "Assistant Coach" },
 } as const;
 
 export function RoleBadge({ role }: { role?: "owner" | "assistant" | "member" }) {
   if (role !== "owner" && role !== "assistant") return null;
-  const badge = ROLE_BADGES[role];
+  const { Icon, label } = ROLE_BADGES[role];
   return (
     <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] font-semibold text-white">
-      {badge.emoji} {badge.label}
+      <Icon className="h-3 w-3" />
+      {label}
     </span>
   );
 }

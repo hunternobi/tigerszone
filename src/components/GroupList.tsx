@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
+import { BriefcaseIcon } from "@heroicons/react/24/outline";
 import type { MyGroup } from "@/app/gruppen/actions";
 import GroupMemberTable from "@/components/GroupMemberTable";
 import type { LeaderboardEntry } from "@/components/Leaderboard";
@@ -42,8 +43,14 @@ export default function GroupList({ groups, leaderboards }: GroupListProps) {
                     {group.isPublic ? "Öffentlich" : "Privat"}
                   </span>
                 </div>
-                <p className="text-xs text-white">
-                  {group.memberCount} Mitglieder{group.isOwner ? " · Head Coach 👔" : ""}
+                <p className="flex items-center gap-1 text-xs text-white">
+                  {group.memberCount} Mitglieder
+                  {group.isOwner && (
+                    <>
+                      {" "}
+                      · Head Coach <BriefcaseIcon className="h-3 w-3" />
+                    </>
+                  )}
                 </p>
               </div>
               <ChevronDown

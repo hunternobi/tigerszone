@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { useSession } from "next-auth/react";
+import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import {
   demoteAssistant,
   kickGroupMember,
@@ -123,9 +124,10 @@ export default function GroupMemberTable({
                 type="button"
                 disabled={isPending}
                 onClick={() => runAction(() => promoteToAssistant(groupId, menu.userId))}
-                className="block w-full rounded-lg px-3 py-2 text-left text-sm text-white transition hover:bg-white/10 disabled:opacity-50"
+                className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-white transition hover:bg-white/10 disabled:opacity-50"
               >
-                📝 Zum Assistant Coach befördern
+                <PencilSquareIcon className="h-4 w-4 shrink-0" />
+                Zum Assistant Coach befördern
               </button>
             )}
             {viewerRole === "owner" && menu.role === "assistant" && (
