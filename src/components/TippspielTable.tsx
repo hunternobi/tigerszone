@@ -83,8 +83,43 @@ function TippspielRow({ index, game, initial, disabled }: TippspielRowProps) {
           {formatPostDate(game.kickoff)}
         </span>
       </div>
-      <div className="mt-1 grid grid-cols-[minmax(0,1fr)_2.25rem_auto_2.25rem_minmax(0,1fr)] items-center gap-1.5 sm:gap-2.5">
-        <span className="truncate text-right text-xs font-medium text-white sm:text-sm">
+      {/* Mobile: each team stacked with its own input, so long names never get truncated */}
+      <div className="mt-1 space-y-1 sm:hidden">
+        <div className="flex items-center justify-between gap-2">
+          <span className="min-w-0 flex-1 truncate text-xs font-medium text-white">
+            {getTeamName(game.homeTeamId)}
+          </span>
+          <input
+            type="text"
+            inputMode="numeric"
+            value={home}
+            onChange={handleChange(setHome)}
+            onBlur={() => trySave(home, away)}
+            disabled={disabled || isPending}
+            aria-label={`Tipp Heimtore ${getTeamName(game.homeTeamId)}`}
+            className="h-8 w-10 shrink-0 rounded-lg border border-white/15 bg-white/5 text-center text-sm font-semibold text-white focus:border-tigers-secondary focus:outline-none disabled:opacity-40"
+          />
+        </div>
+        <div className="flex items-center justify-between gap-2">
+          <span className="min-w-0 flex-1 truncate text-xs font-medium text-white">
+            {getTeamName(game.awayTeamId)}
+          </span>
+          <input
+            type="text"
+            inputMode="numeric"
+            value={away}
+            onChange={handleChange(setAway)}
+            onBlur={() => trySave(home, away)}
+            disabled={disabled || isPending}
+            aria-label={`Tipp Auswärtstore ${getTeamName(game.awayTeamId)}`}
+            className="h-8 w-10 shrink-0 rounded-lg border border-white/15 bg-white/5 text-center text-sm font-semibold text-white focus:border-tigers-secondary focus:outline-none disabled:opacity-40"
+          />
+        </div>
+      </div>
+
+      {/* Desktop / tablet: teams flank the score inline */}
+      <div className="hidden sm:mt-1 sm:grid sm:grid-cols-[minmax(0,1fr)_2.75rem_auto_2.75rem_minmax(0,1fr)] sm:items-center sm:gap-2.5">
+        <span className="truncate text-right text-sm font-medium text-white">
           {getTeamName(game.homeTeamId)}
         </span>
         <input
@@ -97,7 +132,7 @@ function TippspielRow({ index, game, initial, disabled }: TippspielRowProps) {
           aria-label={`Tipp Heimtore ${getTeamName(game.homeTeamId)}`}
           className="h-8 w-full rounded-lg border border-white/15 bg-white/5 text-center text-sm font-semibold text-white focus:border-tigers-secondary focus:outline-none disabled:opacity-40"
         />
-        <span className="text-center text-xs text-white/60 sm:text-sm">:</span>
+        <span className="text-center text-sm text-white/60">:</span>
         <input
           type="text"
           inputMode="numeric"
@@ -108,7 +143,7 @@ function TippspielRow({ index, game, initial, disabled }: TippspielRowProps) {
           aria-label={`Tipp Auswärtstore ${getTeamName(game.awayTeamId)}`}
           className="h-8 w-full rounded-lg border border-white/15 bg-white/5 text-center text-sm font-semibold text-white focus:border-tigers-secondary focus:outline-none disabled:opacity-40"
         />
-        <span className="truncate text-left text-xs font-medium text-white sm:text-sm">
+        <span className="truncate text-left text-sm font-medium text-white">
           {getTeamName(game.awayTeamId)}
         </span>
       </div>

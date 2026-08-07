@@ -45,7 +45,7 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter] duration-300 ${scrolled ? "glass-bar" : ""}`}
+      className={`fixed inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter] duration-300 ${scrolled || mobileOpen ? "glass-bar" : ""}`}
     >
       <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-4 sm:px-6">
         <Link href="/" className="flex items-center gap-2">
@@ -126,7 +126,7 @@ export default function Header() {
       </div>
 
       {mobileOpen && (
-        <nav className="mx-auto flex max-w-7xl flex-col gap-1 border-t border-white/10 px-4 py-4 sm:px-6 md:hidden">
+        <nav className="mx-auto flex max-w-7xl flex-col gap-1 border-t border-white/10 bg-tigers-primary px-4 py-4 sm:px-6 md:hidden">
           {mobileHidden.map((link) => {
             const isActive = pathname?.startsWith(link.href);
             return (
