@@ -38,6 +38,9 @@ export default async function TippspielPage() {
 
   const vorbereitungGames = allGames.filter((game) => game.competition === "Vorbereitung");
   const hauptrundeGames = allGames.filter((game) => game.competition === "DEL");
+  const nextGame =
+    allGames.find((game) => game.status === "scheduled" && new Date(game.kickoff) > new Date()) ??
+    null;
 
   const predictions: Record<string, { predictedHome: number; predictedAway: number }> = {};
   const results: ResultEntry[] = [];
@@ -66,6 +69,7 @@ export default async function TippspielPage() {
 
   return (
     <TippspielInteractive
+      nextGame={nextGame}
       vorbereitungGames={vorbereitungGames}
       hauptrundeGames={hauptrundeGames}
       predictions={predictions}

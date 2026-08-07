@@ -1,5 +1,6 @@
 import FadingBackground from "@/components/FadingBackground";
 import LeaderboardWidget from "@/components/LeaderboardWidget";
+import NextGameCountdown from "@/components/NextGameCountdown";
 import TippspielTable, { type ResultEntry } from "@/components/TippspielTable";
 import { SCORING } from "@/lib/constants";
 import type { Game } from "@/types";
@@ -7,6 +8,7 @@ import type { LeaderboardEntry } from "@/components/Leaderboard";
 import type { GroupLeaderboardData } from "@/lib/leaderboard";
 
 interface TippspielInteractiveProps {
+  nextGame: Game | null;
   vorbereitungGames: Game[];
   hauptrundeGames: Game[];
   predictions: Record<string, { predictedHome: number; predictedAway: number }>;
@@ -18,6 +20,7 @@ interface TippspielInteractiveProps {
 }
 
 export default function TippspielInteractive({
+  nextGame,
   vorbereitungGames,
   hauptrundeGames,
   predictions,
@@ -34,9 +37,17 @@ export default function TippspielInteractive({
           <div>
             <h1 className="text-3xl font-bold text-white">Tippspiel</h1>
             <p className="mt-3 text-white">
-              Trag deinen Tipp direkt in der Tabelle ein – Vorbereitung und Hauptrunde,
-              chronologisch sortiert.
+              Tippe alle Spiele der Straubing Tigers - messe dich mit deinen Freunden und spiele
+              um Ruhm und Punkte!
             </p>
+
+            {nextGame && (
+              <NextGameCountdown
+                homeTeamId={nextGame.homeTeamId}
+                awayTeamId={nextGame.awayTeamId}
+                kickoff={nextGame.kickoff}
+              />
+            )}
 
             <div className="mt-8">
               <TippspielTable
