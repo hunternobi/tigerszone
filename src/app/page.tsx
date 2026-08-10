@@ -66,7 +66,7 @@ export default async function Home() {
                     <p className="mt-1 text-xl font-bold text-white">
                       {getTeamName(nextGame.homeTeamId)} vs. {getTeamName(nextGame.awayTeamId)}
                     </p>
-                    <div className="mt-2 flex flex-wrap gap-4 text-sm text-white">
+                    <div className="mt-2 flex flex-wrap justify-center gap-4 text-sm text-white sm:justify-start">
                       <span className="flex items-center gap-1">
                         <Calendar size={14} /> {formatGameDate(nextGame.kickoff)}
                       </span>
