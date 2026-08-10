@@ -113,19 +113,21 @@ export default function GroupMemberTable({
                   <RoleBadge role={entry.role} />
                 </span>
                 <span className="flex shrink-0 items-center gap-1">
-                  <span className="font-semibold whitespace-nowrap text-white">
+                  <span className="w-14 text-right font-semibold whitespace-nowrap text-white">
                     {entry.points} Pkt.
                   </span>
-                  {manageable && (
-                    <button
-                      type="button"
-                      onClick={(e) => handleMenuButton(e, entry)}
-                      aria-label="Mitglied-Optionen"
-                      className="rounded-full p-1 text-white/60 transition hover:bg-white/10 hover:text-white"
-                    >
-                      <MoreVertical size={16} />
-                    </button>
-                  )}
+                  <span className="flex w-6 shrink-0 justify-center">
+                    {manageable && (
+                      <button
+                        type="button"
+                        onClick={(e) => handleMenuButton(e, entry)}
+                        aria-label="Mitglied-Optionen"
+                        className="rounded-full p-1 text-white/60 transition hover:bg-white/10 hover:text-white"
+                      >
+                        <MoreVertical size={16} />
+                      </button>
+                    )}
+                  </span>
                 </span>
               </li>
             );

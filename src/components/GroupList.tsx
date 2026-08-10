@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { ChevronDown, Pencil, Share2 } from "lucide-react";
 import { renameGroup, type MyGroup } from "@/app/gruppen/actions";
 import GroupMemberTable from "@/components/GroupMemberTable";
-import { RoleBadge, type LeaderboardEntry } from "@/components/Leaderboard";
+import type { LeaderboardEntry } from "@/components/Leaderboard";
 
 interface GroupListProps {
   groups: MyGroup[];
@@ -134,10 +134,7 @@ export default function GroupList({ groups, leaderboards }: GroupListProps) {
                 {isRenaming && renameError && (
                   <p className="mt-1 text-xs text-red-400">{renameError}</p>
                 )}
-                <p className="flex items-center gap-1.5 text-xs text-white">
-                  {group.memberCount} Mitglieder
-                  {group.isOwner && <RoleBadge role="owner" />}
-                </p>
+                <p className="text-xs text-white">{group.memberCount} Mitglieder</p>
               </div>
               <ChevronDown
                 size={18}
