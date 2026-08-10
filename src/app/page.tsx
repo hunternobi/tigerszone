@@ -58,7 +58,7 @@ export default async function Home() {
                   wirklich Ahnung vom Eishockey hat!
                 </p>
 
-                <div className="mt-6 flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
+                <div className="mt-6 flex flex-col items-center gap-6 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-wide text-tigers-secondary">
                       {nextGame.competition === "Vorbereitung" ? "Vorbereitungsspiel" : "DEL"}
