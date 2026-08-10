@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useTransition, type ChangeEvent } from "react";
+import { useEffect, useRef, useState, useTransition, type ChangeEvent } from "react";
 import Link from "next/link";
+import { Check } from "lucide-react";
 import { submitPrediction } from "@/app/tippspiel/actions";
 import { getTeamName } from "@/lib/teams";
 import { formatGameDate, formatPostDate } from "@/utils/format";
@@ -47,14 +48,24 @@ function TippspielRow({ index, game, initial, disabled }: TippspielRowProps) {
   const [home, setHome] = useState(initial ? String(initial.predictedHome) : "");
   const [away, setAway] = useState(initial ? String(initial.predictedAway) : "");
   const [saved, setSaved] = useState<PredictionInfo | undefined>(initial);
-  const [status, setStatus] = useState<"idle" | "saving" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "saving" | "error" | "saved">("idle");
   const [isPending, startTransition] = useTransition();
+  const savedTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  useEffect(() => {
+    return () => {
+      if (savedTimeout.current) clearTimeout(savedTimeout.current);
+    };
+  }, []);
+
+  const isDraw = home !== "" && away !== "" && Number(home) === Number(away);
 
   function trySave(nextHome: string, nextAway: string) {
     if (disabled) return;
     if (nextHome === "" || nextAway === "") return;
     const homeNum = Number(nextHome);
     const awayNum = Number(nextAway);
+    if (homeNum === awayNum) return;
     if (saved && saved.predictedHome === homeNum && saved.predictedAway === awayNum) return;
 
     setStatus("saving");
@@ -65,13 +76,22 @@ function TippspielRow({ index, game, initial, disabled }: TippspielRowProps) {
         return;
       }
       setSaved({ predictedHome: homeNum, predictedAway: awayNum });
-      setStatus("idle");
+      setStatus("saved");
+      if (savedTimeout.current) clearTimeout(savedTimeout.current);
+      savedTimeout.current = setTimeout(() => setStatus("idle"), 1800);
     });
   }
 
   function handleChange(setter: (v: string) => void) {
     return (e: ChangeEvent<HTMLInputElement>) => setter(sanitizeDigits(e.target.value));
   }
+
+  const inputClass = (invalid: boolean) =>
+    `h-8 w-full rounded-lg border text-center text-xs font-semibold text-white focus:outline-none disabled:opacity-40 sm:text-sm ${
+      invalid
+        ? "border-red-500 focus:border-red-500"
+        : "border-white/15 bg-white/5 focus:border-tigers-secondary"
+    }`;
 
   return (
     <div className="rounded-lg px-2 py-2 odd:bg-white/5 sm:px-3">
@@ -83,43 +103,8 @@ function TippspielRow({ index, game, initial, disabled }: TippspielRowProps) {
           {formatPostDate(game.kickoff)}
         </span>
       </div>
-      {/* Mobile: each team stacked with its own input, so long names never get truncated */}
-      <div className="mt-1 space-y-1 sm:hidden">
-        <div className="flex items-center justify-between gap-2">
-          <span className="min-w-0 flex-1 truncate text-xs font-medium text-white">
-            {getTeamName(game.homeTeamId)}
-          </span>
-          <input
-            type="text"
-            inputMode="numeric"
-            value={home}
-            onChange={handleChange(setHome)}
-            onBlur={() => trySave(home, away)}
-            disabled={disabled || isPending}
-            aria-label={`Tipp Heimtore ${getTeamName(game.homeTeamId)}`}
-            className="h-8 w-10 shrink-0 rounded-lg border border-white/15 bg-white/5 text-center text-sm font-semibold text-white focus:border-tigers-secondary focus:outline-none disabled:opacity-40"
-          />
-        </div>
-        <div className="flex items-center justify-between gap-2">
-          <span className="min-w-0 flex-1 truncate text-xs font-medium text-white">
-            {getTeamName(game.awayTeamId)}
-          </span>
-          <input
-            type="text"
-            inputMode="numeric"
-            value={away}
-            onChange={handleChange(setAway)}
-            onBlur={() => trySave(home, away)}
-            disabled={disabled || isPending}
-            aria-label={`Tipp Auswärtstore ${getTeamName(game.awayTeamId)}`}
-            className="h-8 w-10 shrink-0 rounded-lg border border-white/15 bg-white/5 text-center text-sm font-semibold text-white focus:border-tigers-secondary focus:outline-none disabled:opacity-40"
-          />
-        </div>
-      </div>
-
-      {/* Desktop / tablet: teams flank the score inline */}
-      <div className="hidden sm:mt-1 sm:grid sm:grid-cols-[minmax(0,1fr)_2.75rem_auto_2.75rem_minmax(0,1fr)] sm:items-center sm:gap-2.5">
-        <span className="truncate text-right text-sm font-medium text-white">
+      <div className="mt-1 grid grid-cols-[minmax(0,1fr)_2rem_auto_2rem_minmax(0,1fr)] items-center gap-1 sm:grid-cols-[minmax(0,1fr)_2.75rem_auto_2.75rem_minmax(0,1fr)] sm:gap-2.5">
+        <span className="truncate text-right text-[11px] font-medium text-white sm:text-sm">
           {getTeamName(game.homeTeamId)}
         </span>
         <input
@@ -130,9 +115,9 @@ function TippspielRow({ index, game, initial, disabled }: TippspielRowProps) {
           onBlur={() => trySave(home, away)}
           disabled={disabled || isPending}
           aria-label={`Tipp Heimtore ${getTeamName(game.homeTeamId)}`}
-          className="h-8 w-full rounded-lg border border-white/15 bg-white/5 text-center text-sm font-semibold text-white focus:border-tigers-secondary focus:outline-none disabled:opacity-40"
+          className={inputClass(isDraw)}
         />
-        <span className="text-center text-sm text-white/60">:</span>
+        <span className="text-center text-xs text-white/60 sm:text-sm">:</span>
         <input
           type="text"
           inputMode="numeric"
@@ -141,15 +126,27 @@ function TippspielRow({ index, game, initial, disabled }: TippspielRowProps) {
           onBlur={() => trySave(home, away)}
           disabled={disabled || isPending}
           aria-label={`Tipp Auswärtstore ${getTeamName(game.awayTeamId)}`}
-          className="h-8 w-full rounded-lg border border-white/15 bg-white/5 text-center text-sm font-semibold text-white focus:border-tigers-secondary focus:outline-none disabled:opacity-40"
+          className={inputClass(isDraw)}
         />
-        <span className="truncate text-left text-sm font-medium text-white">
+        <span className="truncate text-left text-[11px] font-medium text-white sm:text-sm">
           {getTeamName(game.awayTeamId)}
         </span>
       </div>
-      {status === "error" && (
+
+      {isDraw && (
+        <p className="mt-1 text-center text-[10px] text-red-400">
+          Ungültiger Tipp – ein Unentschieden ist nicht möglich.
+        </p>
+      )}
+      {!isDraw && status === "error" && (
         <p className="mt-1 text-center text-[10px] text-red-400">
           Tipp konnte nicht gespeichert werden.
+        </p>
+      )}
+      {!isDraw && status === "saved" && (
+        <p className="mt-1 flex animate-[fadeIn_0.2s_ease-out] items-center justify-center gap-1 text-center text-[10px] font-semibold text-emerald-400">
+          <Check size={12} />
+          Tipp gespeichert
         </p>
       )}
     </div>
