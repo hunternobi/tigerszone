@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { useSession } from "next-auth/react";
+import { MoreVertical } from "lucide-react";
 import { MdOutlineEditNote } from "react-icons/md";
 import {
   demoteAssistant,
@@ -66,6 +67,14 @@ export default function GroupMemberTable({
     setMenu({ userId: entry.userId, role: entry.role ?? "member", x: e.clientX, y: e.clientY });
   }
 
+  function handleMenuButton(e: ReactMouseEvent<HTMLButtonElement>, entry: LeaderboardEntry) {
+    e.stopPropagation();
+    const rect = e.currentTarget.getBoundingClientRect();
+    const menuWidth = 220;
+    const x = Math.max(8, Math.min(rect.right - menuWidth, window.innerWidth - menuWidth - 8));
+    setMenu({ userId: entry.userId, role: entry.role ?? "member", x, y: rect.bottom + 4 });
+  }
+
   function runAction(action: () => Promise<ActionResult>) {
     setMenu(null);
     startTransition(async () => {
@@ -79,7 +88,7 @@ export default function GroupMemberTable({
       <h3 className="text-lg font-bold text-white">{title}</h3>
       {canManage && (
         <p className="mt-1 mb-3 text-xs text-white">
-          Rechtsklick auf ein Mitglied öffnet die Optionen.
+          Rechtsklick (oder das Menü-Symbol) auf einem Mitglied öffnet die Optionen.
         </p>
       )}
       {entries.length === 0 ? (
@@ -103,8 +112,20 @@ export default function GroupMemberTable({
                   </Link>
                   <RoleBadge role={entry.role} />
                 </span>
-                <span className="shrink-0 font-semibold whitespace-nowrap text-white">
-                  {entry.points} Pkt.
+                <span className="flex shrink-0 items-center gap-1">
+                  <span className="font-semibold whitespace-nowrap text-white">
+                    {entry.points} Pkt.
+                  </span>
+                  {manageable && (
+                    <button
+                      type="button"
+                      onClick={(e) => handleMenuButton(e, entry)}
+                      aria-label="Mitglied-Optionen"
+                      className="rounded-full p-1 text-white/60 transition hover:bg-white/10 hover:text-white"
+                    >
+                      <MoreVertical size={16} />
+                    </button>
+                  )}
                 </span>
               </li>
             );

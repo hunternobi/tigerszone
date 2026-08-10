@@ -2,7 +2,7 @@
 
 import { useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronDown, Pencil } from "lucide-react";
+import { ChevronDown, Pencil, Share2 } from "lucide-react";
 import { renameGroup, type MyGroup } from "@/app/gruppen/actions";
 import GroupMemberTable from "@/components/GroupMemberTable";
 import { RoleBadge, type LeaderboardEntry } from "@/components/Leaderboard";
@@ -18,7 +18,26 @@ export default function GroupList({ groups, leaderboards }: GroupListProps) {
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [nameDraft, setNameDraft] = useState("");
   const [renameError, setRenameError] = useState<string | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  async function shareInvite(group: MyGroup) {
+    const inviteLink = `${window.location.origin}/gruppen/join/${group.inviteCode}`;
+    const text = `${group.ownerName} hat dich eingeladen, der Tippspiel-Gruppe ${group.name} beizutreten.`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: "TigersZone Einladung", text, url: inviteLink });
+      } catch {
+        // Nutzer hat das Teilen-Menü abgebrochen.
+      }
+      return;
+    }
+
+    await navigator.clipboard.writeText(`${text} Link: ${inviteLink}`);
+    setCopiedId(group._id);
+    setTimeout(() => setCopiedId((id) => (id === group._id ? null : id)), 1800);
+  }
 
   function startRename(group: MyGroup) {
     setRenamingId(group._id);
@@ -47,8 +66,6 @@ export default function GroupList({ groups, leaderboards }: GroupListProps) {
         const isExpanded = expandedId === group._id;
         const isRenaming = renamingId === group._id;
         const canManage = group.viewerRole === "owner" || group.viewerRole === "assistant";
-        const inviteLink = `/gruppen/join/${group.inviteCode}`;
-        const inviteText = `${group.ownerName} hat dich eingeladen, der Tippspiel-Gruppe ${group.name} beizutreten. Link: `;
 
         return (
           <div key={group._id} className="glass-panel-sm p-5">
@@ -133,20 +150,20 @@ export default function GroupList({ groups, leaderboards }: GroupListProps) {
                 Öffentliche Gruppe – sichtbar in „Öffentliche Gruppen&quot; für alle Nutzer.
               </p>
             ) : (
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigator.clipboard.writeText(
-                    `${inviteText}${window.location.origin}${inviteLink}`
-                  );
-                }}
-                className="mt-3 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-left text-xs text-white transition hover:bg-white/10"
-              >
-                {inviteText}
-                {inviteLink}
-                <span className="text-white"> (klicken zum Kopieren)</span>
-              </button>
+              <div className="mt-3 flex items-center justify-between gap-3 rounded-lg border border-white/10 bg-white/5 px-3 py-2">
+                <span className="text-xs text-white">Private Gruppe – lade Freunde per Link ein.</span>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    shareInvite(group);
+                  }}
+                  className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-tigers-secondary px-3 py-1.5 text-xs font-semibold text-white transition hover:opacity-90"
+                >
+                  <Share2 size={14} />
+                  {copiedId === group._id ? "Kopiert!" : "Teilen"}
+                </button>
+              </div>
             )}
 
             {isExpanded && (
