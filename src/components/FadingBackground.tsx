@@ -31,7 +31,7 @@ export default function FadingBackground({
     <div ref={ref} className="relative -mt-[72px] overflow-hidden">
       <motion.div
         style={{ opacity: bgOpacity, filter: blurPx ? `blur(${blurPx}px)` : undefined }}
-        className={`pointer-events-none fixed inset-0 -z-10 ${scaleClassName}`}
+        className={`pointer-events-none fixed inset-x-0 top-0 -z-10 h-dvh ${scaleClassName}`}
       >
         <Image src={src} alt={alt} fill priority className="object-cover object-center" />
       </motion.div>
@@ -39,7 +39,7 @@ export default function FadingBackground({
       {overlayClassName && (
         <motion.div
           style={{ opacity: bgOpacity }}
-          className={`pointer-events-none fixed inset-0 -z-10 ${overlayClassName}`}
+          className={`pointer-events-none fixed inset-x-0 top-0 -z-10 h-dvh ${overlayClassName}`}
         />
       )}
 
