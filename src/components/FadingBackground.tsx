@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 
 interface FadingBackgroundProps {
   src: string;
@@ -26,6 +26,17 @@ export default function FadingBackground({
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const bgOpacity = useTransform(scrollYProgress, [0, 1], [opacity, 0]);
+
+  useEffect(() => {
+    // iOS Safari sometimes mis-composites fixed + backdrop-filter layers on first
+    // paint; a 1px scroll nudge forces it to repaint correctly. No-op elsewhere.
+    if (window.scrollY !== 0) return;
+    const id = requestAnimationFrame(() => {
+      window.scrollTo(0, 1);
+      requestAnimationFrame(() => window.scrollTo(0, 0));
+    });
+    return () => cancelAnimationFrame(id);
+  }, []);
 
   return (
     <div ref={ref} className="relative -mt-[72px] overflow-hidden">
