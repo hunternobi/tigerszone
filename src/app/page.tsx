@@ -32,7 +32,7 @@ export default async function Home() {
         overlayClassName="bg-tigers-primary/72"
       >
       <section className="relative min-h-screen overflow-hidden px-4 py-16 sm:min-h-[130vh] sm:px-6 sm:py-24">
-        <div className="relative mx-auto max-w-4xl text-center">
+        <div className="relative mx-auto max-w-4xl text-left sm:text-center">
           <h1 className="text-4xl font-bold text-white sm:text-5xl">
             Willkommen in der
             <span
@@ -42,9 +42,9 @@ export default async function Home() {
             </span>
           </h1>
 
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-white">{SITE_DESCRIPTION}</p>
+          <p className="mt-6 max-w-2xl text-lg text-white sm:mx-auto">{SITE_DESCRIPTION}</p>
 
-          <div className="mt-6 flex justify-center">
+          <div className="mt-6 flex justify-start sm:justify-center">
             <GlassButtonExact href="/spieltagsblog" size="0.9rem">
               Zum Spieltagsblog
             </GlassButtonExact>
