@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SessionProvider } from "next-auth/react";
@@ -54,6 +54,10 @@ export const metadata: Metadata = {
   icons: {
     icon: "/images/TigersZone_Logo.png",
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0a0f3d",
 };
 
 export default function RootLayout({
