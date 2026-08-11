@@ -6,11 +6,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { useSession } from "next-auth/react";
-import { MoreVertical } from "lucide-react";
+import { LogOut, MoreVertical } from "lucide-react";
 import { MdOutlineEditNote } from "react-icons/md";
 import {
   demoteAssistant,
   kickGroupMember,
+  leaveGroup,
   promoteToAssistant,
   type ActionResult,
 } from "@/app/gruppen/actions";
@@ -83,9 +84,32 @@ export default function GroupMemberTable({
     });
   }
 
+  function handleLeave() {
+    const message =
+      viewerRole === "owner"
+        ? "Du bist Head Coach dieser Gruppe. Wenn du sie verlässt, übernimmt automatisch der Assistant Coach (oder das älteste Mitglied) die Leitung. Gruppe wirklich verlassen?"
+        : "Diese Gruppe wirklich verlassen?";
+    if (!window.confirm(message)) return;
+    startTransition(async () => {
+      await leaveGroup(groupId);
+      router.refresh();
+    });
+  }
+
   return (
     <div className="glass-panel p-4 sm:p-6">
-      <h3 className="text-lg font-bold text-white">{title}</h3>
+      <div className="flex items-center justify-between gap-3">
+        <h3 className="text-lg font-bold text-white">{title}</h3>
+        <button
+          type="button"
+          onClick={handleLeave}
+          disabled={isPending}
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-white/15 px-3 py-1.5 text-xs font-semibold text-red-300 transition hover:bg-white/10 disabled:opacity-50"
+        >
+          <LogOut size={14} />
+          Verlassen
+        </button>
+      </div>
       {canManage && (
         <p className="mt-1 mb-3 text-xs text-white">
           Rechtsklick (oder das Menü-Symbol) auf einem Mitglied öffnet die Optionen.
@@ -94,7 +118,7 @@ export default function GroupMemberTable({
       {entries.length === 0 ? (
         <p className="mt-3 text-sm text-white">Noch keine Einträge vorhanden.</p>
       ) : (
-        <ol className="mt-3 space-y-2">
+        <ol className="mt-3 space-y-2 text-sm">
           {entries.map((entry, index) => {
             const manageable = canManage && entry.userId !== currentUserId && entry.role !== "owner";
             return (
@@ -106,7 +130,9 @@ export default function GroupMemberTable({
                 }`}
               >
                 <span className="flex min-w-0 flex-1 flex-wrap items-center gap-2 text-white">
-                  <span className="text-tigers-secondary">{index + 1}.</span>
+                  <span className={index === 0 ? "text-base" : ""}>
+                    {index === 0 ? "🥇" : `${index + 1}.`}
+                  </span>
                   <Link href={`/spieler/${entry.userId}`} className="hover:underline">
                     {entry.name}
                   </Link>

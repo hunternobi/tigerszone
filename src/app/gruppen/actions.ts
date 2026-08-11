@@ -340,6 +340,57 @@ export async function renameGroup(groupId: string, name: string): Promise<Action
   return { success: true };
 }
 
+export async function leaveGroup(groupId: string): Promise<ActionResult> {
+  const session = await auth();
+  if (!session?.user) return { success: false, error: "Bitte melde dich an." };
+
+  await dbConnect();
+  const group = await GroupModel.findById(groupId).select("ownerUserId").lean<{
+    ownerUserId: Types.ObjectId;
+  } | null>();
+  if (!group) return { success: false, error: "Gruppe nicht gefunden." };
+
+  const isOwner = group.ownerUserId.toString() === session.user.id;
+
+  if (isOwner) {
+    const assistant = await GroupMemberModel.findOne({ groupId, role: "assistant" })
+      .sort({ joinedAt: 1 })
+      .lean<{ userId: Types.ObjectId } | null>();
+
+    let successorId = assistant?.userId;
+    if (!successorId) {
+      const oldestOther = await GroupMemberModel.findOne({
+        groupId,
+        userId: { $ne: session.user.id },
+      })
+        .sort({ joinedAt: 1 })
+        .lean<{ userId: Types.ObjectId } | null>();
+      successorId = oldestOther?.userId;
+    }
+
+    if (successorId) {
+      await GroupModel.updateOne({ _id: groupId }, { ownerUserId: successorId });
+      await GroupMemberModel.updateOne({ groupId, userId: successorId }, { role: "member" });
+      await GroupMemberModel.deleteOne({ groupId, userId: session.user.id });
+    } else {
+      // No other members left to hand the group to — dissolve it.
+      await GroupMemberModel.deleteMany({ groupId });
+      await GroupModel.deleteOne({ _id: groupId });
+    }
+  } else {
+    await GroupMemberModel.deleteOne({ groupId, userId: session.user.id });
+  }
+
+  const cookieStore = await cookies();
+  if (cookieStore.get(ACTIVE_GROUP_COOKIE)?.value === groupId) {
+    cookieStore.delete(ACTIVE_GROUP_COOKIE);
+  }
+
+  revalidatePath("/gruppen");
+  revalidatePath("/tippspiel");
+  return { success: true };
+}
+
 export async function kickGroupMember(
   groupId: string,
   targetUserId: string
