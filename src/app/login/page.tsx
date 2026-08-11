@@ -4,11 +4,14 @@ import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState, useTransition, type FormEvent } from "react";
+import { resendVerificationEmail } from "@/app/register/actions";
 
 function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [needsVerification, setNeedsVerification] = useState(false);
+  const [resendState, setResendState] = useState<"idle" | "sending" | "sent">("idle");
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -17,14 +20,34 @@ function LoginForm() {
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
+    setNeedsVerification(false);
+    setResendState("idle");
     startTransition(async () => {
       const result = await signIn("credentials", { email, password, redirect: false });
+      if (result?.code === "email-not-verified") {
+        setNeedsVerification(true);
+        setError("Bitte bestätige zuerst deine E-Mail-Adresse. Schau in dein Postfach.");
+        return;
+      }
       if (result?.error) {
         setError("E-Mail oder Passwort ist falsch.");
         return;
       }
       router.push(callbackUrl);
       router.refresh();
+    });
+  }
+
+  function handleResend() {
+    setResendState("sending");
+    startTransition(async () => {
+      const result = await resendVerificationEmail(email);
+      if (!result.success) {
+        setResendState("idle");
+        setError(result.error ?? "Bestätigungs-E-Mail konnte nicht gesendet werden.");
+        return;
+      }
+      setResendState("sent");
     });
   }
 
@@ -58,6 +81,25 @@ function LoginForm() {
       </div>
 
       {error && <p className="text-sm text-red-400">{error}</p>}
+
+      {needsVerification && (
+        <button
+          type="button"
+          onClick={handleResend}
+          disabled={resendState !== "idle"}
+          className="text-left text-sm text-tigers-secondary hover:underline disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {resendState === "sent"
+            ? "Bestätigungs-E-Mail erneut gesendet."
+            : resendState === "sending"
+              ? "Wird gesendet…"
+              : "Bestätigungs-E-Mail erneut senden"}
+        </button>
+      )}
+
+      <Link href="/forgot-password" className="text-sm text-tigers-secondary hover:underline">
+        Passwort vergessen?
+      </Link>
 
       <button
         type="submit"

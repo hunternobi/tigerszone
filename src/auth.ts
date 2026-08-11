@@ -1,8 +1,12 @@
-import NextAuth from "next-auth";
+import NextAuth, { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { dbConnect } from "@/lib/mongodb";
 import { UserModel } from "@/models/User";
+
+class EmailNotVerifiedError extends CredentialsSignin {
+  code = "email-not-verified";
+}
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   session: { strategy: "jwt" },
@@ -24,6 +28,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         const valid = await bcrypt.compare(password, user.passwordHash);
         if (!valid) return null;
+
+        if (!user.emailVerified) throw new EmailNotVerifiedError();
 
         return {
           id: user._id.toString(),

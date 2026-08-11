@@ -11,6 +11,7 @@ function RegisterForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [checkEmail, setCheckEmail] = useState(false);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -26,6 +27,11 @@ function RegisterForm() {
         return;
       }
 
+      if (result.requiresVerification) {
+        setCheckEmail(true);
+        return;
+      }
+
       const signInResult = await signIn("credentials", { email, password, redirect: false });
       if (signInResult?.error) {
         setError("Konto erstellt. Bitte logge dich manuell ein.");
@@ -35,6 +41,17 @@ function RegisterForm() {
       router.push(callbackUrl);
       router.refresh();
     });
+  }
+
+  if (checkEmail) {
+    return (
+      <div className="glass-panel mt-8 p-6 text-center">
+        <p className="text-white">
+          Fast geschafft! Wir haben dir eine E-Mail an <strong>{email}</strong> geschickt.
+          Klicke auf den Bestätigungslink darin, um dein Konto zu aktivieren.
+        </p>
+      </div>
+    );
   }
 
   return (

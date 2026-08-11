@@ -8,6 +8,11 @@ export interface UserDocument extends Document {
   name: string;
   role: UserRole;
   createdAt: Date;
+  emailVerified: boolean;
+  verificationToken?: string;
+  verificationTokenExpiresAt?: Date;
+  resetToken?: string;
+  resetTokenExpiresAt?: Date;
 }
 
 const userSchema = new Schema<UserDocument>(
@@ -16,6 +21,11 @@ const userSchema = new Schema<UserDocument>(
     passwordHash: { type: String, required: true },
     name: { type: String, required: true, trim: true },
     role: { type: String, enum: ["user", "redakteur", "admin"], default: "user" },
+    emailVerified: { type: Boolean, default: true },
+    verificationToken: { type: String },
+    verificationTokenExpiresAt: { type: Date },
+    resetToken: { type: String },
+    resetTokenExpiresAt: { type: Date },
   },
   { timestamps: { createdAt: true, updatedAt: false } }
 );

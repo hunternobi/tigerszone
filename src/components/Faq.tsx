@@ -22,7 +22,7 @@ const FAQ_ITEMS: FaqItem[] = [
   {
     question: "Ich habe mein Passwort vergessen, was mache ich jetzt?",
     answer:
-      "Aktuell gibt es dafür noch keine automatische Funktion im Login-Bereich. Melde dich einfach bei uns über Instagram oder E-Mail (siehe unten), dann helfen wir dir persönlich weiter.",
+      'Klicke auf der Login-Seite auf „Passwort vergessen?" und gib deine E-Mail-Adresse ein. Du bekommst dann einen Link zum Zurücksetzen zugeschickt.',
   },
   {
     question: "Kann ich meinen Tipp nachträglich ändern?",
