@@ -5,7 +5,7 @@ export const SITE_NAME = "TigersZone";
 export const SITE_CLAIM = "Das TigersZone-Tippspiel für die Straubing Tigers";
 
 export const SITE_DESCRIPTION =
-  "Die ultimative Fan-Plattform für die Straubing Tigers. Tritt dem Tippspiel bei, lese dich durch die Spieltagsblogs und werde teil der größten Eishockey-Community Bayerns.";
+  "Tritt dem Tippspiel bei, lese dich durch die Spieltagsblogs und werde teil der größten Eishockey-Community Bayerns.";
 
 export const NAV_LINKS = [
   { href: "/tippspiel", label: "Tippspiel" },

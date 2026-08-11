@@ -6,7 +6,6 @@ import FadingBackground from "@/components/FadingBackground";
 import GlassButtonExact from "@/components/GlassButtonExact";
 import InstagramEmbed from "@/components/InstagramEmbed";
 import Reveal from "@/components/Reveal";
-import RevealOnScroll from "@/components/RevealOnScroll";
 import { SITE_DESCRIPTION, SITE_NAME } from "@/lib/constants";
 import { getUpcomingGames } from "@/lib/games";
 import { getTeamName } from "@/lib/teams";
@@ -42,9 +41,18 @@ export default async function Home() {
               {SITE_NAME}
             </span>
           </h1>
+
+          <p className="mx-auto mt-6 max-w-2xl text-lg text-white">{SITE_DESCRIPTION}</p>
+
+          <div className="mt-6 flex justify-center">
+            <GlassButtonExact href="/spieltagsblog" size="0.9rem">
+              Zum Spieltagsblog
+            </GlassButtonExact>
+          </div>
+
           {nextGame && (
             <Reveal>
-              <div className="glass-panel mx-auto mt-4 max-w-2xl p-4 text-left sm:mt-6 sm:p-8">
+              <div className="glass-panel mx-auto mt-8 max-w-2xl p-4 text-left sm:mt-10 sm:p-8">
                 <h2 className="text-center text-xl font-bold text-white sm:text-2xl">
                   Nächstes Spiel
                 </h2>
@@ -88,18 +96,6 @@ export default async function Home() {
               </div>
             </Reveal>
           )}
-
-          <RevealOnScroll>
-            <p className="mx-auto mt-8 max-w-2xl text-lg text-white sm:mt-10">
-              {SITE_DESCRIPTION}
-            </p>
-
-            <div className="mt-6 flex justify-center">
-              <GlassButtonExact href="/spieltagsblog" size="0.9rem">
-                Zum Spieltagsblog
-              </GlassButtonExact>
-            </div>
-          </RevealOnScroll>
         </div>
       </section>
       </FadingBackground>
