@@ -6,6 +6,7 @@ import FadingBackground from "@/components/FadingBackground";
 import GlassButtonExact from "@/components/GlassButtonExact";
 import InstagramEmbed from "@/components/InstagramEmbed";
 import Reveal from "@/components/Reveal";
+import RevealOnScroll from "@/components/RevealOnScroll";
 import { SITE_DESCRIPTION, SITE_NAME } from "@/lib/constants";
 import { getUpcomingGames } from "@/lib/games";
 import { getTeamName } from "@/lib/teams";
@@ -88,13 +89,17 @@ export default async function Home() {
             </Reveal>
           )}
 
-          <p className="mx-auto mt-8 max-w-2xl text-lg text-white sm:mt-10">{SITE_DESCRIPTION}</p>
+          <RevealOnScroll>
+            <p className="mx-auto mt-8 max-w-2xl text-lg text-white sm:mt-10">
+              {SITE_DESCRIPTION}
+            </p>
 
-          <div className="mt-6 flex justify-center">
-            <GlassButtonExact href="/spieltagsblog" size="0.9rem">
-              Zum Spieltagsblog
-            </GlassButtonExact>
-          </div>
+            <div className="mt-6 flex justify-center">
+              <GlassButtonExact href="/spieltagsblog" size="0.9rem">
+                Zum Spieltagsblog
+              </GlassButtonExact>
+            </div>
+          </RevealOnScroll>
         </div>
       </section>
       </FadingBackground>
