@@ -63,8 +63,11 @@ function LoginForm() {
         type="submit"
         disabled={isPending}
         className="mt-2 rounded-full bg-tigers-secondary px-5 py-2 text-sm font-semibold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
+        style={{ transform: "translateZ(0)" }}
       >
-        {isPending ? "Wird eingeloggt…" : "Einloggen"}
+        <span key={isPending ? "pending" : "idle"}>
+          {isPending ? "Wird eingeloggt…" : "Einloggen"}
+        </span>
       </button>
     </form>
   );
