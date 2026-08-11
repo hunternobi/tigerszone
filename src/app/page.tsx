@@ -32,7 +32,7 @@ export default async function Home() {
         overlayClassName="bg-gradient-to-b from-tigers-primary/55 via-tigers-primary/80 to-tigers-primary"
       >
       <section className="relative min-h-screen overflow-hidden px-4 py-16 sm:min-h-[130vh] sm:px-6 sm:py-24">
-        <div className="relative mx-auto flex min-h-dvh max-w-4xl flex-col justify-center text-center">
+        <div className="relative mx-auto max-w-4xl text-center">
           <h1 className="text-4xl font-bold text-white sm:text-5xl">
             Willkommen in der
             <span
@@ -43,7 +43,7 @@ export default async function Home() {
           </h1>
           {nextGame && (
             <Reveal>
-              <div className="glass-panel mx-auto mt-6 max-w-2xl p-4 text-left sm:mt-10 sm:p-8">
+              <div className="glass-panel mx-auto mt-4 max-w-2xl p-4 text-left sm:mt-6 sm:p-8">
                 <h2 className="text-center text-xl font-bold text-white sm:text-2xl">
                   Nächstes Spiel
                 </h2>
@@ -87,10 +87,8 @@ export default async function Home() {
               </div>
             </Reveal>
           )}
-        </div>
 
-        <div className="relative mx-auto max-w-4xl pt-10 text-center sm:pt-16">
-          <p className="mx-auto max-w-2xl text-lg text-white">{SITE_DESCRIPTION}</p>
+          <p className="mx-auto mt-8 max-w-2xl text-lg text-white sm:mt-10">{SITE_DESCRIPTION}</p>
 
           <div className="mt-6 flex justify-center">
             <GlassButtonExact href="/spieltagsblog" size="0.9rem">
