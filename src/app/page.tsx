@@ -30,7 +30,7 @@ export default async function Home() {
     <>
       <FadingBackground
         src="/images/hero-stadium.jpg"
-        overlayClassName="bg-gradient-to-b from-tigers-primary/55 via-tigers-primary/80 to-tigers-primary"
+        overlayClassName="bg-tigers-primary/72"
       >
       <section className="relative min-h-screen overflow-hidden px-4 py-16 sm:min-h-[130vh] sm:px-6 sm:py-24">
         <div className="relative mx-auto max-w-4xl text-center">
