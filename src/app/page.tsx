@@ -41,9 +41,7 @@ export default async function Home() {
               {SITE_NAME}
             </span>
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-white">{SITE_DESCRIPTION}</p>
-
-          <div className="mt-8 flex justify-center">
+          <div className="mt-6 flex justify-center">
             <GlassButtonExact href="/tippspiel" size="0.9rem">
               Zum Tippspiel
             </GlassButtonExact>
@@ -51,7 +49,7 @@ export default async function Home() {
 
           {nextGame && (
             <Reveal>
-              <div className="glass-panel mx-auto mt-10 max-w-2xl p-5 text-left sm:mt-16 sm:p-8">
+              <div className="glass-panel mx-auto mt-8 max-w-2xl p-5 text-left sm:mt-10 sm:p-8">
                 <h2 className="text-center text-2xl font-bold text-white">Nächstes Spiel</h2>
                 <p className="mt-2 text-center text-sm text-white">
                   Bereit für den nächsten Spieltag? Tippe und zeig deinen Mitstreitern, wer
@@ -91,6 +89,8 @@ export default async function Home() {
               </div>
             </Reveal>
           )}
+
+          <p className="mx-auto mt-8 max-w-2xl text-lg text-white sm:mt-10">{SITE_DESCRIPTION}</p>
         </div>
       </section>
       </FadingBackground>
