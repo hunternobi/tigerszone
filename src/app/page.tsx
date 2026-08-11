@@ -41,30 +41,26 @@ export default async function Home() {
               {SITE_NAME}
             </span>
           </h1>
-          <div className="mt-6 flex justify-center">
-            <GlassButtonExact href="/tippspiel" size="0.9rem">
-              Zum Tippspiel
-            </GlassButtonExact>
-          </div>
-
           {nextGame && (
             <Reveal>
-              <div className="glass-panel mx-auto mt-8 max-w-2xl p-5 text-left sm:mt-10 sm:p-8">
-                <h2 className="text-center text-2xl font-bold text-white">Nächstes Spiel</h2>
-                <p className="mt-2 text-center text-sm text-white">
+              <div className="glass-panel mx-auto mt-5 max-w-2xl p-4 text-left sm:mt-8 sm:p-8">
+                <h2 className="text-center text-xl font-bold text-white sm:text-2xl">
+                  Nächstes Spiel
+                </h2>
+                <p className="mt-1.5 text-center text-xs text-white sm:mt-2 sm:text-sm">
                   Bereit für den nächsten Spieltag? Tippe und zeig deinen Mitstreitern, wer
                   wirklich Ahnung vom Eishockey hat!
                 </p>
 
-                <div className="mt-6 flex flex-col items-center gap-6 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
+                <div className="mt-4 flex flex-col items-center gap-4 text-center sm:mt-6 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:text-left">
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-wide text-tigers-secondary">
                       {nextGame.competition === "Vorbereitung" ? "Vorbereitungsspiel" : "DEL"}
                     </p>
-                    <p className="mt-1 text-xl font-bold text-white">
+                    <p className="mt-1 text-lg font-bold text-white sm:text-xl">
                       {getTeamName(nextGame.homeTeamId)} vs. {getTeamName(nextGame.awayTeamId)}
                     </p>
-                    <div className="mt-2 flex flex-wrap justify-center gap-4 text-sm text-white sm:justify-start">
+                    <div className="mt-2 flex flex-wrap justify-center gap-4 text-xs text-white sm:justify-start sm:text-sm">
                       <span className="flex items-center gap-1">
                         <Calendar size={14} /> {formatGameDate(nextGame.kickoff)}
                       </span>
@@ -75,7 +71,9 @@ export default async function Home() {
                   </div>
 
                   <div className="text-center">
-                    <p className="text-3xl font-bold text-tigers-secondary">{daysUntilGame}</p>
+                    <p className="text-2xl font-bold text-tigers-secondary sm:text-3xl">
+                      {daysUntilGame}
+                    </p>
                     <p className="text-xs text-white">Tage bis zum Spiel</p>
                     <GlassButtonExact
                       href="/tippspiel"
@@ -91,6 +89,12 @@ export default async function Home() {
           )}
 
           <p className="mx-auto mt-8 max-w-2xl text-lg text-white sm:mt-10">{SITE_DESCRIPTION}</p>
+
+          <div className="mt-6 flex justify-center">
+            <GlassButtonExact href="/spieltagsblog" size="0.9rem">
+              Zum Spieltagsblog
+            </GlassButtonExact>
+          </div>
         </div>
       </section>
       </FadingBackground>
