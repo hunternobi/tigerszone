@@ -20,7 +20,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} – Das Tippspiel für die Straubing Tigers`,
+    default: `${SITE_NAME} – Das Eishockey-Tippspiel für Fans`,
     template: `%s – ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
@@ -40,14 +40,14 @@ export const metadata: Metadata = {
     type: "website",
     locale: "de_DE",
     siteName: SITE_NAME,
-    title: `${SITE_NAME} – Das Tippspiel für die Straubing Tigers`,
+    title: `${SITE_NAME} – Das Eishockey-Tippspiel für Fans`,
     description: SITE_DESCRIPTION,
     url: SITE_URL,
     images: [{ url: "/images/hero-stadium.jpg", width: 1200, height: 630, alt: SITE_NAME }],
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE_NAME} – Das Tippspiel für die Straubing Tigers`,
+    title: `${SITE_NAME} – Das Eishockey-Tippspiel für Fans`,
     description: SITE_DESCRIPTION,
     images: ["/images/hero-stadium.jpg"],
   },
