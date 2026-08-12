@@ -38,13 +38,6 @@ export default function FadingBackground({
         />
       )}
 
-      {/* Flat, unblurred, fully opaque strip so iOS Safari's translucent bottom
-          toolbar has nothing but solid color to sample when it overlaps content. */}
-      <div
-        style={{ opacity }}
-        className="pointer-events-none fixed inset-x-0 bottom-0 -z-10 h-32 bg-tigers-primary sm:hidden"
-      />
-
       <div className="relative z-10 pt-[72px]">{children}</div>
     </div>
   );
