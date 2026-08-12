@@ -1,4 +1,4 @@
-export const SITE_URL = "https://tigerszone.vercel.app";
+export const SITE_URL = "https://tigerszone.de";
 
 export const SITE_NAME = "TigersZone";
 
