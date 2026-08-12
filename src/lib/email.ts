@@ -20,6 +20,14 @@ function wrapper(title: string, bodyHtml: string): string {
           <table role="presentation" width="100%" style="max-width:480px;background-color:#0a0f3d;border-radius:20px;overflow:hidden;">
             <tr>
               <td style="padding:32px 32px 24px;text-align:center;">
+                <img
+                  src="${SITE_URL}/images/TigersZone_Logo.png"
+                  alt="${SITE_NAME}"
+                  width="56"
+                  height="56"
+                  style="display:inline-block;border-radius:50%;margin-bottom:10px;"
+                />
+                <br />
                 <span style="color:#5b7fc7;font-size:22px;font-weight:700;letter-spacing:0.02em;">${SITE_NAME}</span>
               </td>
             </tr>
