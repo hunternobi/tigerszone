@@ -21,9 +21,8 @@ export default function CookiesPage() {
           <p className="mt-2 text-sm text-white">
             Cookies sind kleine Textdateien, die beim Besuch einer Website auf deinem Gerät
             gespeichert werden. {SITE_NAME} setzt ausschließlich technisch notwendige Cookies
-            ein, die für den Betrieb der Seite erforderlich sind. Es werden keine Tracking- oder
-            Marketing-Cookies verwendet, und es findet keine Weitergabe von Cookie-Daten an Dritte
-            zu Werbezwecken statt.
+            ein, die für den Betrieb und die grundlegenden Funktionen der Seite erforderlich
+            sind. Es werden keine Tracking- oder Marketing-Cookies verwendet.
           </p>
         </div>
 
@@ -57,7 +56,7 @@ export default function CookiesPage() {
                 <tr>
                   <td className="py-3 pr-4 font-mono text-xs">activeGroupId</td>
                   <td className="py-3 pr-4">
-                    Merkt sich, welche deiner Tippgruppen aktuell im Tippspiel ausgewählt ist.
+                    Merkt sich, welche deiner Tippgruppen aktuell ausgewählt ist.
                   </td>
                   <td className="py-3">30 Tage</td>
                 </tr>
@@ -65,18 +64,23 @@ export default function CookiesPage() {
             </table>
           </div>
           <p className="mt-3 text-sm text-white">
-            Diese Cookies sind für die Grundfunktionen der Seite (Login, Tippspiel) erforderlich
-            und können nicht deaktiviert werden, ohne dass die Nutzung eingeschränkt wird. Da sie
-            technisch notwendig sind, ist gemäß § 25 Abs. 2 TTDSG keine gesonderte Einwilligung
-            erforderlich.
+            Diese Cookies sind für die Grundfunktionen der Seite (Login und Tippspiel)
+            erforderlich und können nicht deaktiviert werden, ohne dass die Nutzung eingeschränkt
+            wird. Für technisch notwendige Cookies ist gemäß § 25 Abs. 2 TDDDG grundsätzlich
+            keine gesonderte Einwilligung erforderlich, sofern sie tatsächlich für die
+            Bereitstellung der gewünschten Funktion erforderlich sind.
           </p>
         </div>
 
         <div>
           <h2 className="text-lg font-bold text-white">Statistik</h2>
           <p className="mt-2 text-sm text-white">
-            Wir nutzen Vercel Analytics zur anonymen Auswertung von Seitenaufrufen. Dabei werden
-            keine Cookies gesetzt und keine personenbezogenen Kennungen gespeichert.
+            {SITE_NAME} verwendet Vercel Analytics zur statistischen Auswertung der Nutzung der
+            Website. Vercel Analytics verwendet keine Cookies zur Wiedererkennung von Nutzern.
+          </p>
+          <p className="mt-2 text-sm text-white">
+            Die Verarbeitung der dabei erhobenen Daten wird in der Datenschutzerklärung näher
+            erläutert.
           </p>
         </div>
 
@@ -85,7 +89,8 @@ export default function CookiesPage() {
           <p className="mt-2 text-sm text-white">
             Du kannst Cookies jederzeit über die Einstellungen deines Browsers löschen oder
             blockieren. Da {SITE_NAME} nur notwendige Cookies verwendet, kann das Blockieren
-            dazu führen, dass du dich nicht mehr einloggen oder tippen kannst.
+            dieser Cookies dazu führen, dass du dich nicht mehr einloggen oder am Tippspiel
+            teilnehmen kannst.
           </p>
         </div>
       </div>
