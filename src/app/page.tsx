@@ -97,7 +97,7 @@ export default async function Home() {
       </section>
       </FadingBackground>
 
-      <section className="relative overflow-hidden border-t border-white/10 bg-tigers-primary px-4 py-12 text-center sm:px-6 sm:py-16">
+      <section className="relative overflow-hidden bg-tigers-primary px-4 py-12 text-center sm:px-6 sm:py-16">
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <span className="select-none text-[3.5rem] font-black whitespace-nowrap text-white opacity-35 blur-[1.5px] sm:text-[10rem] lg:text-[13rem]">
             2026/27
