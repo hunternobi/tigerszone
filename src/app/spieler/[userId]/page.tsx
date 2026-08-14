@@ -36,6 +36,9 @@ export default async function SpielerPage({ params }: SpielerPageProps) {
   const history = await getUserPredictionHistory(userId);
   if (!history) notFound();
 
+  const isOwnProfile = session.user.id === userId;
+  const now = Date.now();
+
   return (
     <section className="mx-auto max-w-3xl px-6 py-16">
       <Link
@@ -57,43 +60,57 @@ export default async function SpielerPage({ params }: SpielerPageProps) {
         <p className="glass-panel mt-8 p-6 text-sm text-white">Noch keine Tipps abgegeben.</p>
       ) : (
         <div className="mt-8 space-y-3">
-          {history.entries.map((entry) => (
-            <div key={entry.gameId} className="glass-panel-sm p-4 sm:p-5">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <span className="text-xs text-white">
-                  {formatGameDate(entry.kickoff)} · {formatGameTime(entry.kickoff)} Uhr
-                </span>
-                <span className="rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-white uppercase">
-                  {entry.competition === "Vorbereitung" ? "Vorbereitung" : "DEL"}
-                </span>
-              </div>
+          {history.entries.map((entry) => {
+            const locked = entry.status !== "scheduled" || new Date(entry.kickoff).getTime() <= now;
+            const tipHidden = !isOwnProfile && !locked;
 
-              <p className="mt-2 font-semibold text-white">
-                {getTeamName(entry.homeTeamId)} vs. {getTeamName(entry.awayTeamId)}
-              </p>
+            return (
+              <div key={entry.gameId} className="glass-panel-sm p-4 sm:p-5">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span className="text-xs text-white">
+                    {formatGameDate(entry.kickoff)} · {formatGameTime(entry.kickoff)} Uhr
+                  </span>
+                  <span className="rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-white uppercase">
+                    {entry.competition === "Vorbereitung" ? "Vorbereitung" : "DEL"}
+                  </span>
+                </div>
 
-              <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-sm">
-                <span className="text-white">
-                  Tipp: <span className="font-semibold">{entry.predictedHome}:{entry.predictedAway}</span>
-                  {entry.status === "finished" && (
-                    <>
-                      {" "}
-                      · Ergebnis:{" "}
+                <p className="mt-2 font-semibold text-white">
+                  {getTeamName(entry.homeTeamId)} vs. {getTeamName(entry.awayTeamId)}
+                </p>
+
+                {tipHidden ? (
+                  <p className="mt-3 text-sm text-white/60">
+                    Tipp abgegeben – sichtbar nach dem Eröffnungsbully
+                  </p>
+                ) : (
+                  <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-sm">
+                    <span className="text-white">
+                      Tipp:{" "}
                       <span className="font-semibold">
-                        {entry.homeScore}:{entry.awayScore}
+                        {entry.predictedHome}:{entry.predictedAway}
                       </span>
-                    </>
-                  )}
-                  {entry.status !== "finished" && (
-                    <span className="text-white"> · {STATUS_LABELS[entry.status] ?? entry.status}</span>
-                  )}
-                </span>
-                <span className="font-semibold text-white">
-                  {entry.pointsAwarded != null ? `${entry.pointsAwarded} Pkt.` : "– Pkt."}
-                </span>
+                      {entry.status === "finished" && (
+                        <>
+                          {" "}
+                          · Ergebnis:{" "}
+                          <span className="font-semibold">
+                            {entry.homeScore}:{entry.awayScore}
+                          </span>
+                        </>
+                      )}
+                      {entry.status !== "finished" && (
+                        <span className="text-white"> · {STATUS_LABELS[entry.status] ?? entry.status}</span>
+                      )}
+                    </span>
+                    <span className="font-semibold text-white">
+                      {entry.pointsAwarded != null ? `${entry.pointsAwarded} Pkt.` : "– Pkt."}
+                    </span>
+                  </div>
+                )}
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </section>

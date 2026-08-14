@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { useSession } from "next-auth/react";
-import { LogOut, MoreVertical } from "lucide-react";
+import { ChevronDown, LogOut, MoreVertical } from "lucide-react";
 import { MdOutlineEditNote } from "react-icons/md";
 import {
   demoteAssistant,
@@ -42,7 +42,10 @@ export default function GroupMemberTable({
   const currentUserId = session?.user.id;
   const [isPending, startTransition] = useTransition();
   const [menu, setMenu] = useState<MenuState | null>(null);
+  const [showAll, setShowAll] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const VISIBLE_COUNT = 3;
+  const visibleEntries = showAll ? entries : entries.slice(0, VISIBLE_COUNT);
 
   const canManage = viewerRole === "owner" || viewerRole === "assistant";
 
@@ -119,7 +122,7 @@ export default function GroupMemberTable({
         <p className="mt-3 text-sm text-white">Noch keine Einträge vorhanden.</p>
       ) : (
         <ol className="mt-3 space-y-2 text-sm">
-          {entries.map((entry, index) => {
+          {visibleEntries.map((entry, index) => {
             const manageable = canManage && entry.userId !== currentUserId && entry.role !== "owner";
             return (
               <li
@@ -159,6 +162,17 @@ export default function GroupMemberTable({
             );
           })}
         </ol>
+      )}
+
+      {entries.length > VISIBLE_COUNT && (
+        <button
+          type="button"
+          onClick={() => setShowAll((v) => !v)}
+          className="mt-3 flex w-full items-center justify-center gap-1 rounded-lg py-1.5 text-xs font-semibold text-white/70 transition hover:bg-white/5 hover:text-white"
+        >
+          {showAll ? "Weniger anzeigen" : `Alle ${entries.length} anzeigen`}
+          <ChevronDown size={14} className={`transition-transform ${showAll ? "rotate-180" : ""}`} />
+        </button>
       )}
 
       {menu &&

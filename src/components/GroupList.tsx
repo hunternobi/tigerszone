@@ -2,7 +2,7 @@
 
 import { useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronDown, Pencil, Share2 } from "lucide-react";
+import { Check, ChevronDown, Pencil, Share2 } from "lucide-react";
 import { renameGroup, type MyGroup } from "@/app/gruppen/actions";
 import GroupMemberTable from "@/components/GroupMemberTable";
 import type { LeaderboardEntry } from "@/components/Leaderboard";
@@ -79,7 +79,7 @@ export default function GroupList({ groups, leaderboards }: GroupListProps) {
                   setExpandedId(isExpanded ? null : group._id);
                 }
               }}
-              className="flex w-full cursor-pointer items-center justify-between gap-4 text-left"
+              className="flex w-full cursor-pointer items-center justify-between gap-3 text-left"
             >
               <div className="min-w-0 flex-1">
                 {isRenaming ? (
@@ -113,9 +113,6 @@ export default function GroupList({ groups, leaderboards }: GroupListProps) {
                 ) : (
                   <div className="flex items-center gap-2">
                     <p className="truncate font-bold text-white">{group.name}</p>
-                    <span className="shrink-0 rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-white uppercase">
-                      {group.isPublic ? "Öffentlich" : "Privat"}
-                    </span>
                     {canManage && (
                       <button
                         type="button"
@@ -124,7 +121,7 @@ export default function GroupList({ groups, leaderboards }: GroupListProps) {
                           startRename(group);
                         }}
                         aria-label="Gruppennamen bearbeiten"
-                        className="shrink-0 text-white/60 transition hover:text-white"
+                        className="shrink-0 text-white transition hover:text-tigers-secondary"
                       >
                         <Pencil size={14} />
                       </button>
@@ -136,31 +133,39 @@ export default function GroupList({ groups, leaderboards }: GroupListProps) {
                 )}
                 <p className="text-xs text-white">{group.memberCount} Mitglieder</p>
               </div>
-              <ChevronDown
-                size={18}
-                className={`shrink-0 text-white transition-transform ${isExpanded ? "rotate-180" : ""}`}
-              />
+
+              <div className="flex shrink-0 items-center gap-2">
+                <span className="rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-white uppercase">
+                  {group.isPublic ? "Öffentlich" : "Privat"}
+                </span>
+                {!group.isPublic && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      shareInvite(group);
+                    }}
+                    aria-label="Einladungslink teilen"
+                    className="rounded-full p-1.5 text-white/70 transition hover:bg-white/10 hover:text-white"
+                  >
+                    {copiedId === group._id ? (
+                      <Check size={14} className="text-emerald-400" />
+                    ) : (
+                      <Share2 size={14} />
+                    )}
+                  </button>
+                )}
+                <ChevronDown
+                  size={18}
+                  className={`shrink-0 text-white transition-transform ${isExpanded ? "rotate-180" : ""}`}
+                />
+              </div>
             </div>
 
-            {group.isPublic ? (
+            {group.isPublic && (
               <p className="mt-3 text-xs text-white">
                 Öffentliche Gruppe – sichtbar in „Öffentliche Gruppen&quot; für alle Nutzer.
               </p>
-            ) : (
-              <div className="mt-3 flex items-center justify-between gap-3 rounded-lg border border-white/10 bg-white/5 px-3 py-2">
-                <span className="text-xs text-white">Private Gruppe – lade Freunde per Link ein.</span>
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    shareInvite(group);
-                  }}
-                  className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-tigers-secondary px-3 py-1.5 text-xs font-semibold text-white transition hover:opacity-90"
-                >
-                  <Share2 size={14} />
-                  {copiedId === group._id ? "Kopiert!" : "Teilen"}
-                </button>
-              </div>
             )}
 
             {isExpanded && (

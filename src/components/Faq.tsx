@@ -39,6 +39,16 @@ const FAQ_ITEMS: FaqItem[] = [
       "Jede Gruppe hat einen Head Coach (den Ersteller) und kann einen Assistant Coach haben. Beide können Mitglieder aus der Gruppe entfernen und den Gruppennamen ändern.",
   },
   {
+    question: "Warum sehe ich auf fremden Profilen nicht alle abgegebenen Tipps?",
+    answer:
+      "Der Tipp eines anderen Mitglieds für ein Spiel wird auf seinem Profil erst nach dem Eröffnungsbully dieses Spiels angezeigt. So kann niemand seinen eigenen Tipp nachträglich an einen bereits sichtbaren Tipp anpassen. Auf deinem eigenen Profil siehst du deine Tipps natürlich sofort.",
+  },
+  {
+    question: "Was sind Bonustipps?",
+    answer:
+      "Vor Beginn der Hauptrunde kannst du im Tippspiel zusätzlich vier Bonustipps abgeben: Hauptrundensieger, Platzierung der Tigers, Topscorer der Tigers und meiste Tore bei den Tigers. Jeder richtige Bonustipp bringt dir 10 Extrapunkte, ausgewertet am Ende der Hauptrunde. Zu Beginn der Playoffs gibt es eine weitere Runde Bonustipps.",
+  },
+  {
     question: "Weitere Fragen oder Anregungen?",
     answer: (
       <>
