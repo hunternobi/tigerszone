@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 
 interface FadingBackgroundProps {
   src: string;
+  mobileSrc?: string;
   alt?: string;
   opacity?: number;
   blurPx?: number;
@@ -15,6 +16,7 @@ interface FadingBackgroundProps {
 
 export default function FadingBackground({
   src,
+  mobileSrc,
   alt = "",
   opacity = 1,
   blurPx = 0,
@@ -28,7 +30,26 @@ export default function FadingBackground({
         style={{ opacity, filter: blurPx ? `blur(${blurPx}px)` : undefined }}
         className={`pointer-events-none fixed inset-0 -z-10 ${scaleClassName}`}
       >
-        <Image src={src} alt={alt} fill priority className="object-cover object-center" />
+        {mobileSrc ? (
+          <>
+            <Image
+              src={mobileSrc}
+              alt={alt}
+              fill
+              priority
+              className="object-cover object-center sm:hidden"
+            />
+            <Image
+              src={src}
+              alt={alt}
+              fill
+              priority
+              className="hidden object-cover object-center sm:block"
+            />
+          </>
+        ) : (
+          <Image src={src} alt={alt} fill priority className="object-cover object-center" />
+        )}
       </div>
 
       {overlayClassName && (

@@ -37,7 +37,12 @@ export default function TippspielInteractive({
   bonusLocked,
 }: TippspielInteractiveProps) {
   return (
-    <FadingBackground src="/images/tippabgabe-bg.jpg" opacity={0.55} blurPx={1.5}>
+    <FadingBackground
+      src="/images/tippabgabe-bg.jpg"
+      mobileSrc="/images/tippabgabe-bg-mobile.jpg"
+      opacity={0.55}
+      blurPx={1.5}
+    >
       <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-16">
         <div className="grid gap-10 lg:grid-cols-[1fr_300px]">
           <div>
