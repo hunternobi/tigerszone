@@ -8,7 +8,9 @@ import { UserModel } from "@/models/User";
 import { GroupModel } from "@/models/Group";
 import { GroupMemberModel } from "@/models/GroupMember";
 import { PredictionModel } from "@/models/Prediction";
-import { recomputeGamePoints } from "@/lib/scoring";
+import { BonusResultModel } from "@/models/BonusResult";
+import type { BonusRound } from "@/models/BonusPrediction";
+import { recomputeGamePoints, recomputeBonusPoints } from "@/lib/scoring";
 import type { Overtime, UserRole } from "@/types";
 
 export interface ActionResult {
@@ -61,6 +63,34 @@ export async function saveGameResult(
 
   revalidatePath("/admin");
   revalidatePath("/tippspiel");
+
+  return { success: true };
+}
+
+export interface BonusResultInput {
+  hauptrundensieger?: string;
+  platzierungTigers?: number;
+  topscorerTigers?: string;
+  meisteToreTigers?: string;
+}
+
+export async function saveBonusResult(
+  round: BonusRound,
+  values: BonusResultInput
+): Promise<ActionResult> {
+  try {
+    await requireAdmin();
+  } catch {
+    return { success: false, error: "Nicht autorisiert." };
+  }
+
+  await dbConnect();
+  await BonusResultModel.updateOne({ round }, { $set: values }, { upsert: true });
+  await recomputeBonusPoints(round);
+
+  revalidatePath("/admin");
+  revalidatePath("/tippspiel");
+  revalidatePath("/gruppen");
 
   return { success: true };
 }

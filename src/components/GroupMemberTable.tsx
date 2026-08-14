@@ -128,17 +128,19 @@ export default function GroupMemberTable({
               <li
                 key={entry.userId}
                 onContextMenu={(e) => handleContextMenu(e, entry)}
-                className={`flex items-start justify-between gap-3 rounded-lg px-3 py-2 odd:bg-white/5 ${
+                className={`flex items-center justify-between gap-3 rounded-lg px-3 py-2 odd:bg-white/5 ${
                   manageable ? "cursor-context-menu" : ""
                 }`}
               >
-                <span className="flex min-w-0 flex-1 flex-wrap items-center gap-2 text-white">
-                  <span className={index === 0 ? "text-base" : ""}>
-                    {index === 0 ? "🥇" : `${index + 1}.`}
+                <span className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-1 text-white">
+                  <span className="flex min-w-0 items-center gap-2">
+                    <span className={index === 0 ? "shrink-0 text-base" : "shrink-0"}>
+                      {index === 0 ? "🥇" : `${index + 1}.`}
+                    </span>
+                    <Link href={`/spieler/${entry.userId}`} className="truncate hover:underline">
+                      {entry.name}
+                    </Link>
                   </span>
-                  <Link href={`/spieler/${entry.userId}`} className="hover:underline">
-                    {entry.name}
-                  </Link>
                   <RoleBadge role={entry.role} />
                 </span>
                 <span className="flex shrink-0 items-center gap-1">

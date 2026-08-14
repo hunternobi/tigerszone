@@ -2,7 +2,7 @@
 
 import { useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { Check, ChevronDown, Pencil, Share2 } from "lucide-react";
+import { Check, Pencil, Share2 } from "lucide-react";
 import { renameGroup, type MyGroup } from "@/app/gruppen/actions";
 import GroupMemberTable from "@/components/GroupMemberTable";
 import type { LeaderboardEntry } from "@/components/Leaderboard";
@@ -14,7 +14,6 @@ interface GroupListProps {
 
 export default function GroupList({ groups, leaderboards }: GroupListProps) {
   const router = useRouter();
-  const [expandedId, setExpandedId] = useState<string | null>(null);
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [nameDraft, setNameDraft] = useState("");
   const [renameError, setRenameError] = useState<string | null>(null);
@@ -63,24 +62,12 @@ export default function GroupList({ groups, leaderboards }: GroupListProps) {
   return (
     <div className="space-y-4">
       {groups.map((group) => {
-        const isExpanded = expandedId === group._id;
         const isRenaming = renamingId === group._id;
         const canManage = group.viewerRole === "owner" || group.viewerRole === "assistant";
 
         return (
-          <div key={group._id} className="glass-panel-sm p-5">
-            <div
-              role="button"
-              tabIndex={0}
-              onClick={() => setExpandedId(isExpanded ? null : group._id)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  setExpandedId(isExpanded ? null : group._id);
-                }
-              }}
-              className="flex w-full cursor-pointer items-center justify-between gap-3 text-left"
-            >
+          <div key={group._id} className="glass-panel-sm p-4 sm:p-5">
+            <div className="flex w-full items-center justify-between gap-3 text-left">
               <div className="min-w-0 flex-1">
                 {isRenaming ? (
                   <form
@@ -121,7 +108,7 @@ export default function GroupList({ groups, leaderboards }: GroupListProps) {
                           startRename(group);
                         }}
                         aria-label="Gruppennamen bearbeiten"
-                        className="shrink-0 text-white transition hover:text-tigers-secondary"
+                        className="shrink-0 rounded-full p-1.5 -m-1.5 text-white transition hover:bg-white/10 hover:text-tigers-secondary"
                       >
                         <Pencil size={14} />
                       </button>
@@ -155,10 +142,6 @@ export default function GroupList({ groups, leaderboards }: GroupListProps) {
                     )}
                   </button>
                 )}
-                <ChevronDown
-                  size={18}
-                  className={`shrink-0 text-white transition-transform ${isExpanded ? "rotate-180" : ""}`}
-                />
               </div>
             </div>
 
@@ -168,16 +151,14 @@ export default function GroupList({ groups, leaderboards }: GroupListProps) {
               </p>
             )}
 
-            {isExpanded && (
-              <div className="mt-4">
-                <GroupMemberTable
-                  groupId={group._id}
-                  entries={leaderboards[group._id] ?? []}
-                  title={`Rangliste: ${group.name}`}
-                  viewerRole={group.viewerRole}
-                />
-              </div>
-            )}
+            <div className="mt-4">
+              <GroupMemberTable
+                groupId={group._id}
+                entries={leaderboards[group._id] ?? []}
+                title={`Rangliste: ${group.name}`}
+                viewerRole={group.viewerRole}
+              />
+            </div>
           </div>
         );
       })}

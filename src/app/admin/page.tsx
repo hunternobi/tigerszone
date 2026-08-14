@@ -4,9 +4,11 @@ import { auth } from "@/auth";
 import { getAllGames } from "@/lib/games";
 import { getAllUsersWithGroups } from "@/lib/adminUsers";
 import { getAllGroups } from "@/lib/adminGroups";
+import { getBonusResult } from "@/lib/adminBonus";
 import GameResultForm from "@/components/GameResultForm";
 import AdminUserTable from "@/components/AdminUserTable";
 import AdminGroupTable from "@/components/AdminGroupTable";
+import BonusResultForm from "@/components/BonusResultForm";
 
 export const metadata: Metadata = {
   title: "Admin",
@@ -18,10 +20,11 @@ export default async function AdminPage() {
   if (!session?.user) redirect("/login");
   if (session.user.role !== "admin") redirect("/");
 
-  const [games, users, groups] = await Promise.all([
+  const [games, users, groups, bonusResult] = await Promise.all([
     getAllGames(),
     getAllUsersWithGroups(),
     getAllGroups(),
+    getBonusResult("hauptrunde"),
   ]);
 
   return (
@@ -36,6 +39,15 @@ export default async function AdminPage() {
         {games.map((game) => (
           <GameResultForm key={game._id} game={game} />
         ))}
+      </div>
+
+      <h2 className="mt-16 text-2xl font-bold text-white">Bonustipps Hauptrunde</h2>
+      <p className="mt-2 text-white">
+        Auflösung für Hauptrundensieger, Platzierung, Topscorer und meiste Tore. Wird gespeichert
+        und sofort für alle Nutzer ausgewertet.
+      </p>
+      <div className="mt-6">
+        <BonusResultForm round="hauptrunde" initial={bonusResult} />
       </div>
 
       <h2 className="mt-16 text-2xl font-bold text-white">Benutzerverwaltung</h2>

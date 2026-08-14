@@ -4,7 +4,7 @@ import FadingBackground from "@/components/FadingBackground";
 
 export const metadata: Metadata = {
   title: "Community",
-  description: "Häufige Fragen rund um TigersZone – Meme der Woche und Watch Party Finder folgen.",
+  description: "Häufige Fragen rund um TigersZone – freut euch auf coole Aktionen, Preise und Umfragen.",
   alternates: { canonical: "/community" },
 };
 
@@ -14,7 +14,7 @@ export default function CommunityPage() {
       <section className="mx-auto max-w-5xl px-6 py-16">
         <h1 className="text-3xl font-bold text-white">Community</h1>
         <p className="mt-3 text-white">
-          Meme der Woche und Watch Party Finder folgen hier (siehe Spezifikation 4.4 &amp; 4.5).
+          Freut euch auf viele coole Aktionen, Preise und Umfragen während der Saison. Stay tuned!
         </p>
 
         <div className="mt-12">

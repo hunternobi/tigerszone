@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 import { dbConnect } from "@/lib/mongodb";
 import { PredictionModel } from "@/models/Prediction";
+import { BonusPredictionModel } from "@/models/BonusPrediction";
 import { UserModel } from "@/models/User";
 import { GroupMemberModel } from "@/models/GroupMember";
 import { GroupModel } from "@/models/Group";
@@ -15,35 +16,62 @@ export interface GroupLeaderboardData {
 async function sumPointsForUsers(userIds: Types.ObjectId[]): Promise<Map<string, number>> {
   if (userIds.length === 0) return new Map();
 
-  const results = await PredictionModel.aggregate<{ _id: Types.ObjectId; points: number }>([
-    { $match: { userId: { $in: userIds }, pointsAwarded: { $ne: null } } },
-    { $group: { _id: "$userId", points: { $sum: "$pointsAwarded" } } },
+  const [predictionResults, bonusResults] = await Promise.all([
+    PredictionModel.aggregate<{ _id: Types.ObjectId; points: number }>([
+      { $match: { userId: { $in: userIds }, pointsAwarded: { $ne: null } } },
+      { $group: { _id: "$userId", points: { $sum: "$pointsAwarded" } } },
+    ]),
+    BonusPredictionModel.aggregate<{ _id: Types.ObjectId; points: number }>([
+      { $match: { userId: { $in: userIds }, pointsAwarded: { $ne: null } } },
+      { $group: { _id: "$userId", points: { $sum: "$pointsAwarded" } } },
+    ]),
   ]);
 
-  return new Map(results.map((entry) => [entry._id.toString(), entry.points]));
+  const pointsByUser = new Map<string, number>();
+  for (const entry of predictionResults) pointsByUser.set(entry._id.toString(), entry.points);
+  for (const entry of bonusResults) {
+    const key = entry._id.toString();
+    pointsByUser.set(key, (pointsByUser.get(key) ?? 0) + entry.points);
+  }
+
+  return pointsByUser;
 }
 
 export async function getGlobalLeaderboard(limit: number): Promise<LeaderboardEntry[]> {
   await dbConnect();
 
-  const results = await PredictionModel.aggregate<{
-    userId: Types.ObjectId;
-    name: string;
-    points: number;
-  }>([
-    { $match: { pointsAwarded: { $ne: null } } },
-    { $group: { _id: "$userId", points: { $sum: "$pointsAwarded" } } },
-    { $sort: { points: -1 } },
-    { $limit: limit },
-    { $lookup: { from: "users", localField: "_id", foreignField: "_id", as: "user" } },
-    { $unwind: "$user" },
-    { $project: { userId: "$_id", name: "$user.name", points: 1, _id: 0 } },
+  const [predictionResults, bonusResults] = await Promise.all([
+    PredictionModel.aggregate<{ _id: Types.ObjectId; points: number }>([
+      { $match: { pointsAwarded: { $ne: null } } },
+      { $group: { _id: "$userId", points: { $sum: "$pointsAwarded" } } },
+    ]),
+    BonusPredictionModel.aggregate<{ _id: Types.ObjectId; points: number }>([
+      { $match: { pointsAwarded: { $ne: null } } },
+      { $group: { _id: "$userId", points: { $sum: "$pointsAwarded" } } },
+    ]),
   ]);
 
-  return results.map((entry) => ({
-    userId: entry.userId.toString(),
-    name: entry.name,
-    points: entry.points,
+  const pointsByUser = new Map<string, number>();
+  for (const entry of predictionResults) pointsByUser.set(entry._id.toString(), entry.points);
+  for (const entry of bonusResults) {
+    const key = entry._id.toString();
+    pointsByUser.set(key, (pointsByUser.get(key) ?? 0) + entry.points);
+  }
+
+  const top = Array.from(pointsByUser.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, limit);
+
+  const userIds = top.map(([id]) => id);
+  const users = await UserModel.find({ _id: { $in: userIds } })
+    .select("name")
+    .lean<{ _id: Types.ObjectId; name: string }[]>();
+  const nameById = new Map(users.map((user) => [user._id.toString(), user.name]));
+
+  return top.map(([userId, points]) => ({
+    userId,
+    name: nameById.get(userId) ?? "Unbekannt",
+    points,
   }));
 }
 

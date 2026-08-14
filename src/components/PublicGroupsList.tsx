@@ -31,11 +31,11 @@ export default function PublicGroupsList({
           {groups.map((group) => (
             <div
               key={group._id}
-              className="glass-panel-sm flex items-center justify-between gap-4 p-4"
+              className="glass-panel-sm flex items-center justify-between gap-3 p-4"
             >
-              <div>
-                <p className="font-bold text-white">{group.name}</p>
-                <p className="text-xs text-white">
+              <div className="min-w-0 flex-1">
+                <p className="truncate font-bold text-white">{group.name}</p>
+                <p className="truncate text-xs text-white">
                   {group.memberCount} Mitglieder · Ersteller: {group.ownerName}
                 </p>
               </div>
@@ -48,7 +48,7 @@ export default function PublicGroupsList({
                     router.refresh();
                   })
                 }
-                className="glass-pill glass-pill-primary glass-interactive px-4 py-2 text-xs font-semibold text-white disabled:opacity-50"
+                className="glass-pill glass-pill-primary glass-interactive shrink-0 px-4 py-2 text-xs font-semibold text-white disabled:opacity-50"
               >
                 Beitreten
               </button>

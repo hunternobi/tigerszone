@@ -10,6 +10,7 @@ export interface BonusPredictionDocument extends Document {
   platzierungTigers?: number;
   topscorerTigers?: string;
   meisteToreTigers?: string;
+  pointsAwarded?: number;
 }
 
 const bonusPredictionSchema = new Schema<BonusPredictionDocument>({
@@ -19,6 +20,7 @@ const bonusPredictionSchema = new Schema<BonusPredictionDocument>({
   platzierungTigers: { type: Number, min: 1, max: 14 },
   topscorerTigers: { type: String },
   meisteToreTigers: { type: String },
+  pointsAwarded: { type: Number, default: null },
 });
 
 bonusPredictionSchema.index({ userId: 1, round: 1 }, { unique: true });
