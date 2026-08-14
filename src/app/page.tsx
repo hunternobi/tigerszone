@@ -30,6 +30,8 @@ export default async function Home() {
       <FadingBackground
         src="/images/hero-stadium-tinted.jpg"
         mobileSrc="/images/hero-stadium-mobile.jpg"
+        opacity={0.55}
+        blurPx={1.5}
       >
       <section className="relative min-h-screen overflow-hidden px-4 py-16 sm:px-6 sm:py-24">
         <div className="relative mx-auto max-w-4xl text-left sm:text-center">
