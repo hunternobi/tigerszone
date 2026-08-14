@@ -1,3 +1,4 @@
+import BonusTipsCard from "@/components/BonusTipsCard";
 import FadingBackground from "@/components/FadingBackground";
 import LeaderboardWidget from "@/components/LeaderboardWidget";
 import NextGameCountdown from "@/components/NextGameCountdown";
@@ -6,6 +7,7 @@ import { SCORING } from "@/lib/constants";
 import type { Game } from "@/types";
 import type { LeaderboardEntry } from "@/components/Leaderboard";
 import type { GroupLeaderboardData } from "@/lib/leaderboard";
+import type { MyBonusPrediction } from "@/app/tippspiel/bonusActions";
 
 interface TippspielInteractiveProps {
   nextGame: Game | null;
@@ -17,6 +19,8 @@ interface TippspielInteractiveProps {
   globalEntries: LeaderboardEntry[];
   groupLeaderboards: GroupLeaderboardData[];
   activeGroupId: string | null;
+  bonusPrediction: MyBonusPrediction;
+  bonusLocked: boolean;
 }
 
 export default function TippspielInteractive({
@@ -29,6 +33,8 @@ export default function TippspielInteractive({
   globalEntries,
   groupLeaderboards,
   activeGroupId,
+  bonusPrediction,
+  bonusLocked,
 }: TippspielInteractiveProps) {
   return (
     <FadingBackground src="/images/tippabgabe-bg.jpg" opacity={0.55} blurPx={1.5}>
@@ -50,6 +56,11 @@ export default function TippspielInteractive({
             )}
 
             <div className="mt-8">
+              <BonusTipsCard
+                initial={bonusPrediction}
+                isAuthenticated={isAuthenticated}
+                locked={bonusLocked}
+              />
               <TippspielTable
                 vorbereitungGames={vorbereitungGames}
                 hauptrundeGames={hauptrundeGames}

@@ -6,6 +6,7 @@ import { getAllGames } from "@/lib/games";
 import { getActiveGroupId, getMyGroups } from "@/app/gruppen/actions";
 import { getGlobalLeaderboard, getGroupLeaderboard, type GroupLeaderboardData } from "@/lib/leaderboard";
 import { getUserPredictionHistory } from "@/lib/predictions";
+import { getBonusDeadline, getMyBonusPrediction } from "@/app/tippspiel/bonusActions";
 
 export const metadata: Metadata = {
   title: "Tippspiel",
@@ -18,12 +19,18 @@ export default async function TippspielPage() {
   const session = await auth();
   const isAuthenticated = Boolean(session?.user);
 
-  const [activeGroupId, myGroups, allGames, history] = await Promise.all([
-    getActiveGroupId(),
-    getMyGroups(),
-    getAllGames(),
-    isAuthenticated ? getUserPredictionHistory(session!.user.id) : Promise.resolve(null),
-  ]);
+  const [activeGroupId, myGroups, allGames, history, bonusPrediction, bonusDeadline] =
+    await Promise.all([
+      getActiveGroupId(),
+      getMyGroups(),
+      getAllGames(),
+      isAuthenticated ? getUserPredictionHistory(session!.user.id) : Promise.resolve(null),
+      isAuthenticated ? getMyBonusPrediction("hauptrunde") : Promise.resolve({}),
+      getBonusDeadline("hauptrunde"),
+    ]);
+
+  const bonusLocked = Boolean(bonusDeadline && new Date() >= bonusDeadline);
+  const resolvedBonusPrediction = bonusPrediction ?? {};
 
   const [globalEntries, groupLeaderboards] = await Promise.all([
     getGlobalLeaderboard(3),
@@ -78,6 +85,8 @@ export default async function TippspielPage() {
       globalEntries={globalEntries}
       groupLeaderboards={groupLeaderboards}
       activeGroupId={activeGroupId}
+      bonusPrediction={resolvedBonusPrediction}
+      bonusLocked={bonusLocked}
     />
   );
 }
