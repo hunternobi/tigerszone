@@ -58,7 +58,7 @@ function RegisterForm() {
     <form onSubmit={handleSubmit} className="glass-panel mt-8 flex flex-col gap-4 p-6">
       <div>
         <label htmlFor="name" className="mb-1 block text-sm font-medium text-white">
-          Name
+          Benutzername
         </label>
         <input
           id="name"

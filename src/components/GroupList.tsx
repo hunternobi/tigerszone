@@ -155,7 +155,7 @@ export default function GroupList({ groups, leaderboards }: GroupListProps) {
               <GroupMemberTable
                 groupId={group._id}
                 entries={leaderboards[group._id] ?? []}
-                title={`Rangliste: ${group.name}`}
+                title="Rangliste"
                 viewerRole={group.viewerRole}
               />
             </div>

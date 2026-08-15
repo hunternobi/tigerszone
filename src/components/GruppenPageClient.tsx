@@ -47,9 +47,19 @@ export default function GruppenPageClient({
           type="button"
           onClick={() => setShowCreateForm((open) => !open)}
           aria-label={showCreateForm ? "Formular schließen" : "Neue Gruppe erstellen"}
-          className="glass-panel-sm glass-interactive flex h-11 w-11 shrink-0 items-center justify-center text-white"
+          className="glass-panel-sm glass-interactive flex h-11 shrink-0 items-center gap-1.5 px-4 text-sm font-semibold text-white"
         >
-          {showCreateForm ? <X size={20} /> : <Plus size={20} />}
+          {showCreateForm ? (
+            <>
+              Schließen
+              <X size={18} />
+            </>
+          ) : (
+            <>
+              Gruppe erstellen
+              <Plus size={18} />
+            </>
+          )}
         </button>
       </div>
 
