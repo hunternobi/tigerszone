@@ -11,7 +11,6 @@ const QUICK_LINKS = [
 ];
 
 const LEGAL_LINKS = [
-  { href: "/cookies", label: "Cookies" },
   { href: "/agb", label: "AGB" },
   { href: "/datenschutz", label: "Datenschutz" },
   { href: "/impressum", label: "Impressum" },

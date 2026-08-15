@@ -34,7 +34,7 @@ export default async function Home() {
         <div className="relative mx-auto max-w-4xl text-left sm:text-center">
           <h1 className="text-4xl font-bold text-white sm:text-5xl">
             Willkommen in der
-            <span className="script-heading mt-2 block text-5xl tracking-wide text-tigers-secondary sm:text-6xl">
+            <span className="script-heading mt-2 block text-4xl tracking-wide text-tigers-secondary sm:text-5xl">
               {SITE_NAME}
             </span>
           </h1>
