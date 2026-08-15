@@ -60,7 +60,7 @@ export default async function Home() {
 
                 <div className="mt-4 flex flex-col items-center gap-4 text-center sm:mt-6 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:text-left">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-wide text-tigers-secondary">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-white">
                       {nextGame.competition === "Vorbereitung" ? "Vorbereitungsspiel" : "DEL"}
                     </p>
                     <p className="mt-1 text-lg font-bold text-white sm:text-xl">

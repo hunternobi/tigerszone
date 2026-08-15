@@ -46,7 +46,7 @@ export default function NextGameCountdown({
   return (
     <div className="glass-panel-sm mt-4 flex flex-wrap items-center justify-between gap-3 p-3 sm:p-4">
       <div>
-        <p className="text-xs font-semibold tracking-wide text-tigers-secondary uppercase">
+        <p className="text-xs font-semibold tracking-wide text-white uppercase">
           Nächstes Spiel
         </p>
         <p className="text-sm font-bold text-white sm:text-base">
