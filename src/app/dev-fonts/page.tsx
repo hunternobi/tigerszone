@@ -1,5 +1,16 @@
 import type { Metadata } from "next";
-import { Antonio, Oswald, Barlow_Condensed, Big_Shoulders, Teko, Anton } from "next/font/google";
+import {
+  Antonio,
+  Oswald,
+  Barlow_Condensed,
+  Big_Shoulders,
+  Teko,
+  Anton,
+  Source_Serif_4,
+  PT_Serif,
+  Lora,
+  Newsreader,
+} from "next/font/google";
 
 export const metadata: Metadata = {
   title: "Font-Vergleich (intern)",
@@ -12,6 +23,10 @@ const barlowCondensed = Barlow_Condensed({ weight: "600", subsets: ["latin"] });
 const bigShoulders = Big_Shoulders({ weight: "600", subsets: ["latin"] });
 const teko = Teko({ weight: "600", subsets: ["latin"] });
 const anton = Anton({ weight: "400", subsets: ["latin"] });
+const sourceSerif = Source_Serif_4({ weight: "700", subsets: ["latin"] });
+const ptSerif = PT_Serif({ weight: "700", subsets: ["latin"] });
+const lora = Lora({ weight: "700", subsets: ["latin"] });
+const newsreader = Newsreader({ weight: "700", subsets: ["latin"] });
 
 interface FontOption {
   id: string;
@@ -28,6 +43,10 @@ const FONTS: FontOption[] = [
   { id: "bigshoulders", label: "Big Shoulders SemiBold", note: "kantiger, sehr sportlich", className: bigShoulders.className },
   { id: "teko", label: "Teko SemiBold", note: "sehr schmal, viel Höhe", className: teko.className },
   { id: "anton", label: "Anton (nur 400, sehr fett)", note: "kein echtes SemiBold, aber als fette Alternative dabei", className: anton.className },
+  { id: "sourceserif", label: "Source Serif 4 Bold", note: "Serif, ähnlich dem „AI drafts your slides“-Screenshot", className: sourceSerif.className },
+  { id: "ptserif", label: "PT Serif Bold", note: "Serif, etwas klassischer/enger", className: ptSerif.className },
+  { id: "lora", label: "Lora Bold", note: "Serif, weicher/runder", className: lora.className },
+  { id: "newsreader", label: "Newsreader Bold", note: "Serif, editorial/Zeitungs-Look", className: newsreader.className },
 ];
 
 function HeadingSamples({ className }: { className: string }) {
