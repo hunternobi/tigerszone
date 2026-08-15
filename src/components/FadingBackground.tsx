@@ -21,7 +21,7 @@ export default function FadingBackground({
   opacity = 1,
   blurPx = 0,
   overlayClassName,
-  scaleClassName = "scale-105",
+  scaleClassName = "scale-100",
   children,
 }: FadingBackgroundProps) {
   return (
