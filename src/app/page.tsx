@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { ArrowRight, Calendar, Clock } from "lucide-react";
-import { Oswald } from "next/font/google";
 import { auth } from "@/auth";
 import FadingBackground from "@/components/FadingBackground";
 import GlassButtonExact from "@/components/GlassButtonExact";
@@ -10,8 +9,6 @@ import { SITE_DESCRIPTION, SITE_NAME } from "@/lib/constants";
 import { getUpcomingGames } from "@/lib/games";
 import { getTeamName } from "@/lib/teams";
 import { formatGameDate, formatGameTime } from "@/utils/format";
-
-const scriptFont = Oswald({ weight: "600", subsets: ["latin"] });
 
 const INSTAGRAM_POSTS = ["https://www.instagram.com/p/DVG8cgaDHBf/"];
 
@@ -37,9 +34,7 @@ export default async function Home() {
         <div className="relative mx-auto max-w-4xl text-left sm:text-center">
           <h1 className="text-4xl font-bold text-white sm:text-5xl">
             Willkommen in der
-            <span
-              className={`${scriptFont.className} script-heading mt-2 block text-5xl tracking-wide text-tigers-secondary sm:text-6xl`}
-            >
+            <span className="script-heading mt-2 block text-5xl tracking-wide text-tigers-secondary sm:text-6xl">
               {SITE_NAME}
             </span>
           </h1>
