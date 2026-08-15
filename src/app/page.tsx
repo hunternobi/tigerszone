@@ -154,7 +154,11 @@ export default async function Home() {
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-tigers-secondary" />
-                    Fan-Momente &amp; Memes
+                    Fan-Momente
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-tigers-secondary" />
+                    Memes
                   </li>
                 </ul>
 
