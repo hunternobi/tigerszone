@@ -8,6 +8,7 @@ import { auth } from "@/auth";
 import { dbConnect } from "@/lib/mongodb";
 import { GroupModel } from "@/models/Group";
 import { GroupMemberModel } from "@/models/GroupMember";
+import { GroupInviteModel } from "@/models/GroupInvite";
 import { UserModel } from "@/models/User";
 
 const ACTIVE_GROUP_COOKIE = "activeGroupId";
@@ -19,6 +20,15 @@ export interface ActionResult {
 
 function generateInviteCode(): string {
   return randomBytes(6).toString("hex");
+}
+
+function escapeRegex(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+async function isGroupMember(groupId: string, userId: string): Promise<boolean> {
+  const membership = await GroupMemberModel.findOne({ groupId, userId }).select("_id");
+  return membership !== null;
 }
 
 export async function createGroup(name: string, isPublic: boolean): Promise<ActionResult> {
@@ -426,5 +436,180 @@ export async function kickGroupMember(
 
   revalidatePath("/gruppen");
   revalidatePath("/tippspiel");
+  return { success: true };
+}
+
+export interface InvitableUser {
+  userId: string;
+  name: string;
+}
+
+export async function searchInvitableUsers(
+  groupId: string,
+  query: string
+): Promise<InvitableUser[]> {
+  const session = await auth();
+  if (!session?.user) return [];
+
+  const trimmed = query.trim();
+  if (trimmed.length < 2) return [];
+
+  await dbConnect();
+  if (!(await isGroupMember(groupId, session.user.id))) return [];
+
+  const [members, pendingInvites] = await Promise.all([
+    GroupMemberModel.find({ groupId }).select("userId").lean<{ userId: Types.ObjectId }[]>(),
+    GroupInviteModel.find({ groupId }).select("invitedUserId").lean<
+      { invitedUserId: Types.ObjectId }[]
+    >(),
+  ]);
+  const excludedIds = [
+    ...members.map((m) => m.userId),
+    ...pendingInvites.map((i) => i.invitedUserId),
+    session.user.id,
+  ];
+
+  const users = await UserModel.find({
+    _id: { $nin: excludedIds },
+    name: { $regex: escapeRegex(trimmed), $options: "i" },
+  })
+    .select("name")
+    .limit(8)
+    .lean<{ _id: Types.ObjectId; name: string }[]>();
+
+  return users.map((user) => ({ userId: user._id.toString(), name: user.name }));
+}
+
+export async function inviteUserToGroup(
+  groupId: string,
+  targetUserId: string
+): Promise<ActionResult> {
+  const session = await auth();
+  if (!session?.user) return { success: false, error: "Bitte melde dich an." };
+
+  await dbConnect();
+  const group = await GroupModel.findById(groupId).select("name").lean<{ name: string } | null>();
+  if (!group) return { success: false, error: "Gruppe nicht gefunden." };
+
+  if (!(await isGroupMember(groupId, session.user.id))) {
+    return { success: false, error: "Keine Berechtigung." };
+  }
+  if (targetUserId === session.user.id) {
+    return { success: false, error: "Du kannst dich nicht selbst einladen." };
+  }
+
+  const targetUser = await UserModel.findById(targetUserId).select("_id");
+  if (!targetUser) return { success: false, error: "Spieler nicht gefunden." };
+
+  if (await isGroupMember(groupId, targetUserId)) {
+    return { success: false, error: "Spieler ist bereits Mitglied." };
+  }
+
+  try {
+    await GroupInviteModel.create({
+      groupId,
+      invitedUserId: targetUserId,
+      invitedByUserId: session.user.id,
+    });
+  } catch {
+    return { success: false, error: "Spieler wurde bereits eingeladen." };
+  }
+
+  return { success: true };
+}
+
+export interface MyGroupInvite {
+  inviteId: string;
+  groupId: string;
+  groupName: string;
+  invitedByName: string;
+}
+
+export async function getMyGroupInvites(): Promise<MyGroupInvite[]> {
+  const session = await auth();
+  if (!session?.user) return [];
+
+  await dbConnect();
+  const invites = await GroupInviteModel.find({ invitedUserId: session.user.id })
+    .sort({ createdAt: -1 })
+    .lean<
+      {
+        _id: Types.ObjectId;
+        groupId: Types.ObjectId;
+        invitedByUserId: Types.ObjectId;
+      }[]
+    >();
+  if (invites.length === 0) return [];
+
+  const groupIds = invites.map((invite) => invite.groupId);
+  const inviterIds = invites.map((invite) => invite.invitedByUserId);
+
+  const [groups, inviters] = await Promise.all([
+    GroupModel.find({ _id: { $in: groupIds } })
+      .select("name")
+      .lean<{ _id: Types.ObjectId; name: string }[]>(),
+    UserModel.find({ _id: { $in: inviterIds } })
+      .select("name")
+      .lean<{ _id: Types.ObjectId; name: string }[]>(),
+  ]);
+  const groupNameById = new Map(groups.map((g) => [g._id.toString(), g.name]));
+  const inviterNameById = new Map(inviters.map((u) => [u._id.toString(), u.name]));
+
+  return invites.map((invite) => ({
+    inviteId: invite._id.toString(),
+    groupId: invite.groupId.toString(),
+    groupName: groupNameById.get(invite.groupId.toString()) ?? "Unbekannte Gruppe",
+    invitedByName: inviterNameById.get(invite.invitedByUserId.toString()) ?? "Unbekannt",
+  }));
+}
+
+export async function acceptGroupInvite(inviteId: string): Promise<ActionResult> {
+  const session = await auth();
+  if (!session?.user) return { success: false, error: "Bitte melde dich an." };
+
+  await dbConnect();
+  const invite = await GroupInviteModel.findById(inviteId).lean<{
+    groupId: Types.ObjectId;
+    invitedUserId: Types.ObjectId;
+  } | null>();
+  if (!invite || invite.invitedUserId.toString() !== session.user.id) {
+    return { success: false, error: "Einladung nicht gefunden." };
+  }
+
+  const groupId = invite.groupId.toString();
+  const alreadyMember = await isGroupMember(groupId, session.user.id);
+  if (!alreadyMember) {
+    await GroupMemberModel.create({ groupId, userId: session.user.id });
+  }
+  await GroupInviteModel.deleteOne({ _id: inviteId });
+
+  const cookieStore = await cookies();
+  cookieStore.set(ACTIVE_GROUP_COOKIE, groupId, {
+    httpOnly: true,
+    sameSite: "lax",
+    path: "/",
+  });
+
+  revalidatePath("/profile");
+  revalidatePath("/gruppen");
+  revalidatePath("/tippspiel");
+  return { success: true };
+}
+
+export async function declineGroupInvite(inviteId: string): Promise<ActionResult> {
+  const session = await auth();
+  if (!session?.user) return { success: false, error: "Bitte melde dich an." };
+
+  await dbConnect();
+  const invite = await GroupInviteModel.findById(inviteId).select("invitedUserId").lean<{
+    invitedUserId: Types.ObjectId;
+  } | null>();
+  if (!invite || invite.invitedUserId.toString() !== session.user.id) {
+    return { success: false, error: "Einladung nicht gefunden." };
+  }
+
+  await GroupInviteModel.deleteOne({ _id: inviteId });
+
+  revalidatePath("/profile");
   return { success: true };
 }

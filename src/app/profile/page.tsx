@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
+import { getMyGroupInvites } from "@/app/gruppen/actions";
+import GroupInvites from "@/components/GroupInvites";
 
 export const metadata: Metadata = {
   title: "Profil",
@@ -10,6 +12,8 @@ export const metadata: Metadata = {
 export default async function ProfilePage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
+
+  const invites = await getMyGroupInvites();
 
   return (
     <section className="mx-auto max-w-3xl px-6 py-16">
@@ -28,6 +32,8 @@ export default async function ProfilePage() {
           </span>
         )}
       </div>
+
+      <GroupInvites invites={invites} />
     </section>
   );
 }

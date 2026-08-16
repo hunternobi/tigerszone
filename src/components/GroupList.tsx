@@ -2,9 +2,10 @@
 
 import { useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { Check, Pencil, Share2 } from "lucide-react";
+import { Pencil } from "lucide-react";
 import { renameGroup, type MyGroup } from "@/app/gruppen/actions";
 import GroupMemberTable from "@/components/GroupMemberTable";
+import GroupShareMenu from "@/components/GroupShareMenu";
 import type { LeaderboardEntry } from "@/components/Leaderboard";
 
 interface GroupListProps {
@@ -17,26 +18,7 @@ export default function GroupList({ groups, leaderboards }: GroupListProps) {
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [nameDraft, setNameDraft] = useState("");
   const [renameError, setRenameError] = useState<string | null>(null);
-  const [copiedId, setCopiedId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-
-  async function shareInvite(group: MyGroup) {
-    const inviteLink = `${window.location.origin}/gruppen/join/${group.inviteCode}`;
-    const text = `${group.ownerName} hat dich eingeladen, der Tippspiel-Gruppe ${group.name} beizutreten.`;
-
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: "TigersZone Einladung", text, url: inviteLink });
-      } catch {
-        // Nutzer hat das Teilen-Menü abgebrochen.
-      }
-      return;
-    }
-
-    await navigator.clipboard.writeText(`${text} Link: ${inviteLink}`);
-    setCopiedId(group._id);
-    setTimeout(() => setCopiedId((id) => (id === group._id ? null : id)), 1800);
-  }
 
   function startRename(group: MyGroup) {
     setRenamingId(group._id);
@@ -125,23 +107,7 @@ export default function GroupList({ groups, leaderboards }: GroupListProps) {
                 <span className="rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-white uppercase">
                   {group.isPublic ? "Öffentlich" : "Privat"}
                 </span>
-                {!group.isPublic && (
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      shareInvite(group);
-                    }}
-                    aria-label="Einladungslink teilen"
-                    className="rounded-full p-1.5 text-white/70 transition hover:bg-white/10 hover:text-white"
-                  >
-                    {copiedId === group._id ? (
-                      <Check size={14} className="text-emerald-400" />
-                    ) : (
-                      <Share2 size={14} />
-                    )}
-                  </button>
-                )}
+                {!group.isPublic && <GroupShareMenu group={group} />}
               </div>
             </div>
 
