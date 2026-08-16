@@ -50,6 +50,9 @@ function RegisterForm() {
           Fast geschafft! Wir haben dir eine E-Mail an <strong>{email}</strong> geschickt.
           Klicke auf den Bestätigungslink darin, um dein Konto zu aktivieren.
         </p>
+        <p className="mt-3 text-sm text-white/70">
+          Nichts angekommen? Bitte auch im Spam- bzw. Junk-Ordner nachschauen.
+        </p>
       </div>
     );
   }
