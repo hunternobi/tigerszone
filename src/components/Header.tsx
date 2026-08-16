@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { COMMUNITY_LINK, NAV_LINKS, SITE_NAME } from "@/lib/constants";
+import NotificationBell from "@/components/NotificationBell";
+import type { MyGroupInvite } from "@/app/gruppen/actions";
 
 const MOBILE_NAV_LINKS = [
   { href: "/tippspiel", label: "Tippspiel" },
@@ -15,7 +17,11 @@ const MOBILE_NAV_LINKS = [
 ];
 const MOBILE_HREFS = new Set(MOBILE_NAV_LINKS.map((link) => link.href));
 
-export default function Header() {
+interface HeaderProps {
+  invites: MyGroupInvite[];
+}
+
+export default function Header({ invites }: HeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
@@ -80,6 +86,7 @@ export default function Header() {
         <div className="hidden items-center gap-3 md:flex">
           {status === "authenticated" ? (
             <>
+              <NotificationBell invites={invites} />
               <span className="text-sm text-white">Hallo, {session.user.name}</span>
               <button
                 type="button"
@@ -115,14 +122,17 @@ export default function Header() {
             );
           })}
         </nav>
-        <button
-          type="button"
-          className="p-1 text-white md:hidden"
-          onClick={() => setMobileOpen((open) => !open)}
-          aria-label="Menü umschalten"
-        >
-          {mobileOpen ? <X size={22} /> : <Menu size={22} />}
-        </button>
+        <div className="flex shrink-0 items-center gap-1 md:hidden">
+          {status === "authenticated" && <NotificationBell invites={invites} />}
+          <button
+            type="button"
+            className="p-1 text-white"
+            onClick={() => setMobileOpen((open) => !open)}
+            aria-label="Menü umschalten"
+          >
+            {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+          </button>
+        </div>
       </div>
 
       {mobileOpen && (

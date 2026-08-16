@@ -5,6 +5,8 @@ import { SessionProvider } from "next-auth/react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/constants";
+import { auth } from "@/auth";
+import { getMyGroupInvites } from "@/app/gruppen/actions";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -66,11 +68,14 @@ export const viewport: Viewport = {
   themeColor: "#0a0f3d",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+  const invites = session?.user ? await getMyGroupInvites() : [];
+
   return (
     <html
       lang="de"
@@ -92,7 +97,7 @@ export default function RootLayout({
           }}
         />
         <SessionProvider>
-          <Header />
+          <Header invites={invites} />
           <main className="flex-1 pt-[72px]">{children}</main>
           <Footer />
         </SessionProvider>
