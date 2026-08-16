@@ -20,6 +20,7 @@ const groupMemberSchema = new Schema<GroupMemberDocument>(
 );
 
 groupMemberSchema.index({ groupId: 1, userId: 1 }, { unique: true });
+groupMemberSchema.index({ userId: 1 });
 
 export const GroupMemberModel =
   models.GroupMember || model<GroupMemberDocument>("GroupMember", groupMemberSchema);

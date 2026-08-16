@@ -32,4 +32,7 @@ const gameSchema = new Schema<GameDocument>({
   overtime: { type: String, enum: ["REG", "OT", "SO"] },
 });
 
+gameSchema.index({ status: 1, kickoff: 1 });
+gameSchema.index({ competition: 1, kickoff: 1 });
+
 export const GameModel = models.Game || model<GameDocument>("Game", gameSchema);

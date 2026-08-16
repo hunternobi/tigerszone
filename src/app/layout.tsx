@@ -51,13 +51,13 @@ export const metadata: Metadata = {
     title: `${SITE_NAME} – Das Eishockey-Tippspiel für Fans`,
     description: SITE_DESCRIPTION,
     url: SITE_URL,
-    images: [{ url: "/images/hero-stadium.jpg", width: 1200, height: 630, alt: SITE_NAME }],
+    images: [{ url: "/images/hero-stadium-og.jpg", width: 1200, height: 630, alt: SITE_NAME }],
   },
   twitter: {
     card: "summary_large_image",
     title: `${SITE_NAME} – Das Eishockey-Tippspiel für Fans`,
     description: SITE_DESCRIPTION,
-    images: ["/images/hero-stadium.jpg"],
+    images: ["/images/hero-stadium-og.jpg"],
   },
   icons: {
     icon: "/images/TigersZone_Logo.png",
@@ -74,7 +74,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await auth();
-  const invites = session?.user ? await getMyGroupInvites() : [];
+  const invites = session?.user ? await getMyGroupInvites(session.user.id) : [];
 
   return (
     <html

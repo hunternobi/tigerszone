@@ -13,7 +13,7 @@ export default async function ProfilePage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const invites = await getMyGroupInvites();
+  const invites = await getMyGroupInvites(session.user.id);
 
   return (
     <section className="mx-auto max-w-3xl px-6 py-16">

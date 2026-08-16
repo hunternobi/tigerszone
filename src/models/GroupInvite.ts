@@ -18,6 +18,7 @@ const groupInviteSchema = new Schema<GroupInviteDocument>(
 );
 
 groupInviteSchema.index({ groupId: 1, invitedUserId: 1 }, { unique: true });
+groupInviteSchema.index({ invitedUserId: 1 });
 
 export const GroupInviteModel =
   models.GroupInvite || model<GroupInviteDocument>("GroupInvite", groupInviteSchema);

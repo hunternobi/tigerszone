@@ -21,6 +21,7 @@ const predictionSchema = new Schema<PredictionDocument>({
 });
 
 predictionSchema.index({ userId: 1, gameId: 1 }, { unique: true });
+predictionSchema.index({ gameId: 1 });
 
 export const PredictionModel =
   models.Prediction || model<PredictionDocument>("Prediction", predictionSchema);

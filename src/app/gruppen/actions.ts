@@ -525,12 +525,15 @@ export interface MyGroupInvite {
   invitedByName: string;
 }
 
-export async function getMyGroupInvites(): Promise<MyGroupInvite[]> {
-  const session = await auth();
-  if (!session?.user) return [];
+export async function getMyGroupInvites(userId?: string): Promise<MyGroupInvite[]> {
+  if (!userId) {
+    const session = await auth();
+    if (!session?.user) return [];
+    userId = session.user.id;
+  }
 
   await dbConnect();
-  const invites = await GroupInviteModel.find({ invitedUserId: session.user.id })
+  const invites = await GroupInviteModel.find({ invitedUserId: userId })
     .sort({ createdAt: -1 })
     .lean<
       {

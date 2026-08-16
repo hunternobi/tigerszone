@@ -24,6 +24,7 @@ const bonusPredictionSchema = new Schema<BonusPredictionDocument>({
 });
 
 bonusPredictionSchema.index({ userId: 1, round: 1 }, { unique: true });
+bonusPredictionSchema.index({ round: 1 });
 
 export const BonusPredictionModel =
   models.BonusPrediction ||
