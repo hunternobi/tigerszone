@@ -28,7 +28,7 @@ const sourceSerif = Source_Serif_4({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} – Das Eishockey-Tippspiel für Fans`,
+    default: `${SITE_NAME} – Das Tippspiel für Eishockeyfans`,
     template: `%s – ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
@@ -48,14 +48,14 @@ export const metadata: Metadata = {
     type: "website",
     locale: "de_DE",
     siteName: SITE_NAME,
-    title: `${SITE_NAME} – Das Eishockey-Tippspiel für Fans`,
+    title: `${SITE_NAME} – Das Tippspiel für Eishockeyfans`,
     description: SITE_DESCRIPTION,
     url: SITE_URL,
     images: [{ url: "/images/hero-stadium-og.jpg", width: 1200, height: 630, alt: SITE_NAME }],
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE_NAME} – Das Eishockey-Tippspiel für Fans`,
+    title: `${SITE_NAME} – Das Tippspiel für Eishockeyfans`,
     description: SITE_DESCRIPTION,
     images: ["/images/hero-stadium-og.jpg"],
   },
