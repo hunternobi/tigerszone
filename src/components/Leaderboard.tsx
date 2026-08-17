@@ -1,3 +1,4 @@
+import { ArrowDown, ArrowUp } from "lucide-react";
 import { FaUserTie } from "react-icons/fa";
 import { MdOutlineEditNote } from "react-icons/md";
 
@@ -6,6 +7,7 @@ export interface LeaderboardEntry {
   name: string;
   points: number;
   role?: "owner" | "assistant" | "member";
+  trend?: "up" | "down";
 }
 
 interface LeaderboardProps {
@@ -32,6 +34,24 @@ export function RoleBadge({ role }: { role?: "owner" | "assistant" | "member" })
   );
 }
 
+export function TrendIcon({ trend }: { trend?: "up" | "down" }) {
+  if (trend === "up") {
+    return (
+      <span title="Im Vergleich zum letzten Spieltag aufgestiegen">
+        <ArrowUp size={12} className="shrink-0 text-emerald-400" />
+      </span>
+    );
+  }
+  if (trend === "down") {
+    return (
+      <span title="Im Vergleich zum letzten Spieltag abgerutscht">
+        <ArrowDown size={12} className="shrink-0 text-red-400" />
+      </span>
+    );
+  }
+  return null;
+}
+
 export default function Leaderboard({ entries, title = "Rangliste", medals = false }: LeaderboardProps) {
   return (
     <div className="glass-panel p-4 sm:p-6">
@@ -51,6 +71,7 @@ export default function Leaderboard({ entries, title = "Rangliste", medals = fal
                     {medals ? MEDALS[index] : `${index + 1}.`}
                   </span>
                   <span className="truncate">{entry.name}</span>
+                  <TrendIcon trend={entry.trend} />
                 </span>
                 <RoleBadge role={entry.role} />
               </span>

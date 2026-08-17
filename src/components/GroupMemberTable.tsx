@@ -15,7 +15,7 @@ import {
   promoteToAssistant,
   type ActionResult,
 } from "@/app/gruppen/actions";
-import { RoleBadge, type LeaderboardEntry } from "@/components/Leaderboard";
+import { RoleBadge, TrendIcon, type LeaderboardEntry } from "@/components/Leaderboard";
 
 interface GroupMemberTableProps {
   groupId: string;
@@ -140,6 +140,7 @@ export default function GroupMemberTable({
                     <Link href={`/spieler/${entry.userId}`} className="truncate hover:underline">
                       {entry.name}
                     </Link>
+                    <TrendIcon trend={entry.trend} />
                   </span>
                   <RoleBadge role={entry.role} />
                 </span>
