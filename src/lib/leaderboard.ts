@@ -211,9 +211,17 @@ export interface SpieltagsMvpEntry {
   name: string;
 }
 
+export interface SpieltagsMvpGame {
+  homeTeamId: string;
+  awayTeamId: string;
+  homeScore: number;
+  awayScore: number;
+}
+
 export interface SpieltagsMvpData {
   date: string | null;
   matchLabel: string | null;
+  games: SpieltagsMvpGame[];
   entries: SpieltagsMvpEntry[];
 }
 
@@ -226,7 +234,8 @@ export async function getSpieltagsMvp(): Promise<SpieltagsMvpData> {
   await dbConnect();
 
   const latestBatchGameIds = await getLatestBatchGameIds();
-  if (latestBatchGameIds.length === 0) return { date: null, matchLabel: null, entries: [] };
+  if (latestBatchGameIds.length === 0)
+    return { date: null, matchLabel: null, games: [], entries: [] };
 
   const games = await GameModel.find({ _id: { $in: latestBatchGameIds } })
     .select("homeTeamId awayTeamId kickoff homeScore awayScore")
@@ -272,6 +281,14 @@ export async function getSpieltagsMvp(): Promise<SpieltagsMvpData> {
       games.length === 1
         ? `${getTeamName(games[0].homeTeamId)} vs. ${getTeamName(games[0].awayTeamId)}`
         : `${games.length} Spiele`,
+    games: games
+      .filter((game) => game.homeScore != null && game.awayScore != null)
+      .map((game) => ({
+        homeTeamId: game.homeTeamId,
+        awayTeamId: game.awayTeamId,
+        homeScore: game.homeScore!,
+        awayScore: game.awayScore!,
+      })),
     entries: users
       .map((user) => ({ userId: user._id.toString(), name: user.name }))
       .sort((a, b) => a.name.localeCompare(b.name)),

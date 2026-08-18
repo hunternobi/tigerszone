@@ -5,10 +5,12 @@ import { getAllGames } from "@/lib/games";
 import { getAllUsersWithGroups } from "@/lib/adminUsers";
 import { getAllGroups } from "@/lib/adminGroups";
 import { getBonusResult } from "@/lib/adminBonus";
+import { getSpieltagsMvp } from "@/lib/leaderboard";
 import GameResultForm from "@/components/GameResultForm";
 import AdminUserTable from "@/components/AdminUserTable";
 import AdminGroupTable from "@/components/AdminGroupTable";
 import BonusResultForm from "@/components/BonusResultForm";
+import SpieltagsMvpAdmin from "@/components/SpieltagsMvpAdmin";
 
 export const metadata: Metadata = {
   title: "Admin",
@@ -20,11 +22,12 @@ export default async function AdminPage() {
   if (!session?.user) redirect("/login");
   if (session.user.role !== "admin") redirect("/");
 
-  const [games, users, groups, bonusResult] = await Promise.all([
+  const [games, users, groups, bonusResult, spieltagsMvp] = await Promise.all([
     getAllGames(),
     getAllUsersWithGroups(),
     getAllGroups(),
     getBonusResult("hauptrunde"),
+    getSpieltagsMvp(),
   ]);
 
   return (
@@ -39,6 +42,15 @@ export default async function AdminPage() {
         {games.map((game) => (
           <GameResultForm key={game._id} game={game} />
         ))}
+      </div>
+
+      <h2 className="mt-16 text-2xl font-bold text-white">Spieltags-MVP</h2>
+      <p className="mt-2 text-white">
+        Wer beim letzten ausgewerteten Spieltag das Ergebnis exakt getroffen hat, fertig
+        formatiert zum Kopieren für Instagram.
+      </p>
+      <div className="mt-6">
+        <SpieltagsMvpAdmin mvp={spieltagsMvp} />
       </div>
 
       <h2 className="mt-16 text-2xl font-bold text-white">Bonustipps Hauptrunde</h2>
