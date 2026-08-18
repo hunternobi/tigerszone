@@ -125,7 +125,7 @@ export default function GroupList({ groups, leaderboards }: GroupListProps) {
                 <span className="rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-white uppercase">
                   {group.isPublic ? "Öffentlich" : "Privat"}
                 </span>
-                {!group.isPublic && <GroupShareMenu group={group} />}
+                <GroupShareMenu group={group} />
               </div>
             </div>
 

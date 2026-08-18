@@ -42,6 +42,12 @@ export async function createGroup(name: string, isPublic: boolean): Promise<Acti
 
   await dbConnect();
 
+  const nameLower = trimmed.toLowerCase();
+  const nameTaken = await GroupModel.findOne({ nameLower });
+  if (nameTaken) {
+    return { success: false, error: "Dieser Gruppenname ist bereits vergeben." };
+  }
+
   let inviteCode = generateInviteCode();
   for (let attempt = 0; attempt < 5; attempt++) {
     const existing = await GroupModel.findOne({ inviteCode });
@@ -51,6 +57,7 @@ export async function createGroup(name: string, isPublic: boolean): Promise<Acti
 
   const group = await GroupModel.create({
     name: trimmed,
+    nameLower,
     inviteCode,
     ownerUserId: session.user.id,
     isPublic,
@@ -362,7 +369,13 @@ export async function renameGroup(groupId: string, name: string): Promise<Action
     }
   }
 
-  await GroupModel.updateOne({ _id: groupId }, { name: trimmed });
+  const nameLower = trimmed.toLowerCase();
+  const nameTaken = await GroupModel.findOne({ nameLower, _id: { $ne: groupId } }).select("_id");
+  if (nameTaken) {
+    return { success: false, error: "Dieser Gruppenname ist bereits vergeben." };
+  }
+
+  await GroupModel.updateOne({ _id: groupId }, { name: trimmed, nameLower });
 
   revalidatePath("/gruppen");
   revalidatePath("/tippspiel");
