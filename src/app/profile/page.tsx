@@ -2,7 +2,12 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { getMyGroupInvites } from "@/app/gruppen/actions";
+import { getFavoritePlayerId } from "@/app/profile/actions";
+import { getMyBonusPrediction } from "@/app/tippspiel/bonusActions";
+import { getUserPredictionHistory } from "@/lib/predictions";
 import GroupInvites from "@/components/GroupInvites";
+import FavoritePlayerSelect from "@/components/FavoritePlayerSelect";
+import ProfileHistory from "@/components/ProfileHistory";
 
 export const metadata: Metadata = {
   title: "Profil",
@@ -13,7 +18,13 @@ export default async function ProfilePage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const invites = await getMyGroupInvites(session.user.id);
+  const [invites, favoritePlayerId, bonusHauptrunde, bonusPlayoffs, history] = await Promise.all([
+    getMyGroupInvites(session.user.id),
+    getFavoritePlayerId(session.user.id),
+    getMyBonusPrediction("hauptrunde"),
+    getMyBonusPrediction("playoffs"),
+    getUserPredictionHistory(session.user.id),
+  ]);
 
   return (
     <section className="mx-auto max-w-3xl px-6 py-16">
@@ -31,9 +42,19 @@ export default async function ProfilePage() {
             Admin
           </span>
         )}
+
+        <div className="mt-6">
+          <FavoritePlayerSelect initialPlayerId={favoritePlayerId ?? ""} />
+        </div>
       </div>
 
       <GroupInvites invites={invites} />
+
+      <ProfileHistory
+        entries={history?.entries ?? []}
+        bonusHauptrunde={bonusHauptrunde ?? {}}
+        bonusPlayoffs={bonusPlayoffs ?? {}}
+      />
     </section>
   );
 }

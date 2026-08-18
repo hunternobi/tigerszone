@@ -19,7 +19,7 @@ const gameSchema = new Schema<GameDocument>({
   homeTeamId: { type: String, required: true },
   awayTeamId: { type: String, required: true },
   kickoff: { type: Date, required: true },
-  competition: { type: String, enum: ["Vorbereitung", "DEL"], required: true },
+  competition: { type: String, enum: ["Vorbereitung", "DEL", "Playoffs"], required: true },
   matchday: { type: Number },
   isDerby: { type: Boolean, default: false },
   status: {

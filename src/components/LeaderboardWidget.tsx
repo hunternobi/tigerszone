@@ -59,7 +59,15 @@ export default function LeaderboardWidget({
       </div>
 
       {tab === "global" ? (
-        <Leaderboard entries={globalEntries} title="Gesamtrangliste" medals />
+        <div>
+          <Leaderboard entries={globalEntries} title="Gesamtrangliste" medals />
+          <Link
+            href="/tippspiel/rangliste"
+            className="mt-2 block text-center text-xs text-tigers-secondary hover:underline"
+          >
+            Gesamte Rangliste ansehen
+          </Link>
+        </div>
       ) : groupLeaderboards.length === 0 ? (
         <div className="glass-panel p-6 text-center text-sm text-white">
           Keine aktive Gruppe.{" "}

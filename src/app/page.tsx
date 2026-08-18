@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Calendar, Clock } from "lucide-react";
+import { ArrowRight, Calendar, Clock, Trophy } from "lucide-react";
 import { auth } from "@/auth";
 import FadingBackground from "@/components/FadingBackground";
 import GlassButtonExact from "@/components/GlassButtonExact";
@@ -7,6 +7,7 @@ import InstagramEmbed from "@/components/InstagramEmbed";
 import Reveal from "@/components/Reveal";
 import { SITE_DESCRIPTION, SITE_NAME } from "@/lib/constants";
 import { getUpcomingGames } from "@/lib/games";
+import { getSpieltagsMvp } from "@/lib/leaderboard";
 import { getTeamName } from "@/lib/teams";
 import { formatGameDate, formatGameTime } from "@/utils/format";
 
@@ -14,7 +15,11 @@ const INSTAGRAM_POSTS = ["https://www.instagram.com/p/DVG8cgaDHBf/"];
 
 export default async function Home() {
   const session = await auth();
-  const nextGame = (await getUpcomingGames(1))[0];
+  const [upcomingGames, spieltagsMvp] = await Promise.all([
+    getUpcomingGames(1),
+    getSpieltagsMvp(),
+  ]);
+  const nextGame = upcomingGames[0];
   const daysUntilGame = nextGame
     ? Math.max(
         0,
@@ -90,6 +95,39 @@ export default async function Home() {
                     </GlassButtonExact>
                   </div>
                 </div>
+              </div>
+            </Reveal>
+          )}
+
+          {spieltagsMvp.date && (
+            <Reveal>
+              <div className="glass-panel mx-auto mt-6 max-w-2xl p-4 text-left sm:mt-8 sm:p-8">
+                <div className="flex items-center justify-center gap-2">
+                  <Trophy size={20} className="shrink-0 text-tigers-secondary" />
+                  <h2 className="text-center text-xl font-bold text-white sm:text-2xl">
+                    Spieltags-MVP
+                  </h2>
+                </div>
+                <p className="mt-1.5 text-center text-xs text-white sm:mt-2 sm:text-sm">
+                  {spieltagsMvp.matchLabel} · alle mit dem exakt richtigen Tipp
+                </p>
+
+                {spieltagsMvp.entries.length === 0 ? (
+                  <p className="mt-4 text-center text-sm text-white">
+                    Diesmal hat niemand das genaue Ergebnis getroffen.
+                  </p>
+                ) : (
+                  <ul className="mt-4 flex flex-wrap justify-center gap-2">
+                    {spieltagsMvp.entries.map((entry) => (
+                      <li
+                        key={entry.userId}
+                        className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-sm font-semibold text-white"
+                      >
+                        {entry.name}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             </Reveal>
           )}

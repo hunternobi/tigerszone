@@ -6,6 +6,7 @@ import { GameModel } from "@/models/Game";
 import { UserModel } from "@/models/User";
 import { GroupMemberModel } from "@/models/GroupMember";
 import { GroupModel } from "@/models/Group";
+import { getTeamName } from "@/lib/teams";
 import type { LeaderboardEntry } from "@/components/Leaderboard";
 
 export interface GroupLeaderboardData {
@@ -51,7 +52,7 @@ async function sumPointsForUsers(
  * Games counted as "the last Spieltag" for rank-trend purposes: every finished
  * game that kicked off on the same calendar day as the most recently finished game.
  */
-async function getLatestBatchGameIds(): Promise<Types.ObjectId[]> {
+export async function getLatestBatchGameIds(): Promise<Types.ObjectId[]> {
   const latest = await GameModel.findOne({ status: "finished" })
     .sort({ kickoff: -1 })
     .select("kickoff")
@@ -97,7 +98,7 @@ function computeTrends(
   return trends;
 }
 
-export async function getGlobalLeaderboard(limit: number): Promise<LeaderboardEntry[]> {
+export async function getGlobalLeaderboard(limit?: number): Promise<LeaderboardEntry[]> {
   await dbConnect();
 
   const latestBatchGameIds = await getLatestBatchGameIds();
@@ -138,9 +139,8 @@ export async function getGlobalLeaderboard(limit: number): Promise<LeaderboardEn
   const allUserIds = new Set([...pointsByUser.keys(), ...previousPointsByUser.keys()]);
   const trends = computeTrends(Array.from(allUserIds), pointsByUser, previousPointsByUser);
 
-  const top = Array.from(pointsByUser.entries())
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, limit);
+  const sortedEntries = Array.from(pointsByUser.entries()).sort((a, b) => b[1] - a[1]);
+  const top = limit ? sortedEntries.slice(0, limit) : sortedEntries;
 
   const userIds = top.map(([id]) => id);
   const users = await UserModel.find({ _id: { $in: userIds } })
@@ -204,4 +204,76 @@ export async function getGroupLeaderboard(
     .sort((a, b) => b.points - a.points);
 
   return limit ? sorted.slice(0, limit) : sorted;
+}
+
+export interface SpieltagsMvpEntry {
+  userId: string;
+  name: string;
+}
+
+export interface SpieltagsMvpData {
+  date: string | null;
+  matchLabel: string | null;
+  entries: SpieltagsMvpEntry[];
+}
+
+/**
+ * Users who predicted the exact final score for a game in the latest finished
+ * Spieltag (see getLatestBatchGameIds — every finished game sharing the same
+ * calendar day as the most recently finished game).
+ */
+export async function getSpieltagsMvp(): Promise<SpieltagsMvpData> {
+  await dbConnect();
+
+  const latestBatchGameIds = await getLatestBatchGameIds();
+  if (latestBatchGameIds.length === 0) return { date: null, matchLabel: null, entries: [] };
+
+  const games = await GameModel.find({ _id: { $in: latestBatchGameIds } })
+    .select("homeTeamId awayTeamId kickoff homeScore awayScore")
+    .lean<
+      {
+        _id: Types.ObjectId;
+        homeTeamId: string;
+        awayTeamId: string;
+        kickoff: Date;
+        homeScore?: number;
+        awayScore?: number;
+      }[]
+    >();
+  const gameById = new Map(games.map((game) => [game._id.toString(), game]));
+
+  const predictions = await PredictionModel.find({ gameId: { $in: latestBatchGameIds } })
+    .select("userId gameId predictedHome predictedAway")
+    .lean<
+      { userId: Types.ObjectId; gameId: Types.ObjectId; predictedHome: number; predictedAway: number }[]
+    >();
+
+  const exactUserIds = new Set<string>();
+  for (const prediction of predictions) {
+    const game = gameById.get(prediction.gameId.toString());
+    if (
+      game &&
+      game.homeScore != null &&
+      game.awayScore != null &&
+      prediction.predictedHome === game.homeScore &&
+      prediction.predictedAway === game.awayScore
+    ) {
+      exactUserIds.add(prediction.userId.toString());
+    }
+  }
+
+  const users = await UserModel.find({ _id: { $in: Array.from(exactUserIds) } })
+    .select("name")
+    .lean<{ _id: Types.ObjectId; name: string }[]>();
+
+  return {
+    date: games[0].kickoff.toISOString(),
+    matchLabel:
+      games.length === 1
+        ? `${getTeamName(games[0].homeTeamId)} vs. ${getTeamName(games[0].awayTeamId)}`
+        : `${games.length} Spiele`,
+    entries: users
+      .map((user) => ({ userId: user._id.toString(), name: user.name }))
+      .sort((a, b) => a.name.localeCompare(b.name)),
+  };
 }

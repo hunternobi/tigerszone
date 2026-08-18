@@ -32,7 +32,7 @@ export interface Team {
 
 export type Overtime = "REG" | "OT" | "SO";
 export type GameStatus = "scheduled" | "live" | "finished" | "postponed" | "cancelled";
-export type Competition = "Vorbereitung" | "DEL";
+export type Competition = "Vorbereitung" | "DEL" | "Playoffs";
 
 export interface Game {
   _id: string;

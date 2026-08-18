@@ -34,3 +34,20 @@ export function getSkaterName(id: string): string {
   const player = TIGERS_SKATERS.find((p) => p.id === id);
   return player ? `#${player.number} ${player.name}` : id;
 }
+
+// Straubing Tigers Torhüter 2026/2027, nach Rückennummer sortiert
+export const TIGERS_GOALIES: RosterPlayer[] = [
+  { id: "1-florian-bugl", number: 1, name: "Florian Bugl" },
+  { id: "21-sebastian-wieber", number: 21, name: "Sebastian Wieber" },
+  { id: "31-jakub-skarek", number: 31, name: "Jakub Škarek" },
+];
+
+// Gesamtkader (Feldspieler + Torhüter), nach Rückennummer sortiert
+export const TIGERS_ROSTER: RosterPlayer[] = [...TIGERS_SKATERS, ...TIGERS_GOALIES].sort(
+  (a, b) => a.number - b.number
+);
+
+export function getPlayerName(id: string): string {
+  const player = TIGERS_ROSTER.find((p) => p.id === id);
+  return player ? `#${player.number} ${player.name}` : id;
+}
