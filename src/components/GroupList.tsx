@@ -111,12 +111,6 @@ export default function GroupList({ groups, leaderboards }: GroupListProps) {
               </div>
             </div>
 
-            {group.isPublic && (
-              <p className="mt-3 text-xs text-white">
-                Öffentliche Gruppe – sichtbar in „Öffentliche Gruppen&quot; für alle Nutzer.
-              </p>
-            )}
-
             <div className="mt-4">
               <GroupMemberTable
                 groupId={group._id}

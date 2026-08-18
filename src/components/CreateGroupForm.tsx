@@ -61,7 +61,7 @@ export default function CreateGroupForm() {
       <p className="mt-2 text-xs text-white">
         {isPublic
           ? "Jeder Nutzer kann direkt beitreten."
-          : "Beitritt nur über den Einladungslink."}
+          : "Beitritt über Einladungslink oder indem du Spieler direkt in der Gruppe einlädst."}
       </p>
 
       {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
