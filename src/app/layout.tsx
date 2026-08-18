@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/constants";
 import { auth } from "@/auth";
 import { getMyGroupInvites } from "@/app/gruppen/actions";
+import { getMyNotifications } from "@/app/notifications/actions";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -74,7 +75,12 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await auth();
-  const invites = session?.user ? await getMyGroupInvites(session.user.id) : [];
+  const [invites, notifications] = session?.user
+    ? await Promise.all([
+        getMyGroupInvites(session.user.id),
+        getMyNotifications(session.user.id),
+      ])
+    : [[], []];
 
   return (
     <html
@@ -97,7 +103,7 @@ export default async function RootLayout({
           }}
         />
         <SessionProvider>
-          <Header invites={invites} />
+          <Header invites={invites} notifications={notifications} />
           <main className="flex-1 pt-[72px]">{children}</main>
           <Footer />
         </SessionProvider>

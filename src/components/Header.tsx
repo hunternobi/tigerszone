@@ -9,6 +9,7 @@ import { signOut, useSession } from "next-auth/react";
 import { COMMUNITY_LINK, NAV_LINKS, SITE_NAME } from "@/lib/constants";
 import NotificationBell from "@/components/NotificationBell";
 import type { MyGroupInvite } from "@/app/gruppen/actions";
+import type { MyNotification } from "@/app/notifications/actions";
 
 const MOBILE_NAV_LINKS = [
   { href: "/tippspiel", label: "Tippspiel" },
@@ -19,9 +20,10 @@ const MOBILE_HREFS = new Set(MOBILE_NAV_LINKS.map((link) => link.href));
 
 interface HeaderProps {
   invites: MyGroupInvite[];
+  notifications: MyNotification[];
 }
 
-export default function Header({ invites }: HeaderProps) {
+export default function Header({ invites, notifications }: HeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
@@ -86,7 +88,7 @@ export default function Header({ invites }: HeaderProps) {
         <div className="hidden items-center gap-3 md:flex">
           {status === "authenticated" ? (
             <>
-              <NotificationBell invites={invites} />
+              <NotificationBell invites={invites} notifications={notifications} />
               <span className="text-sm text-white">Hallo, {session.user.name}</span>
               <button
                 type="button"
@@ -123,7 +125,7 @@ export default function Header({ invites }: HeaderProps) {
           })}
         </nav>
         <div className="flex shrink-0 items-center gap-1 md:hidden">
-          {status === "authenticated" && <NotificationBell invites={invites} />}
+          {status === "authenticated" && <NotificationBell invites={invites} notifications={notifications} />}
           <button
             type="button"
             className="p-1 text-white"
