@@ -131,7 +131,7 @@ export default function NotificationBell({
                       <Link
                         href={notification.linkHref}
                         onClick={() => setOpen(false)}
-                        className="mt-1.5 inline-block text-xs text-tigers-secondary hover:underline"
+                        className="mt-1.5 inline-block text-xs font-semibold text-white underline"
                       >
                         {notification.linkLabel ?? "Mehr erfahren"}
                       </Link>
