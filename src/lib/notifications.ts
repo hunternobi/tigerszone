@@ -24,8 +24,13 @@ export async function createWelcomeNotification(userId: string, name: string): P
   );
 }
 
-const REMINDER_WINDOW_START_MS = 23 * 60 * 60 * 1000;
-const REMINDER_WINDOW_END_MS = 25 * 60 * 60 * 1000;
+// Vercel Hobby plan only allows daily (not hourly) cron jobs, so this runs
+// once a day. The window has to be wide enough to reliably catch "tomorrow's"
+// game regardless of its exact kickoff time; the unique index on
+// {userId, type, gameId} means overlapping windows across days never
+// double-notify anyone.
+const REMINDER_WINDOW_START_MS = 0;
+const REMINDER_WINDOW_END_MS = 30 * 60 * 60 * 1000;
 
 export interface TipReminderResult {
   gamesChecked: number;
