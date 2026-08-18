@@ -483,9 +483,6 @@ export async function searchInvitableUsers(
   const session = await auth();
   if (!session?.user) return [];
 
-  const trimmed = query.trim();
-  if (trimmed.length < 2) return [];
-
   await dbConnect();
   if (!(await isGroupMember(groupId, session.user.id))) return [];
 
@@ -501,12 +498,16 @@ export async function searchInvitableUsers(
     session.user.id,
   ];
 
-  const users = await UserModel.find({
-    _id: { $nin: excludedIds },
-    name: { $regex: escapeRegex(trimmed), $options: "i" },
-  })
+  const trimmed = query.trim();
+  const filter: Record<string, unknown> = { _id: { $nin: excludedIds } };
+  if (trimmed.length >= 2) {
+    filter.name = { $regex: escapeRegex(trimmed), $options: "i" };
+  }
+
+  const users = await UserModel.find(filter)
     .select("name")
-    .limit(8)
+    .sort({ name: 1 })
+    .limit(100)
     .lean<{ _id: Types.ObjectId; name: string }[]>();
 
   return users.map((user) => ({ userId: user._id.toString(), name: user.name }));

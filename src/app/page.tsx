@@ -10,6 +10,7 @@ import { getUpcomingGames } from "@/lib/games";
 import { getSpieltagsMvp } from "@/lib/leaderboard";
 import { getTeamName } from "@/lib/teams";
 import { formatGameDate, formatGameTime } from "@/utils/format";
+import NextGameHeroCountdown from "@/components/NextGameHeroCountdown";
 
 const INSTAGRAM_POSTS = ["https://www.instagram.com/p/DVG8cgaDHBf/"];
 
@@ -20,12 +21,6 @@ export default async function Home() {
     getSpieltagsMvp(),
   ]);
   const nextGame = upcomingGames[0];
-  const daysUntilGame = nextGame
-    ? Math.max(
-        0,
-        Math.ceil((new Date(nextGame.kickoff).getTime() - Date.now()) / (1000 * 60 * 60 * 24)),
-      )
-    : 0;
 
   return (
     <>
@@ -82,10 +77,7 @@ export default async function Home() {
                   </div>
 
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-tigers-secondary sm:text-3xl">
-                      {daysUntilGame}
-                    </p>
-                    <p className="text-xs text-white">Tage bis zum Spiel</p>
+                    <NextGameHeroCountdown kickoff={nextGame.kickoff} />
                     <GlassButtonExact
                       href="/tippspiel"
                       wrapperClassName="mt-3"

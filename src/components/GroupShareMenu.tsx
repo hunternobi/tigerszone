@@ -126,19 +126,17 @@ function InviteSearchModal({ group, onClose }: { group: MyGroup; onClose: () => 
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    if (query.trim().length < 2) {
-      setResults([]);
-      setLoading(false);
-      return;
-    }
     setLoading(true);
-    debounceRef.current = setTimeout(() => {
-      startTransition(async () => {
-        const found = await searchInvitableUsers(group._id, query);
-        setResults(found);
-        setLoading(false);
-      });
-    }, 300);
+    debounceRef.current = setTimeout(
+      () => {
+        startTransition(async () => {
+          const found = await searchInvitableUsers(group._id, query);
+          setResults(found);
+          setLoading(false);
+        });
+      },
+      query.trim().length === 0 ? 0 : 300
+    );
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
@@ -189,28 +187,29 @@ function InviteSearchModal({ group, onClose }: { group: MyGroup; onClose: () => 
         {error && <p className="mt-2 text-xs text-red-400">{error}</p>}
 
         <div className="mt-3 max-h-64 space-y-1.5 overflow-y-auto">
-          {loading && <p className="py-3 text-center text-xs text-white/60">Suche…</p>}
-          {!loading && query.trim().length >= 2 && results.length === 0 && (
+          {loading && <p className="py-3 text-center text-xs text-white/60">Lädt…</p>}
+          {!loading && results.length === 0 && (
             <p className="py-3 text-center text-xs text-white/60">Keine Spieler gefunden.</p>
           )}
           {!loading &&
             results.map((user) => {
               const invited = invitedIds.has(user.userId);
               return (
-                <div
+                <label
                   key={user.userId}
-                  className="flex items-center justify-between gap-2 rounded-lg px-2 py-1.5 odd:bg-white/5"
+                  className="flex cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 odd:bg-white/5"
                 >
-                  <span className="truncate text-sm text-white">{user.name}</span>
-                  <button
-                    type="button"
+                  <input
+                    type="checkbox"
+                    checked={invited}
                     disabled={invited || isPending}
-                    onClick={() => invite(user.userId)}
-                    className="shrink-0 rounded-full bg-tigers-secondary px-3 py-1 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    {invited ? "Eingeladen" : "Einladen"}
-                  </button>
-                </div>
+                    onChange={() => invite(user.userId)}
+                    className="h-4 w-4 shrink-0 accent-tigers-secondary disabled:cursor-not-allowed"
+                  />
+                  <span className={`truncate text-sm ${invited ? "text-white/50" : "text-white"}`}>
+                    {user.name}
+                  </span>
+                </label>
               );
             })}
         </div>
