@@ -1,9 +1,12 @@
+const GAME_TIME_ZONE = "Europe/Berlin";
+
 export function formatGameDate(iso: string): string {
   return new Date(iso).toLocaleDateString("de-DE", {
     weekday: "long",
     day: "2-digit",
     month: "long",
     year: "numeric",
+    timeZone: GAME_TIME_ZONE,
   });
 }
 
@@ -11,6 +14,7 @@ export function formatGameTime(iso: string): string {
   return new Date(iso).toLocaleTimeString("de-DE", {
     hour: "2-digit",
     minute: "2-digit",
+    timeZone: GAME_TIME_ZONE,
   });
 }
 
@@ -19,6 +23,7 @@ export function formatPostDate(iso: string): string {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
+    timeZone: GAME_TIME_ZONE,
   });
 }
 

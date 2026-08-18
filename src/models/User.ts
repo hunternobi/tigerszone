@@ -14,6 +14,7 @@ export interface UserDocument extends Document {
   resetToken?: string;
   resetTokenExpiresAt?: Date;
   favoritePlayerId?: string;
+  nameChangedAt?: Date;
 }
 
 const userSchema = new Schema<UserDocument>(
@@ -28,6 +29,7 @@ const userSchema = new Schema<UserDocument>(
     resetToken: { type: String },
     resetTokenExpiresAt: { type: Date },
     favoritePlayerId: { type: String },
+    nameChangedAt: { type: Date },
   },
   { timestamps: { createdAt: true, updatedAt: false } }
 );

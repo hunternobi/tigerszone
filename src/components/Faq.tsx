@@ -12,7 +12,7 @@ const FAQ_ITEMS: FaqItem[] = [
   {
     question: '„Name" – ist das mein Klarname oder mein Nutzername?',
     answer:
-      "Das ist dein Benutzername (nicht dein Klarname). Er kann aktuell nicht nachträglich geändert werden, und jeder Benutzername wird nur einmal vergeben.",
+      "Das ist dein Benutzername (nicht dein Klarname). Du kannst ihn in deinem Profil jederzeit ändern, allerdings höchstens einmal pro Woche.",
   },
   {
     question: 'Kann ich anonym bleiben (z. B. als „Anonym123")?',
