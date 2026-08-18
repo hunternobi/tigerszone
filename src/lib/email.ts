@@ -89,6 +89,36 @@ export async function sendVerificationEmail(
   }
 }
 
+export async function sendAccountDeletedEmail(
+  to: string,
+  name: string
+): Promise<{ success: boolean; error?: string }> {
+  if (!resend) return { success: false, error: "E-Mail-Versand ist nicht konfiguriert." };
+
+  const html = wrapper(
+    "Dein Konto wurde gelöscht",
+    `<p style="margin:0 0 8px;font-size:14px;line-height:1.6;color:#ffffff;">
+      Hallo ${name}, dein ${SITE_NAME}-Konto wurde soeben endgültig gelöscht.
+    </p>
+    <p style="margin:0;font-size:14px;line-height:1.6;color:#ffffff;">
+      Wir bedauern, dass du deinen Account gelöscht hast und freuen uns, wenn du uns wieder besuchst!
+    </p>`
+  );
+
+  try {
+    const result = await resend.emails.send({
+      from: EMAIL_FROM,
+      to,
+      subject: `${SITE_NAME} – dein Konto wurde gelöscht`,
+      html,
+    });
+    if (result.error) return { success: false, error: result.error.message };
+    return { success: true };
+  } catch {
+    return { success: false, error: "E-Mail konnte nicht gesendet werden." };
+  }
+}
+
 export async function sendPasswordResetEmail(
   to: string,
   name: string,

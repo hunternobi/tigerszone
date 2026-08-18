@@ -6,7 +6,25 @@ import { Pencil } from "lucide-react";
 import { renameGroup, type MyGroup } from "@/app/gruppen/actions";
 import GroupMemberTable from "@/components/GroupMemberTable";
 import GroupShareMenu from "@/components/GroupShareMenu";
+import PunkteverlaufChart from "@/components/PunkteverlaufChart";
 import type { LeaderboardEntry } from "@/components/Leaderboard";
+
+const SIMULATED_SPIELTAGE = ["1.", "2.", "3.", "4.", "5.", "6."];
+
+function buildSimulatedSeries(entries: LeaderboardEntry[]) {
+  // Deterministic fake progression per player, just to preview the chart look.
+  const patterns = [
+    [3, 6, 6, 10, 13, 13],
+    [0, 3, 6, 6, 9, 12],
+    [3, 3, 5, 8, 8, 11],
+    [0, 0, 3, 6, 9, 9],
+    [3, 6, 9, 9, 12, 15],
+  ];
+  return entries.slice(0, patterns.length).map((entry, index) => ({
+    name: entry.name,
+    points: patterns[index],
+  }));
+}
 
 interface GroupListProps {
   groups: MyGroup[];
@@ -119,6 +137,21 @@ export default function GroupList({ groups, leaderboards }: GroupListProps) {
                 viewerRole={group.viewerRole}
               />
             </div>
+
+            {group.isOwner && group.name === "test" && (
+              <div className="mt-4 rounded-xl border border-amber-300/30 bg-amber-500/10 p-3 sm:p-4">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-sm font-bold text-white">Punkteverlauf</p>
+                  <span className="rounded-full border border-amber-300/40 bg-amber-500/20 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-amber-100 uppercase">
+                    Simulation – nur für dich sichtbar
+                  </span>
+                </div>
+                <PunkteverlaufChart
+                  spieltage={SIMULATED_SPIELTAGE}
+                  players={buildSimulatedSeries(leaderboards[group._id] ?? [])}
+                />
+              </div>
+            )}
           </div>
         );
       })}

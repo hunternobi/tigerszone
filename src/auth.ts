@@ -3,9 +3,14 @@ import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { dbConnect } from "@/lib/mongodb";
 import { UserModel } from "@/models/User";
+import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 
 class EmailNotVerifiedError extends CredentialsSignin {
   code = "email-not-verified";
+}
+
+class TooManyAttemptsError extends CredentialsSignin {
+  code = "too-many-attempts";
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -22,8 +27,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const password = credentials?.password;
         if (typeof email !== "string" || typeof password !== "string") return null;
 
+        const emailLower = email.toLowerCase().trim();
+        const ip = await getClientIp();
+        const [ipCheck, emailCheck] = await Promise.all([
+          checkRateLimit(`login:ip:${ip}`, 20, 15 * 60 * 1000),
+          checkRateLimit(`login:email:${emailLower}`, 6, 15 * 60 * 1000),
+        ]);
+        if (!ipCheck.allowed || !emailCheck.allowed) throw new TooManyAttemptsError();
+
         await dbConnect();
-        const user = await UserModel.findOne({ email: email.toLowerCase().trim() });
+        const user = await UserModel.findOne({ email: emailLower });
         if (!user) return null;
 
         const valid = await bcrypt.compare(password, user.passwordHash);

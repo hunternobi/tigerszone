@@ -29,6 +29,10 @@ function LoginForm() {
         setError("Bitte bestätige zuerst deine E-Mail-Adresse. Schau in dein Postfach.");
         return;
       }
+      if (result?.code === "too-many-attempts") {
+        setError("Zu viele Login-Versuche. Bitte warte einige Minuten und versuche es erneut.");
+        return;
+      }
       if (result?.error) {
         setError("E-Mail oder Passwort ist falsch.");
         return;

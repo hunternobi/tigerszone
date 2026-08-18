@@ -7,6 +7,7 @@ import { UserModel } from "@/models/User";
 import { isEmailConfigured, sendVerificationEmail } from "@/lib/email";
 import { generateToken } from "@/lib/tokens";
 import { createWelcomeNotification } from "@/lib/notifications";
+import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 
 const VERIFICATION_TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
 
@@ -39,10 +40,25 @@ export async function registerAction(
 
   const parsedValues = parsed.data;
 
+  const ip = await getClientIp();
+  const ipCheck = await checkRateLimit(`register:ip:${ip}`, 8, 60 * 60 * 1000);
+  if (!ipCheck.allowed) {
+    return {
+      success: false,
+      error: "Zu viele Registrierungen von dieser Verbindung. Bitte versuche es später erneut.",
+    };
+  }
+
   await dbConnect();
   const existing = await UserModel.findOne({ email: parsedValues.email });
   if (existing) {
     return { success: false, error: "Diese E-Mail-Adresse ist bereits registriert." };
+  }
+
+  const nameLower = parsedValues.name.toLowerCase();
+  const nameTaken = await UserModel.findOne({ nameLower });
+  if (nameTaken) {
+    return { success: false, error: "Dieser Benutzername ist bereits vergeben." };
   }
 
   const passwordHash = await bcrypt.hash(parsedValues.password, 10);
@@ -57,6 +73,7 @@ export async function registerAction(
 
   const user = await UserModel.create({
     name: parsedValues.name,
+    nameLower,
     email: parsedValues.email,
     passwordHash,
     role,

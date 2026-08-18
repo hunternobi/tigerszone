@@ -4,7 +4,13 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { dbConnect } from "@/lib/mongodb";
 import { UserModel } from "@/models/User";
+import { PredictionModel } from "@/models/Prediction";
+import { BonusPredictionModel } from "@/models/BonusPrediction";
+import { NotificationModel } from "@/models/Notification";
+import { GroupInviteModel } from "@/models/GroupInvite";
 import { TIGERS_ROSTER } from "@/lib/tigersRoster";
+import { sendAccountDeletedEmail } from "@/lib/email";
+import { getMyGroups, leaveGroup } from "@/app/gruppen/actions";
 
 export interface ActionResult {
   success: boolean;
@@ -65,7 +71,14 @@ export async function updateUsername(newName: string): Promise<ActionResult> {
 
   if (trimmed === user.name) return { success: true };
 
+  const nameLower = trimmed.toLowerCase();
+  const nameTaken = await UserModel.findOne({ nameLower, _id: { $ne: user._id } }).select("_id");
+  if (nameTaken) {
+    return { success: false, error: "Dieser Benutzername ist bereits vergeben." };
+  }
+
   user.name = trimmed;
+  user.nameLower = nameLower;
   user.nameChangedAt = new Date();
   await user.save();
 
@@ -97,5 +110,37 @@ export async function updateFavoritePlayer(playerId: string): Promise<ActionResu
   }
 
   revalidatePath("/profile");
+  return { success: true };
+}
+
+export async function deleteMyAccount(): Promise<ActionResult> {
+  const session = await auth();
+  if (!session?.user) return { success: false, error: "Bitte melde dich an." };
+
+  await dbConnect();
+  const user = await UserModel.findById(session.user.id).select("name email");
+  if (!user) return { success: false, error: "Nutzer nicht gefunden." };
+
+  // Reuse the existing leave-group flow so ownership handoff (assistant or
+  // oldest member) happens the same way it does for a manual "Verlassen".
+  const myGroups = await getMyGroups();
+  for (const group of myGroups) {
+    await leaveGroup(group._id);
+  }
+
+  await Promise.all([
+    PredictionModel.deleteMany({ userId: session.user.id }),
+    BonusPredictionModel.deleteMany({ userId: session.user.id }),
+    NotificationModel.deleteMany({ userId: session.user.id }),
+    GroupInviteModel.deleteMany({
+      $or: [{ invitedUserId: session.user.id }, { invitedByUserId: session.user.id }],
+    }),
+  ]);
+
+  const { name, email } = user;
+  await UserModel.deleteOne({ _id: session.user.id });
+
+  sendAccountDeletedEmail(email, name).catch(() => {});
+
   return { success: true };
 }

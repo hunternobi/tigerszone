@@ -5,6 +5,7 @@ import { dbConnect } from "@/lib/mongodb";
 import { UserModel } from "@/models/User";
 import { isEmailConfigured, sendPasswordResetEmail } from "@/lib/email";
 import { generateToken } from "@/lib/tokens";
+import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 
 const RESET_TOKEN_TTL_MS = 60 * 60 * 1000;
 
@@ -23,6 +24,18 @@ export async function forgotPasswordAction(email: string): Promise<ForgotPasswor
 
   if (!isEmailConfigured()) {
     return { success: false, error: "Passwort-Zurücksetzen ist aktuell nicht verfügbar." };
+  }
+
+  const ip = await getClientIp();
+  const [ipCheck, emailCheck] = await Promise.all([
+    checkRateLimit(`forgot-password:ip:${ip}`, 10, 60 * 60 * 1000),
+    checkRateLimit(`forgot-password:email:${parsed.data}`, 3, 60 * 60 * 1000),
+  ]);
+  if (!ipCheck.allowed || !emailCheck.allowed) {
+    return {
+      success: false,
+      error: "Zu viele Anfragen. Bitte versuche es in einer Stunde erneut.",
+    };
   }
 
   await dbConnect();

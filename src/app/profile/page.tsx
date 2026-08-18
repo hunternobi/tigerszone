@@ -10,6 +10,7 @@ import FavoritePlayerSelect from "@/components/FavoritePlayerSelect";
 import MyBonusSummary from "@/components/MyBonusSummary";
 import TipHistoryTabs from "@/components/TipHistoryTabs";
 import UsernameEditForm from "@/components/UsernameEditForm";
+import DeleteAccountButton from "@/components/DeleteAccountButton";
 
 export const metadata: Metadata = {
   title: "Profil",
@@ -60,6 +61,10 @@ export default async function ProfilePage() {
       <MyBonusSummary bonusHauptrunde={bonusHauptrunde ?? {}} bonusPlayoffs={bonusPlayoffs ?? {}} />
 
       <TipHistoryTabs entries={history?.entries ?? []} />
+
+      <div className="mt-8 flex justify-end">
+        <DeleteAccountButton />
+      </div>
     </section>
   );
 }
