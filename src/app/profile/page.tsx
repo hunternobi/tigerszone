@@ -7,7 +7,8 @@ import { getMyBonusPrediction } from "@/app/tippspiel/bonusActions";
 import { getUserPredictionHistory } from "@/lib/predictions";
 import GroupInvites from "@/components/GroupInvites";
 import FavoritePlayerSelect from "@/components/FavoritePlayerSelect";
-import ProfileHistory from "@/components/ProfileHistory";
+import MyBonusSummary from "@/components/MyBonusSummary";
+import TipHistoryTabs from "@/components/TipHistoryTabs";
 
 export const metadata: Metadata = {
   title: "Profil",
@@ -50,11 +51,9 @@ export default async function ProfilePage() {
 
       <GroupInvites invites={invites} />
 
-      <ProfileHistory
-        entries={history?.entries ?? []}
-        bonusHauptrunde={bonusHauptrunde ?? {}}
-        bonusPlayoffs={bonusPlayoffs ?? {}}
-      />
+      <MyBonusSummary bonusHauptrunde={bonusHauptrunde ?? {}} bonusPlayoffs={bonusPlayoffs ?? {}} />
+
+      <TipHistoryTabs entries={history?.entries ?? []} />
     </section>
   );
 }

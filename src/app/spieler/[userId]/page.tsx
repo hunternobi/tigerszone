@@ -3,9 +3,11 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { auth } from "@/auth";
+import { getGroupsForUser } from "@/app/gruppen/actions";
+import { getFavoritePlayerId } from "@/app/profile/actions";
 import { getUserPredictionHistory } from "@/lib/predictions";
-import { getTeamName } from "@/lib/teams";
-import { formatGameDate, formatGameTime } from "@/utils/format";
+import { getPlayerName } from "@/lib/tigersRoster";
+import TipHistoryTabs, { type TipHistoryEntry } from "@/components/TipHistoryTabs";
 
 interface SpielerPageProps {
   params: Promise<{ userId: string }>;
@@ -15,29 +17,30 @@ export async function generateMetadata({ params }: SpielerPageProps): Promise<Me
   const { userId } = await params;
   const history = await getUserPredictionHistory(userId);
   return {
-    title: history ? `Tipphistorie: ${history.playerName}` : "Spieler nicht gefunden",
+    title: history ? `Profil: ${history.playerName}` : "Spieler nicht gefunden",
     robots: { index: false, follow: false },
   };
 }
-
-const STATUS_LABELS: Record<string, string> = {
-  scheduled: "Ausstehend",
-  live: "Live",
-  finished: "Beendet",
-  postponed: "Verschoben",
-  cancelled: "Abgesagt",
-};
 
 export default async function SpielerPage({ params }: SpielerPageProps) {
   const session = await auth();
   if (!session?.user) redirect("/login");
 
   const { userId } = await params;
-  const history = await getUserPredictionHistory(userId);
+  const [history, favoritePlayerId, groups] = await Promise.all([
+    getUserPredictionHistory(userId),
+    getFavoritePlayerId(userId),
+    getGroupsForUser(userId),
+  ]);
   if (!history) notFound();
 
   const isOwnProfile = session.user.id === userId;
   const now = Date.now();
+
+  const entries: TipHistoryEntry[] = history.entries.map((entry) => {
+    const locked = entry.status !== "scheduled" || new Date(entry.kickoff).getTime() <= now;
+    return { ...entry, hidden: !isOwnProfile && !locked };
+  });
 
   return (
     <section className="mx-auto max-w-3xl px-6 py-16">
@@ -49,70 +52,47 @@ export default async function SpielerPage({ params }: SpielerPageProps) {
         Zurück zu den Gruppen
       </Link>
 
-      <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-3xl font-bold text-white">Tipphistorie: {history.playerName}</h1>
-        <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-sm font-semibold text-white">
-          {history.totalPoints} Pkt. gesamt
-        </span>
+      <div className="glass-panel mx-auto mt-6 p-4 text-left sm:p-8">
+        <h1 className="text-center text-xl font-bold text-white sm:text-2xl">
+          {history.playerName}
+        </h1>
+
+        <div className="mt-4 flex flex-col items-center gap-4 text-center sm:mt-6 sm:flex-row sm:items-start sm:justify-between sm:gap-6 sm:text-left">
+          <div>
+            <p className="text-xs font-semibold tracking-wide text-white uppercase">
+              Lieblingsspieler
+            </p>
+            <p className="mt-1 text-lg font-bold text-white">
+              {favoritePlayerId ? getPlayerName(favoritePlayerId) : "–"}
+            </p>
+          </div>
+
+          <div>
+            <p className="text-xs font-semibold tracking-wide text-white uppercase">Gruppen</p>
+            {groups.length === 0 ? (
+              <p className="mt-1 text-sm text-white">Keine Gruppen</p>
+            ) : (
+              <div className="mt-1 flex flex-wrap justify-center gap-2 sm:justify-start">
+                {groups.map((group) => (
+                  <span
+                    key={group._id}
+                    className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-sm text-white"
+                  >
+                    {group.name}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div>
+            <p className="text-xs font-semibold tracking-wide text-white uppercase">Gesamt</p>
+            <p className="mt-1 text-lg font-bold text-white">{history.totalPoints} Pkt.</p>
+          </div>
+        </div>
       </div>
 
-      {history.entries.length === 0 ? (
-        <p className="glass-panel mt-8 p-6 text-sm text-white">Noch keine Tipps abgegeben.</p>
-      ) : (
-        <div className="mt-8 space-y-3">
-          {history.entries.map((entry) => {
-            const locked = entry.status !== "scheduled" || new Date(entry.kickoff).getTime() <= now;
-            const tipHidden = !isOwnProfile && !locked;
-
-            return (
-              <div key={entry.gameId} className="glass-panel-sm p-4 sm:p-5">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <span className="text-xs text-white">
-                    {formatGameDate(entry.kickoff)} · {formatGameTime(entry.kickoff)} Uhr
-                  </span>
-                  <span className="rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-white uppercase">
-                    {entry.competition === "Vorbereitung" ? "Vorbereitung" : "DEL"}
-                  </span>
-                </div>
-
-                <p className="mt-2 font-semibold text-white">
-                  {getTeamName(entry.homeTeamId)} vs. {getTeamName(entry.awayTeamId)}
-                </p>
-
-                {tipHidden ? (
-                  <p className="mt-3 text-sm text-white/60">
-                    Tipp abgegeben – sichtbar nach dem Eröffnungsbully
-                  </p>
-                ) : (
-                  <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-sm">
-                    <span className="text-white">
-                      Tipp:{" "}
-                      <span className="font-semibold">
-                        {entry.predictedHome}:{entry.predictedAway}
-                      </span>
-                      {entry.status === "finished" && (
-                        <>
-                          {" "}
-                          · Ergebnis:{" "}
-                          <span className="font-semibold">
-                            {entry.homeScore}:{entry.awayScore}
-                          </span>
-                        </>
-                      )}
-                      {entry.status !== "finished" && (
-                        <span className="text-white"> · {STATUS_LABELS[entry.status] ?? entry.status}</span>
-                      )}
-                    </span>
-                    <span className="font-semibold text-white">
-                      {entry.pointsAwarded != null ? `${entry.pointsAwarded} Pkt.` : "– Pkt."}
-                    </span>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      )}
+      <TipHistoryTabs entries={entries} />
     </section>
   );
 }

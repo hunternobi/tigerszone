@@ -208,6 +208,25 @@ export async function getMyGroups(): Promise<MyGroup[]> {
   });
 }
 
+export interface UserGroup {
+  _id: string;
+  name: string;
+}
+
+export async function getGroupsForUser(userId: string): Promise<UserGroup[]> {
+  await dbConnect();
+  const memberships = await GroupMemberModel.find({ userId }).select("groupId").lean<
+    { groupId: Types.ObjectId }[]
+  >();
+  if (memberships.length === 0) return [];
+
+  const groups = await GroupModel.find({ _id: { $in: memberships.map((m) => m.groupId) } })
+    .select("name")
+    .lean<{ _id: Types.ObjectId; name: string }[]>();
+
+  return groups.map((group) => ({ _id: group._id.toString(), name: group.name }));
+}
+
 export interface PublicGroup {
   _id: string;
   name: string;

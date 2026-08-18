@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { FaUserTie } from "react-icons/fa";
 import { MdOutlineEditNote } from "react-icons/md";
@@ -70,7 +71,9 @@ export default function Leaderboard({ entries, title = "Rangliste", medals = fal
                   <span className={medals ? "shrink-0 text-lg" : "shrink-0 text-tigers-secondary"}>
                     {medals ? MEDALS[index] : `${index + 1}.`}
                   </span>
-                  <span className="truncate">{entry.name}</span>
+                  <Link href={`/spieler/${entry.userId}`} className="truncate hover:underline">
+                    {entry.name}
+                  </Link>
                   <TrendIcon trend={entry.trend} />
                 </span>
                 <RoleBadge role={entry.role} />
