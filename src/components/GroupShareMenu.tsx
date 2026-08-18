@@ -120,9 +120,17 @@ function InviteSearchModal({ group, onClose }: { group: MyGroup; onClose: () => 
   const [results, setResults] = useState<InvitableUser[]>([]);
   const [loading, setLoading] = useState(false);
   const [invitedIds, setInvitedIds] = useState<Set<string>>(new Set());
+  const [justInvitedId, setJustInvitedId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const justInvitedTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  useEffect(() => {
+    return () => {
+      if (justInvitedTimeout.current) clearTimeout(justInvitedTimeout.current);
+    };
+  }, []);
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -151,6 +159,9 @@ function InviteSearchModal({ group, onClose }: { group: MyGroup; onClose: () => 
         return;
       }
       setInvitedIds((prev) => new Set(prev).add(userId));
+      setJustInvitedId(userId);
+      if (justInvitedTimeout.current) clearTimeout(justInvitedTimeout.current);
+      justInvitedTimeout.current = setTimeout(() => setJustInvitedId(null), 1800);
     });
   }
 
@@ -209,6 +220,12 @@ function InviteSearchModal({ group, onClose }: { group: MyGroup; onClose: () => 
                   <span className={`truncate text-sm ${invited ? "text-white/50" : "text-white"}`}>
                     {user.name}
                   </span>
+                  {justInvitedId === user.userId && (
+                    <span className="ml-auto flex animate-[fadeIn_0.2s_ease-out] items-center gap-1 text-[11px] font-semibold whitespace-nowrap text-emerald-400">
+                      <Check size={11} />
+                      Gruppeneinladung gesendet
+                    </span>
+                  )}
                 </label>
               );
             })}
