@@ -6,6 +6,7 @@ import { dbConnect } from "@/lib/mongodb";
 import { UserModel } from "@/models/User";
 import { isEmailConfigured, sendVerificationEmail } from "@/lib/email";
 import { generateToken } from "@/lib/tokens";
+import { createWelcomeNotification } from "@/lib/notifications";
 
 const VERIFICATION_TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
 
@@ -54,7 +55,7 @@ export async function registerAction(
   const emailConfigured = isEmailConfigured();
   const verificationToken = emailConfigured ? generateToken() : undefined;
 
-  await UserModel.create({
+  const user = await UserModel.create({
     name: parsedValues.name,
     email: parsedValues.email,
     passwordHash,
@@ -65,6 +66,10 @@ export async function registerAction(
       ? new Date(Date.now() + VERIFICATION_TOKEN_TTL_MS)
       : undefined,
   });
+
+  if (!emailConfigured) {
+    await createWelcomeNotification(user._id.toString(), user.name);
+  }
 
   if (emailConfigured && verificationToken) {
     const emailResult = await sendVerificationEmail(

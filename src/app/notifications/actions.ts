@@ -3,10 +3,11 @@
 import { Types } from "mongoose";
 import { auth } from "@/auth";
 import { dbConnect } from "@/lib/mongodb";
-import { NotificationModel } from "@/models/Notification";
+import { NotificationModel, type NotificationType } from "@/models/Notification";
 
 export interface MyNotification {
   id: string;
+  type: NotificationType;
   title: string;
   body: string;
   linkHref?: string;
@@ -27,6 +28,7 @@ export async function getMyNotifications(userId?: string): Promise<MyNotificatio
     .lean<
       {
         _id: Types.ObjectId;
+        type: NotificationType;
         title: string;
         body: string;
         linkHref?: string;
@@ -36,6 +38,7 @@ export async function getMyNotifications(userId?: string): Promise<MyNotificatio
 
   return notifications.map((n) => ({
     id: n._id.toString(),
+    type: n.type,
     title: n.title,
     body: n.body,
     linkHref: n.linkHref,

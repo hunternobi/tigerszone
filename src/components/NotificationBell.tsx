@@ -123,31 +123,48 @@ export default function NotificationBell({
               </p>
             ) : (
               <div className="max-h-80 space-y-2 overflow-y-auto">
-                {notifications.map((notification) => (
-                  <div key={notification.id} className="rounded-lg bg-white/5 p-2.5">
-                    <p className="text-xs font-semibold text-white">{notification.title}</p>
-                    <p className="mt-1 text-xs text-white/80">{notification.body}</p>
-                    {notification.linkHref && (
-                      <Link
-                        href={notification.linkHref}
-                        onClick={() => setOpen(false)}
-                        className="mt-1.5 inline-block text-xs font-semibold text-white underline"
-                      >
-                        {notification.linkLabel ?? "Mehr erfahren"}
-                      </Link>
-                    )}
-                    <div className="mt-2">
-                      <button
-                        type="button"
-                        disabled={isPending && pendingId === notification.id}
-                        onClick={() => dismiss(notification.id)}
-                        className="rounded-full border border-white/20 px-3 py-1 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
-                      >
-                        Verstanden
-                      </button>
+                {notifications.map((notification) => {
+                  const isReminder = notification.type === "tip_reminder";
+                  return (
+                    <div key={notification.id} className="rounded-lg bg-white/5 p-2.5">
+                      <p className="text-xs font-semibold text-white">{notification.title}</p>
+                      <p className="mt-1 text-xs text-white/80">{notification.body}</p>
+                      {!isReminder && notification.linkHref && (
+                        <Link
+                          href={notification.linkHref}
+                          onClick={() => setOpen(false)}
+                          className="mt-1.5 inline-block text-xs font-semibold text-white underline"
+                        >
+                          {notification.linkLabel ?? "Mehr erfahren"}
+                        </Link>
+                      )}
+                      <div className="mt-2 flex gap-2">
+                        {isReminder && notification.linkHref && (
+                          <Link
+                            href={notification.linkHref}
+                            onClick={() => {
+                              setOpen(false);
+                              dismiss(notification.id);
+                            }}
+                            className="flex-1 rounded-full bg-tigers-secondary px-3 py-1 text-center text-xs font-semibold text-white"
+                          >
+                            {notification.linkLabel ?? "Jetzt Tippen"}
+                          </Link>
+                        )}
+                        <button
+                          type="button"
+                          disabled={isPending && pendingId === notification.id}
+                          onClick={() => dismiss(notification.id)}
+                          className={`rounded-full border border-white/20 px-3 py-1 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50 ${
+                            isReminder ? "flex-1" : ""
+                          }`}
+                        >
+                          {isReminder ? "Als gelesen markieren" : "Verstanden"}
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
                 {invites.map((invite) => (
                   <div key={invite.inviteId} className="rounded-lg bg-white/5 p-2.5">
                     <p className="text-xs text-white">

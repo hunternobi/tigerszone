@@ -2,6 +2,7 @@
 
 import { dbConnect } from "@/lib/mongodb";
 import { UserModel } from "@/models/User";
+import { createWelcomeNotification } from "@/lib/notifications";
 
 export interface VerifyEmailResult {
   success: boolean;
@@ -23,6 +24,8 @@ export async function verifyEmailToken(token: string): Promise<VerifyEmailResult
   user.verificationToken = undefined;
   user.verificationTokenExpiresAt = undefined;
   await user.save();
+
+  await createWelcomeNotification(user._id.toString(), user.name);
 
   return { success: true };
 }
