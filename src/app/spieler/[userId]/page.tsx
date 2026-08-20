@@ -6,8 +6,10 @@ import { auth } from "@/auth";
 import { getGroupsForUser } from "@/app/gruppen/actions";
 import { getFavoritePlayerId } from "@/app/profile/actions";
 import { getUserPredictionHistory } from "@/lib/predictions";
+import { getUserPointsHistory } from "@/lib/leaderboard";
 import { getPlayerName } from "@/lib/tigersRoster";
 import TipHistoryTabs, { type TipHistoryEntry } from "@/components/TipHistoryTabs";
+import PointsHistorySection from "@/components/PointsHistorySection";
 
 interface SpielerPageProps {
   params: Promise<{ userId: string }>;
@@ -27,10 +29,11 @@ export default async function SpielerPage({ params }: SpielerPageProps) {
   if (!session?.user) redirect("/login");
 
   const { userId } = await params;
-  const [history, favoritePlayerId, groups] = await Promise.all([
+  const [history, favoritePlayerId, groups, pointsHistory] = await Promise.all([
     getUserPredictionHistory(userId),
     getFavoritePlayerId(userId),
     getGroupsForUser(userId),
+    getUserPointsHistory(userId),
   ]);
   if (!history) notFound();
 
@@ -91,6 +94,8 @@ export default async function SpielerPage({ params }: SpielerPageProps) {
           </div>
         </div>
       </div>
+
+      <PointsHistorySection playerName={history.playerName} history={pointsHistory} />
 
       <TipHistoryTabs entries={entries} />
     </section>

@@ -5,10 +5,12 @@ import { getMyGroupInvites } from "@/app/gruppen/actions";
 import { getFavoritePlayerId, getMyAccountInfo } from "@/app/profile/actions";
 import { getMyBonusPrediction } from "@/app/tippspiel/bonusActions";
 import { getUserPredictionHistory } from "@/lib/predictions";
+import { getUserPointsHistory } from "@/lib/leaderboard";
 import GroupInvites from "@/components/GroupInvites";
 import FavoritePlayerSelect from "@/components/FavoritePlayerSelect";
 import MyBonusSummary from "@/components/MyBonusSummary";
 import TipHistoryTabs from "@/components/TipHistoryTabs";
+import PointsHistorySection from "@/components/PointsHistorySection";
 import UsernameEditForm from "@/components/UsernameEditForm";
 import DeleteAccountButton from "@/components/DeleteAccountButton";
 
@@ -21,7 +23,7 @@ export default async function ProfilePage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const [invites, favoritePlayerId, bonusHauptrunde, bonusPlayoffs, history, account] =
+  const [invites, favoritePlayerId, bonusHauptrunde, bonusPlayoffs, history, account, pointsHistory] =
     await Promise.all([
       getMyGroupInvites(session.user.id),
       getFavoritePlayerId(session.user.id),
@@ -29,6 +31,7 @@ export default async function ProfilePage() {
       getMyBonusPrediction("playoffs"),
       getUserPredictionHistory(session.user.id),
       getMyAccountInfo(session.user.id),
+      getUserPointsHistory(session.user.id),
     ]);
 
   return (
@@ -59,6 +62,11 @@ export default async function ProfilePage() {
       <GroupInvites invites={invites} />
 
       <MyBonusSummary bonusHauptrunde={bonusHauptrunde ?? {}} bonusPlayoffs={bonusPlayoffs ?? {}} />
+
+      <PointsHistorySection
+        playerName={account?.name ?? session.user.name ?? "Du"}
+        history={pointsHistory}
+      />
 
       <TipHistoryTabs entries={history?.entries ?? []} />
 

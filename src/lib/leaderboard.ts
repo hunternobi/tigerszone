@@ -294,3 +294,58 @@ export async function getSpieltagsMvp(): Promise<SpieltagsMvpData> {
       .sort((a, b) => a.name.localeCompare(b.name)),
   };
 }
+
+export interface PointsHistoryEntry {
+  label: string;
+  points: number;
+  cumulative: number;
+}
+
+/**
+ * A user's tip points per Spieltag (finished games grouped by calendar day,
+ * same grouping as getLatestBatchGameIds), running as a cumulative total.
+ * Bonus-tip points aren't included since they aren't tied to a Spieltag.
+ */
+export async function getUserPointsHistory(userId: string): Promise<PointsHistoryEntry[]> {
+  await dbConnect();
+
+  const finishedGames = await GameModel.find({ status: "finished" })
+    .select("_id kickoff")
+    .sort({ kickoff: 1 })
+    .lean<{ _id: Types.ObjectId; kickoff: Date }[]>();
+  if (finishedGames.length === 0) return [];
+
+  const batches: { dayStart: number; gameIds: Types.ObjectId[] }[] = [];
+  for (const game of finishedGames) {
+    const dayStart = new Date(game.kickoff);
+    dayStart.setHours(0, 0, 0, 0);
+    const dayStartMs = dayStart.getTime();
+    const lastBatch = batches[batches.length - 1];
+    if (lastBatch && lastBatch.dayStart === dayStartMs) {
+      lastBatch.gameIds.push(game._id);
+    } else {
+      batches.push({ dayStart: dayStartMs, gameIds: [game._id] });
+    }
+  }
+
+  const predictions = await PredictionModel.find({
+    userId,
+    gameId: { $in: finishedGames.map((game) => game._id) },
+    pointsAwarded: { $ne: null },
+  })
+    .select("gameId pointsAwarded")
+    .lean<{ gameId: Types.ObjectId; pointsAwarded: number }[]>();
+  const pointsByGame = new Map(
+    predictions.map((prediction) => [prediction.gameId.toString(), prediction.pointsAwarded])
+  );
+
+  let cumulative = 0;
+  return batches.map((batch, index) => {
+    const points = batch.gameIds.reduce(
+      (sum, gameId) => sum + (pointsByGame.get(gameId.toString()) ?? 0),
+      0
+    );
+    cumulative += points;
+    return { label: `${index + 1}.`, points, cumulative };
+  });
+}
