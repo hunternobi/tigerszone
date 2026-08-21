@@ -63,7 +63,7 @@ export default function LeaderboardWidget({
           <Leaderboard entries={globalEntries} title="Gesamtrangliste" medals />
           <Link
             href="/tippspiel/rangliste"
-            className="mt-2 block text-center text-xs text-tigers-secondary hover:underline"
+            className="mt-2 block text-center text-xs font-semibold text-white underline underline-offset-2"
           >
             Gesamte Rangliste ansehen
           </Link>
