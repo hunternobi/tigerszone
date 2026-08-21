@@ -15,6 +15,7 @@ export const TIGERS_SKATERS: RosterPlayer[] = [
   { id: "17-adrian-klein", number: 17, name: "Adrian Klein" },
   { id: "18-tyler-madden", number: 18, name: "Tyler Madden" },
   { id: "19-tim-brunnhuber", number: 19, name: "Tim Brunnhuber" },
+  { id: "23-jc-beaudin", number: 23, name: "JC Beaudin" },
   { id: "26-moritz-kukuk", number: 26, name: "Moritz Kukuk" },
   { id: "38-stefan-loibl", number: 38, name: "Stefan Loibl" },
   { id: "39-simon-seidl", number: 39, name: "Simon Seidl" },
