@@ -15,7 +15,8 @@ const HEIGHT = 1920;
 const FONT = "Poppins, Arial, sans-serif";
 
 const AMBER_BORDER = "rgba(252,211,77,0.45)";
-const AMBER_GOLD = "#fcd34d";
+// Matches the real site's amber-100/90 heading color (Bonustipps, Hauptrundensieger).
+const AMBER_GOLD = "rgba(254,243,199,0.9)";
 
 let poppinsLoaded: Promise<void> | null = null;
 
@@ -151,11 +152,7 @@ function wrapPills(
     let x = centerX - rowWidth / 2;
     for (const item of row) {
       roundRectPath(ctx, x, y, item.width, pillHeight, pillHeight / 2);
-      const gradient = ctx.createLinearGradient(x, y, x + item.width, y + pillHeight);
-      gradient.addColorStop(0, "rgba(245,158,11,0.35)");
-      gradient.addColorStop(0.5, "rgba(251,191,36,0.16)");
-      gradient.addColorStop(1, "rgba(251,191,36,0.06)");
-      ctx.fillStyle = gradient;
+      ctx.fillStyle = "rgba(245,158,11,0.35)";
       ctx.fill();
       ctx.strokeStyle = "rgba(252,211,77,0.6)";
       ctx.lineWidth = 2.5;
