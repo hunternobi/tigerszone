@@ -15,6 +15,7 @@ const HEIGHT = 1920;
 const FONT = "Poppins, Arial, sans-serif";
 
 const AMBER_BORDER = "rgba(252,211,77,0.45)";
+const AMBER_GOLD = "#fcd34d";
 
 let poppinsLoaded: Promise<void> | null = null;
 
@@ -149,11 +150,15 @@ function wrapPills(
     const rowWidth = row.reduce((sum, item, i) => sum + item.width + (i > 0 ? gapX : 0), 0);
     let x = centerX - rowWidth / 2;
     for (const item of row) {
-      ctx.fillStyle = "rgba(245,158,11,0.32)";
+      roundRectPath(ctx, x, y, item.width, pillHeight, pillHeight / 2);
+      const gradient = ctx.createLinearGradient(x, y, x + item.width, y + pillHeight);
+      gradient.addColorStop(0, "rgba(245,158,11,0.35)");
+      gradient.addColorStop(0.5, "rgba(251,191,36,0.16)");
+      gradient.addColorStop(1, "rgba(251,191,36,0.06)");
+      ctx.fillStyle = gradient;
+      ctx.fill();
       ctx.strokeStyle = "rgba(252,211,77,0.6)";
       ctx.lineWidth = 2.5;
-      roundRectPath(ctx, x, y, item.width, pillHeight, pillHeight / 2);
-      ctx.fill();
       ctx.stroke();
       ctx.fillStyle = "#ffffff";
       ctx.fillText(item.name, x + item.width / 2, y + pillHeight / 2 + 2);
@@ -202,15 +207,12 @@ async function renderStoryCanvas(mvp: SpieltagsMvpData): Promise<HTMLCanvasEleme
   ctx.arc(logoX, logoY, logoSize / 2, 0, Math.PI * 2);
   ctx.stroke();
 
-  ctx.fillStyle = "#ffffff";
-  ctx.font = `700 44px ${FONT}`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText("TigersZone", WIDTH / 2, logoY + 115);
 
-  const headingY = logoY + 280;
+  const headingY = logoY + 210;
   ctx.font = `800 74px ${FONT}`;
-  ctx.fillStyle = "#fbbf24";
+  ctx.fillStyle = AMBER_GOLD;
   ctx.fillText("SPIELTAGS-MVP", WIDTH / 2, headingY);
 
   const cardY = headingY + 200;
@@ -225,8 +227,8 @@ async function renderStoryCanvas(mvp: SpieltagsMvpData): Promise<HTMLCanvasEleme
   const cardPaddingX = 90;
   const cardWidth = WIDTH - cardPaddingX * 2;
   const lineHeight = 62;
-  const cardTopPadding = 40;
-  const cardBottomPadding = 68;
+  const cardTopPadding = 50;
+  const cardBottomPadding = 50;
   const cardHeight = cardTopPadding + mvp.games.length * lineHeight + cardBottomPadding;
   fillAmberCard(ctx, cardPaddingX, cardY, cardWidth, cardHeight, 32);
 
@@ -244,7 +246,7 @@ async function renderStoryCanvas(mvp: SpieltagsMvpData): Promise<HTMLCanvasEleme
   let y = cardY + cardHeight + 90;
 
   ctx.font = `700 36px ${FONT}`;
-  ctx.fillStyle = "#fbbf24";
+  ctx.fillStyle = AMBER_GOLD;
   ctx.fillText(
     mvp.entries.length === 0 ? "Diesmal war niemand exakt richtig" : "Richtig getippt haben:",
     WIDTH / 2,
