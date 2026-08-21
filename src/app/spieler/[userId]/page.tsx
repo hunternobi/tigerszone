@@ -10,6 +10,7 @@ import { getUserPointsHistory } from "@/lib/leaderboard";
 import { getPlayerName } from "@/lib/tigersRoster";
 import TipHistoryTabs, { type TipHistoryEntry } from "@/components/TipHistoryTabs";
 import PointsHistorySection from "@/components/PointsHistorySection";
+import FadingBackground from "@/components/FadingBackground";
 
 interface SpielerPageProps {
   params: Promise<{ userId: string }>;
@@ -46,6 +47,7 @@ export default async function SpielerPage({ params }: SpielerPageProps) {
   });
 
   return (
+    <FadingBackground src="/images/jubel.jpg" opacity={0.55} blurPx={1.5}>
     <section className="mx-auto max-w-3xl px-6 py-16">
       <Link
         href="/gruppen"
@@ -99,5 +101,6 @@ export default async function SpielerPage({ params }: SpielerPageProps) {
 
       <TipHistoryTabs entries={entries} />
     </section>
+    </FadingBackground>
   );
 }
