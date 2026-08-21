@@ -62,7 +62,12 @@ export default async function AdminPage() {
         <BonusResultForm round="hauptrunde" initial={bonusResult} />
       </div>
 
-      <h2 className="mt-16 text-2xl font-bold text-white">Benutzerverwaltung</h2>
+      <div className="mt-16 flex flex-wrap items-center gap-3">
+        <h2 className="text-2xl font-bold text-white">Benutzerverwaltung</h2>
+        <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-sm font-semibold text-white">
+          {users.length} {users.length === 1 ? "Nutzer" : "Nutzer registriert"}
+        </span>
+      </div>
       <p className="mt-2 text-white">
         Alle registrierten Nutzer und ihre Gruppenmitgliedschaften.
       </p>
