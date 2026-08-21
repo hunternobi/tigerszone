@@ -5,6 +5,7 @@ import { Check, Copy, Trophy } from "lucide-react";
 import { getTeamName } from "@/lib/teams";
 import { formatPostDate } from "@/utils/format";
 import type { SpieltagsMvpData } from "@/lib/leaderboard";
+import SpieltagsMvpStoryExport from "@/components/SpieltagsMvpStoryExport";
 
 interface SpieltagsMvpAdminProps {
   mvp: SpieltagsMvpData;
@@ -56,14 +57,17 @@ export default function SpieltagsMvpAdmin({ mvp }: SpieltagsMvpAdminProps) {
           <Trophy size={20} className="shrink-0 text-tigers-secondary" />
           <h3 className="text-lg font-bold text-white">Spieltags-MVP</h3>
         </div>
-        <button
-          type="button"
-          onClick={handleCopy}
-          className="glass-pill glass-interactive flex shrink-0 items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white"
-        >
-          {copied ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
-          {copied ? "Kopiert!" : "Text kopieren"}
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={handleCopy}
+            className="glass-pill glass-interactive flex shrink-0 items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white"
+          >
+            {copied ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
+            {copied ? "Kopiert!" : "Text kopieren"}
+          </button>
+          <SpieltagsMvpStoryExport mvp={mvp} />
+        </div>
       </div>
 
       <p className="mt-2 text-xs text-white/70">{formatPostDate(mvp.date)}</p>
