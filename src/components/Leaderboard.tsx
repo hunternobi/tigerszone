@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { FaUserTie } from "react-icons/fa";
 import { MdOutlineEditNote } from "react-icons/md";
@@ -15,6 +16,7 @@ interface LeaderboardProps {
   entries: LeaderboardEntry[];
   title?: string;
   medals?: boolean;
+  footer?: ReactNode;
 }
 
 const MEDALS = ["🥇", "🥈", "🥉"];
@@ -53,7 +55,12 @@ export function TrendIcon({ trend }: { trend?: "up" | "down" }) {
   return null;
 }
 
-export default function Leaderboard({ entries, title = "Rangliste", medals = false }: LeaderboardProps) {
+export default function Leaderboard({
+  entries,
+  title = "Rangliste",
+  medals = false,
+  footer,
+}: LeaderboardProps) {
   return (
     <div className="glass-panel p-4 sm:p-6">
       <h3 className="mb-4 text-lg font-bold text-white">{title}</h3>
@@ -85,6 +92,7 @@ export default function Leaderboard({ entries, title = "Rangliste", medals = fal
           ))}
         </ol>
       )}
+      {footer && <div className="mt-3">{footer}</div>}
     </div>
   );
 }
