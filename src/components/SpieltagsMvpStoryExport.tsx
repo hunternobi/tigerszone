@@ -12,6 +12,27 @@ interface SpieltagsMvpStoryExportProps {
 
 const WIDTH = 1080;
 const HEIGHT = 1920;
+const FONT = "Poppins, Arial, sans-serif";
+
+const AMBER_BORDER = "rgba(252,211,77,0.45)";
+
+let poppinsLoaded: Promise<void> | null = null;
+
+function ensurePoppinsLoaded(): Promise<void> {
+  if (!poppinsLoaded) {
+    const weights = [500, 600, 700, 800];
+    poppinsLoaded = Promise.all(
+      weights.map(async (weight) => {
+        const font = new FontFace("Poppins", `url(/fonts/poppins-${weight}.woff2)`, {
+          weight: String(weight),
+        });
+        await font.load();
+        document.fonts.add(font);
+      })
+    ).then(() => undefined);
+  }
+  return poppinsLoaded;
+}
 
 function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
@@ -37,6 +58,26 @@ function roundRectPath(
   ctx.arcTo(x, y + height, x, y, radius);
   ctx.arcTo(x, y, x + width, y, radius);
   ctx.closePath();
+}
+
+function fillAmberCard(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  radius: number
+) {
+  roundRectPath(ctx, x, y, width, height, radius);
+  const gradient = ctx.createLinearGradient(x, y, x + width, y + height);
+  gradient.addColorStop(0, "rgba(245,158,11,0.24)");
+  gradient.addColorStop(0.5, "rgba(251,191,36,0.09)");
+  gradient.addColorStop(1, "rgba(251,191,36,0.02)");
+  ctx.fillStyle = gradient;
+  ctx.fill();
+  ctx.strokeStyle = AMBER_BORDER;
+  ctx.lineWidth = 2;
+  ctx.stroke();
 }
 
 function drawCoverImage(
@@ -108,9 +149,9 @@ function wrapPills(
     const rowWidth = row.reduce((sum, item, i) => sum + item.width + (i > 0 ? gapX : 0), 0);
     let x = centerX - rowWidth / 2;
     for (const item of row) {
-      ctx.fillStyle = "rgba(255,255,255,0.12)";
-      ctx.strokeStyle = "rgba(255,255,255,0.3)";
-      ctx.lineWidth = 2;
+      ctx.fillStyle = "rgba(245,158,11,0.32)";
+      ctx.strokeStyle = "rgba(252,211,77,0.6)";
+      ctx.lineWidth = 2.5;
       roundRectPath(ctx, x, y, item.width, pillHeight, pillHeight / 2);
       ctx.fill();
       ctx.stroke();
@@ -133,6 +174,7 @@ async function renderStoryCanvas(mvp: SpieltagsMvpData): Promise<HTMLCanvasEleme
   const [bgImage, logoImage] = await Promise.all([
     loadImage("/images/jubel.jpg"),
     loadImage("/images/TigersZone_Logo.png"),
+    ensurePoppinsLoaded(),
   ]);
 
   drawCoverImage(ctx, bgImage, 0, 0, WIDTH, HEIGHT);
@@ -161,39 +203,38 @@ async function renderStoryCanvas(mvp: SpieltagsMvpData): Promise<HTMLCanvasEleme
   ctx.stroke();
 
   ctx.fillStyle = "#ffffff";
-  ctx.font = "700 44px Georgia, 'Times New Roman', serif";
+  ctx.font = `700 44px ${FONT}`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText("TigersZone", WIDTH / 2, logoY + 115);
 
-  ctx.font = "800 90px Arial, sans-serif";
+  const headingY = logoY + 280;
+  ctx.font = `800 74px ${FONT}`;
   ctx.fillStyle = "#fbbf24";
-  ctx.fillText("🏆", WIDTH / 2, logoY + 300);
+  ctx.fillText("SPIELTAGS-MVP", WIDTH / 2, headingY);
 
-  ctx.font = "800 74px Arial, sans-serif";
-  ctx.fillText("SPIELTAGS-MVP", WIDTH / 2, logoY + 430);
+  const cardY = headingY + 200;
 
   if (mvp.date) {
-    ctx.font = "500 32px Arial, sans-serif";
-    ctx.fillStyle = "rgba(255,255,255,0.75)";
-    ctx.fillText(formatPostDate(mvp.date), WIDTH / 2, logoY + 490);
+    const dateY = (headingY + cardY) / 2 + 10;
+    ctx.font = `500 34px ${FONT}`;
+    ctx.fillStyle = "#ffffff";
+    ctx.fillText(formatPostDate(mvp.date), WIDTH / 2, dateY);
   }
 
-  const cardY = logoY + 550;
   const cardPaddingX = 90;
   const cardWidth = WIDTH - cardPaddingX * 2;
-  const lineHeight = 64;
-  const cardHeight = 56 + mvp.games.length * lineHeight;
-  roundRectPath(ctx, cardPaddingX, cardY, cardWidth, cardHeight, 32);
-  ctx.fillStyle = "rgba(255,255,255,0.08)";
-  ctx.fill();
-  ctx.strokeStyle = "rgba(255,255,255,0.2)";
-  ctx.lineWidth = 2;
-  ctx.stroke();
+  const lineHeight = 62;
+  const cardTopPadding = 40;
+  const cardBottomPadding = 68;
+  const cardHeight = cardTopPadding + mvp.games.length * lineHeight + cardBottomPadding;
+  fillAmberCard(ctx, cardPaddingX, cardY, cardWidth, cardHeight, 32);
 
-  ctx.font = "700 40px Arial, sans-serif";
+  ctx.font = `700 40px ${FONT}`;
   ctx.fillStyle = "#ffffff";
-  let lineY = cardY + 56;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  let lineY = cardY + cardTopPadding + lineHeight / 2;
   for (const game of mvp.games) {
     const text = `${getTeamName(game.homeTeamId)} ${game.homeScore}:${game.awayScore} ${getTeamName(game.awayTeamId)}`;
     ctx.fillText(text, WIDTH / 2, lineY);
@@ -202,17 +243,17 @@ async function renderStoryCanvas(mvp: SpieltagsMvpData): Promise<HTMLCanvasEleme
 
   let y = cardY + cardHeight + 90;
 
-  ctx.font = "700 36px Arial, sans-serif";
+  ctx.font = `700 36px ${FONT}`;
   ctx.fillStyle = "#fbbf24";
   ctx.fillText(
-    mvp.entries.length === 0 ? "Diesmal war niemand exakt richtig" : "Exakt richtig getippt:",
+    mvp.entries.length === 0 ? "Diesmal war niemand exakt richtig" : "Richtig getippt haben:",
     WIDTH / 2,
     y
   );
   y += 70;
 
   if (mvp.entries.length > 0) {
-    ctx.font = "600 30px Arial, sans-serif";
+    ctx.font = `600 30px ${FONT}`;
     wrapPills(
       ctx,
       mvp.entries.map((entry) => entry.name),
@@ -222,10 +263,10 @@ async function renderStoryCanvas(mvp: SpieltagsMvpData): Promise<HTMLCanvasEleme
     );
   }
 
-  ctx.font = "500 28px Arial, sans-serif";
+  ctx.font = `500 28px ${FONT}`;
   ctx.fillStyle = "rgba(255,255,255,0.6)";
   ctx.textAlign = "center";
-  ctx.fillText("tigerszone.de · @tigerszoneofficial", WIDTH / 2, HEIGHT - 70);
+  ctx.fillText("tigerszone.de · Fotos: RS-Sportfoto.de", WIDTH / 2, HEIGHT - 70);
 
   return canvas;
 }
