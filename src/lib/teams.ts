@@ -3,12 +3,7 @@ import type { Team } from "@/types";
 export const TEAMS: Team[] = [
   { _id: "straubing-tigers", name: "Straubing Tigers", shortName: "Straubing", logoUrl: "" },
   { _id: "nuernberg-ice-tigers", name: "Nürnberg Ice Tigers", shortName: "Nürnberg", logoUrl: "" },
-  {
-    _id: "frankfurt-wolfsburg",
-    name: "Frankfurt/Wolfsburg",
-    shortName: "Frankfurt/Wolfsburg",
-    logoUrl: "",
-  },
+  { _id: "grizzlys-wolfsburg", name: "Grizzlys Wolfsburg", shortName: "Wolfsburg", logoUrl: "" },
   {
     _id: "steinbach-black-wings-linz",
     name: "Steinbach Black Wings Linz",
