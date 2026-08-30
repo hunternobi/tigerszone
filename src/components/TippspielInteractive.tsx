@@ -1,6 +1,7 @@
 import BonusTipsCard from "@/components/BonusTipsCard";
 import FadingBackground from "@/components/FadingBackground";
 import LeaderboardWidget from "@/components/LeaderboardWidget";
+import MeineTippsTable from "@/components/MeineTippsTable";
 import NextGameCountdown from "@/components/NextGameCountdown";
 import TippspielTable, { type ResultEntry } from "@/components/TippspielTable";
 import { SCORING } from "@/lib/constants";
@@ -45,7 +46,7 @@ export default function TippspielInteractive({
     >
       <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-16">
         <div className="grid gap-10 lg:grid-cols-[1fr_300px]">
-          <div>
+          <div className="order-1 lg:order-none lg:col-start-1 lg:row-start-1">
             <h1 className="text-3xl font-bold text-white">Tippspiel</h1>
             <p className="mt-3 text-white">
               Tippe alle Spiele des geilsten Eishockeyvereins der Welt - messe dich mit deinen
@@ -70,13 +71,12 @@ export default function TippspielInteractive({
                 vorbereitungGames={vorbereitungGames}
                 hauptrundeGames={hauptrundeGames}
                 predictions={predictions}
-                results={results}
                 isAuthenticated={isAuthenticated}
               />
             </div>
           </div>
 
-          <aside className="space-y-6">
+          <aside className="order-2 space-y-6 lg:order-none lg:col-start-2 lg:row-start-1 lg:row-span-2">
             <LeaderboardWidget
               globalEntries={globalEntries}
               groupLeaderboards={groupLeaderboards}
@@ -105,6 +105,10 @@ export default function TippspielInteractive({
               </ul>
             </div>
           </aside>
+
+          <div className="order-3 lg:order-none lg:col-start-1 lg:row-start-2">
+            <MeineTippsTable results={results} />
+          </div>
         </div>
       </section>
     </FadingBackground>
