@@ -38,7 +38,7 @@ export default function MeineTippsTable({ results }: MeineTippsTableProps) {
                 {entry.homeScore}:{entry.awayScore}
               </span>
               <span className="text-right text-sm font-semibold text-white">
-                {entry.pointsAwarded ?? 0} Pkt.
+                {entry.pointsAwarded ?? 0}
               </span>
             </div>
           ))}
