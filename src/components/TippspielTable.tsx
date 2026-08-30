@@ -104,7 +104,7 @@ function TippspielRow({ index, game, initial, disabled }: TippspielRowProps) {
         </span>
       </div>
       <div className="mt-1 grid grid-cols-[minmax(0,1fr)_2rem_auto_2rem_minmax(0,1fr)] items-center gap-1 sm:grid-cols-[minmax(0,1fr)_2.75rem_auto_2.75rem_minmax(0,1fr)] sm:gap-2.5">
-        <span className="truncate text-right text-[11px] font-medium text-white sm:text-sm">
+        <span className="text-right text-[11px] font-medium text-white sm:text-sm">
           {getTeamName(game.homeTeamId)}
         </span>
         <input
@@ -128,7 +128,7 @@ function TippspielRow({ index, game, initial, disabled }: TippspielRowProps) {
           aria-label={`Tipp Auswärtstore ${getTeamName(game.awayTeamId)}`}
           className={inputClass(isDraw)}
         />
-        <span className="truncate text-left text-[11px] font-medium text-white sm:text-sm">
+        <span className="text-left text-[11px] font-medium text-white sm:text-sm">
           {getTeamName(game.awayTeamId)}
         </span>
       </div>

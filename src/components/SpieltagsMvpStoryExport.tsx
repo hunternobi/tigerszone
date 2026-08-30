@@ -106,6 +106,90 @@ function drawCoverImage(
   ctx.drawImage(img, dx, dy, drawWidth, drawHeight);
 }
 
+function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] {
+  const words = text.split(" ");
+  const lines: string[] = [];
+  let currentLine = "";
+  for (const word of words) {
+    const testLine = currentLine ? `${currentLine} ${word}` : word;
+    if (ctx.measureText(testLine).width > maxWidth && currentLine) {
+      lines.push(currentLine);
+      currentLine = word;
+    } else {
+      currentLine = testLine;
+    }
+  }
+  if (currentLine) lines.push(currentLine);
+  return lines;
+}
+
+interface GameBlock {
+  homeLines: string[];
+  awayLines: string[];
+  scoreText: string;
+  blockHeight: number;
+}
+
+function computeGameBlock(
+  ctx: CanvasRenderingContext2D,
+  game: { homeTeamId: string; awayTeamId: string; homeScore: number; awayScore: number },
+  teamFont: string,
+  teamLineHeight: number,
+  columnWidth: number
+): GameBlock {
+  ctx.font = teamFont;
+  const homeLines = wrapText(ctx, getTeamName(game.homeTeamId), columnWidth);
+  const awayLines = wrapText(ctx, getTeamName(game.awayTeamId), columnWidth);
+  const numLines = Math.max(homeLines.length, awayLines.length, 1);
+  return {
+    homeLines,
+    awayLines,
+    scoreText: `${game.homeScore}:${game.awayScore}`,
+    blockHeight: numLines * teamLineHeight,
+  };
+}
+
+// Score stays perfectly centered; team names are right/left-aligned toward it
+// and wrap onto extra lines instead of overflowing, mirroring the Tippabgabe layout.
+function drawGameBlock(
+  ctx: CanvasRenderingContext2D,
+  block: GameBlock,
+  centerX: number,
+  blockTopY: number,
+  centerZoneHalfWidth: number,
+  teamFont: string,
+  teamLineHeight: number,
+  scoreFont: string
+) {
+  const blockCenterY = blockTopY + block.blockHeight / 2;
+
+  ctx.font = scoreFont;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillStyle = "#ffffff";
+  ctx.fillText(block.scoreText, centerX, blockCenterY);
+
+  const homeRightEdge = centerX - centerZoneHalfWidth;
+  const awayLeftEdge = centerX + centerZoneHalfWidth;
+
+  ctx.font = teamFont;
+  ctx.fillStyle = "#ffffff";
+
+  ctx.textAlign = "right";
+  const homeStartY =
+    blockCenterY - (block.homeLines.length * teamLineHeight) / 2 + teamLineHeight / 2;
+  block.homeLines.forEach((line, i) => {
+    ctx.fillText(line, homeRightEdge, homeStartY + i * teamLineHeight);
+  });
+
+  ctx.textAlign = "left";
+  const awayStartY =
+    blockCenterY - (block.awayLines.length * teamLineHeight) / 2 + teamLineHeight / 2;
+  block.awayLines.forEach((line, i) => {
+    ctx.fillText(line, awayLeftEdge, awayStartY + i * teamLineHeight);
+  });
+}
+
 interface PillItem {
   name: string;
   width: number;
@@ -223,22 +307,32 @@ async function renderStoryCanvas(mvp: SpieltagsMvpData): Promise<HTMLCanvasEleme
 
   const cardPaddingX = 90;
   const cardWidth = WIDTH - cardPaddingX * 2;
-  const lineHeight = 62;
+  const cardInnerPaddingX = 36;
+  const centerZoneHalfWidth = 95;
+  const columnWidth = cardWidth / 2 - cardInnerPaddingX - centerZoneHalfWidth;
+  const teamFont = `700 34px ${FONT}`;
+  const scoreFont = `800 54px ${FONT}`;
+  const teamLineHeight = 42;
+  const gameGap = 36;
   const cardTopPadding = 50;
   const cardBottomPadding = 50;
-  const cardHeight = cardTopPadding + mvp.games.length * lineHeight + cardBottomPadding;
+
+  const blocks = mvp.games.map((game) =>
+    computeGameBlock(ctx, game, teamFont, teamLineHeight, columnWidth)
+  );
+  const blocksHeight =
+    blocks.reduce((sum, block) => sum + block.blockHeight, 0) +
+    gameGap * Math.max(0, blocks.length - 1);
+  const cardHeight = cardTopPadding + blocksHeight + cardBottomPadding;
   fillAmberCard(ctx, cardPaddingX, cardY, cardWidth, cardHeight, 32);
 
-  ctx.font = `700 40px ${FONT}`;
-  ctx.fillStyle = "#ffffff";
+  let blockY = cardY + cardTopPadding;
+  for (const block of blocks) {
+    drawGameBlock(ctx, block, WIDTH / 2, blockY, centerZoneHalfWidth, teamFont, teamLineHeight, scoreFont);
+    blockY += block.blockHeight + gameGap;
+  }
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  let lineY = cardY + cardTopPadding + lineHeight / 2;
-  for (const game of mvp.games) {
-    const text = `${getTeamName(game.homeTeamId)} ${game.homeScore}:${game.awayScore} ${getTeamName(game.awayTeamId)}`;
-    ctx.fillText(text, WIDTH / 2, lineY);
-    lineY += lineHeight;
-  }
 
   let y = cardY + cardHeight + 90;
 
