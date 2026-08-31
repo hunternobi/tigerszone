@@ -54,19 +54,26 @@ export default function CustomSelect({
       if (panelRef.current?.contains(target)) return;
       setOpen(false);
     }
-    function handleDismiss() {
+    function handleScroll(e: Event) {
+      // Ignore scrolling inside the option list itself (e.g. scrolling through a long
+      // list of clubs) - only dismiss when the page behind the panel scrolls, since that
+      // would otherwise leave the panel's fixed position stale.
+      if (panelRef.current?.contains(e.target as Node)) return;
+      setOpen(false);
+    }
+    function handleResize() {
       setOpen(false);
     }
 
     document.addEventListener("mousedown", handleClickOutside);
-    // capture:true so scrolling inside any nested scroll container also closes the panel,
+    // capture:true so scrolling inside any nested scroll container is observed here too,
     // since scroll events don't bubble to window otherwise.
-    window.addEventListener("scroll", handleDismiss, true);
-    window.addEventListener("resize", handleDismiss);
+    window.addEventListener("scroll", handleScroll, true);
+    window.addEventListener("resize", handleResize);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
-      window.removeEventListener("scroll", handleDismiss, true);
-      window.removeEventListener("resize", handleDismiss);
+      window.removeEventListener("scroll", handleScroll, true);
+      window.removeEventListener("resize", handleResize);
     };
   }, [open]);
 
@@ -78,7 +85,7 @@ export default function CustomSelect({
         disabled={disabled}
         onClick={() => (open ? setOpen(false) : openPanel())}
         aria-label={aria["aria-label"]}
-        className="glass-select glass-interactive flex h-9 w-full items-center justify-between rounded-lg px-2 text-left text-sm text-white disabled:cursor-not-allowed disabled:opacity-50"
+        className="glass-select glass-interactive flex h-9 w-full items-center justify-between px-2 text-left text-sm text-white disabled:cursor-not-allowed disabled:opacity-50"
       >
         <span className={`truncate ${selected ? "" : "text-white/60"}`}>
           {selected ? selected.label : placeholder}
