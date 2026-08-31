@@ -69,7 +69,7 @@ export default function CustomSelect({
                 setOpen(false);
               }}
               className={`flex w-full items-center justify-between gap-2 rounded-xl border border-white/10 px-3 py-2 text-left text-sm transition hover:brightness-125 ${
-                index % 2 === 0 ? "bg-tigers-secondary/30" : "bg-tigers-tertiary/45"
+                index % 2 === 0 ? "bg-tigers-secondary/60" : "bg-tigers-tertiary/75"
               } ${option.value === value ? "text-white" : "text-white/70"}`}
             >
               <span className="truncate">{option.label}</span>
