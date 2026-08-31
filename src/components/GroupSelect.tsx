@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { Check, ChevronDown } from "lucide-react";
+import CustomSelect from "@/components/CustomSelect";
 
 interface GroupSelectOption {
   groupId: string;
@@ -15,54 +14,15 @@ interface GroupSelectProps {
 }
 
 export default function GroupSelect({ options, value, onChange }: GroupSelectProps) {
-  const [open, setOpen] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const selected = options.find((option) => option.groupId === value);
-
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
   return (
-    <div ref={containerRef} className="relative mb-3">
-      <button
-        type="button"
-        onClick={() => setOpen((isOpen) => !isOpen)}
-        className="glass-select glass-interactive flex w-full items-center justify-between px-3 py-2 text-left text-sm font-medium text-white"
-      >
-        <span>{selected?.groupName ?? "Gruppe wählen"}</span>
-        <ChevronDown
-          size={16}
-          className={`shrink-0 transition-transform ${open ? "rotate-180" : ""}`}
-        />
-      </button>
-
-      {open && (
-        <div className="glass-select absolute z-20 mt-2 w-full space-y-1.5 p-2">
-          {options.map((option, index) => (
-            <button
-              key={option.groupId}
-              type="button"
-              onClick={() => {
-                onChange(option.groupId);
-                setOpen(false);
-              }}
-              className={`flex w-full items-center justify-between rounded-xl border border-white/10 px-3 py-2 text-left text-sm transition hover:brightness-125 ${
-                index % 2 === 0 ? "bg-tigers-secondary/30" : "bg-tigers-tertiary/45"
-              } ${option.groupId === value ? "text-white" : "text-white/70"}`}
-            >
-              {option.groupName}
-              {option.groupId === value && <Check size={14} />}
-            </button>
-          ))}
-        </div>
-      )}
+    <div className="mb-3">
+      <CustomSelect
+        value={value ?? ""}
+        onChange={onChange}
+        options={options.map((option) => ({ value: option.groupId, label: option.groupName }))}
+        placeholder="Gruppe wählen"
+        aria-label="Gruppe wählen"
+      />
     </div>
   );
 }

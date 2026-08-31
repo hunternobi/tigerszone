@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition, type ChangeEvent } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { Check, Trophy } from "lucide-react";
 import { submitBonusTip, type BonusField, type MyBonusPrediction } from "@/app/tippspiel/bonusActions";
 import { DEL_CLUBS } from "@/lib/delClubs";
 import { TIGERS_SKATERS } from "@/lib/tigersRoster";
+import CustomSelect from "@/components/CustomSelect";
 
 interface BonusTipsCardProps {
   initial: MyBonusPrediction;
@@ -56,8 +57,7 @@ function BonusTipField({
     };
   }, []);
 
-  function handleChange(e: ChangeEvent<HTMLSelectElement>) {
-    const next = e.target.value;
+  function handleChange(next: string) {
     setValue(next);
     if (next === "" || next === saved) return;
 
@@ -78,21 +78,13 @@ function BonusTipField({
   return (
     <div>
       <label className="mb-1 block text-xs font-semibold text-amber-100/90">{label}</label>
-      <select
+      <CustomSelect
         value={value}
         onChange={handleChange}
+        options={options}
         disabled={disabled || isPending}
-        className="glass-select h-9 w-full rounded-lg px-2 text-sm text-white focus:outline-none disabled:opacity-50"
-      >
-        <option className="text-black" value="">
-          Bitte wählen
-        </option>
-        {options.map((option) => (
-          <option key={option.value} className="text-black" value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
+        aria-label={label}
+      />
       {status === "error" && <p className="mt-1 text-[11px] text-red-400">Konnte nicht gespeichert werden.</p>}
       {status === "saved" && (
         <p className="mt-1 flex animate-[fadeIn_0.2s_ease-out] items-center gap-1 text-[11px] font-semibold text-emerald-400">
