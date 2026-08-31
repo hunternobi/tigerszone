@@ -79,8 +79,11 @@ export default function GroupList({ groups, leaderboards }: GroupListProps) {
                   </button>
                 </form>
               ) : (
-                <div className="flex items-start gap-2">
+                <div className="flex flex-wrap items-start gap-2">
                   <p className="min-w-0 flex-1 font-bold break-words text-white">{group.name}</p>
+                  <span className="shrink-0 rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-white uppercase">
+                    {group.isPublic ? "Öffentlich" : "Privat"}
+                  </span>
                   {canManage && (
                     <button
                       type="button"
@@ -102,12 +105,7 @@ export default function GroupList({ groups, leaderboards }: GroupListProps) {
 
               <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
                 <p className="text-xs text-white">{group.memberCount} Mitglieder</p>
-                <div className="flex shrink-0 items-center gap-2">
-                  <span className="rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-white uppercase">
-                    {group.isPublic ? "Öffentlich" : "Privat"}
-                  </span>
-                  <GroupShareMenu group={group} />
-                </div>
+                <GroupShareMenu group={group} />
               </div>
             </div>
 
