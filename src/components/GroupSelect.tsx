@@ -44,8 +44,8 @@ export default function GroupSelect({ options, value, onChange }: GroupSelectPro
       </button>
 
       {open && (
-        <div className="glass-select absolute z-20 mt-2 w-full space-y-0.5 p-1">
-          {options.map((option) => (
+        <div className="glass-select absolute z-20 mt-2 w-full space-y-1.5 p-2">
+          {options.map((option, index) => (
             <button
               key={option.groupId}
               type="button"
@@ -53,9 +53,9 @@ export default function GroupSelect({ options, value, onChange }: GroupSelectPro
                 onChange(option.groupId);
                 setOpen(false);
               }}
-              className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition hover:bg-white/10 ${
-                option.groupId === value ? "text-white" : "text-white/60"
-              }`}
+              className={`flex w-full items-center justify-between rounded-xl border border-white/10 px-3 py-2 text-left text-sm transition hover:brightness-125 ${
+                index % 2 === 0 ? "bg-tigers-secondary/30" : "bg-tigers-tertiary/45"
+              } ${option.groupId === value ? "text-white" : "text-white/70"}`}
             >
               {option.groupName}
               {option.groupId === value && <Check size={14} />}
