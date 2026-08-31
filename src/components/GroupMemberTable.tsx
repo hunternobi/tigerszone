@@ -137,7 +137,7 @@ export default function GroupMemberTable({
                     <span className={index === 0 ? "shrink-0 text-base" : "shrink-0"}>
                       {index === 0 ? "🥇" : `${index + 1}.`}
                     </span>
-                    <Link href={`/spieler/${entry.userId}`} className="truncate hover:underline">
+                    <Link href={`/spieler/${entry.userId}`} className="break-words hover:underline">
                       {entry.name}
                     </Link>
                     <TrendIcon trend={entry.trend} />

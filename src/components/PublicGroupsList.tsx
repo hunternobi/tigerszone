@@ -31,11 +31,11 @@ export default function PublicGroupsList({
           {groups.map((group) => (
             <div
               key={group._id}
-              className="glass-panel-sm flex items-center justify-between gap-3 p-4"
+              className="glass-panel-sm flex items-start justify-between gap-3 p-4"
             >
               <div className="min-w-0 flex-1">
-                <p className="truncate font-bold text-white">{group.name}</p>
-                <p className="truncate text-xs text-white">
+                <p className="font-bold break-words text-white">{group.name}</p>
+                <p className="text-xs text-white">
                   {group.memberCount} Mitglieder · Ersteller: {group.ownerName}
                 </p>
               </div>

@@ -62,7 +62,7 @@ export default function TipHistoryTabs({ entries }: TipHistoryTabsProps) {
               className="flex flex-wrap items-center justify-between gap-2 px-1 py-2.5 sm:px-2"
             >
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold text-white">
+                <p className="text-sm font-semibold text-white">
                   {getTeamName(entry.homeTeamId)} vs. {getTeamName(entry.awayTeamId)}
                 </p>
                 <p className="text-[11px] text-white/60">

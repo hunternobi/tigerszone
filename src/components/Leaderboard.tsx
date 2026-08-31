@@ -78,7 +78,7 @@ export default function Leaderboard({
                   <span className={medals ? "shrink-0 text-lg" : "shrink-0 text-tigers-secondary"}>
                     {medals ? MEDALS[index] : `${index + 1}.`}
                   </span>
-                  <Link href={`/spieler/${entry.userId}`} className="truncate hover:underline">
+                  <Link href={`/spieler/${entry.userId}`} className="break-words hover:underline">
                     {entry.name}
                   </Link>
                   <TrendIcon trend={entry.trend} />
