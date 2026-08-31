@@ -80,10 +80,7 @@ export default function GroupList({ groups, leaderboards }: GroupListProps) {
                 </form>
               ) : (
                 <div className="flex flex-wrap items-start gap-2">
-                  <p className="min-w-0 flex-1 font-bold break-words text-white">{group.name}</p>
-                  <span className="shrink-0 rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-white uppercase">
-                    {group.isPublic ? "Öffentlich" : "Privat"}
-                  </span>
+                  <p className="min-w-0 break-words font-bold text-white">{group.name}</p>
                   {canManage && (
                     <button
                       type="button"
@@ -97,6 +94,9 @@ export default function GroupList({ groups, leaderboards }: GroupListProps) {
                       <Pencil size={14} />
                     </button>
                   )}
+                  <span className="shrink-0 rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-white uppercase">
+                    {group.isPublic ? "Öffentlich" : "Privat"}
+                  </span>
                 </div>
               )}
               {isRenaming && renameError && (

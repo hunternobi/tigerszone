@@ -91,6 +91,27 @@ h6 {
       0 4px 20px rgba(0, 0, 0, 0.28);
   }
 
+  /* Liquid Glass select: a visibly blue-toned variant of glass-panel-sm for
+     dropdown/selection controls (Gruppen-Auswahl, Bonustipps), so they read
+     as distinct, interactive controls instead of blending into the page. */
+  .glass-select {
+    @apply backdrop-blur-lg backdrop-saturate-150;
+    position: relative;
+    border-radius: 1.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background:
+      radial-gradient(130% 150% at 15% -15%, rgba(255, 255, 255, 0.16), transparent 55%),
+      linear-gradient(
+        135deg,
+        rgba(91, 127, 199, 0.55),
+        rgba(42, 58, 122, 0.55) 50%,
+        rgba(10, 15, 61, 0.6)
+      );
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.3),
+      0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+
   /* Liquid Glass bar: full-bleed frosted strip, e.g. the top nav */
   .glass-bar {
     @apply backdrop-blur-xl backdrop-saturate-150;

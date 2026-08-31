@@ -34,7 +34,7 @@ export default function GroupSelect({ options, value, onChange }: GroupSelectPro
       <button
         type="button"
         onClick={() => setOpen((isOpen) => !isOpen)}
-        className="glass-panel-sm glass-interactive flex w-full items-center justify-between px-3 py-2 text-left text-sm font-medium text-white"
+        className="glass-select glass-interactive flex w-full items-center justify-between px-3 py-2 text-left text-sm font-medium text-white"
       >
         <span>{selected?.groupName ?? "Gruppe wählen"}</span>
         <ChevronDown
@@ -44,7 +44,7 @@ export default function GroupSelect({ options, value, onChange }: GroupSelectPro
       </button>
 
       {open && (
-        <div className="glass-panel-sm absolute z-20 mt-2 w-full space-y-0.5 p-1">
+        <div className="glass-select absolute z-20 mt-2 w-full space-y-0.5 p-1">
           {options.map((option) => (
             <button
               key={option.groupId}

@@ -82,7 +82,7 @@ function BonusTipField({
         value={value}
         onChange={handleChange}
         disabled={disabled || isPending}
-        className="glass-panel-sm h-9 w-full rounded-lg border-amber-300/20 bg-transparent px-2 text-sm text-white focus:outline-none disabled:opacity-50"
+        className="glass-select h-9 w-full rounded-lg px-2 text-sm text-white focus:outline-none disabled:opacity-50"
       >
         <option className="text-black" value="">
           Bitte wählen
