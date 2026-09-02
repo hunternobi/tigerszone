@@ -85,7 +85,7 @@ export default function CustomSelect({
         disabled={disabled}
         onClick={() => (open ? setOpen(false) : openPanel())}
         aria-label={aria["aria-label"]}
-        className="glass-select glass-interactive flex h-9 w-full items-center justify-between px-2 text-left text-sm text-white disabled:cursor-not-allowed disabled:opacity-50"
+        className="glass-select glass-interactive flex h-9 w-full items-center justify-between rounded-xl px-2 text-left text-sm text-white disabled:cursor-not-allowed disabled:opacity-50"
       >
         <span className={`truncate ${selected ? "" : "text-white/60"}`}>
           {selected ? selected.label : placeholder}
