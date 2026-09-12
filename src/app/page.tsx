@@ -95,13 +95,13 @@ export default async function Home() {
             <Reveal>
               <div className="glass-panel mx-auto mt-6 max-w-2xl p-4 text-left sm:mt-8 sm:p-8">
                 <div className="flex items-center justify-center gap-2">
-                  <Trophy size={20} className="shrink-0 text-tigers-secondary" />
+                  <Trophy size={20} className="shrink-0 text-amber-300" />
                   <h2 className="text-center text-xl font-bold text-white sm:text-2xl">
                     Spieltags-MVP
                   </h2>
                 </div>
                 <p className="mt-1.5 text-center text-xs text-white sm:mt-2 sm:text-sm">
-                  {spieltagsMvp.matchLabel} · alle mit dem exakt richtigen Tipp
+                  {spieltagsMvp.matchLabel}
                 </p>
 
                 {spieltagsMvp.entries.length === 0 ? (
@@ -109,16 +109,21 @@ export default async function Home() {
                     Diesmal hat niemand das genaue Ergebnis getroffen.
                   </p>
                 ) : (
-                  <ul className="mt-4 flex flex-wrap justify-center gap-2">
-                    {spieltagsMvp.entries.map((entry) => (
-                      <li
-                        key={entry.userId}
-                        className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-sm font-semibold text-white"
-                      >
-                        {entry.name}
-                      </li>
-                    ))}
-                  </ul>
+                  <>
+                    <p className="mt-3 text-center text-xs font-semibold text-white sm:text-sm">
+                      Richtig getippt haben:
+                    </p>
+                    <ul className="mt-2 flex flex-wrap justify-center gap-2">
+                      {spieltagsMvp.entries.map((entry) => (
+                        <li
+                          key={entry.userId}
+                          className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-sm font-semibold text-white"
+                        >
+                          {entry.name}
+                        </li>
+                      ))}
+                    </ul>
+                  </>
                 )}
               </div>
             </Reveal>

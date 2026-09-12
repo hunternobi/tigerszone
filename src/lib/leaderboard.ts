@@ -279,7 +279,7 @@ export async function getSpieltagsMvp(): Promise<SpieltagsMvpData> {
     date: games[0].kickoff.toISOString(),
     matchLabel:
       games.length === 1
-        ? `${getTeamName(games[0].homeTeamId)} vs. ${getTeamName(games[0].awayTeamId)}`
+        ? `${getTeamName(games[0].homeTeamId)} ${games[0].homeScore} : ${games[0].awayScore} ${getTeamName(games[0].awayTeamId)}`
         : `${games.length} Spiele`,
     games: games
       .filter((game) => game.homeScore != null && game.awayScore != null)

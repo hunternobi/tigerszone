@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useTransition } from "react";
-import { Check, Trophy } from "lucide-react";
+import { Check } from "lucide-react";
 import { submitBonusTip, type BonusField, type MyBonusPrediction } from "@/app/tippspiel/bonusActions";
 import { DEL_CLUBS } from "@/lib/delClubs";
 import { TIGERS_SKATERS } from "@/lib/tigersRoster";
@@ -101,10 +101,7 @@ export default function BonusTipsCard({ initial, isAuthenticated, locked }: Bonu
 
   return (
     <div className="glass-panel mb-8 border border-amber-300/30 bg-gradient-to-br from-amber-500/15 via-amber-400/5 to-transparent p-4 sm:p-6">
-      <div className="flex items-center gap-2">
-        <Trophy size={20} className="shrink-0 text-amber-300" />
-        <h2 className="text-lg font-bold text-amber-100">Bonustipps</h2>
-      </div>
+      <h2 className="text-lg font-bold text-amber-100">Bonustipps</h2>
       <p className="mt-2 text-sm text-amber-50/90">
         Tippe vor der Saison und sichere dir zusätzliche Punkte, jeder richtige Bonustipp erhält
         10 Extrapunkte am Ende der Hauptrunde.
