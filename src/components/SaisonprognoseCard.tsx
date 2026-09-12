@@ -62,7 +62,9 @@ export default function SaisonprognoseCard({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <Trophy size={20} className="shrink-0 text-amber-300" />
-          <h2 className="text-lg font-bold text-white">Meine Saisonprognose</h2>
+          <h2 className="text-lg font-bold text-white">
+            Meine Saisonprognose – markiere uns auf Instagram!
+          </h2>
         </div>
         <div className="flex items-center gap-2">
           <SaisonprognoseStoryExport
