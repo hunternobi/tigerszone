@@ -5,12 +5,13 @@ import { getAllGames } from "@/lib/games";
 import { getAllUsersWithGroups } from "@/lib/adminUsers";
 import { getAllGroups } from "@/lib/adminGroups";
 import { getBonusResult } from "@/lib/adminBonus";
-import { getSpieltagsMvp } from "@/lib/leaderboard";
+import { getGlobalLeaderboard, getSpieltagsMvp } from "@/lib/leaderboard";
 import GameResultForm from "@/components/GameResultForm";
 import AdminUserTable from "@/components/AdminUserTable";
 import AdminGroupTable from "@/components/AdminGroupTable";
 import BonusResultForm from "@/components/BonusResultForm";
 import SpieltagsMvpAdmin from "@/components/SpieltagsMvpAdmin";
+import TopDreiAdmin from "@/components/TopDreiAdmin";
 
 export const metadata: Metadata = {
   title: "Admin",
@@ -22,12 +23,13 @@ export default async function AdminPage() {
   if (!session?.user) redirect("/login");
   if (session.user.role !== "admin") redirect("/");
 
-  const [games, users, groups, bonusResult, spieltagsMvp] = await Promise.all([
+  const [games, users, groups, bonusResult, spieltagsMvp, topDrei] = await Promise.all([
     getAllGames(),
     getAllUsersWithGroups(),
     getAllGroups(),
     getBonusResult("hauptrunde"),
     getSpieltagsMvp(),
+    getGlobalLeaderboard(3),
   ]);
 
   return (
@@ -51,6 +53,14 @@ export default async function AdminPage() {
       </p>
       <div className="mt-6">
         <SpieltagsMvpAdmin mvp={spieltagsMvp} />
+      </div>
+
+      <h2 className="mt-16 text-2xl font-bold text-white">Gesamtrangliste Top 3</h2>
+      <p className="mt-2 text-white">
+        Die aktuellen ersten drei der Gesamtrangliste, fertig formatiert für Instagram.
+      </p>
+      <div className="mt-6">
+        <TopDreiAdmin entries={topDrei} />
       </div>
 
       <h2 className="mt-16 text-2xl font-bold text-white">Bonustipps Hauptrunde</h2>
