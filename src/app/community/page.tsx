@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import Faq from "@/components/Faq";
 import FadingBackground from "@/components/FadingBackground";
+import SaisonprognoseCard from "@/components/SaisonprognoseCard";
+import { auth } from "@/auth";
+import { getMySeasonPrediction, getSeasonPredictionDeadline } from "@/app/community/seasonPredictionActions";
 
 export const metadata: Metadata = {
   title: "Community",
@@ -8,7 +11,14 @@ export const metadata: Metadata = {
   alternates: { canonical: "/community" },
 };
 
-export default function CommunityPage() {
+export default async function CommunityPage() {
+  const session = await auth();
+  const [initialOrder, deadline] = await Promise.all([
+    getMySeasonPrediction(),
+    getSeasonPredictionDeadline(),
+  ]);
+  const locked = deadline != null && new Date() >= deadline;
+
   return (
     <FadingBackground src="/images/Community_.jpg" opacity={0.55} blurPx={1.5}>
       <section className="mx-auto max-w-5xl px-6 py-16">
@@ -16,6 +26,13 @@ export default function CommunityPage() {
         <p className="mt-3 text-white">
           Freut euch auf viele coole Aktionen, Preise und Umfragen während der Saison. Stay tuned!
         </p>
+
+        <SaisonprognoseCard
+          initialOrder={initialOrder}
+          isAuthenticated={!!session?.user}
+          locked={locked}
+          playerName={session?.user?.name ?? ""}
+        />
 
         <div className="mt-12">
           <Faq />
