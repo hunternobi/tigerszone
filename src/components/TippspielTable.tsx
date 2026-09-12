@@ -13,18 +13,6 @@ interface PredictionInfo {
   predictedAway: number;
 }
 
-export interface ResultEntry {
-  gameId: string;
-  homeTeamId: string;
-  awayTeamId: string;
-  kickoff: string;
-  predictedHome: number;
-  predictedAway: number;
-  homeScore?: number;
-  awayScore?: number;
-  pointsAwarded?: number;
-}
-
 interface TippspielTableProps {
   vorbereitungGames: Game[];
   hauptrundeGames: Game[];

@@ -68,7 +68,9 @@ export default async function ProfilePage() {
         history={pointsHistory}
       />
 
-      <TipHistoryTabs entries={history?.entries ?? []} />
+      <div id="tipphistorie" className="scroll-mt-24">
+        <TipHistoryTabs entries={history?.entries ?? []} />
+      </div>
 
       <div className="mt-8 flex justify-end">
         <DeleteAccountButton />

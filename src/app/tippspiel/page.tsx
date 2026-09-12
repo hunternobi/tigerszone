@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { auth } from "@/auth";
 import TippspielInteractive from "@/components/TippspielInteractive";
-import type { ResultEntry } from "@/components/TippspielTable";
 import { getAllGames } from "@/lib/games";
 import { getActiveGroupId, getMyGroups } from "@/app/gruppen/actions";
 import { getGlobalLeaderboard, getGroupLeaderboard, type GroupLeaderboardData } from "@/lib/leaderboard";
@@ -50,7 +49,6 @@ export default async function TippspielPage() {
     null;
 
   const predictions: Record<string, { predictedHome: number; predictedAway: number }> = {};
-  const results: ResultEntry[] = [];
 
   if (history) {
     for (const entry of history.entries) {
@@ -58,19 +56,6 @@ export default async function TippspielPage() {
         predictedHome: entry.predictedHome,
         predictedAway: entry.predictedAway,
       };
-      if (entry.status === "finished") {
-        results.push({
-          gameId: entry.gameId,
-          homeTeamId: entry.homeTeamId,
-          awayTeamId: entry.awayTeamId,
-          kickoff: entry.kickoff,
-          predictedHome: entry.predictedHome,
-          predictedAway: entry.predictedAway,
-          homeScore: entry.homeScore,
-          awayScore: entry.awayScore,
-          pointsAwarded: entry.pointsAwarded,
-        });
-      }
     }
   }
 
@@ -80,7 +65,6 @@ export default async function TippspielPage() {
       vorbereitungGames={vorbereitungGames}
       hauptrundeGames={hauptrundeGames}
       predictions={predictions}
-      results={results}
       isAuthenticated={isAuthenticated}
       globalEntries={globalEntries}
       groupLeaderboards={groupLeaderboards}

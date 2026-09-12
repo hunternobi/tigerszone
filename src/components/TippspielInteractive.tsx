@@ -1,9 +1,10 @@
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import BonusTipsCard from "@/components/BonusTipsCard";
 import FadingBackground from "@/components/FadingBackground";
 import LeaderboardWidget from "@/components/LeaderboardWidget";
-import MeineTippsTable from "@/components/MeineTippsTable";
 import NextGameCountdown from "@/components/NextGameCountdown";
-import TippspielTable, { type ResultEntry } from "@/components/TippspielTable";
+import TippspielTable from "@/components/TippspielTable";
 import { SCORING } from "@/lib/constants";
 import type { Game } from "@/types";
 import type { LeaderboardEntry } from "@/components/Leaderboard";
@@ -15,7 +16,6 @@ interface TippspielInteractiveProps {
   vorbereitungGames: Game[];
   hauptrundeGames: Game[];
   predictions: Record<string, { predictedHome: number; predictedAway: number }>;
-  results: ResultEntry[];
   isAuthenticated: boolean;
   globalEntries: LeaderboardEntry[];
   groupLeaderboards: GroupLeaderboardData[];
@@ -29,7 +29,6 @@ export default function TippspielInteractive({
   vorbereitungGames,
   hauptrundeGames,
   predictions,
-  results,
   isAuthenticated,
   globalEntries,
   groupLeaderboards,
@@ -106,9 +105,17 @@ export default function TippspielInteractive({
             </div>
           </aside>
 
-          <div className="order-3 lg:order-none lg:col-start-1 lg:row-start-2">
-            <MeineTippsTable results={results} />
-          </div>
+          {isAuthenticated && (
+            <div className="order-3 lg:order-none lg:col-start-1 lg:row-start-2">
+              <Link
+                href="/profile#tipphistorie"
+                className="glass-panel-sm glass-interactive flex items-center justify-between gap-3 p-4 text-sm font-semibold text-white sm:p-5"
+              >
+                Hier geht es zu deiner Tipphistorie
+                <ArrowRight size={16} className="shrink-0" />
+              </Link>
+            </div>
+          )}
         </div>
       </section>
     </FadingBackground>
