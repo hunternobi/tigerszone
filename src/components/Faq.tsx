@@ -1,54 +1,70 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { ChevronDown } from "lucide-react";
 
 interface FaqItem {
+  id: string;
   question: string;
   answer: ReactNode;
 }
 
 const FAQ_ITEMS: FaqItem[] = [
   {
+    id: "benutzername",
     question: '„Name" – ist das mein Klarname oder mein Nutzername?',
     answer:
       "Das ist dein Benutzername (nicht dein Klarname). Du kannst ihn in deinem Profil jederzeit ändern, allerdings höchstens einmal pro Woche.",
   },
   {
+    id: "anonym",
     question: 'Kann ich anonym bleiben (z. B. als „Anonym123")?',
     answer:
       "Nein, aktuell ist keine Anonymisierung geplant – dein Benutzername ist für andere Mitglieder sichtbar.",
   },
   {
+    id: "passwort-vergessen",
     question: "Ich habe mein Passwort vergessen, was mache ich jetzt?",
     answer:
       'Klicke auf der Login-Seite auf „Passwort vergessen?" und gib deine E-Mail-Adresse ein. Du bekommst dann einen Link zum Zurücksetzen zugeschickt.',
   },
   {
+    id: "tipp-aendern",
     question: "Kann ich meinen Tipp nachträglich ändern?",
     answer: "Ja, dein Tipp kann bis zum Eröffnungsbully beliebig oft geändert werden.",
   },
   {
+    id: "mehrere-gruppen",
     question: "Kann ich mehreren Gruppen beitreten?",
     answer:
       'Ja, das ist möglich. Im Reiter „Gruppen" siehst du die Gesamtstände all deiner Gruppen, im Reiter „Tippspiel" die Top 5 der gerade ausgewählten Gruppe.',
   },
   {
+    id: "gruppen-rechte",
     question: "Welche Rechte haben Head Coach und Assistant Coach in einer Gruppe?",
     answer:
       "Jede Gruppe hat einen Head Coach (den Ersteller) und kann einen Assistant Coach haben. Beide können Mitglieder aus der Gruppe entfernen und den Gruppennamen ändern.",
   },
   {
+    id: "fremde-tipps",
     question: "Warum sehe ich auf fremden Profilen nicht alle abgegebenen Tipps?",
     answer:
       "Der Tipp eines anderen Mitglieds für ein Spiel wird auf seinem Profil erst nach dem Eröffnungsbully dieses Spiels angezeigt. So kann niemand seinen eigenen Tipp nachträglich an einen bereits sichtbaren Tipp anpassen. Auf deinem eigenen Profil siehst du deine Tipps natürlich sofort.",
   },
   {
+    id: "bonustipps",
     question: "Was sind Bonustipps?",
     answer:
       "Vor Beginn der Hauptrunde kannst du im Tippspiel zusätzlich vier Bonustipps abgeben: Hauptrundensieger, Platzierung der Tigers, Topscorer der Tigers und meiste Tore bei den Tigers. Jeder richtige Bonustipp bringt dir 10 Extrapunkte, ausgewertet am Ende der Hauptrunde. Zu Beginn der Playoffs gibt es eine weitere Runde Bonustipps.",
   },
   {
+    id: "story-export",
+    question: "Wie funktioniert der Story-Export für Instagram?",
+    answer:
+      'Tippe bei „Meine Saisonprognose" auf „Als Story exportieren". Auf dem Handy öffnet sich automatisch das Teilen-Menü deines Betriebssystems – wähle dort Instagram aus, dann öffnet sich direkt der Story-Editor mit deinem Bild (bei manchen Instagram-Versionen musst du davor kurz noch „Story" auswählen). Fertigstellen und posten wie gewohnt. Am Computer wird das Bild stattdessen als Datei heruntergeladen, die du dann manuell in Instagram hochladen kannst.',
+  },
+  {
+    id: "kontakt",
     question: "Weitere Fragen oder Anregungen?",
     answer: (
       <>
@@ -77,8 +93,22 @@ const FAQ_ITEMS: FaqItem[] = [
 function FaqRow({ item }: { item: FaqItem }) {
   const [open, setOpen] = useState(false);
 
+  useEffect(() => {
+    function checkHash() {
+      if (window.location.hash === `#${item.id}`) {
+        setOpen(true);
+        requestAnimationFrame(() => {
+          document.getElementById(item.id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      }
+    }
+    checkHash();
+    window.addEventListener("hashchange", checkHash);
+    return () => window.removeEventListener("hashchange", checkHash);
+  }, [item.id]);
+
   return (
-    <div className="glass-panel-sm overflow-hidden">
+    <div id={item.id} className="glass-panel-sm scroll-mt-24 overflow-hidden">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}

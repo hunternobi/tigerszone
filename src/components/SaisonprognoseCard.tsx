@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Reorder } from "framer-motion";
-import { Check, GripVertical, Trophy } from "lucide-react";
+import { Check, GripVertical, HelpCircle, Trophy } from "lucide-react";
 import { DEL_CLUBS, getDelClubName } from "@/lib/delClubs";
 import { saveSeasonPrediction } from "@/app/community/seasonPredictionActions";
 import SaisonprognoseStoryExport from "@/components/SaisonprognoseStoryExport";
@@ -64,11 +64,21 @@ export default function SaisonprognoseCard({
           <Trophy size={20} className="shrink-0 text-amber-300" />
           <h2 className="text-lg font-bold text-white">Meine Saisonprognose</h2>
         </div>
-        <SaisonprognoseStoryExport
-          order={order}
-          playerName={playerName}
-          disabled={!isAuthenticated}
-        />
+        <div className="flex items-center gap-2">
+          <SaisonprognoseStoryExport
+            order={order}
+            playerName={playerName}
+            disabled={!isAuthenticated}
+          />
+          <a
+            href="#story-export"
+            aria-label="Hilfe zum Story-Export"
+            title="Hilfe zum Story-Export"
+            className="glass-pill glass-interactive flex h-8 w-8 shrink-0 items-center justify-center text-white"
+          >
+            <HelpCircle size={16} />
+          </a>
+        </div>
       </div>
       <p className="mt-2 text-sm text-white">
         Zieh die Vereine in die Reihenfolge, in der du sie am Ende der Hauptrunde erwartest.
