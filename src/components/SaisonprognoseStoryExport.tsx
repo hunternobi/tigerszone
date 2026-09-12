@@ -14,9 +14,7 @@ const WIDTH = 1080;
 const HEIGHT = 1920;
 const FONT = "Poppins, Arial, sans-serif";
 
-const AMBER_BORDER = "rgba(252,211,77,0.45)";
-// Matches the real site's amber-100/90 heading color (Bonustipps, Hauptrundensieger).
-const AMBER_GOLD = "rgba(254,243,199,0.9)";
+const CARD_BORDER = "rgba(255,255,255,0.35)";
 
 let poppinsLoaded: Promise<void> | null = null;
 
@@ -62,7 +60,7 @@ function roundRectPath(
   ctx.closePath();
 }
 
-function fillAmberCard(
+function fillCard(
   ctx: CanvasRenderingContext2D,
   x: number,
   y: number,
@@ -72,12 +70,12 @@ function fillAmberCard(
 ) {
   roundRectPath(ctx, x, y, width, height, radius);
   const gradient = ctx.createLinearGradient(x, y, x + width, y + height);
-  gradient.addColorStop(0, "rgba(245,158,11,0.24)");
-  gradient.addColorStop(0.5, "rgba(251,191,36,0.09)");
-  gradient.addColorStop(1, "rgba(251,191,36,0.02)");
+  gradient.addColorStop(0, "rgba(255,255,255,0.18)");
+  gradient.addColorStop(0.5, "rgba(255,255,255,0.08)");
+  gradient.addColorStop(1, "rgba(255,255,255,0.02)");
   ctx.fillStyle = gradient;
   ctx.fill();
-  ctx.strokeStyle = AMBER_BORDER;
+  ctx.strokeStyle = CARD_BORDER;
   ctx.lineWidth = 2;
   ctx.stroke();
 }
@@ -149,7 +147,7 @@ async function renderStoryCanvas(order: string[], playerName: string): Promise<H
 
   const headingY = logoY + 210;
   ctx.font = `800 74px ${FONT}`;
-  ctx.fillStyle = AMBER_GOLD;
+  ctx.fillStyle = "#ffffff";
   ctx.fillText("SAISONPROGNOSE", WIDTH / 2, headingY);
 
   const subheadingY = headingY + 90;
@@ -167,7 +165,7 @@ async function renderStoryCanvas(order: string[], playerName: string): Promise<H
   const cardHeight = cardTopPadding + rowHeight * order.length + cardBottomPadding;
   const cardY = subheadingY + 80;
 
-  fillAmberCard(ctx, cardPaddingX, cardY, cardWidth, cardHeight, 32);
+  fillCard(ctx, cardPaddingX, cardY, cardWidth, cardHeight, 32);
 
   const nameFont = `600 34px ${FONT}`;
   const posFont = `800 30px ${FONT}`;
@@ -187,7 +185,7 @@ async function renderStoryCanvas(order: string[], playerName: string): Promise<H
     ctx.textAlign = "left";
     ctx.textBaseline = "middle";
     ctx.font = posFont;
-    ctx.fillStyle = AMBER_GOLD;
+    ctx.fillStyle = "#ffffff";
     ctx.fillText(`${i + 1}.`, cardPaddingX + rowPaddingX, rowCenterY);
 
     ctx.font = nameFont;
