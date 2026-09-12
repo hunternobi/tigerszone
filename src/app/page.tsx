@@ -47,6 +47,23 @@ export default async function Home() {
             </GlassButtonExact>
           </div>
 
+          <Reveal>
+            <div className="glass-panel mx-auto mt-6 max-w-2xl p-4 text-left sm:mt-8 sm:p-8">
+              <span className="inline-block rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] font-bold tracking-wide text-white uppercase">
+                Neu!
+              </span>
+              <p className="mt-3 text-sm text-white sm:text-base">
+                Erstelle jetzt deine Tabelle für die Hauptrunde der Saison 2026/27 und teile sie
+                mit uns und deinen Freunden auf Instagram!
+              </p>
+              <div className="mt-4 flex justify-start sm:justify-center">
+                <GlassButtonExact href="/community" size="0.9rem">
+                  Saisonprognose erstellen
+                </GlassButtonExact>
+              </div>
+            </div>
+          </Reveal>
+
           {nextGame && (
             <Reveal>
               <div className="glass-panel mx-auto mt-8 max-w-2xl p-4 text-left sm:mt-10 sm:p-8">
