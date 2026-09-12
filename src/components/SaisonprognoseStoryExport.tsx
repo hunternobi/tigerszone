@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ImageDown } from "lucide-react";
 import { getDelClubName } from "@/lib/delClubs";
+import { shareOrDownloadImage } from "@/lib/shareOrDownloadImage";
 
 interface SaisonprognoseStoryExportProps {
   order: string[];
@@ -219,12 +220,7 @@ export default function SaisonprognoseStoryExport({
       );
       if (!blob) throw new Error("Export fehlgeschlagen.");
 
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "saisonprognose.png";
-      a.click();
-      URL.revokeObjectURL(url);
+      await shareOrDownloadImage(blob, "saisonprognose.png", "Saisonprognose");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Export fehlgeschlagen.");
     } finally {

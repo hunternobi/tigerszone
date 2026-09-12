@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ImageDown } from "lucide-react";
 import { getTeamName } from "@/lib/teams";
 import { formatPostDate } from "@/utils/format";
+import { shareOrDownloadImage } from "@/lib/shareOrDownloadImage";
 import type { SpieltagsMvpData } from "@/lib/leaderboard";
 
 interface SpieltagsMvpStoryExportProps {
@@ -378,13 +379,8 @@ export default function SpieltagsMvpStoryExport({ mvp }: SpieltagsMvpStoryExport
       );
       if (!blob) throw new Error("Export fehlgeschlagen.");
 
-      const url = URL.createObjectURL(blob);
       const dateLabel = mvp.date ? formatPostDate(mvp.date).replace(/\./g, "-") : "mvp";
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `spieltags-mvp-${dateLabel}.png`;
-      a.click();
-      URL.revokeObjectURL(url);
+      await shareOrDownloadImage(blob, `spieltags-mvp-${dateLabel}.png`, "Spieltags-MVP");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Export fehlgeschlagen.");
     } finally {
