@@ -61,12 +61,13 @@ export default function TippspielInteractive({
             )}
 
             <div className="mt-8">
-              <BonusTipsCard
-                initial={bonusPrediction}
-                isAuthenticated={isAuthenticated}
-                locked={bonusLocked}
-                deadline={bonusDeadline}
-              />
+              {!bonusLocked && (
+                <BonusTipsCard
+                  initial={bonusPrediction}
+                  isAuthenticated={isAuthenticated}
+                  deadline={bonusDeadline}
+                />
+              )}
               <TippspielTable
                 hauptrundeGames={hauptrundeGames}
                 predictions={predictions}

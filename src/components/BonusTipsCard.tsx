@@ -10,7 +10,6 @@ import CustomSelect from "@/components/CustomSelect";
 interface BonusTipsCardProps {
   initial: MyBonusPrediction;
   isAuthenticated: boolean;
-  locked: boolean;
   deadline: string | null;
 }
 
@@ -131,30 +130,19 @@ function BonusTipField({
   );
 }
 
-export default function BonusTipsCard({
-  initial,
-  isAuthenticated,
-  locked,
-  deadline,
-}: BonusTipsCardProps) {
-  const disabled = !isAuthenticated || locked;
+export default function BonusTipsCard({ initial, isAuthenticated, deadline }: BonusTipsCardProps) {
+  const disabled = !isAuthenticated;
 
   return (
     <div className="glass-panel mb-8 border border-amber-300/30 bg-gradient-to-br from-amber-500/15 via-amber-400/5 to-transparent p-4 sm:p-6">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <h2 className="text-lg font-bold text-amber-100">Bonustipps</h2>
-        {deadline && !locked && <DeadlineCountdown deadline={deadline} />}
+        {deadline && <DeadlineCountdown deadline={deadline} />}
       </div>
       <p className="mt-2 text-sm text-amber-50/90">
         Tippe vor der Saison und sichere dir zusätzliche Punkte, jeder richtige Bonustipp erhält
         10 Extrapunkte am Ende der Hauptrunde.
       </p>
-
-      {locked && (
-        <p className="mt-3 text-xs font-semibold text-amber-200">
-          Die Abgabe ist geschlossen – die Hauptrunde hat begonnen.
-        </p>
-      )}
 
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
         {FIELDS.map((config) => (
