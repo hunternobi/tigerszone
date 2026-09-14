@@ -12,6 +12,7 @@ export interface TipHistoryEntry extends PredictionHistoryEntry {
 
 interface TipHistoryTabsProps {
   entries: TipHistoryEntry[];
+  defaultTab?: Competition;
 }
 
 const TABS: { key: Competition; label: string }[] = [
@@ -28,8 +29,8 @@ const STATUS_LABELS: Record<string, string> = {
   cancelled: "Abgesagt",
 };
 
-export default function TipHistoryTabs({ entries }: TipHistoryTabsProps) {
-  const [tab, setTab] = useState<Competition>("Vorbereitung");
+export default function TipHistoryTabs({ entries, defaultTab = "Vorbereitung" }: TipHistoryTabsProps) {
+  const [tab, setTab] = useState<Competition>(defaultTab);
   const filtered = entries.filter((entry) => entry.competition === tab);
 
   return (

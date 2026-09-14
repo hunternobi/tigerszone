@@ -75,7 +75,9 @@ export async function getUserPredictionHistory(
     .filter((entry): entry is PredictionHistoryEntry => entry !== null)
     .sort((a, b) => new Date(b.kickoff).getTime() - new Date(a.kickoff).getTime());
 
-  const totalPoints = entries.reduce((sum, entry) => sum + (entry.pointsAwarded ?? 0), 0);
+  const totalPoints = entries
+    .filter((entry) => entry.competition !== "Vorbereitung")
+    .reduce((sum, entry) => sum + (entry.pointsAwarded ?? 0), 0);
 
   return { userId, playerName: user.name, entries, totalPoints };
 }

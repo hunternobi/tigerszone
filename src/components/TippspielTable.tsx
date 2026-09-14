@@ -14,7 +14,6 @@ interface PredictionInfo {
 }
 
 interface TippspielTableProps {
-  vorbereitungGames: Game[];
   hauptrundeGames: Game[];
   predictions: Record<string, PredictionInfo>;
   isAuthenticated: boolean;
@@ -175,7 +174,6 @@ function CompetitionTable({
 }
 
 export default function TippspielTable({
-  vorbereitungGames,
   hauptrundeGames,
   predictions,
   isAuthenticated,
@@ -192,12 +190,6 @@ export default function TippspielTable({
         </p>
       )}
 
-      <CompetitionTable
-        title="Vorbereitung"
-        games={vorbereitungGames}
-        predictions={predictions}
-        isAuthenticated={isAuthenticated}
-      />
       <CompetitionTable
         title="Hauptrunde"
         games={hauptrundeGames}

@@ -7,6 +7,7 @@ import { getGroupsForUser } from "@/app/gruppen/actions";
 import { getFavoritePlayerId } from "@/app/profile/actions";
 import { getUserPredictionHistory } from "@/lib/predictions";
 import { getUserPointsHistory } from "@/lib/leaderboard";
+import { getBonusDeadline } from "@/app/tippspiel/bonusActions";
 import { getPlayerName } from "@/lib/tigersRoster";
 import TipHistoryTabs, { type TipHistoryEntry } from "@/components/TipHistoryTabs";
 import PointsHistorySection from "@/components/PointsHistorySection";
@@ -30,13 +31,15 @@ export default async function SpielerPage({ params }: SpielerPageProps) {
   if (!session?.user) redirect("/login");
 
   const { userId } = await params;
-  const [history, favoritePlayerId, groups, pointsHistory] = await Promise.all([
+  const [history, favoritePlayerId, groups, pointsHistory, bonusDeadline] = await Promise.all([
     getUserPredictionHistory(userId),
     getFavoritePlayerId(userId),
     getGroupsForUser(userId),
     getUserPointsHistory(userId),
+    getBonusDeadline("hauptrunde"),
   ]);
   if (!history) notFound();
+  const hauptrundeStarted = Boolean(bonusDeadline && new Date() >= bonusDeadline);
 
   const isOwnProfile = session.user.id === userId;
   const now = Date.now();
@@ -99,7 +102,7 @@ export default async function SpielerPage({ params }: SpielerPageProps) {
 
       <PointsHistorySection playerName={history.playerName} history={pointsHistory} />
 
-      <TipHistoryTabs entries={entries} />
+      <TipHistoryTabs entries={entries} defaultTab={hauptrundeStarted ? "DEL" : "Vorbereitung"} />
     </section>
     </FadingBackground>
   );

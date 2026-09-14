@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { getMyGroupInvites } from "@/app/gruppen/actions";
 import { getFavoritePlayerId, getMyAccountInfo } from "@/app/profile/actions";
-import { getMyBonusPrediction } from "@/app/tippspiel/bonusActions";
+import { getBonusDeadline, getMyBonusPrediction } from "@/app/tippspiel/bonusActions";
 import { getUserPredictionHistory } from "@/lib/predictions";
 import { getUserPointsHistory } from "@/lib/leaderboard";
 import GroupInvites from "@/components/GroupInvites";
@@ -23,7 +23,7 @@ export default async function ProfilePage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const [invites, favoritePlayerId, bonusHauptrunde, bonusPlayoffs, history, account, pointsHistory] =
+  const [invites, favoritePlayerId, bonusHauptrunde, bonusPlayoffs, history, account, pointsHistory, bonusDeadline] =
     await Promise.all([
       getMyGroupInvites(session.user.id),
       getFavoritePlayerId(session.user.id),
@@ -32,7 +32,9 @@ export default async function ProfilePage() {
       getUserPredictionHistory(session.user.id),
       getMyAccountInfo(session.user.id),
       getUserPointsHistory(session.user.id),
+      getBonusDeadline("hauptrunde"),
     ]);
+  const hauptrundeStarted = Boolean(bonusDeadline && new Date() >= bonusDeadline);
 
   return (
     <section className="mx-auto max-w-3xl px-6 py-16">
@@ -69,7 +71,10 @@ export default async function ProfilePage() {
       />
 
       <div id="tipphistorie" className="scroll-mt-24">
-        <TipHistoryTabs entries={history?.entries ?? []} />
+        <TipHistoryTabs
+          entries={history?.entries ?? []}
+          defaultTab={hauptrundeStarted ? "DEL" : "Vorbereitung"}
+        />
       </div>
 
       <div className="mt-8 flex justify-end">

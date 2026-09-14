@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useTransition } from "react";
-import { Check } from "lucide-react";
+import { Check, Clock } from "lucide-react";
 import { submitBonusTip, type BonusField, type MyBonusPrediction } from "@/app/tippspiel/bonusActions";
 import { DEL_CLUBS } from "@/lib/delClubs";
 import { TIGERS_SKATERS } from "@/lib/tigersRoster";
@@ -11,6 +11,41 @@ interface BonusTipsCardProps {
   initial: MyBonusPrediction;
   isAuthenticated: boolean;
   locked: boolean;
+  deadline: string | null;
+}
+
+function formatRemaining(ms: number): string {
+  if (ms <= 0) return "Abgabe geschlossen";
+
+  const totalSeconds = Math.floor(ms / 1000);
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+
+  if (days > 0) return `Noch ${days} Tag${days === 1 ? "" : "e"} ${hours} Std.`;
+  if (hours > 0) return `Noch ${hours} Std. ${minutes} Min.`;
+  return `Noch ${minutes} Min.`;
+}
+
+function DeadlineCountdown({ deadline }: { deadline: string }) {
+  const [now, setNow] = useState<number | null>(null);
+
+  useEffect(() => {
+    setNow(Date.now());
+    const interval = setInterval(() => setNow(Date.now()), 30000);
+    return () => clearInterval(interval);
+  }, [deadline]);
+
+  if (now === null) return null;
+
+  const remaining = new Date(deadline).getTime() - now;
+
+  return (
+    <span className="flex shrink-0 items-center gap-1 text-[11px] font-semibold whitespace-nowrap text-amber-100/90 sm:text-xs">
+      <Clock size={12} className="shrink-0" />
+      {formatRemaining(remaining)}
+    </span>
+  );
 }
 
 interface FieldConfig {
@@ -96,12 +131,20 @@ function BonusTipField({
   );
 }
 
-export default function BonusTipsCard({ initial, isAuthenticated, locked }: BonusTipsCardProps) {
+export default function BonusTipsCard({
+  initial,
+  isAuthenticated,
+  locked,
+  deadline,
+}: BonusTipsCardProps) {
   const disabled = !isAuthenticated || locked;
 
   return (
     <div className="glass-panel mb-8 border border-amber-300/30 bg-gradient-to-br from-amber-500/15 via-amber-400/5 to-transparent p-4 sm:p-6">
-      <h2 className="text-lg font-bold text-amber-100">Bonustipps</h2>
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <h2 className="text-lg font-bold text-amber-100">Bonustipps</h2>
+        {deadline && !locked && <DeadlineCountdown deadline={deadline} />}
+      </div>
       <p className="mt-2 text-sm text-amber-50/90">
         Tippe vor der Saison und sichere dir zusätzliche Punkte, jeder richtige Bonustipp erhält
         10 Extrapunkte am Ende der Hauptrunde.

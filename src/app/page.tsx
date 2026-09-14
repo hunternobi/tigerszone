@@ -7,7 +7,7 @@ import InstagramEmbed from "@/components/InstagramEmbed";
 import Reveal from "@/components/Reveal";
 import { SITE_DESCRIPTION, SITE_NAME } from "@/lib/constants";
 import { getUpcomingGames } from "@/lib/games";
-import { getSpieltagsMvp } from "@/lib/leaderboard";
+import { getVorbereitungLeaderboard } from "@/lib/leaderboard";
 import { getTeamName } from "@/lib/teams";
 import { formatGameDate, formatGameTime } from "@/utils/format";
 import NextGameHeroCountdown from "@/components/NextGameHeroCountdown";
@@ -16,9 +16,9 @@ const INSTAGRAM_POSTS = ["https://www.instagram.com/p/DVG8cgaDHBf/"];
 
 export default async function Home() {
   const session = await auth();
-  const [upcomingGames, spieltagsMvp] = await Promise.all([
+  const [upcomingGames, vorbereitungTop3] = await Promise.all([
     getUpcomingGames(1),
-    getSpieltagsMvp(),
+    getVorbereitungLeaderboard(3),
   ]);
   const nextGame = upcomingGames[0];
 
@@ -108,40 +108,32 @@ export default async function Home() {
             </Reveal>
           )}
 
-          {spieltagsMvp.date && (
+          {vorbereitungTop3.length > 0 && (
             <Reveal>
               <div className="glass-panel mx-auto mt-6 max-w-2xl p-4 text-left sm:mt-8 sm:p-8">
                 <div className="flex items-center justify-center gap-2">
                   <Trophy size={20} className="shrink-0 text-amber-300" />
                   <h2 className="text-center text-xl font-bold text-white sm:text-2xl">
-                    Spieltags-MVP
+                    Die besten Tipper der Vorbereitung stehen fest
                   </h2>
                 </div>
-                <p className="mt-1.5 text-center text-xs text-white sm:mt-2 sm:text-sm">
-                  {spieltagsMvp.matchLabel}
+                <p className="mt-3 text-center text-sm font-semibold text-white">
+                  Herzlichen Glückwunsch an
                 </p>
-
-                {spieltagsMvp.entries.length === 0 ? (
-                  <p className="mt-4 text-center text-sm text-white">
-                    Diesmal hat niemand das genaue Ergebnis getroffen.
-                  </p>
-                ) : (
-                  <>
-                    <p className="mt-3 text-center text-xs font-semibold text-white sm:text-sm">
-                      Richtig getippt haben:
-                    </p>
-                    <ul className="mt-2 flex flex-wrap justify-center gap-2">
-                      {spieltagsMvp.entries.map((entry) => (
-                        <li
-                          key={entry.userId}
-                          className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-sm font-semibold text-white"
-                        >
-                          {entry.name}
-                        </li>
-                      ))}
-                    </ul>
-                  </>
-                )}
+                <ul className="mt-3 space-y-2">
+                  {vorbereitungTop3.map((entry, index) => (
+                    <li
+                      key={entry.userId}
+                      className="flex items-center justify-between gap-3 rounded-lg px-3 py-2 odd:bg-white/5"
+                    >
+                      <span className="flex items-center gap-2 text-white">
+                        <span className="text-base">{["🥇", "🥈", "🥉"][index]}</span>
+                        <span className="font-semibold">{entry.name}</span>
+                      </span>
+                      <span className="font-semibold text-white">{entry.points} Pkt.</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </Reveal>
           )}

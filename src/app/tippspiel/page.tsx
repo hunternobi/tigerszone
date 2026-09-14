@@ -42,8 +42,7 @@ export default async function TippspielPage() {
     ),
   ]);
 
-  const vorbereitungGames = allGames.filter((game) => game.competition === "Vorbereitung");
-  const hauptrundeGames = allGames.filter((game) => game.competition === "DEL");
+  const hauptrundeGames = allGames.filter((game) => game.competition === "DEL").slice(0, 3);
   const nextGame =
     allGames.find((game) => game.status === "scheduled" && new Date(game.kickoff) > new Date()) ??
     null;
@@ -62,7 +61,6 @@ export default async function TippspielPage() {
   return (
     <TippspielInteractive
       nextGame={nextGame}
-      vorbereitungGames={vorbereitungGames}
       hauptrundeGames={hauptrundeGames}
       predictions={predictions}
       isAuthenticated={isAuthenticated}
@@ -71,6 +69,7 @@ export default async function TippspielPage() {
       activeGroupId={activeGroupId}
       bonusPrediction={resolvedBonusPrediction}
       bonusLocked={bonusLocked}
+      bonusDeadline={bonusDeadline ? bonusDeadline.toISOString() : null}
     />
   );
 }

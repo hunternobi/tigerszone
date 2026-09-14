@@ -13,7 +13,6 @@ import type { MyBonusPrediction } from "@/app/tippspiel/bonusActions";
 
 interface TippspielInteractiveProps {
   nextGame: Game | null;
-  vorbereitungGames: Game[];
   hauptrundeGames: Game[];
   predictions: Record<string, { predictedHome: number; predictedAway: number }>;
   isAuthenticated: boolean;
@@ -22,11 +21,11 @@ interface TippspielInteractiveProps {
   activeGroupId: string | null;
   bonusPrediction: MyBonusPrediction;
   bonusLocked: boolean;
+  bonusDeadline: string | null;
 }
 
 export default function TippspielInteractive({
   nextGame,
-  vorbereitungGames,
   hauptrundeGames,
   predictions,
   isAuthenticated,
@@ -35,6 +34,7 @@ export default function TippspielInteractive({
   activeGroupId,
   bonusPrediction,
   bonusLocked,
+  bonusDeadline,
 }: TippspielInteractiveProps) {
   return (
     <FadingBackground
@@ -65,9 +65,9 @@ export default function TippspielInteractive({
                 initial={bonusPrediction}
                 isAuthenticated={isAuthenticated}
                 locked={bonusLocked}
+                deadline={bonusDeadline}
               />
               <TippspielTable
-                vorbereitungGames={vorbereitungGames}
                 hauptrundeGames={hauptrundeGames}
                 predictions={predictions}
                 isAuthenticated={isAuthenticated}
