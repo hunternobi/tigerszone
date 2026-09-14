@@ -1,6 +1,6 @@
 import { Schema, models, model, type Document, type Types } from "mongoose";
 
-export type NotificationType = "welcome" | "tip_reminder" | "season_recap";
+export type NotificationType = "welcome" | "tip_reminder" | "season_recap" | "hauptrunde_start";
 
 export interface NotificationDocument extends Document {
   _id: Types.ObjectId;
@@ -17,7 +17,11 @@ export interface NotificationDocument extends Document {
 const notificationSchema = new Schema<NotificationDocument>(
   {
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    type: { type: String, enum: ["welcome", "tip_reminder", "season_recap"], required: true },
+    type: {
+      type: String,
+      enum: ["welcome", "tip_reminder", "season_recap", "hauptrunde_start"],
+      required: true,
+    },
     title: { type: String, required: true },
     body: { type: String, required: true },
     linkHref: { type: String },

@@ -128,7 +128,9 @@ export default function NotificationBell({
                   return (
                     <div key={notification.id} className="rounded-lg bg-white/5 p-2.5">
                       <p className="text-xs font-semibold text-white">{notification.title}</p>
-                      <p className="mt-1 text-xs text-white/80">{notification.body}</p>
+                      <p className="mt-1 text-xs whitespace-pre-line text-white/80">
+                        {notification.body}
+                      </p>
                       {!isReminder && notification.linkHref && (
                         <Link
                           href={notification.linkHref}
