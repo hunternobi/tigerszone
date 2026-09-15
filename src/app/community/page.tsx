@@ -23,9 +23,6 @@ export default async function CommunityPage() {
     <FadingBackground src="/images/Community_.jpg" opacity={0.55} blurPx={1.5}>
       <section className="mx-auto max-w-5xl px-6 py-16">
         <h1 className="text-3xl font-bold text-white">Community</h1>
-        <p className="mt-3 text-white">
-          Freut euch auf viele coole Aktionen, Preise und Umfragen während der Saison. Stay tuned!
-        </p>
 
         <SaisonprognoseCard
           initialOrder={initialOrder}

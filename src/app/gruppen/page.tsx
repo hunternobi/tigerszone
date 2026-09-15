@@ -33,10 +33,6 @@ export default async function GruppenPage() {
     <FadingBackground src="/images/jubel.jpg" opacity={0.55} blurPx={1.5}>
       <section className="mx-auto max-w-5xl px-6 py-16">
         <h1 className="text-3xl font-bold text-white">Tippgruppen</h1>
-        <p className="mt-3 text-white">
-          Erstelle eigene Gruppen oder tritt per Einladungslink bei. Im Tippspiel kannst du
-          zwischen deinen Gruppen wechseln.
-        </p>
 
         <div className="mt-8">
           <GruppenPageClient

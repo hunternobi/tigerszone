@@ -21,9 +21,6 @@ export default async function SpieltagsblogPage() {
       <FadingBackground src="/images/Fans.jpg" opacity={0.55} blurPx={1.5}>
         <section className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-16">
           <h1 className="text-3xl font-bold text-white">Spieltagsblog</h1>
-          <p className="mt-3 text-white">
-            Berichte, Vorschauen und Rückblicke rund um die Spiele der Straubing Tigers.
-          </p>
 
           {!latestPost ? (
             <p className="glass-panel mt-8 p-5 text-center text-white sm:p-8">

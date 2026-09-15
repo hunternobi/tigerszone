@@ -47,10 +47,6 @@ export default function TippspielInteractive({
         <div className="grid gap-10 lg:grid-cols-[1fr_300px]">
           <div className="order-1 lg:order-none lg:col-start-1 lg:row-start-1">
             <h1 className="text-3xl font-bold text-white">Tippspiel</h1>
-            <p className="mt-3 text-white">
-              Tippe alle Spiele des geilsten Eishockeyvereins der Welt - messe dich mit deinen
-              Freunden und kämpfe wie unsere Tigers um jeden Punkt!
-            </p>
 
             {nextGame && (
               <NextGameCountdown
