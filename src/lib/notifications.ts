@@ -106,3 +106,71 @@ export async function sendTipReminders(
 
   return { gamesChecked: games.length, notificationsCreated };
 }
+
+export interface FinalCallResult {
+  gamesChecked: number;
+  notificationsCreated: number;
+}
+
+/**
+ * One-off "last call" reminder for games kicking off very soon, meant to be
+ * triggered manually (e.g. shortly before a big matchday) rather than on the
+ * daily cron - sendTipReminders already covers the ~24h-out case. Uses its
+ * own notification type so it can run alongside sendTipReminders for the
+ * same game without the {userId, type, gameId} unique index treating it as
+ * a duplicate, and is itself safe to call more than once.
+ */
+export async function sendFinalCallReminders(
+  now: Date = new Date(),
+  windowMs: number = 4 * 60 * 60 * 1000,
+  dryRun = false
+): Promise<FinalCallResult> {
+  await dbConnect();
+
+  const windowEnd = new Date(now.getTime() + windowMs);
+  const games = await GameModel.find({
+    status: "scheduled",
+    kickoff: { $gte: now, $lt: windowEnd },
+  }).lean<{ _id: Types.ObjectId; homeTeamId: string; awayTeamId: string; kickoff: Date }[]>();
+
+  let notificationsCreated = 0;
+
+  for (const game of games) {
+    const [allUsers, predictedUserIds] = await Promise.all([
+      UserModel.find({ emailVerified: true }).select("_id").lean<{ _id: Types.ObjectId }[]>(),
+      PredictionModel.find({ gameId: game._id }).select("userId").lean<
+        { userId: Types.ObjectId }[]
+      >(),
+    ]);
+
+    const predicted = new Set(predictedUserIds.map((p) => p.userId.toString()));
+    const dueUserIds = allUsers.map((u) => u._id.toString()).filter((id) => !predicted.has(id));
+
+    if (dueUserIds.length === 0) continue;
+    if (dryRun) {
+      notificationsCreated += dueUserIds.length;
+      continue;
+    }
+
+    const title = "Letzter Aufruf!";
+    const body = `${getTeamName(game.homeTeamId)} vs. ${getTeamName(
+      game.awayTeamId
+    )} beginnt gleich – du hast für dieses Spiel noch nicht getippt.`;
+
+    const result = await NotificationModel.insertMany(
+      dueUserIds.map((userId) => ({
+        userId,
+        type: "tip_reminder_final",
+        title,
+        body,
+        linkHref: "/tippspiel",
+        linkLabel: "Jetzt tippen",
+        gameId: game._id,
+      })),
+      { ordered: false }
+    );
+    notificationsCreated += result.length;
+  }
+
+  return { gamesChecked: games.length, notificationsCreated };
+}
