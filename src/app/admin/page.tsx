@@ -41,9 +41,11 @@ export default async function AdminPage() {
       </p>
 
       <div className="mt-8 space-y-4">
-        {games.map((game) => (
-          <GameResultForm key={game._id} game={game} />
-        ))}
+        {games
+          .filter((game) => game.competition !== "Vorbereitung")
+          .map((game) => (
+            <GameResultForm key={game._id} game={game} />
+          ))}
       </div>
 
       <h2 className="mt-16 text-2xl font-bold text-white">Spieltags-MVP</h2>
