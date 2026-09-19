@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "seed:games": "node --env-file=.env.local scripts/seed-games.mjs",
-    "seed:blogposts": "node --env-file=.env.local scripts/seed-blogposts.mjs"
+    "seed:blogposts": "node --env-file=.env.local scripts/seed-blogposts.mjs",
+    "db:clone-dev": "node --env-file=.env.local scripts/clone-prod-to-dev.mjs"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
