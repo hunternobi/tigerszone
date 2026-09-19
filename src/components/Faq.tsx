@@ -58,12 +58,6 @@ const FAQ_ITEMS: FaqItem[] = [
       "Vor Beginn der Hauptrunde kannst du im Tippspiel zusätzlich vier Bonustipps abgeben: Hauptrundensieger, Platzierung der Tigers, Topscorer der Tigers und meiste Tore bei den Tigers. Jeder richtige Bonustipp bringt dir 10 Extrapunkte, ausgewertet am Ende der Hauptrunde. Zu Beginn der Playoffs gibt es eine weitere Runde Bonustipps.",
   },
   {
-    id: "story-export",
-    question: "Wie funktioniert der Story-Export für Instagram?",
-    answer:
-      'Tippe bei „Meine Saisonprognose" auf „Als Story exportieren". Auf dem Handy öffnet sich automatisch das Teilen-Menü deines Betriebssystems – wähle dort Instagram aus, dann öffnet sich direkt der Story-Editor mit deinem Bild (bei manchen Instagram-Versionen musst du davor kurz noch „Story" auswählen). Fertigstellen und posten wie gewohnt. Am Computer wird das Bild stattdessen als Datei heruntergeladen, die du dann manuell in Instagram hochladen kannst.',
-  },
-  {
     id: "kontakt",
     question: "Weitere Fragen oder Anregungen?",
     answer: (
