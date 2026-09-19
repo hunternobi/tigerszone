@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Faq from "@/components/Faq";
 import FadingBackground from "@/components/FadingBackground";
 import SaisonprognoseCard from "@/components/SaisonprognoseCard";
+import ShootoutCard from "@/components/ShootoutCard";
 import { auth } from "@/auth";
 import { getMySeasonPrediction, getSeasonPredictionDeadline } from "@/app/community/seasonPredictionActions";
 
@@ -30,6 +31,8 @@ export default async function CommunityPage() {
           locked={locked}
           playerName={session?.user?.name ?? ""}
         />
+
+        <ShootoutCard />
 
         <div className="mt-12">
           <Faq />

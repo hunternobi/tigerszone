@@ -1,9 +1,12 @@
 import Image from "next/image";
+import Link from "next/link";
 import Reveal from "@/components/Reveal";
 
 interface Partner {
   name: string;
   href: string;
+  /** Internal links stay in the same tab; external ones open a new tab. */
+  internal?: boolean;
   logoSrc: string;
   logoWidth: number;
   logoHeight: number;
@@ -19,12 +22,16 @@ const PARTNERS: Partner[] = [
   },
   {
     name: "Shootout Eventlocation",
-    href: "https://www.instagram.com/shootout_straubing/",
+    href: "/community#shootout",
+    internal: true,
     logoSrc: "/images/partners/shootout-eventlocation.png",
     logoWidth: 640,
     logoHeight: 430,
   },
 ];
+
+const TILE_CLASS =
+  "glass-panel glass-interactive flex h-32 items-center justify-center p-3 sm:h-40 sm:p-4";
 
 export default function PartnerBar() {
   return (
@@ -36,15 +43,8 @@ export default function PartnerBar() {
         </p>
 
         <div className="mt-6 grid grid-cols-2 gap-3 sm:mt-8 sm:gap-4">
-          {PARTNERS.map((partner) => (
-            <a
-              key={partner.name}
-              href={partner.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={partner.name}
-              className="glass-panel glass-interactive flex h-32 items-center justify-center p-3 sm:h-40 sm:p-4"
-            >
+          {PARTNERS.map((partner) => {
+            const logo = (
               <Image
                 src={partner.logoSrc}
                 alt={partner.name}
@@ -52,8 +52,30 @@ export default function PartnerBar() {
                 height={partner.logoHeight}
                 className="h-full w-full object-contain"
               />
-            </a>
-          ))}
+            );
+
+            return partner.internal ? (
+              <Link
+                key={partner.name}
+                href={partner.href}
+                aria-label={partner.name}
+                className={TILE_CLASS}
+              >
+                {logo}
+              </Link>
+            ) : (
+              <a
+                key={partner.name}
+                href={partner.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={partner.name}
+                className={TILE_CLASS}
+              >
+                {logo}
+              </a>
+            );
+          })}
         </div>
       </div>
     </Reveal>
