@@ -63,6 +63,60 @@ export default function ShootoutGallery({ images, placeholderCount = 4 }: Shooto
     strip.scrollBy({ left: direction * amount, behavior: "smooth" });
   }
 
+  // Autoplay: advance one image per second. Pauses while the user interacts (hover, touch,
+  // arrows), while the viewer is open, while the strip is off-screen, and for users who
+  // prefer reduced motion. After the last image it winds back to the first.
+  const hoveredRef = useRef(false);
+  const pauseUntilRef = useRef(0);
+  const inViewRef = useRef(true);
+  const viewerOpenRef = useRef(false);
+
+  useEffect(() => {
+    viewerOpenRef.current = openIndex !== null;
+  }, [openIndex]);
+
+  function pauseAutoplay(ms = 4000) {
+    pauseUntilRef.current = Date.now() + ms;
+  }
+
+  useEffect(() => {
+    const strip = stripRef.current;
+    if (!strip || itemCount < 2) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        inViewRef.current = entry.isIntersecting;
+      },
+      { threshold: 0.5 }
+    );
+    observer.observe(strip);
+
+    const timer = setInterval(() => {
+      if (
+        hoveredRef.current ||
+        viewerOpenRef.current ||
+        !inViewRef.current ||
+        Date.now() < pauseUntilRef.current
+      ) {
+        return;
+      }
+      const atEnd = strip.scrollLeft + strip.clientWidth >= strip.scrollWidth - 4;
+      if (atEnd) {
+        strip.scrollTo({ left: 0, behavior: "smooth" });
+        return;
+      }
+      const firstTile = strip.firstElementChild as HTMLElement | null;
+      const amount = firstTile ? firstTile.getBoundingClientRect().width + 12 : strip.clientWidth;
+      strip.scrollBy({ left: amount, behavior: "smooth" });
+    }, 1000);
+
+    return () => {
+      clearInterval(timer);
+      observer.disconnect();
+    };
+  }, [itemCount]);
+
   const close = useCallback(() => setOpenIndex(null), []);
   const step = useCallback(
     (direction: number) =>
@@ -94,7 +148,14 @@ export default function ShootoutGallery({ images, placeholderCount = 4 }: Shooto
 
   return (
     <>
-      <div className="relative -mx-4 sm:-mx-6">
+      <div
+        className="relative -mx-4 sm:-mx-6"
+        onMouseEnter={() => (hoveredRef.current = true)}
+        onMouseLeave={() => (hoveredRef.current = false)}
+        onPointerDown={() => pauseAutoplay()}
+        onTouchStart={() => pauseAutoplay()}
+        onWheel={() => pauseAutoplay()}
+      >
         {canScrollLeft && (
           <button
             type="button"
@@ -125,7 +186,7 @@ export default function ShootoutGallery({ images, placeholderCount = 4 }: Shooto
               type="button"
               onClick={() => setOpenIndex(index)}
               aria-label={`${item.alt} vergrößern`}
-              className={`relative aspect-[4/3] w-64 shrink-0 snap-start overflow-hidden rounded-2xl transition hover:brightness-110 sm:w-72 ${
+              className={`relative aspect-[4/3] w-64 shrink-0 snap-always snap-start overflow-hidden rounded-2xl transition hover:brightness-110 sm:w-72 ${
                 item.src ? "" : "border border-dashed border-white/30 bg-white/5 text-white/70"
               }`}
             >
