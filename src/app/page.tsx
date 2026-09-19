@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Calendar, Clock, Trophy } from "lucide-react";
+import { ArrowRight, Calendar, Clock } from "lucide-react";
 import { auth } from "@/auth";
 import FadingBackground from "@/components/FadingBackground";
 import GlassButtonExact from "@/components/GlassButtonExact";
@@ -7,7 +7,6 @@ import InstagramEmbed from "@/components/InstagramEmbed";
 import Reveal from "@/components/Reveal";
 import { SITE_DESCRIPTION, SITE_NAME } from "@/lib/constants";
 import { getUpcomingGames } from "@/lib/games";
-import { getVorbereitungLeaderboard } from "@/lib/leaderboard";
 import { getTeamName } from "@/lib/teams";
 import { formatGameDate, formatGameTime } from "@/utils/format";
 import NextGameHeroCountdown from "@/components/NextGameHeroCountdown";
@@ -16,11 +15,7 @@ const INSTAGRAM_POSTS = ["https://www.instagram.com/p/DVG8cgaDHBf/"];
 
 export default async function Home() {
   const session = await auth();
-  const [upcomingGames, vorbereitungTop3] = await Promise.all([
-    getUpcomingGames(1),
-    getVorbereitungLeaderboard(3),
-  ]);
-  const nextGame = upcomingGames[0];
+  const [nextGame] = await getUpcomingGames(1);
 
   return (
     <>
@@ -46,23 +41,6 @@ export default async function Home() {
               Zum Spieltagsblog
             </GlassButtonExact>
           </div>
-
-          <Reveal>
-            <div className="glass-panel mx-auto mt-6 max-w-2xl p-4 text-left sm:mt-8 sm:p-8">
-              <span className="inline-block rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] font-bold tracking-wide text-white uppercase">
-                Neu!
-              </span>
-              <p className="mt-3 text-sm text-white sm:text-base">
-                Erstelle jetzt deine Tabelle für die Hauptrunde der Saison 2026/27 und teile sie
-                mit uns und deinen Freunden auf Instagram!
-              </p>
-              <div className="mt-4 flex justify-start sm:justify-center">
-                <GlassButtonExact href="/community" size="0.9rem">
-                  Saisonprognose erstellen
-                </GlassButtonExact>
-              </div>
-            </div>
-          </Reveal>
 
           {nextGame && (
             <Reveal>
@@ -104,36 +82,6 @@ export default async function Home() {
                     </GlassButtonExact>
                   </div>
                 </div>
-              </div>
-            </Reveal>
-          )}
-
-          {vorbereitungTop3.length > 0 && (
-            <Reveal>
-              <div className="glass-panel mx-auto mt-6 max-w-2xl p-4 text-left sm:mt-8 sm:p-8">
-                <div className="flex items-center justify-center gap-2">
-                  <Trophy size={20} className="shrink-0 text-amber-300" />
-                  <h2 className="text-center text-xl font-bold text-white sm:text-2xl">
-                    Die besten Tipper der Vorbereitung stehen fest
-                  </h2>
-                </div>
-                <p className="mt-3 text-center text-sm font-semibold text-white">
-                  Herzlichen Glückwunsch an
-                </p>
-                <ul className="mt-3 space-y-2">
-                  {vorbereitungTop3.map((entry, index) => (
-                    <li
-                      key={entry.userId}
-                      className="flex items-center justify-between gap-3 rounded-lg px-3 py-2 odd:bg-white/5"
-                    >
-                      <span className="flex items-center gap-2 text-white">
-                        <span className="text-base">{["🥇", "🥈", "🥉"][index]}</span>
-                        <span className="font-semibold">{entry.name}</span>
-                      </span>
-                      <span className="font-semibold text-white">{entry.points} Pkt.</span>
-                    </li>
-                  ))}
-                </ul>
               </div>
             </Reveal>
           )}
