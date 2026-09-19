@@ -1,18 +1,27 @@
 import Image from "next/image";
-import { MapPin } from "lucide-react";
+import { ImageIcon, MapPin } from "lucide-react";
 import GlassButtonExact from "@/components/GlassButtonExact";
 
 // Inhalte der Partner-Kachel: hier Text, Adresse und Bilder pflegen.
 // Bilder liegen unter public/images/shootout/, z. B. { src: "/images/shootout/bar.jpg", alt: "Blick in die Bar" }.
+// Solange `images` leer ist, werden vier Musterbilder als Platzhalter angezeigt.
 const SHOOTOUT = {
   name: "Shootout Eventlocation",
   instagramUrl: "https://www.instagram.com/shootout_straubing/",
-  intro: "Hier stellt sich unser Partner Shootout Eventlocation bald selbst vor.",
-  address: null as string | null,
+  intro:
+    "Mustertext – wird vom Shootout selbst ersetzt: Willkommen im Shootout! Hier stellt ihr euch " +
+    "kurz vor: Was ist das Shootout, was erwartet die Gäste (z. B. Bar, Events, Feiern, Watch " +
+    "Partys bei Tigers-Spielen) und wann habt ihr geöffnet? Zwei bis vier Sätze reichen völlig – " +
+    "wir freuen uns auf euch!",
+  address: "Bernauergasse 18, 94315 Straubing",
   images: [] as { src: string; alt: string }[],
 };
 
+const PLACEHOLDER_COUNT = 4;
+
 export default function ShootoutCard() {
+  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(SHOOTOUT.address)}`;
+
   return (
     <section id="shootout" className="glass-panel mt-8 scroll-mt-24 p-4 sm:p-6">
       <div className="flex items-center gap-4">
@@ -33,28 +42,39 @@ export default function ShootoutCard() {
 
       <p className="mt-4 text-sm text-white sm:text-base">{SHOOTOUT.intro}</p>
 
-      {SHOOTOUT.address && (
-        <p className="mt-3 flex items-center gap-1.5 text-sm text-white">
-          <MapPin size={14} className="shrink-0" />
-          {SHOOTOUT.address}
-        </p>
-      )}
+      <a
+        href={mapsUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-3 inline-flex items-center gap-1.5 text-sm text-white underline-offset-2 hover:underline"
+      >
+        <MapPin size={14} className="shrink-0" />
+        {SHOOTOUT.address}
+      </a>
 
-      {SHOOTOUT.images.length > 0 && (
-        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {SHOOTOUT.images.map((image) => (
-            <div key={image.src} className="relative aspect-[4/3] overflow-hidden rounded-2xl">
-              <Image
-                src={image.src}
-                alt={image.alt}
-                fill
-                sizes="(min-width: 640px) 33vw, 50vw"
-                className="object-cover"
-              />
-            </div>
-          ))}
-        </div>
-      )}
+      <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {SHOOTOUT.images.length > 0
+          ? SHOOTOUT.images.map((image) => (
+              <div key={image.src} className="relative aspect-[4/3] overflow-hidden rounded-2xl">
+                <Image
+                  src={image.src}
+                  alt={image.alt}
+                  fill
+                  sizes="(min-width: 640px) 25vw, 50vw"
+                  className="object-cover"
+                />
+              </div>
+            ))
+          : Array.from({ length: PLACEHOLDER_COUNT }, (_, index) => (
+              <div
+                key={index}
+                className="flex aspect-[4/3] flex-col items-center justify-center gap-1.5 rounded-2xl border border-dashed border-white/30 bg-white/5 text-white/70"
+              >
+                <ImageIcon size={22} />
+                <span className="text-xs font-semibold">Musterbild {index + 1}</span>
+              </div>
+            ))}
+      </div>
 
       <div className="mt-5">
         <GlassButtonExact href={SHOOTOUT.instagramUrl} size="0.85rem">
