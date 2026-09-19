@@ -5,6 +5,9 @@ import { createPortal } from "react-dom";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, ImageIcon, X } from "lucide-react";
 
+/** Time each image stays visible before the strip advances on its own. */
+const AUTOPLAY_INTERVAL_MS = 4000;
+
 export interface GalleryImage {
   src: string;
   alt: string;
@@ -75,7 +78,7 @@ export default function ShootoutGallery({ images, placeholderCount = 4 }: Shooto
     viewerOpenRef.current = openIndex !== null;
   }, [openIndex]);
 
-  function pauseAutoplay(ms = 4000) {
+  function pauseAutoplay(ms = AUTOPLAY_INTERVAL_MS * 2) {
     pauseUntilRef.current = Date.now() + ms;
   }
 
@@ -109,7 +112,7 @@ export default function ShootoutGallery({ images, placeholderCount = 4 }: Shooto
       const firstTile = strip.firstElementChild as HTMLElement | null;
       const amount = firstTile ? firstTile.getBoundingClientRect().width + 12 : strip.clientWidth;
       strip.scrollBy({ left: amount, behavior: "smooth" });
-    }, 1000);
+    }, AUTOPLAY_INTERVAL_MS);
 
     return () => {
       clearInterval(timer);
@@ -186,7 +189,7 @@ export default function ShootoutGallery({ images, placeholderCount = 4 }: Shooto
               type="button"
               onClick={() => setOpenIndex(index)}
               aria-label={`${item.alt} vergrößern`}
-              className={`relative aspect-[4/3] w-64 shrink-0 snap-always snap-start overflow-hidden rounded-2xl transition hover:brightness-110 sm:w-72 ${
+              className={`relative aspect-[4/3] w-full shrink-0 snap-always snap-start overflow-hidden rounded-2xl transition hover:brightness-110 sm:aspect-[16/9] sm:max-h-96 ${
                 item.src ? "" : "border border-dashed border-white/30 bg-white/5 text-white/70"
               }`}
             >
@@ -195,7 +198,7 @@ export default function ShootoutGallery({ images, placeholderCount = 4 }: Shooto
                   src={item.src}
                   alt={item.alt}
                   fill
-                  sizes="(min-width: 640px) 288px, 256px"
+                  sizes="(min-width: 1024px) 900px, 100vw"
                   className="object-cover"
                 />
               ) : (
