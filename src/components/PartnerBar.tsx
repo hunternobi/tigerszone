@@ -29,13 +29,13 @@ const PARTNERS: Partner[] = [
 export default function PartnerBar() {
   return (
     <Reveal>
-      <div className="mx-auto mt-8 max-w-2xl sm:mt-10">
-        <h2 className="text-center text-xl font-bold text-white sm:text-2xl">Unsere Partner</h2>
-        <p className="mt-1.5 text-center text-xs text-white sm:mt-2 sm:text-sm">
+      <div className="mx-auto mt-28 max-w-2xl sm:mt-40">
+        <h2 className="text-center text-3xl font-bold text-white">Unsere Partner</h2>
+        <p className="mx-auto mt-3 max-w-xl text-center text-white">
           Gemeinsam mit starken Partnern machen wir TigersZone möglich
         </p>
 
-        <div className="mt-4 grid grid-cols-2 gap-3 sm:mt-6 sm:gap-4">
+        <div className="mt-6 grid grid-cols-2 gap-3 sm:mt-8 sm:gap-4">
           {PARTNERS.map((partner) => (
             <a
               key={partner.name}
@@ -43,7 +43,7 @@ export default function PartnerBar() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={partner.name}
-              className="flex h-28 items-center justify-center rounded-2xl bg-white p-4 shadow-lg transition hover:-translate-y-0.5 hover:shadow-xl sm:h-36 sm:p-5"
+              className="flex h-28 items-center justify-center rounded-2xl border border-white/40 bg-white/70 p-4 shadow-md backdrop-blur-md transition hover:-translate-y-0.5 hover:bg-white/80 sm:h-36 sm:p-5"
             >
               <Image
                 src={partner.logoSrc}
