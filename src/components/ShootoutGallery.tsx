@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, ImageIcon, X } from "lucide-react";
@@ -31,7 +31,37 @@ export default function ShootoutGallery({ images, placeholderCount = 4 }: Shooto
         }));
 
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+  const stripRef = useRef<HTMLDivElement>(null);
   const itemCount = items.length;
+
+  const updateArrows = useCallback(() => {
+    const strip = stripRef.current;
+    if (!strip) return;
+    setCanScrollLeft(strip.scrollLeft > 4);
+    setCanScrollRight(strip.scrollLeft + strip.clientWidth < strip.scrollWidth - 4);
+  }, []);
+
+  useEffect(() => {
+    const strip = stripRef.current;
+    if (!strip) return;
+    updateArrows();
+    strip.addEventListener("scroll", updateArrows, { passive: true });
+    window.addEventListener("resize", updateArrows);
+    return () => {
+      strip.removeEventListener("scroll", updateArrows);
+      window.removeEventListener("resize", updateArrows);
+    };
+  }, [updateArrows, itemCount]);
+
+  function scrollStrip(direction: number) {
+    const strip = stripRef.current;
+    if (!strip) return;
+    const firstTile = strip.firstElementChild as HTMLElement | null;
+    const amount = firstTile ? firstTile.getBoundingClientRect().width + 12 : strip.clientWidth * 0.8;
+    strip.scrollBy({ left: direction * amount, behavior: "smooth" });
+  }
 
   const close = useCallback(() => setOpenIndex(null), []);
   const step = useCallback(
@@ -64,33 +94,58 @@ export default function ShootoutGallery({ images, placeholderCount = 4 }: Shooto
 
   return (
     <>
-      <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-pl-4 px-4 pb-2 sm:-mx-6 sm:scroll-pl-6 sm:px-6">
-        {items.map((item, index) => (
+      <div className="relative -mx-4 sm:-mx-6">
+        {canScrollLeft && (
           <button
-            key={item.src ?? index}
             type="button"
-            onClick={() => setOpenIndex(index)}
-            aria-label={`${item.alt} vergrößern`}
-            className={`relative aspect-[4/3] w-64 shrink-0 snap-start overflow-hidden rounded-2xl transition hover:brightness-110 sm:w-72 ${
-              item.src ? "" : "border border-dashed border-white/30 bg-white/5 text-white/70"
-            }`}
+            onClick={() => scrollStrip(-1)}
+            aria-label="Vorherige Bilder"
+            className="glass-pill glass-interactive absolute top-1/2 left-2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center text-white sm:left-3"
           >
-            {item.src ? (
-              <Image
-                src={item.src}
-                alt={item.alt}
-                fill
-                sizes="(min-width: 640px) 288px, 256px"
-                className="object-cover"
-              />
-            ) : (
-              <span className="flex h-full flex-col items-center justify-center gap-1.5">
-                <ImageIcon size={22} />
-                <span className="text-xs font-semibold">{item.alt}</span>
-              </span>
-            )}
+            <ChevronLeft size={22} />
           </button>
-        ))}
+        )}
+        {canScrollRight && (
+          <button
+            type="button"
+            onClick={() => scrollStrip(1)}
+            aria-label="Weitere Bilder"
+            className="glass-pill glass-interactive absolute top-1/2 right-2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center text-white sm:right-3"
+          >
+            <ChevronRight size={22} />
+          </button>
+        )}
+        <div
+          ref={stripRef}
+          className="flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-pl-4 px-4 pb-2 sm:scroll-pl-6 sm:px-6"
+        >
+          {items.map((item, index) => (
+            <button
+              key={item.src ?? index}
+              type="button"
+              onClick={() => setOpenIndex(index)}
+              aria-label={`${item.alt} vergrößern`}
+              className={`relative aspect-[4/3] w-64 shrink-0 snap-start overflow-hidden rounded-2xl transition hover:brightness-110 sm:w-72 ${
+                item.src ? "" : "border border-dashed border-white/30 bg-white/5 text-white/70"
+              }`}
+            >
+              {item.src ? (
+                <Image
+                  src={item.src}
+                  alt={item.alt}
+                  fill
+                  sizes="(min-width: 640px) 288px, 256px"
+                  className="object-cover"
+                />
+              ) : (
+                <span className="flex h-full flex-col items-center justify-center gap-1.5">
+                  <ImageIcon size={22} />
+                  <span className="text-xs font-semibold">{item.alt}</span>
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
       </div>
 
       {active &&
