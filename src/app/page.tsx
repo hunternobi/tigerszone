@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import FadingBackground from "@/components/FadingBackground";
 import GlassButtonExact from "@/components/GlassButtonExact";
 import InstagramEmbed from "@/components/InstagramEmbed";
+import PartnerBar from "@/components/PartnerBar";
 import Reveal from "@/components/Reveal";
 import { SITE_DESCRIPTION, SITE_NAME } from "@/lib/constants";
 import { getUpcomingGames } from "@/lib/games";
@@ -85,6 +86,8 @@ export default async function Home() {
               </div>
             </Reveal>
           )}
+
+          <PartnerBar />
         </div>
       </section>
 
