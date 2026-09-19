@@ -14,8 +14,8 @@ const PARTNERS: Partner[] = [
     name: "Marien Apotheke Bodenmais",
     href: "https://www.apotheke-bodenmais.de/",
     logoSrc: "/images/partners/marien-apotheke.png",
-    logoWidth: 352,
-    logoHeight: 380,
+    logoWidth: 460,
+    logoHeight: 498,
   },
   {
     name: "Shootout Eventlocation",
@@ -43,7 +43,7 @@ export default function PartnerBar() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={partner.name}
-              className="flex h-28 items-center justify-center rounded-2xl border border-white/40 bg-white/70 p-4 shadow-md backdrop-blur-md transition hover:-translate-y-0.5 hover:bg-white/80 sm:h-36 sm:p-5"
+              className="glass-panel glass-interactive flex h-32 items-center justify-center p-3 sm:h-40 sm:p-4"
             >
               <Image
                 src={partner.logoSrc}
