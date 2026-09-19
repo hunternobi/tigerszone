@@ -1,23 +1,27 @@
 import Image from "next/image";
-import { ImageIcon, MapPin } from "lucide-react";
+import { MapPin } from "lucide-react";
 import GlassButtonExact from "@/components/GlassButtonExact";
+import ShootoutGallery, { type GalleryImage } from "@/components/ShootoutGallery";
 
 // Inhalte der Partner-Kachel: hier Text, Adresse und Bilder pflegen.
 // Bilder liegen unter public/images/shootout/, z. B. { src: "/images/shootout/bar.jpg", alt: "Blick in die Bar" }.
 // Solange `images` leer ist, werden vier Musterbilder als Platzhalter angezeigt.
-const SHOOTOUT = {
+const SHOOTOUT: {
+  name: string;
+  instagramUrl: string;
+  intro: string;
+  address: string;
+  images: GalleryImage[];
+} = {
   name: "Shootout Eventlocation",
   instagramUrl: "https://www.instagram.com/shootout_straubing/",
   intro:
-    "Mustertext – wird vom Shootout selbst ersetzt: Willkommen im Shootout! Hier stellt ihr euch " +
-    "kurz vor: Was ist das Shootout, was erwartet die Gäste (z. B. Bar, Events, Feiern, Watch " +
-    "Partys bei Tigers-Spielen) und wann habt ihr geöffnet? Zwei bis vier Sätze reichen völlig – " +
-    "wir freuen uns auf euch!",
+    "Mustertext: Willkommen im Shootout! Hier stellt ihr euch kurz vor: Was ist das Shootout, " +
+    "was erwartet die Gäste (z. B. Bar, Events, Feiern, Watch Partys bei Tigers-Spielen) und wann " +
+    "habt ihr geöffnet? Zwei bis vier Sätze reichen völlig – wir freuen uns auf euch!",
   address: "Bernauergasse 18, 94315 Straubing",
-  images: [] as { src: string; alt: string }[],
+  images: [],
 };
-
-const PLACEHOLDER_COUNT = 4;
 
 export default function ShootoutCard() {
   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(SHOOTOUT.address)}`;
@@ -52,31 +56,11 @@ export default function ShootoutCard() {
         {SHOOTOUT.address}
       </a>
 
-      <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {SHOOTOUT.images.length > 0
-          ? SHOOTOUT.images.map((image) => (
-              <div key={image.src} className="relative aspect-[4/3] overflow-hidden rounded-2xl">
-                <Image
-                  src={image.src}
-                  alt={image.alt}
-                  fill
-                  sizes="(min-width: 640px) 25vw, 50vw"
-                  className="object-cover"
-                />
-              </div>
-            ))
-          : Array.from({ length: PLACEHOLDER_COUNT }, (_, index) => (
-              <div
-                key={index}
-                className="flex aspect-[4/3] flex-col items-center justify-center gap-1.5 rounded-2xl border border-dashed border-white/30 bg-white/5 text-white/70"
-              >
-                <ImageIcon size={22} />
-                <span className="text-xs font-semibold">Musterbild {index + 1}</span>
-              </div>
-            ))}
+      <div className="mt-4">
+        <ShootoutGallery images={SHOOTOUT.images} />
       </div>
 
-      <div className="mt-5">
+      <div className="mt-3">
         <GlassButtonExact href={SHOOTOUT.instagramUrl} size="0.85rem">
           Shootout auf Instagram
         </GlassButtonExact>
