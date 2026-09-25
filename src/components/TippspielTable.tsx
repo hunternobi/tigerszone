@@ -161,7 +161,7 @@ function CompetitionTable({
           return (
             <TippspielRow
               key={game._id}
-              index={index + 1}
+              index={game.matchday ?? index + 1}
               game={game}
               initial={predictions[game._id]}
               disabled={!isAuthenticated || deadlinePassed}

@@ -42,7 +42,17 @@ export default async function TippspielPage() {
     ),
   ]);
 
-  const hauptrundeGames = allGames.filter((game) => game.competition === "DEL").slice(0, 3);
+  // Only the next three games still open for tips. Finished games stay in the database (and in
+  // the Tipphistorie) so points are untouched - they just leave this list.
+  const now = new Date();
+  const hauptrundeGames = allGames
+    .filter(
+      (game) =>
+        game.competition === "DEL" &&
+        game.status === "scheduled" &&
+        new Date(game.kickoff) > now
+    )
+    .slice(0, 3);
   const nextGame =
     allGames.find((game) => game.status === "scheduled" && new Date(game.kickoff) > new Date()) ??
     null;
