@@ -20,18 +20,10 @@ const PARTNERS: Partner[] = [
     logoWidth: 460,
     logoHeight: 498,
   },
-  {
-    name: "Shootout Eventlocation",
-    href: "/community#shootout",
-    internal: true,
-    logoSrc: "/images/partners/shootout-eventlocation.png",
-    logoWidth: 640,
-    logoHeight: 430,
-  },
 ];
 
 const TILE_CLASS =
-  "glass-panel glass-interactive flex h-32 items-center justify-center p-3 sm:h-40 sm:p-4";
+  "glass-panel glass-interactive flex h-32 w-40 items-center justify-center p-3 sm:h-40 sm:w-48 sm:p-4";
 
 export default function PartnerBar() {
   return (
@@ -42,7 +34,7 @@ export default function PartnerBar() {
           Gemeinsam mit starken Partnern machen wir TigersZone möglich
         </p>
 
-        <div className="mt-6 grid grid-cols-2 gap-3 sm:mt-8 sm:gap-4">
+        <div className="mt-6 flex justify-center gap-3 sm:mt-8 sm:gap-4">
           {PARTNERS.map((partner) => {
             const logo = (
               <Image

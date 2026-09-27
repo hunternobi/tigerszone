@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Faq from "@/components/Faq";
 import FadingBackground from "@/components/FadingBackground";
-import ShootoutCard from "@/components/ShootoutCard";
 
 export const metadata: Metadata = {
   title: "Community",
@@ -14,8 +13,6 @@ export default function CommunityPage() {
     <FadingBackground src="/images/Community_.jpg" opacity={0.55} blurPx={1.5}>
       <section className="mx-auto max-w-5xl px-6 py-16">
         <h1 className="text-3xl font-bold text-white">Community</h1>
-
-        <ShootoutCard />
 
         <div className="mt-12">
           <Faq />
