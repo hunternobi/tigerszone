@@ -26,8 +26,8 @@ export default async function Home() {
         opacity={0.55}
         blurPx={1.5}
       >
-      <section className="relative min-h-screen overflow-hidden px-4 py-16 sm:px-6 sm:py-24">
-        <div className="relative mx-auto max-w-4xl text-left sm:text-center">
+      <section className="relative overflow-hidden px-4 pt-16 pb-8 sm:min-h-screen sm:px-6 sm:py-24">
+        <div className="relative mx-auto flex max-w-4xl flex-col text-left sm:text-center">
           <h1 className="text-4xl font-bold text-white sm:text-5xl">
             Willkommen in der
             <span className="script-heading mt-2 block text-4xl tracking-wide text-tigers-secondary sm:text-5xl">
@@ -35,9 +35,9 @@ export default async function Home() {
             </span>
           </h1>
 
-          <p className="mt-6 max-w-2xl text-lg text-white sm:mx-auto">{SITE_DESCRIPTION}</p>
+          <p className="mt-6 max-w-2xl text-base text-white sm:mx-auto sm:text-lg">{SITE_DESCRIPTION}</p>
 
-          <div className="mt-6 flex justify-start sm:justify-center">
+          <div className="order-1 mt-6 flex justify-start sm:order-none sm:justify-center">
             <GlassButtonExact href="/spieltagsblog" size="0.9rem">
               Zum Spieltagsblog
             </GlassButtonExact>
@@ -45,11 +45,11 @@ export default async function Home() {
 
           {nextGame && (
             <Reveal>
-              <div className="glass-panel mx-auto mt-8 max-w-2xl p-4 text-left sm:mt-10 sm:p-8">
+              <div className="glass-panel mx-auto mt-8 w-full max-w-2xl p-4 text-left sm:mt-10 sm:p-8">
                 <h2 className="text-center text-xl font-bold text-white sm:text-2xl">
                   Nächstes Spiel
                 </h2>
-                <p className="mt-1.5 text-center text-xs text-white sm:mt-2 sm:text-sm">
+                <p className="mt-2 hidden text-center text-sm text-white sm:block">
                   Bereit für den nächsten Spieltag? Tippe und zeig deinen Mitstreitern, wer
                   wirklich Ahnung vom Eishockey hat!
                 </p>
@@ -87,34 +87,38 @@ export default async function Home() {
             </Reveal>
           )}
 
-          <PartnerBar />
+          <div className="order-2 sm:order-none">
+            <PartnerBar />
+          </div>
         </div>
       </section>
 
-      <section className="relative overflow-hidden px-4 py-12 text-center sm:px-6 sm:py-16">
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <span className="select-none text-[3.5rem] font-black whitespace-nowrap text-white opacity-35 blur-[1.5px] sm:text-[10rem] lg:text-[13rem]">
-            2026/27
-          </span>
-        </div>
+      {!session?.user && (
+        <section className="relative overflow-hidden px-4 py-12 text-center sm:px-6 sm:py-16">
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+            <span className="select-none text-[3.5rem] font-black whitespace-nowrap text-white opacity-35 blur-[1.5px] sm:text-[10rem] lg:text-[13rem]">
+              2026/27
+            </span>
+          </div>
 
-        <div className="relative">
-          <Reveal>
-            <h2 className="text-3xl font-bold text-white">Bereit für die neue Saison?</h2>
-            <p className="mx-auto mt-3 max-w-xl text-white">
-              Werde Teil der TigersZone-Community, erlebe Eishockey neu, nimm am Tippspiel teil
-              und kämpfe um Ruhm und Ehre!
-            </p>
-            <GlassButtonExact
-              href={session?.user ? "/profile" : "/register"}
-              wrapperClassName="mt-6"
-              size="1rem"
-            >
-              {session?.user ? "Bereits Registriert" : "Jetzt Registrieren"}
-            </GlassButtonExact>
-          </Reveal>
-        </div>
-      </section>
+          <div className="relative">
+            <Reveal>
+              <h2 className="text-3xl font-bold text-white">Bereit für die neue Saison?</h2>
+              <p className="mx-auto mt-3 max-w-xl text-white">
+                Werde Teil der TigersZone-Community, erlebe Eishockey neu, nimm am Tippspiel teil
+                und kämpfe um Ruhm und Ehre!
+              </p>
+              <GlassButtonExact
+                href="/register"
+                wrapperClassName="mt-6"
+                size="1rem"
+              >
+                Jetzt Registrieren
+              </GlassButtonExact>
+            </Reveal>
+          </div>
+        </section>
+      )}
       </FadingBackground>
 
       <section className="border-t border-white/10 bg-tigers-primary px-4 py-12 sm:px-6 sm:py-16">
@@ -137,7 +141,7 @@ export default async function Home() {
                 <h3 className="text-center text-xl font-bold text-white">
                   Werde Teil der Tigers-Zone
                 </h3>
-                <p className="mt-3 text-center text-sm text-white">
+                <p className="mt-3 hidden text-center text-sm text-white sm:block">
                   Folg&apos; uns auf Instagram, um die volle Bandbreite der Tigers mitzuerleben
                   und immer auf dem Laufenden zu bleiben.
                 </p>

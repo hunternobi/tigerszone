@@ -28,7 +28,7 @@ const TILE_CLASS =
 export default function PartnerBar() {
   return (
     <Reveal>
-      <div className="mx-auto mt-28 max-w-2xl sm:mt-40">
+      <div className="mx-auto mt-20 max-w-2xl sm:mt-40">
         <h2 className="text-center text-3xl font-bold text-white">Unsere Partner</h2>
         <p className="mx-auto mt-3 max-w-xl text-center text-white">
           Gemeinsam mit starken Partnern machen wir TigersZone möglich
