@@ -52,7 +52,7 @@ export default function Header({ invites, notifications }: HeaderProps) {
     <header
       className={`absolute inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter] duration-300 md:fixed ${scrolled || mobileOpen ? "glass-bar" : ""}`}
     >
-      <div className="mx-auto flex h-[4.5rem] max-w-7xl items-center justify-between px-4 sm:px-6">
+      <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-4 sm:px-6">
         <Link href="/" className="flex items-center gap-2">
           <Image
             src="/images/TigersZone_Logo.png"

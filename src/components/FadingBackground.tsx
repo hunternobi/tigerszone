@@ -25,7 +25,7 @@ export default function FadingBackground({
   children,
 }: FadingBackgroundProps) {
   return (
-    <div className="relative -mt-[4.5rem] overflow-hidden">
+    <div className="relative -mt-[72px] overflow-hidden">
       <div
         style={{ opacity, filter: blurPx ? `blur(${blurPx}px)` : undefined }}
         className={`pointer-events-none fixed inset-0 -z-10 ${scaleClassName}`}
@@ -59,7 +59,7 @@ export default function FadingBackground({
         />
       )}
 
-      <div className="relative z-10 pt-[4.5rem]">{children}</div>
+      <div className="relative z-10 pt-[72px]">{children}</div>
     </div>
   );
 }
