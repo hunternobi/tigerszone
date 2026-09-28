@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Check } from "lucide-react";
 import { submitPrediction } from "@/app/tippspiel/actions";
 import { getTeamName } from "@/lib/teams";
-import { formatPostDate } from "@/utils/format";
+import { formatGameTime, formatPostDate } from "@/utils/format";
 import type { Game } from "@/types";
 
 interface PredictionInfo {
@@ -74,24 +74,22 @@ function TippspielRow({ index, game, initial, disabled, started }: TippspielRowP
   }
 
   const inputClass = (invalid: boolean) =>
-    `h-8 w-full rounded-lg border text-center text-xs font-semibold text-white focus:outline-none disabled:opacity-40 sm:text-sm ${
+    `h-11 w-full rounded-lg border text-center text-base font-semibold text-white focus:outline-none disabled:opacity-40 sm:h-8 sm:text-sm ${
       invalid
         ? "border-red-500 focus:border-red-500"
         : "border-white/15 bg-white/5 focus:border-tigers-secondary"
     }`;
 
   return (
-    <div className={`rounded-lg px-2 py-2 odd:bg-white/5 sm:px-3 ${started ? "opacity-60" : ""}`}>
+    <div className={`rounded-lg px-3 py-3 odd:bg-white/5 sm:px-3 sm:py-2 ${started ? "opacity-60" : ""}`}>
       <div className="flex items-baseline justify-between gap-2">
-        <span className="text-[10px] whitespace-nowrap text-white/60 sm:text-xs">
-          {index}. Spieltag
-        </span>
-        <span className="text-[10px] whitespace-nowrap text-white/50 sm:text-xs">
-          {formatPostDate(game.kickoff)}
+        <span className="text-xs whitespace-nowrap text-white/60">{index}. Spieltag</span>
+        <span className="text-xs whitespace-nowrap text-white/50">
+          {formatPostDate(game.kickoff)} · {formatGameTime(game.kickoff)} Uhr
         </span>
       </div>
-      <div className="mt-1 grid grid-cols-[minmax(0,1fr)_2rem_auto_2rem_minmax(0,1fr)] items-center gap-1 sm:grid-cols-[minmax(0,1fr)_2.75rem_auto_2.75rem_minmax(0,1fr)] sm:gap-2.5">
-        <span className="text-right text-[11px] font-medium text-white sm:text-sm">
+      <div className="mt-2 grid grid-cols-[minmax(0,1fr)_3.25rem] items-center gap-x-3 gap-y-2 sm:mt-1 sm:grid-cols-[minmax(0,1fr)_2.75rem_auto_2.75rem_minmax(0,1fr)] sm:gap-x-2.5 sm:gap-y-0">
+        <span className="col-start-1 row-start-1 text-left text-[15px] font-medium text-white sm:col-auto sm:row-auto sm:text-right sm:text-sm">
           {getTeamName(game.homeTeamId)}
         </span>
         <input
@@ -102,9 +100,9 @@ function TippspielRow({ index, game, initial, disabled, started }: TippspielRowP
           onBlur={() => trySave(home, away)}
           disabled={disabled || isPending}
           aria-label={`Tipp Heimtore ${getTeamName(game.homeTeamId)}`}
-          className={inputClass(isDraw)}
+          className={`col-start-2 row-start-1 sm:col-auto sm:row-auto ${inputClass(isDraw)}`}
         />
-        <span className="text-center text-xs text-white/60 sm:text-sm">:</span>
+        <span className="hidden text-center text-sm text-white/60 sm:block">:</span>
         <input
           type="text"
           inputMode="numeric"
@@ -113,9 +111,9 @@ function TippspielRow({ index, game, initial, disabled, started }: TippspielRowP
           onBlur={() => trySave(home, away)}
           disabled={disabled || isPending}
           aria-label={`Tipp Auswärtstore ${getTeamName(game.awayTeamId)}`}
-          className={inputClass(isDraw)}
+          className={`col-start-2 row-start-2 sm:col-auto sm:row-auto ${inputClass(isDraw)}`}
         />
-        <span className="text-left text-[11px] font-medium text-white sm:text-sm">
+        <span className="col-start-1 row-start-2 text-left text-[15px] font-medium text-white sm:col-auto sm:row-auto sm:text-sm">
           {getTeamName(game.awayTeamId)}
         </span>
       </div>

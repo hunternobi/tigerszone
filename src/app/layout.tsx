@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { SessionProvider } from "next-auth/react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import MobileNav from "@/components/MobileNav";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/constants";
 import { auth } from "@/auth";
 import { getMyGroupInvites } from "@/app/gruppen/actions";
@@ -87,7 +88,7 @@ export default async function RootLayout({
       lang="de"
       className={`${geistSans.variable} ${geistMono.variable} ${sourceSerif.variable} h-full scroll-smooth antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-tigers-primary">
+      <body className="flex min-h-full flex-col bg-tigers-primary pb-16 md:pb-0">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -102,10 +103,11 @@ export default async function RootLayout({
             }),
           }}
         />
-        <SessionProvider>
+        <SessionProvider session={session}>
           <Header invites={invites} notifications={notifications} />
           <main className="flex-1 pt-[72px]">{children}</main>
           <Footer />
+          <MobileNav />
         </SessionProvider>
         <Analytics />
       </body>

@@ -44,30 +44,26 @@ export default function NextGameCountdown({
   const isUrgent = remaining > 0 && remaining <= 10 * 60 * 1000;
 
   return (
-    <div className="glass-panel-sm mt-4 flex flex-wrap items-center justify-between gap-3 p-3 sm:p-4">
-      <div>
-        <p className="text-xs font-semibold tracking-wide text-white uppercase">
-          Nächstes Spiel
-        </p>
-        <p className="text-sm font-bold text-white sm:text-base">
-          {getTeamName(homeTeamId)} vs. {getTeamName(awayTeamId)}
-        </p>
-        <div className="mt-1 flex flex-wrap gap-3 text-xs text-white">
-          <span className="flex items-center gap-1">
-            <Calendar size={12} /> {formatGameDate(kickoff)}
-          </span>
-          <span className="flex items-center gap-1">
-            <Clock size={12} /> {formatGameTime(kickoff)} Uhr
-          </span>
-        </div>
-      </div>
+    <div className="glass-panel-sm mt-4 grid grid-cols-[1fr_auto] items-center gap-x-3 gap-y-0.5 p-3 sm:p-4">
+      <p className="text-xs font-semibold tracking-wide text-white uppercase">Nächstes Spiel</p>
       <p
-        className={`text-sm font-semibold whitespace-nowrap sm:text-base ${
+        className={`col-start-2 row-start-1 text-sm font-semibold whitespace-nowrap sm:row-span-3 sm:text-base ${
           isUrgent ? "text-red-400" : "text-white"
         }`}
       >
         {formatRemaining(remaining)}
       </p>
+      <p className="col-span-2 text-base font-bold text-white sm:col-span-1">
+        {getTeamName(homeTeamId)} vs. {getTeamName(awayTeamId)}
+      </p>
+      <div className="col-span-2 mt-0.5 flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-white sm:col-span-1">
+        <span className="flex items-center gap-1">
+          <Calendar size={12} /> {formatGameDate(kickoff)}
+        </span>
+        <span className="flex items-center gap-1">
+          <Clock size={12} /> {formatGameTime(kickoff)} Uhr
+        </span>
+      </div>
     </div>
   );
 }

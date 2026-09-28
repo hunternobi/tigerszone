@@ -8,15 +8,11 @@ import { Menu, X } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { COMMUNITY_LINK, NAV_LINKS, SITE_NAME } from "@/lib/constants";
 import NotificationBell from "@/components/NotificationBell";
+import { MOBILE_NAV_HREFS } from "@/components/MobileNav";
 import type { MyGroupInvite } from "@/app/gruppen/actions";
 import type { MyNotification } from "@/app/notifications/actions";
 
-const MOBILE_NAV_LINKS = [
-  { href: "/tippspiel", label: "Tippspiel" },
-  { href: "/spieltagsblog", label: "Spieltagsblog" },
-  { href: "/gruppen", label: "Gruppen" },
-];
-const MOBILE_HREFS = new Set(MOBILE_NAV_LINKS.map((link) => link.href));
+const MOBILE_HREFS = new Set(MOBILE_NAV_HREFS);
 
 interface HeaderProps {
   invites: MyGroupInvite[];
@@ -108,33 +104,19 @@ export default function Header({ invites, notifications }: HeaderProps) {
           )}
         </div>
 
-        <nav className="flex flex-1 items-center justify-center gap-0.5 md:hidden">
-          {MOBILE_NAV_LINKS.map((link) => {
-            const isActive = pathname?.startsWith(link.href);
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`rounded-full px-1.5 py-1.5 text-[11px] font-medium whitespace-nowrap transition sm:px-3 sm:text-sm ${
-                  isActive ? "text-white" : "text-white/60 hover:text-white"
-                }`}
-              >
-                {link.label}
-              </Link>
-            );
-          })}
-        </nav>
-        <div className="flex shrink-0 items-center gap-1 md:hidden">
-          {status === "authenticated" && <NotificationBell invites={invites} notifications={notifications} />}
-          <button
-            type="button"
-            className="p-1 text-white"
-            onClick={() => setMobileOpen((open) => !open)}
-            aria-label="Menü umschalten"
-          >
-            {mobileOpen ? <X size={22} /> : <Menu size={22} />}
-          </button>
-        </div>
+        {status === "authenticated" && (
+          <div className="flex shrink-0 items-center gap-1 md:hidden">
+            <NotificationBell invites={invites} notifications={notifications} />
+            <button
+              type="button"
+              className="p-2 text-white"
+              onClick={() => setMobileOpen((open) => !open)}
+              aria-label="Menü umschalten"
+            >
+              {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
+          </div>
+        )}
       </div>
 
       {mobileOpen && (
@@ -154,26 +136,16 @@ export default function Header({ invites, notifications }: HeaderProps) {
               </Link>
             );
           })}
-          {status === "authenticated" ? (
-            <button
-              type="button"
-              onClick={() => {
-                setMobileOpen(false);
-                signOut({ callbackUrl: "/" });
-              }}
-              className="mt-2 rounded-full border border-white/20 px-3 py-2 text-center text-sm font-medium text-white transition hover:bg-white/10"
-            >
-              Abmelden
-            </button>
-          ) : (
-            <Link
-              href="/login"
-              className="mt-2 rounded-full border border-white/20 px-3 py-2 text-center text-sm font-medium text-white transition hover:bg-white/10"
-              onClick={() => setMobileOpen(false)}
-            >
-              Login
-            </Link>
-          )}
+          <button
+            type="button"
+            onClick={() => {
+              setMobileOpen(false);
+              signOut({ callbackUrl: "/" });
+            }}
+            className="mt-2 rounded-full border border-white/20 px-3 py-2 text-center text-sm font-medium text-white transition hover:bg-white/10"
+          >
+            Abmelden
+          </button>
         </nav>
       )}
     </header>
