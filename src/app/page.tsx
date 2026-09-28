@@ -27,7 +27,7 @@ export default async function Home() {
         blurPx={1.5}
       >
       <section className="relative overflow-hidden px-4 pt-16 pb-8 sm:min-h-screen sm:px-6 sm:py-24">
-        <div className="relative mx-auto flex max-w-4xl flex-col text-left sm:text-center">
+        <div className="relative mx-auto max-w-4xl text-left sm:text-center">
           <h1 className="text-4xl font-bold text-white sm:text-5xl">
             Willkommen in der
             <span className="script-heading mt-2 block text-4xl tracking-wide text-tigers-secondary sm:text-5xl">
@@ -37,15 +37,9 @@ export default async function Home() {
 
           <p className="mt-6 max-w-2xl text-base text-white sm:mx-auto sm:text-lg">{SITE_DESCRIPTION}</p>
 
-          <div className="order-1 mt-6 flex justify-start sm:order-none sm:justify-center">
-            <GlassButtonExact href="/spieltagsblog" size="0.9rem">
-              Zum Spieltagsblog
-            </GlassButtonExact>
-          </div>
-
           {nextGame && (
             <Reveal>
-              <div className="glass-panel mx-auto mt-8 w-full max-w-2xl p-4 text-left sm:mt-10 sm:p-8">
+              <div className="glass-panel mx-auto mt-8 max-w-2xl p-4 text-left sm:mt-10 sm:p-8">
                 <h2 className="text-center text-xl font-bold text-white sm:text-2xl">
                   Nächstes Spiel
                 </h2>
@@ -87,9 +81,7 @@ export default async function Home() {
             </Reveal>
           )}
 
-          <div className="order-2 sm:order-none">
-            <PartnerBar />
-          </div>
+          <PartnerBar />
         </div>
       </section>
 
