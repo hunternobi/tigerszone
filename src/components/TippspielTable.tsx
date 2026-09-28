@@ -169,15 +169,15 @@ function CompetitionTable({
             />
           );
         })}
-        <div className="px-1 pt-3 pb-1 lg:hidden">
+        <div className="pt-3 pb-1 lg:hidden">
           <div className="grid grid-cols-3 gap-2 text-center">
             {[
               { points: SCORING.WINNER, label: "Richtiger Sieger" },
-              { points: SCORING.GOAL_DIFF, label: "Richtige Tordifferenz" },
-              { points: SCORING.EXACT_SCORE, label: "Richtiges Ergebnis" },
+              { points: SCORING.GOAL_DIFF - SCORING.WINNER, label: "Richtige Tordifferenz" },
+              { points: SCORING.EXACT_SCORE - SCORING.GOAL_DIFF, label: "Richtiges Ergebnis" },
             ].map((rule) => (
               <div key={rule.label} className="rounded-xl bg-white/5 px-1 py-2">
-                <p className="text-base font-bold text-white">{rule.points} Pkt.</p>
+                <p className="text-base font-bold text-white">+{rule.points}</p>
                 <p className="text-[11px] leading-tight text-white/70">{rule.label}</p>
               </div>
             ))}
