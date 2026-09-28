@@ -100,9 +100,9 @@ export default function GroupMemberTable({
   }
 
   return (
-    <div className="glass-panel p-4 sm:p-6">
+    <div>
       <div className="flex items-center justify-between gap-3">
-        <h3 className="text-lg font-bold text-white">{title}</h3>
+        <h3 className="text-base font-bold text-white sm:text-lg">{title}</h3>
         <button
           type="button"
           onClick={handleLeave}
@@ -115,7 +115,7 @@ export default function GroupMemberTable({
       </div>
       {canManage && (
         <p className="mt-1 mb-3 text-xs text-white">
-          Rechtsklick (oder das Menü-Symbol) auf einem Mitglied öffnet die Optionen.
+          Über das Menü-Symbol neben einem Mitglied öffnest du die Optionen.
         </p>
       )}
       {entries.length === 0 ? (

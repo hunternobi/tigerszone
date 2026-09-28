@@ -73,10 +73,12 @@ export default function GroupShareMenu({ group }: GroupShareMenuProps) {
         type="button"
         onClick={toggleMenu}
         aria-label="Gruppe teilen"
-        className="glass-panel-sm glass-interactive flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold whitespace-nowrap text-white"
+        className="glass-panel-sm glass-interactive flex h-10 w-10 shrink-0 items-center justify-center gap-1.5 rounded-full text-white sm:h-auto sm:w-auto sm:px-3 sm:py-1.5"
       >
-        {copied ? <Check size={12} className="text-emerald-400" /> : <Share2 size={12} />}
-        Gruppe teilen
+        {copied ? <Check size={16} className="text-emerald-400" /> : <Share2 size={16} />}
+        <span className="sr-only text-xs font-semibold whitespace-nowrap sm:not-sr-only">
+          Gruppe teilen
+        </span>
       </button>
 
       {menu &&
