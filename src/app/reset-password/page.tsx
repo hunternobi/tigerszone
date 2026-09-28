@@ -85,7 +85,7 @@ function ResetPasswordForm() {
 
 export default function ResetPasswordPage() {
   return (
-    <section className="mx-auto max-w-md px-6 py-16">
+    <section className="mx-auto max-w-md px-7 sm:px-6 py-16">
       <h1 className="text-3xl font-bold text-white">Neues Passwort vergeben</h1>
 
       <Suspense fallback={null}>

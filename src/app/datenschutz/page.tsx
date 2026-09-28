@@ -12,7 +12,7 @@ const list = "mt-2 list-disc space-y-1 pl-5 text-sm text-white";
 
 export default function DatenschutzPage() {
   return (
-    <section className="mx-auto max-w-3xl px-6 py-16">
+    <section className="mx-auto max-w-3xl px-7 sm:px-6 py-16">
       <h1 className="text-3xl font-bold text-white">Datenschutzerklärung</h1>
       <p className="mt-2 text-sm text-white/60">Stand: August 2026</p>
 

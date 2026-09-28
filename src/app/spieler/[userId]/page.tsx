@@ -51,7 +51,7 @@ export default async function SpielerPage({ params }: SpielerPageProps) {
 
   return (
     <FadingBackground src="/images/jubel.jpg" opacity={0.55} blurPx={1.5}>
-    <section className="mx-auto max-w-3xl px-6 py-16">
+    <section className="mx-auto max-w-3xl px-7 sm:px-6 py-16">
       <Link
         href="/gruppen"
         className="inline-flex items-center gap-2 text-sm text-white hover:underline"

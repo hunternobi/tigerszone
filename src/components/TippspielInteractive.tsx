@@ -43,7 +43,7 @@ export default function TippspielInteractive({
       opacity={0.55}
       blurPx={1.5}
     >
-      <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-16">
+      <section className="mx-auto max-w-6xl px-7 py-10 sm:px-6 sm:py-16">
         <div className="grid gap-10 lg:grid-cols-[1fr_300px]">
           <div className="order-1 lg:order-none lg:col-start-1 lg:row-start-1">
             <h1 className="text-3xl font-bold text-white">Tippspiel</h1>

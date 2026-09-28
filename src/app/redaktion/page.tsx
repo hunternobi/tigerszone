@@ -18,7 +18,7 @@ export default async function RedaktionPage() {
   const posts = await getAllBlogPosts();
 
   return (
-    <section className="mx-auto max-w-4xl px-6 py-16">
+    <section className="mx-auto max-w-4xl px-7 sm:px-6 py-16">
       <h1 className="text-3xl font-bold text-white">Redaktion</h1>
       <p className="mt-3 text-white">
         Neue Spieltagsblog-Beiträge verfassen und veröffentlichen.

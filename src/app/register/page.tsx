@@ -130,7 +130,7 @@ function LoginLink() {
 
 export default function RegisterPage() {
   return (
-    <section className="mx-auto max-w-md px-6 py-16">
+    <section className="mx-auto max-w-md px-7 sm:px-6 py-16">
       <h1 className="text-3xl font-bold text-white">Registrieren</h1>
       <p className="mt-2 text-white">Werde Teil der TigersZone-Community und tippe mit.</p>
 

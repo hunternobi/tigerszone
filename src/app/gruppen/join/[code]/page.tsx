@@ -24,7 +24,7 @@ export default async function JoinGroupPage({ params }: JoinGroupPageProps) {
   }
 
   return (
-    <section className="mx-auto max-w-md px-6 py-16 text-center">
+    <section className="mx-auto max-w-md px-7 sm:px-6 py-16 text-center">
       <h1 className="text-2xl font-bold text-white">Gruppe beitreten</h1>
       <p className="mt-3 text-white">
         <strong className="text-white">{preview.ownerName}</strong> hat dich eingeladen, der

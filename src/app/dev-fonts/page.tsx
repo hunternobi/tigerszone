@@ -65,7 +65,7 @@ function HeadingSamples({ className }: { className: string }) {
 
 export default function DevFontsPage() {
   return (
-    <section className="mx-auto max-w-4xl px-6 py-16">
+    <section className="mx-auto max-w-4xl px-7 sm:px-6 py-16">
       <h1 className="text-3xl font-bold text-white">Font-Vergleich (nur intern, nicht verlinkt)</h1>
       <p className="mt-3 text-white">
         Größen sind exakt die echten Tailwind-Klassen von der Seite (text-5xl/4xl für Hero,

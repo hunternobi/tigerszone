@@ -11,7 +11,7 @@ const link = "text-tigers-secondary hover:underline";
 
 export default function ImpressumPage() {
   return (
-    <section className="mx-auto max-w-3xl px-6 py-16">
+    <section className="mx-auto max-w-3xl px-7 sm:px-6 py-16">
       <h1 className="text-3xl font-bold text-white">Impressum</h1>
 
       <div className="glass-panel mt-8 space-y-8 p-6 sm:p-8">

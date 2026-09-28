@@ -133,7 +133,7 @@ export default function MobileNav() {
                 draggable={false}
                 aria-current={index === routeIndex ? "page" : undefined}
                 onClick={() => setOptimistic({ index, fromPath: pathname })}
-                className={`flex h-12 flex-col items-center justify-center gap-0.5 text-[10px] font-medium transition ${
+                className={`flex h-[48px] flex-col items-center justify-center gap-0.5 text-[10px] font-medium transition ${
                   isActive ? "text-white" : "text-white/55 active:text-white"
                 }`}
               >

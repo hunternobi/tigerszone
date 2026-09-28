@@ -19,7 +19,7 @@ export default async function SpieltagsblogPage() {
   return (
     <>
       <FadingBackground src="/images/Fans.jpg" opacity={0.55} blurPx={1.5}>
-        <section className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-16">
+        <section className="mx-auto max-w-5xl px-7 py-10 sm:px-6 sm:py-16">
           <h1 className="text-3xl font-bold text-white">Spieltagsblog</h1>
 
           {!latestPost ? (
@@ -80,7 +80,7 @@ export default async function SpieltagsblogPage() {
         </section>
       </FadingBackground>
 
-      <section className="relative overflow-hidden border-t border-white/10 bg-tigers-primary px-4 py-12 text-center sm:px-6 sm:py-16">
+      <section className="relative overflow-hidden border-t border-white/10 bg-tigers-primary px-7 py-12 text-center sm:px-6 sm:py-16">
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <Image
             src="/images/tigers_corner_logo_transparent.png"

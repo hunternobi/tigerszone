@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function CommunityPage() {
   return (
     <FadingBackground src="/images/Community_.jpg" opacity={0.55} blurPx={1.5}>
-      <section className="mx-auto max-w-5xl px-6 py-16">
+      <section className="mx-auto max-w-5xl px-7 sm:px-6 py-16">
         <h1 className="text-3xl font-bold text-white">Community</h1>
 
         <div className="mt-12">

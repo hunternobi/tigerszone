@@ -12,7 +12,7 @@ const sublist = "mt-2 list-disc space-y-1 pl-5";
 
 export default function AgbPage() {
   return (
-    <section className="mx-auto max-w-3xl px-6 py-16">
+    <section className="mx-auto max-w-3xl px-7 sm:px-6 py-16">
       <h1 className="text-3xl font-bold text-white">Allgemeine Geschäftsbedingungen (AGB)</h1>
 
       <div className="glass-panel mt-8 space-y-8 p-6 sm:p-8">

@@ -20,7 +20,7 @@ export default async function RanglistePage() {
       opacity={0.55}
       blurPx={1.5}
     >
-      <section className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-16">
+      <section className="mx-auto max-w-3xl px-7 py-10 sm:px-6 sm:py-16">
         <Link
           href="/tippspiel"
           className="inline-flex items-center gap-2 text-sm text-white hover:underline"

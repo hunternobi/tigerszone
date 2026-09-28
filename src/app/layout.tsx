@@ -88,7 +88,7 @@ export default async function RootLayout({
       lang="de"
       className={`${geistSans.variable} ${geistMono.variable} ${sourceSerif.variable} h-full scroll-smooth antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-tigers-primary pb-12 md:pb-0">
+      <body className="flex min-h-full flex-col bg-tigers-primary pb-[48px] md:pb-0">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -105,7 +105,7 @@ export default async function RootLayout({
         />
         <SessionProvider session={session}>
           <Header invites={invites} notifications={notifications} />
-          <main className="flex-1 pt-[72px]">{children}</main>
+          <main className="flex-1 pt-[4.5rem]">{children}</main>
           <Footer />
           <MobileNav />
         </SessionProvider>

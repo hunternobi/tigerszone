@@ -55,7 +55,7 @@ export default function SponsorBar() {
   }, [index, count]);
 
   return (
-    <section className="mx-auto max-w-7xl px-6 py-16 text-center">
+    <section className="mx-auto max-w-7xl px-7 sm:px-6 py-16 text-center">
       <h2 className="text-3xl font-bold text-white">Unsere Partner</h2>
       <p className="mt-2 text-white">
         Gemeinsam mit starken Partnern machen wir TigersZone möglich

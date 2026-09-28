@@ -26,7 +26,7 @@ export default async function Home() {
         opacity={0.55}
         blurPx={1.5}
       >
-      <section className="relative overflow-hidden px-4 pt-16 pb-8 sm:min-h-screen sm:px-6 sm:py-24">
+      <section className="relative overflow-hidden px-7 pt-16 pb-8 sm:min-h-screen sm:px-6 sm:py-24">
         <div className="relative mx-auto max-w-4xl text-left sm:text-center">
           <h1 className="text-4xl font-bold text-white sm:text-5xl">
             Willkommen in der
@@ -86,9 +86,9 @@ export default async function Home() {
       </section>
 
       {!session?.user && (
-        <section className="relative overflow-hidden px-4 py-12 text-center sm:px-6 sm:py-16">
+        <section className="relative overflow-hidden px-7 py-12 text-center sm:px-6 sm:py-16">
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <span className="select-none text-[3.5rem] font-black whitespace-nowrap text-white opacity-35 blur-[1.5px] sm:text-[10rem] lg:text-[13rem]">
+            <span className="select-none text-[56px] font-black whitespace-nowrap text-white opacity-35 blur-[1.5px] sm:text-[10rem] lg:text-[13rem]">
               2026/27
             </span>
           </div>
@@ -113,7 +113,7 @@ export default async function Home() {
       )}
       </FadingBackground>
 
-      <section className="border-t border-white/10 bg-tigers-primary px-4 py-12 sm:px-6 sm:py-16">
+      <section className="border-t border-white/10 bg-tigers-primary px-7 py-12 sm:px-6 sm:py-16">
         <Reveal>
           <div className="mx-auto max-w-6xl text-center">
             <h2 className="text-3xl font-bold text-white">Folge uns auf Instagram</h2>
@@ -164,7 +164,7 @@ export default async function Home() {
         </Reveal>
       </section>
 
-      <section className="border-t border-white/10 bg-tigers-primary px-4 py-8 text-center sm:px-6">
+      <section className="border-t border-white/10 bg-tigers-primary px-7 py-8 text-center sm:px-6">
         <Link
           href="/community#faq"
           className="inline-flex items-center gap-2 text-sm font-medium text-tigers-secondary hover:underline"

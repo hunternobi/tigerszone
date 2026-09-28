@@ -16,7 +16,7 @@ export default async function VerifyEmailPage({ searchParams }: VerifyEmailPageP
   const result = await verifyEmailToken(token ?? "");
 
   return (
-    <section className="mx-auto max-w-md px-6 py-16 text-center">
+    <section className="mx-auto max-w-md px-7 sm:px-6 py-16 text-center">
       <h1 className="text-3xl font-bold text-white">E-Mail-Bestätigung</h1>
 
       <div className="glass-panel mt-8 p-6">
