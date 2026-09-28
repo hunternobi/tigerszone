@@ -24,6 +24,24 @@ function sanitizeDigits(value: string): string {
   return value.replace(/\D/g, "").slice(0, 2);
 }
 
+// Moves to the next open tip field after the first digit (or closes the keyboard after the last
+// one). Deferred so the state update lands first - blurring saves with the freshly typed value.
+function advanceFocus(current: HTMLInputElement) {
+  setTimeout(() => {
+    const inputs = Array.from(
+      document.querySelectorAll<HTMLInputElement>("input[data-tip-input]:not(:disabled)")
+    );
+    const index = inputs.indexOf(current);
+    const next = index >= 0 ? inputs[index + 1] : undefined;
+    if (next) {
+      next.focus();
+      next.select();
+    } else {
+      current.blur();
+    }
+  }, 0);
+}
+
 interface TippspielRowProps {
   index: number;
   game: Game;
@@ -70,8 +88,12 @@ function TippspielRow({ index, game, initial, disabled, started }: TippspielRowP
     });
   }
 
-  function handleChange(setter: (v: string) => void) {
-    return (e: ChangeEvent<HTMLInputElement>) => setter(sanitizeDigits(e.target.value));
+  function handleChange(setter: (v: string) => void, previous: string) {
+    return (e: ChangeEvent<HTMLInputElement>) => {
+      const next = sanitizeDigits(e.target.value);
+      setter(next);
+      if (previous === "" && next.length === 1) advanceFocus(e.currentTarget);
+    };
   }
 
   const inputClass = (invalid: boolean) =>
@@ -97,7 +119,8 @@ function TippspielRow({ index, game, initial, disabled, started }: TippspielRowP
           type="text"
           inputMode="numeric"
           value={home}
-          onChange={handleChange(setHome)}
+          onChange={handleChange(setHome, home)}
+          data-tip-input
           onBlur={() => trySave(home, away)}
           disabled={disabled || isPending}
           aria-label={`Tipp Heimtore ${getTeamName(game.homeTeamId)}`}
@@ -108,7 +131,8 @@ function TippspielRow({ index, game, initial, disabled, started }: TippspielRowP
           type="text"
           inputMode="numeric"
           value={away}
-          onChange={handleChange(setAway)}
+          onChange={handleChange(setAway, away)}
+          data-tip-input
           onBlur={() => trySave(home, away)}
           disabled={disabled || isPending}
           aria-label={`Tipp Auswärtstore ${getTeamName(game.awayTeamId)}`}
