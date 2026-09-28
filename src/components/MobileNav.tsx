@@ -38,7 +38,7 @@ export default function MobileNav() {
       <ul className="relative mx-auto flex max-w-lg">
         <li
           aria-hidden
-          className="pointer-events-none absolute inset-y-1.5 left-0 px-1 transition-[transform,opacity] duration-500 ease-[cubic-bezier(0.34,1.3,0.64,1)]"
+          className="pointer-events-none absolute inset-y-1 left-0 px-1 transition-[transform,opacity] duration-500 ease-[cubic-bezier(0.34,1.3,0.64,1)]"
           style={{
             width: `${100 / items.length}%`,
             transform: `translateX(${Math.max(activeIndex, 0) * 100}%)`,
@@ -54,11 +54,11 @@ export default function MobileNav() {
               <Link
                 href={href}
                 aria-current={isActive ? "page" : undefined}
-                className={`flex h-16 flex-col items-center justify-center gap-1 text-[11px] font-medium transition ${
+                className={`flex h-12 flex-col items-center justify-center gap-0.5 text-[10px] font-medium transition ${
                   isActive ? "text-white" : "text-white/55 active:text-white"
                 }`}
               >
-                <Icon size={22} strokeWidth={isActive ? 2.4 : 1.8} />
+                <Icon size={19} strokeWidth={isActive ? 2.4 : 1.8} />
                 {label}
               </Link>
             </li>

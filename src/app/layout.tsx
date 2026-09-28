@@ -88,7 +88,7 @@ export default async function RootLayout({
       lang="de"
       className={`${geistSans.variable} ${geistMono.variable} ${sourceSerif.variable} h-full scroll-smooth antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-tigers-primary pb-16 md:pb-0">
+      <body className="flex min-h-full flex-col bg-tigers-primary pb-12 md:pb-0">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
