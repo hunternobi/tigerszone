@@ -97,7 +97,7 @@ function TippspielRow({ index, game, initial, disabled, started }: TippspielRowP
   }
 
   const inputClass = (invalid: boolean) =>
-    `h-11 w-full rounded-lg border text-center text-base font-semibold text-white focus:outline-none disabled:opacity-40 sm:h-8 sm:text-sm ${
+    `h-11 w-full rounded-lg border text-center text-[16px] font-semibold text-white focus:outline-none disabled:opacity-40 sm:h-8 sm:text-sm ${
       invalid
         ? "border-red-500 focus:border-red-500"
         : "border-white/15 bg-white/5 focus:border-tigers-secondary"
@@ -112,7 +112,7 @@ function TippspielRow({ index, game, initial, disabled, started }: TippspielRowP
         </span>
       </div>
       <div className="mt-2 grid grid-cols-[minmax(0,1fr)_3.25rem] items-center gap-x-3 gap-y-2 sm:mt-1 sm:grid-cols-[minmax(0,1fr)_2.75rem_auto_2.75rem_minmax(0,1fr)] sm:gap-x-2.5 sm:gap-y-0">
-        <span className="col-start-1 row-start-1 text-left text-[15px] font-medium text-white sm:col-auto sm:row-auto sm:text-right sm:text-sm">
+        <span className="col-start-1 row-start-1 text-left text-[0.9375rem] font-medium text-white sm:col-auto sm:row-auto sm:text-right sm:text-sm">
           {getTeamName(game.homeTeamId)}
         </span>
         <input
@@ -138,7 +138,7 @@ function TippspielRow({ index, game, initial, disabled, started }: TippspielRowP
           aria-label={`Tipp Auswärtstore ${getTeamName(game.awayTeamId)}`}
           className={`col-start-2 row-start-2 sm:col-auto sm:row-auto ${inputClass(isDraw)}`}
         />
-        <span className="col-start-1 row-start-2 text-left text-[15px] font-medium text-white sm:col-auto sm:row-auto sm:text-sm">
+        <span className="col-start-1 row-start-2 text-left text-[0.9375rem] font-medium text-white sm:col-auto sm:row-auto sm:text-sm">
           {getTeamName(game.awayTeamId)}
         </span>
       </div>

@@ -105,7 +105,7 @@ export default async function RootLayout({
         />
         <SessionProvider session={session}>
           <Header invites={invites} notifications={notifications} />
-          <main className="flex-1 pt-[72px]">{children}</main>
+          <main className="flex-1 pt-[4.5rem]">{children}</main>
           <Footer />
           <MobileNav />
         </SessionProvider>
