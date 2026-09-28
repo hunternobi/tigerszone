@@ -42,16 +42,14 @@ export default async function TippspielPage() {
     ),
   ]);
 
-  // Only the next three games still open for tips. Finished games stay in the database (and in
-  // the Tipphistorie) so points are untouched - they just leave this list.
-  const now = new Date();
+  // Always three games: a game stays in the list (greyed out once it has started) until
+  // midnight German time on its match day, then the next game moves up. Games stay in the
+  // database (and in the Tipphistorie), so points are untouched - they just leave this list.
+  const berlinDay = (date: Date) =>
+    new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Berlin" }).format(date);
+  const today = berlinDay(new Date());
   const hauptrundeGames = allGames
-    .filter(
-      (game) =>
-        game.competition === "DEL" &&
-        game.status === "scheduled" &&
-        new Date(game.kickoff) > now
-    )
+    .filter((game) => game.competition === "DEL" && berlinDay(new Date(game.kickoff)) >= today)
     .slice(0, 3);
   const nextGame =
     allGames.find((game) => game.status === "scheduled" && new Date(game.kickoff) > new Date()) ??

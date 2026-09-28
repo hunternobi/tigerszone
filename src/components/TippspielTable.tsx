@@ -28,9 +28,10 @@ interface TippspielRowProps {
   game: Game;
   initial: PredictionInfo | undefined;
   disabled: boolean;
+  started: boolean;
 }
 
-function TippspielRow({ index, game, initial, disabled }: TippspielRowProps) {
+function TippspielRow({ index, game, initial, disabled, started }: TippspielRowProps) {
   const [home, setHome] = useState(initial ? String(initial.predictedHome) : "");
   const [away, setAway] = useState(initial ? String(initial.predictedAway) : "");
   const [saved, setSaved] = useState<PredictionInfo | undefined>(initial);
@@ -80,7 +81,7 @@ function TippspielRow({ index, game, initial, disabled }: TippspielRowProps) {
     }`;
 
   return (
-    <div className="rounded-lg px-2 py-2 odd:bg-white/5 sm:px-3">
+    <div className={`rounded-lg px-2 py-2 odd:bg-white/5 sm:px-3 ${started ? "opacity-60" : ""}`}>
       <div className="flex items-baseline justify-between gap-2">
         <span className="text-[10px] whitespace-nowrap text-white/60 sm:text-xs">
           {index}. Spieltag
@@ -165,6 +166,7 @@ function CompetitionTable({
               game={game}
               initial={predictions[game._id]}
               disabled={!isAuthenticated || deadlinePassed}
+              started={deadlinePassed}
             />
           );
         })}
