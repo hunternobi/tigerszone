@@ -29,7 +29,8 @@ export default function Header({ invites, notifications }: HeaderProps) {
 
   useEffect(() => {
     function onScroll() {
-      setScrolled(window.scrollY > 8);
+      // The phone has a bottom bar, so the top bar simply scrolls away there.
+      setScrolled(window.matchMedia("(min-width: 768px)").matches && window.scrollY > 8);
     }
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -49,7 +50,7 @@ export default function Header({ invites, notifications }: HeaderProps) {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter] duration-300 ${scrolled || mobileOpen ? "glass-bar" : ""}`}
+      className={`absolute inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter] duration-300 md:fixed ${scrolled || mobileOpen ? "glass-bar" : ""}`}
     >
       <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-4 sm:px-6">
         <Link href="/" className="flex items-center gap-2">
