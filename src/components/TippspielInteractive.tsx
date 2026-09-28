@@ -79,7 +79,7 @@ export default function TippspielInteractive({
               activeGroupId={activeGroupId}
             />
 
-            <div className="glass-panel p-4 sm:p-6">
+            <div className="glass-panel hidden p-4 sm:p-6 lg:block">
               <h3 className="mb-4 text-lg font-bold text-white">Regeln</h3>
               <ul className="space-y-2 text-sm text-white">
                 <li className="flex items-start gap-2">
