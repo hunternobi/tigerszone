@@ -22,6 +22,7 @@ export default function GroupSelect({ options, value, onChange }: GroupSelectPro
         options={options.map((option) => ({ value: option.groupId, label: option.groupName }))}
         placeholder="Gruppe wählen"
         aria-label="Gruppe wählen"
+        variant="panel"
       />
     </div>
   );

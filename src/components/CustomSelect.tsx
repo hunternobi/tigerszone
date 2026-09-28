@@ -15,6 +15,8 @@ interface CustomSelectProps {
   onChange: (value: string) => void;
   placeholder?: string;
   disabled?: boolean;
+  /** "panel" matches the glass cards (e.g. the Tipphistorie link); "select" is the blue control style. */
+  variant?: "select" | "panel";
   "aria-label"?: string;
 }
 
@@ -30,8 +32,10 @@ export default function CustomSelect({
   onChange,
   placeholder = "Bitte wählen",
   disabled = false,
+  variant = "select",
   ...aria
 }: CustomSelectProps) {
+  const isPanel = variant === "panel";
   const [open, setOpen] = useState(false);
   const [panelPosition, setPanelPosition] = useState<PanelPosition | null>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -85,13 +89,17 @@ export default function CustomSelect({
         disabled={disabled}
         onClick={() => (open ? setOpen(false) : openPanel())}
         aria-label={aria["aria-label"]}
-        className="glass-select glass-interactive flex h-9 w-full items-center justify-between rounded-xl px-2 text-left text-sm text-white disabled:cursor-not-allowed disabled:opacity-50"
+        className={`glass-interactive flex w-full items-center justify-between text-left text-sm text-white disabled:cursor-not-allowed disabled:opacity-50 ${
+          isPanel
+            ? "glass-panel-sm gap-3 p-4 font-semibold"
+            : "glass-select h-9 rounded-xl px-2"
+        }`}
       >
         <span className={`truncate ${selected ? "" : "text-white/60"}`}>
           {selected ? selected.label : placeholder}
         </span>
         <ChevronDown
-          size={14}
+          size={isPanel ? 16 : 14}
           className={`shrink-0 transition-transform ${open ? "rotate-180" : ""}`}
         />
       </button>
@@ -110,7 +118,9 @@ export default function CustomSelect({
               left: panelPosition.left,
               width: panelPosition.width,
             }}
-            className="glass-select z-50 max-h-64 space-y-1.5 overflow-y-auto p-2"
+            className={`z-50 max-h-64 space-y-1.5 overflow-y-auto p-2 ${
+              isPanel ? "glass-panel-sm" : "glass-select"
+            }`}
           >
             {options.map((option, index) => (
               <button
@@ -120,9 +130,13 @@ export default function CustomSelect({
                   onChange(option.value);
                   setOpen(false);
                 }}
-                className={`flex w-full items-center justify-between gap-2 rounded-xl border border-white/10 px-3 py-2 text-left text-sm transition hover:brightness-125 ${
-                  index % 2 === 0 ? "bg-tigers-secondary/60" : "bg-tigers-tertiary/75"
-                } ${option.value === value ? "text-white" : "text-white/70"}`}
+                className={`flex w-full items-center justify-between gap-2 rounded-xl border border-white/10 px-3 py-2 text-left text-sm transition ${
+                  isPanel
+                    ? "bg-white/5 hover:bg-white/15"
+                    : `hover:brightness-125 ${
+                        index % 2 === 0 ? "bg-tigers-secondary/60" : "bg-tigers-tertiary/75"
+                      }`
+                } ${option.value === value ? "font-semibold text-white" : "text-white/70"}`}
               >
                 <span className="truncate">{option.label}</span>
                 {option.value === value && <Check size={14} className="shrink-0" />}
