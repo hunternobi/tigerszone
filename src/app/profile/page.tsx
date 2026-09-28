@@ -5,12 +5,10 @@ import { getMyGroupInvites } from "@/app/gruppen/actions";
 import { getFavoritePlayerId, getMyAccountInfo } from "@/app/profile/actions";
 import { getBonusDeadline, getMyBonusPrediction } from "@/app/tippspiel/bonusActions";
 import { getUserPredictionHistory } from "@/lib/predictions";
-import { getUserPointsHistory } from "@/lib/leaderboard";
 import GroupInvites from "@/components/GroupInvites";
 import FavoritePlayerSelect from "@/components/FavoritePlayerSelect";
 import MyBonusSummary from "@/components/MyBonusSummary";
 import TipHistoryTabs from "@/components/TipHistoryTabs";
-import PointsHistorySection from "@/components/PointsHistorySection";
 import UsernameEditForm from "@/components/UsernameEditForm";
 import DeleteAccountButton from "@/components/DeleteAccountButton";
 import ProfileTabs from "@/components/ProfileTabs";
@@ -24,7 +22,7 @@ export default async function ProfilePage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const [invites, favoritePlayerId, bonusHauptrunde, bonusPlayoffs, history, account, pointsHistory, bonusDeadline] =
+  const [invites, favoritePlayerId, bonusHauptrunde, bonusPlayoffs, history, account, bonusDeadline] =
     await Promise.all([
       getMyGroupInvites(session.user.id),
       getFavoritePlayerId(session.user.id),
@@ -32,7 +30,6 @@ export default async function ProfilePage() {
       getMyBonusPrediction("playoffs"),
       getUserPredictionHistory(session.user.id),
       getMyAccountInfo(session.user.id),
-      getUserPointsHistory(session.user.id),
       getBonusDeadline("hauptrunde"),
     ]);
   const hauptrundeStarted = Boolean(bonusDeadline && new Date() >= bonusDeadline);
@@ -89,11 +86,6 @@ export default async function ProfilePage() {
             label: "Tipphistorie",
             content: (
               <>
-                <PointsHistorySection
-                  playerName={account?.name ?? session.user.name ?? "Du"}
-                  history={pointsHistory}
-                />
-
                 <div id="tipphistorie" className="scroll-mt-24">
                   <TipHistoryTabs
                     entries={history?.entries ?? []}

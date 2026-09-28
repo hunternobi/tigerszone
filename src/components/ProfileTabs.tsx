@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useSyncExternalStore, type ReactNode } from "react";
-import GlassButtonExact from "@/components/GlassButtonExact";
 
 export interface ProfileTab {
   id: string;
@@ -42,19 +41,26 @@ export default function ProfileTabs({ tabs }: { tabs: ProfileTab[] }) {
 
   return (
     <div>
-      <div className="mt-6 flex gap-2" role="tablist">
-        {tabs.map((tab) => (
-          <GlassButtonExact
-            key={tab.id}
-            type="button"
-            size="0.875rem"
-            wrapperClassName="flex-1"
-            className={`block w-full text-center ${tab.id === active ? "" : "opacity-60"}`}
-            onClick={() => select(tab.id)}
-          >
-            {tab.label}
-          </GlassButtonExact>
-        ))}
+      <div className="mt-6 flex border-b border-white/15" role="tablist">
+        {tabs.map((tab) => {
+          const isActive = tab.id === active;
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              role="tab"
+              aria-selected={isActive}
+              onClick={() => select(tab.id)}
+              className={`-mb-px flex-1 border-b-2 px-2 pt-2 pb-3 text-sm font-semibold transition-colors ${
+                isActive
+                  ? "border-white text-white"
+                  : "border-transparent text-white/55 hover:text-white/80"
+              }`}
+            >
+              {tab.label}
+            </button>
+          );
+        })}
       </div>
 
       {tabs.map((tab) => (
