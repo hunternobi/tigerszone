@@ -148,7 +148,7 @@ export default function NotificationBell({
                               setOpen(false);
                               dismiss(notification.id);
                             }}
-                            className="flex-1 rounded-full bg-tigers-secondary px-3 py-1 text-center text-xs font-semibold text-white"
+                            className="flex flex-1 items-center justify-center rounded-full bg-tigers-secondary px-3 py-1 text-center text-xs font-semibold text-white"
                           >
                             {notification.linkLabel ?? "Jetzt Tippen"}
                           </Link>
@@ -157,7 +157,7 @@ export default function NotificationBell({
                           type="button"
                           disabled={isPending && pendingId === notification.id}
                           onClick={() => dismiss(notification.id)}
-                          className={`rounded-full border border-white/20 px-3 py-1 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50 ${
+                          className={`rounded-full border border-white/20 px-3 py-1 text-center text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50 ${
                             isReminder ? "flex-1" : ""
                           }`}
                         >
