@@ -19,12 +19,11 @@ export default function GroupList({ groups, leaderboards }: GroupListProps) {
   const [nameDraft, setNameDraft] = useState("");
   const [renameError, setRenameError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-  const [openIds, setOpenIds] = useState<Record<string, boolean>>(() =>
-    groups[0] ? { [groups[0]._id]: true } : {}
-  );
+  // Every group starts expanded (top 3 of the ranking); only groups the user collapsed are tracked.
+  const [closedIds, setClosedIds] = useState<Record<string, boolean>>({});
 
   function toggleOpen(groupId: string) {
-    setOpenIds((current) => ({ ...current, [groupId]: !current[groupId] }));
+    setClosedIds((current) => ({ ...current, [groupId]: !current[groupId] }));
   }
 
   function startRename(group: MyGroup) {
@@ -53,7 +52,7 @@ export default function GroupList({ groups, leaderboards }: GroupListProps) {
       {groups.map((group) => {
         const isRenaming = renamingId === group._id;
         const canManage = group.viewerRole === "owner" || group.viewerRole === "assistant";
-        const isOpen = Boolean(openIds[group._id]);
+        const isOpen = !closedIds[group._id];
 
         return (
           <div key={group._id} className="glass-panel-sm p-4 sm:p-5">
@@ -124,11 +123,11 @@ export default function GroupList({ groups, leaderboards }: GroupListProps) {
                 onClick={() => toggleOpen(group._id)}
                 aria-expanded={isOpen}
                 aria-label={isOpen ? "Rangliste einklappen" : "Rangliste ausklappen"}
-                className="glass-panel-sm glass-interactive flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white"
+                className="glass-panel-sm glass-interactive relative h-10 w-10 shrink-0 appearance-none rounded-full text-white"
               >
                 <ChevronDown
                   size={18}
-                  className={`transition-transform ${isOpen ? "rotate-180" : ""}`}
+                  className={`absolute inset-0 m-auto transition-transform ${isOpen ? "rotate-180" : ""}`}
                 />
               </button>
             </div>
