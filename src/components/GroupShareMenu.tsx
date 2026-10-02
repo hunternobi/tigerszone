@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useTransition, type MouseEvent as ReactMouseEvent } from "react";
 import { createPortal } from "react-dom";
-import { Check, Link2, Search, Share2, UserPlus, X } from "lucide-react";
+import { Check, Link2, Search, Share, UserPlus, X } from "lucide-react";
 import {
   inviteUserToGroup,
   searchInvitableUsers,
@@ -79,7 +79,7 @@ export default function GroupShareMenu({ group }: GroupShareMenuProps) {
         {copied ? (
           <Check size={16} className="absolute inset-0 m-auto text-emerald-400 sm:static sm:m-0" />
         ) : (
-          <Share2 size={16} className="absolute inset-0 m-auto sm:static sm:m-0" />
+          <Share size={16} className="absolute inset-0 m-auto sm:static sm:m-0" />
         )}
         <span className="sr-only text-xs font-semibold whitespace-nowrap sm:not-sr-only">
           Gruppe teilen
