@@ -93,6 +93,9 @@ export default function GroupShareMenu({ group }: GroupShareMenuProps) {
             style={{ position: "fixed", top: menu.y, left: menu.x }}
             className="glass-panel-sm z-50 min-w-[200px] space-y-0.5 p-1"
           >
+            <p className="mb-1 border-b border-white/10 px-3 pt-2 pb-2 text-sm font-bold text-white">
+              Gruppe teilen
+            </p>
             <button
               type="button"
               onClick={shareLink}
