@@ -73,9 +73,9 @@ export default function GroupShareMenu({ group }: GroupShareMenuProps) {
         type="button"
         onClick={toggleMenu}
         aria-label="Gruppe teilen"
-        className="glass-panel-sm glass-interactive relative flex h-10 w-10 shrink-0 appearance-none items-center justify-center gap-1.5 rounded-full text-white sm:h-auto sm:w-auto sm:px-3 sm:py-1.5"
+        className="glass-panel-sm glass-interactive relative h-10 w-10 shrink-0 appearance-none rounded-full text-white sm:flex sm:h-auto sm:w-auto sm:items-center sm:justify-center sm:gap-1.5 sm:px-3 sm:py-1.5"
       >
-        {/* Absolutely centred on the phone: flex centring inside a fixed-size <button> renders off-centre in iOS Safari. */}
+        {/* Phone: no flexbox on the button, the icon is absolutely centred (flex centring in a fixed-size <button> was off-centre in iOS Safari). */}
         {copied ? (
           <Check size={16} className="absolute inset-0 m-auto text-emerald-400 sm:static sm:m-0" />
         ) : (
