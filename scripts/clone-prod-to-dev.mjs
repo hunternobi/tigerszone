@@ -84,7 +84,8 @@ try {
     {
       $set: {
         email: { $concat: ["user-", { $toString: "$_id" }, "@dev.tigerszone.test"] },
-        passwordHash: devPasswordHash,
+        // $literal: a bcrypt hash starts with "$" and would otherwise be read as a field path
+        passwordHash: { $literal: devPasswordHash },
       },
     },
   ]);
