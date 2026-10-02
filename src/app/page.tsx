@@ -8,11 +8,13 @@ import PartnerBar from "@/components/PartnerBar";
 import Reveal from "@/components/Reveal";
 import { SITE_DESCRIPTION, SITE_NAME } from "@/lib/constants";
 import { getUpcomingGames } from "@/lib/games";
-import { getTeamName } from "@/lib/teams";
+import { getTeamById, getTeamName } from "@/lib/teams";
 import { formatGameDate, formatGameTime } from "@/utils/format";
 import NextGameHeroCountdown from "@/components/NextGameHeroCountdown";
 
 const INSTAGRAM_POSTS = ["https://www.instagram.com/p/DVG8cgaDHBf/"];
+
+const shortTeamName = (teamId: string) => getTeamById(teamId)?.shortName ?? getTeamName(teamId);
 
 export default async function Home() {
   const session = await auth();
@@ -26,21 +28,21 @@ export default async function Home() {
         opacity={0.55}
         blurPx={1.5}
       >
-      <section className="relative overflow-hidden px-7 pt-16 pb-8 sm:min-h-screen sm:px-6 sm:py-24">
+      <section className="relative overflow-hidden px-7 pt-4 pb-8 sm:min-h-screen sm:px-6 sm:py-24">
         <div className="relative mx-auto max-w-4xl text-left sm:text-center">
-          <h1 className="text-4xl font-bold text-white sm:text-5xl">
+          <h1 className="text-3xl font-bold text-white sm:text-5xl">
             Willkommen in der
-            <span className="script-heading mt-2 block text-4xl tracking-wide text-tigers-secondary sm:text-5xl">
+            <span className="script-heading mt-1 block text-3xl tracking-wide text-tigers-secondary sm:mt-2 sm:text-5xl">
               {SITE_NAME}
             </span>
           </h1>
 
-          <p className="mt-6 max-w-2xl text-base text-white sm:mx-auto sm:text-lg">{SITE_DESCRIPTION}</p>
+          <p className="mt-3 max-w-2xl text-base text-white sm:mx-auto sm:mt-6 sm:text-lg">{SITE_DESCRIPTION}</p>
 
           {nextGame && (
             <Reveal>
-              <div className="glass-panel mx-auto mt-8 max-w-2xl p-4 text-left sm:mt-10 sm:p-8">
-                <h2 className="text-center text-xl font-bold text-white sm:text-2xl">
+              <div className="glass-panel mx-auto mt-4 max-w-2xl p-3.5 text-left sm:mt-10 sm:p-8">
+                <h2 className="text-lg font-bold text-white sm:text-center sm:text-2xl">
                   Nächstes Spiel
                 </h2>
                 <p className="mt-2 hidden text-center text-sm text-white sm:block">
@@ -48,15 +50,20 @@ export default async function Home() {
                   wirklich Ahnung vom Eishockey hat!
                 </p>
 
-                <div className="mt-4 flex flex-col items-center gap-4 text-center sm:mt-6 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:text-left">
+                <div className="mt-2 flex flex-col gap-3 sm:mt-6 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-wide text-white">
+                    <p className="hidden text-xs font-semibold uppercase tracking-wide text-white sm:block">
                       {nextGame.competition === "Vorbereitung" ? "Vorbereitungsspiel" : "DEL"}
                     </p>
-                    <p className="mt-1 text-lg font-bold text-white sm:text-xl">
-                      {getTeamName(nextGame.homeTeamId)} vs. {getTeamName(nextGame.awayTeamId)}
+                    <p className="text-base font-bold text-white sm:mt-1 sm:text-xl">
+                      <span className="sm:hidden">
+                        {shortTeamName(nextGame.homeTeamId)} vs. {shortTeamName(nextGame.awayTeamId)}
+                      </span>
+                      <span className="hidden sm:inline">
+                        {getTeamName(nextGame.homeTeamId)} vs. {getTeamName(nextGame.awayTeamId)}
+                      </span>
                     </p>
-                    <div className="mt-2 flex flex-wrap justify-center gap-4 text-xs text-white sm:justify-start sm:text-sm">
+                    <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-white sm:mt-2 sm:text-sm">
                       <span className="flex items-center gap-1">
                         <Calendar size={14} /> {formatGameDate(nextGame.kickoff)}
                       </span>
@@ -66,11 +73,13 @@ export default async function Home() {
                     </div>
                   </div>
 
-                  <div className="text-center">
-                    <NextGameHeroCountdown kickoff={nextGame.kickoff} />
+                  <div className="flex w-full items-center justify-between gap-3 text-left sm:block sm:w-auto sm:text-center">
+                    <div>
+                      <NextGameHeroCountdown kickoff={nextGame.kickoff} />
+                    </div>
                     <GlassButtonExact
                       href="/tippspiel"
-                      wrapperClassName="mt-3"
+                      wrapperClassName="sm:mt-3"
                       size="0.875rem"
                     >
                       Jetzt Tippen

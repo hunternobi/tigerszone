@@ -23,18 +23,18 @@ const PARTNERS: Partner[] = [
 ];
 
 const TILE_CLASS =
-  "glass-panel glass-interactive flex h-32 w-40 items-center justify-center p-3 sm:h-40 sm:w-48 sm:p-4";
+  "glass-panel glass-interactive flex h-24 w-32 items-center justify-center p-3 sm:h-40 sm:w-48 sm:p-4";
 
 export default function PartnerBar() {
   return (
     <Reveal>
-      <div className="mx-auto mt-10 max-w-2xl sm:mt-12">
-        <h2 className="text-center text-3xl font-bold text-white">Unsere Partner</h2>
-        <p className="mx-auto mt-3 max-w-xl text-center text-white">
+      <div className="mx-auto mt-6 max-w-2xl sm:mt-12">
+        <h2 className="text-center text-2xl font-bold text-white sm:text-3xl">Unsere Partner</h2>
+        <p className="mx-auto mt-2 max-w-xl text-center text-sm text-white sm:mt-3 sm:text-base">
           Gemeinsam mit starken Partnern machen wir TigersZone möglich
         </p>
 
-        <div className="mt-6 flex justify-center gap-3 sm:mt-8 sm:gap-4">
+        <div className="mt-4 flex justify-center gap-3 sm:mt-8 sm:gap-4">
           {PARTNERS.map((partner) => {
             const logo = (
               <Image
