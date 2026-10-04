@@ -105,8 +105,15 @@ function TippspielRow({ index, game, initial, disabled, started }: TippspielRowP
 
   return (
     <div className={`rounded-lg px-3 py-3 odd:bg-white/5 sm:px-3 sm:py-2 ${started ? "opacity-60" : ""}`}>
-      <div className="flex items-baseline justify-between gap-2">
-        <span className="text-xs whitespace-nowrap text-white/60">{index}. Spieltag</span>
+      <div className="flex items-center justify-between gap-2">
+        <span className="flex items-center gap-2 text-xs whitespace-nowrap text-white/60">
+          {index}. Spieltag
+          {game.isDerby && (
+            <span className="rounded-full border border-amber-300/30 bg-amber-400/15 px-2 py-0.5 text-[10px] font-bold tracking-wide text-amber-300 uppercase">
+              Derby ×{SCORING.DERBY_MULTIPLIER}
+            </span>
+          )}
+        </span>
         <span className="text-xs whitespace-nowrap text-white/50">
           {formatPostDate(game.kickoff)} · {formatGameTime(game.kickoff)} Uhr
         </span>
