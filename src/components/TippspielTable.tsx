@@ -109,8 +109,8 @@ function TippspielRow({ index, game, initial, disabled, started }: TippspielRowP
         <span className="flex items-center gap-2 text-xs whitespace-nowrap text-white/60">
           {index}. Spieltag
           {game.isDerby && (
-            <span className="rounded-full border border-amber-300/30 bg-amber-500/15 px-2 py-0.5 text-[10px] font-bold tracking-wide text-amber-100 uppercase">
-              Derby ×{SCORING.DERBY_MULTIPLIER}
+            <span title="Derby" className="rounded-full border border-amber-300/30 bg-amber-500/15 px-2 py-0.5 text-[10px] font-bold tracking-wide text-amber-100 uppercase">
+              Doppelte Punkte
             </span>
           )}
         </span>
