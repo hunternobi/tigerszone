@@ -206,6 +206,10 @@ function CompetitionTable({
               </div>
             ))}
           </div>
+          <div className="mt-2 flex items-center justify-center gap-2 rounded-xl bg-white/5 px-1 py-2 text-center">
+            <p className="text-base font-bold text-white">×{SCORING.DERBY_MULTIPLIER}</p>
+            <p className="text-[11px] leading-tight text-white/70">Derbys zählen doppelt</p>
+          </div>
           <p className="mt-2 text-center text-xs text-white/60">Tippabgabe endet mit Spielbeginn</p>
         </div>
       </div>

@@ -98,6 +98,10 @@ export default function TippspielInteractive({
                   <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-tigers-secondary" />
                   {SCORING.EXACT_SCORE} Punkte für das richtige Ergebnis
                 </li>
+                <li className="flex items-start gap-2">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-tigers-secondary" />
+                  Derbys zählen doppelt
+                </li>
               </ul>
             </div>
           </aside>
