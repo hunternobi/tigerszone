@@ -16,7 +16,6 @@ export default function GameResultForm({ game }: { game: Game }) {
   const [homeScore, setHomeScore] = useState(game.homeScore?.toString() ?? "");
   const [awayScore, setAwayScore] = useState(game.awayScore?.toString() ?? "");
   const [overtime, setOvertime] = useState<Overtime>(game.overtime ?? "REG");
-  const [isDerby, setIsDerby] = useState(game.isDerby);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -31,8 +30,7 @@ export default function GameResultForm({ game }: { game: Game }) {
         game._id,
         Number(homeScore),
         Number(awayScore),
-        overtime,
-        isDerby
+        overtime
       );
       if (!result.success) {
         setError(result.error ?? "Speichern fehlgeschlagen.");
@@ -92,12 +90,11 @@ export default function GameResultForm({ game }: { game: Game }) {
           </option>
         </select>
 
-        <label className="flex shrink-0 items-center gap-1 text-xs text-white sm:gap-2 sm:text-sm">
-          <input
-            type="checkbox"
-            checked={isDerby}
-            onChange={(e) => setIsDerby(e.target.checked)}
-          />
+        <label
+          title="Derby wird hier nicht geändert"
+          className="flex shrink-0 cursor-not-allowed items-center gap-1 text-xs text-white opacity-50 sm:gap-2 sm:text-sm"
+        >
+          <input type="checkbox" checked={game.isDerby} disabled readOnly className="cursor-not-allowed" />
           <span className="hidden sm:inline">Derby</span>
           <span className="sm:hidden">D</span>
         </label>

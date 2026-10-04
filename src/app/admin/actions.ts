@@ -30,8 +30,7 @@ export async function saveGameResult(
   gameId: string,
   homeScore: number,
   awayScore: number,
-  overtime: Overtime,
-  isDerby: boolean
+  overtime: Overtime
 ): Promise<ActionResult> {
   try {
     await requireAdmin();
@@ -55,7 +54,6 @@ export async function saveGameResult(
   game.homeScore = homeScore;
   game.awayScore = awayScore;
   game.overtime = overtime;
-  game.isDerby = isDerby;
   game.status = "finished";
   await game.save();
 
