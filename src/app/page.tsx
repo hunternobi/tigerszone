@@ -93,13 +93,13 @@ export default async function Home() {
                     <div>
                       <NextGameHeroCountdown kickoff={nextGame.kickoff} />
                     </div>
-                    <GlassButtonExact
+                    <Link
                       href="/tippspiel"
-                      wrapperClassName="sm:mt-3"
-                      size="0.875rem"
+                      data-glass-button
+                      className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium whitespace-nowrap text-white sm:mt-3"
                     >
                       Jetzt Tippen
-                    </GlassButtonExact>
+                    </Link>
                   </div>
                 </div>
               </LiquidGlassCard>

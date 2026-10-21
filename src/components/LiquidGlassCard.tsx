@@ -40,6 +40,10 @@ const DESKTOP_QUERY = "(min-width: 640px)";
  * layer above it: the library re-rasterises everything inside a glass element whenever it changes
  * (a ticking countdown would do that every second). Until WebGL is up, or if it is unavailable, the
  * card keeps the plain CSS glass look.
+ *
+ * Mark a link or button inside the content with `data-glass-button` to give it a glass pill of its
+ * own (the library's button mode with hover/press). Style the element itself as a plain pill; the
+ * CSS in globals.css makes that look transparent once the glass is running.
  */
 export default function LiquidGlassCard({
   children,
@@ -51,6 +55,7 @@ export default function LiquidGlassCard({
 }: LiquidGlassCardProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const glassRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const bgCanvasRef = useRef<HTMLCanvasElement>(null);
   const [webglActive, setWebglActive] = useState(false);
 
@@ -69,7 +74,8 @@ export default function LiquidGlassCard({
     const root = rootRef.current;
     const glass = glassRef.current;
     const canvas = bgCanvasRef.current;
-    if (!root || !glass || !canvas) return;
+    const content = contentRef.current;
+    if (!root || !glass || !canvas || !content) return;
 
     let cancelled = false;
     let instance: LiquidGlassInstance | null = null;
@@ -78,6 +84,84 @@ export default function LiquidGlassCard({
     let frame = 0;
     let settleUntil = 0;
     let visible = true;
+
+    // Every [data-glass-button] link in the content gets its own glass pill behind it. The link stays
+    // the real, focusable element (transparent once the glass runs); the pill is created here because
+    // the library only takes glass elements that exist when it starts.
+    interface Pill {
+      link: HTMLElement;
+      glass: HTMLElement;
+      cleanup: () => void;
+    }
+    const pills: Pill[] = [];
+
+    function pillConfig(height: number) {
+      return JSON.stringify({
+        button: true,
+        floating: false,
+        cornerRadius: Math.round(height / 2),
+        zRadius: Math.round(height / 2),
+        blurAmount: 0.25,
+        refraction: 0.7,
+        chromAberration: 0.05,
+        edgeHighlight: 0.12,
+        specular: 0.15,
+        shadowOpacity: 0.25,
+        shadowSpread: 8,
+      });
+    }
+
+    function placePills() {
+      if (!root) return;
+      const rootRect = root.getBoundingClientRect();
+      for (const pill of pills) {
+        const r = pill.link.getBoundingClientRect();
+        // offsetWidth/Height ignore the link's own hover transform
+        const w = pill.link.offsetWidth;
+        const h = pill.link.offsetHeight;
+        pill.glass.style.left = `${r.left + (r.width - w) / 2 - rootRect.left}px`;
+        pill.glass.style.top = `${r.top + (r.height - h) / 2 - rootRect.top}px`;
+        pill.glass.style.width = `${w}px`;
+        pill.glass.style.height = `${h}px`;
+        const config = pillConfig(h);
+        if (pill.glass.dataset.config !== config) pill.glass.dataset.config = config;
+      }
+    }
+
+    function createPills() {
+      if (!root || !content) return;
+      for (const link of content.querySelectorAll<HTMLElement>("[data-glass-button]")) {
+        const pillGlass = document.createElement("div");
+        pillGlass.style.position = "absolute";
+        root.appendChild(pillGlass);
+
+        // The glass sits below the link, so forward hover/press to drive the library's button effect.
+        const forward = (type: string) => () =>
+          pillGlass.dispatchEvent(new PointerEvent(type, { bubbles: false }));
+        const handlers: Array<[string, () => void]> = [
+          ["pointerenter", forward("pointerover")],
+          ["pointerleave", forward("pointerout")],
+          ["pointerdown", forward("pointerdown")],
+          ["pointerup", forward("pointerup")],
+          ["pointercancel", forward("pointerup")],
+        ];
+        for (const [type, handler] of handlers) link.addEventListener(type, handler);
+
+        const resizeObserver = new ResizeObserver(() => schedule());
+        resizeObserver.observe(link);
+
+        pills.push({
+          link,
+          glass: pillGlass,
+          cleanup: () => {
+            for (const [type, handler] of handlers) link.removeEventListener(type, handler);
+            resizeObserver.disconnect();
+            pillGlass.remove();
+          },
+        });
+      }
+      placePills();
+    }
 
     const pageBackground = () => document.querySelector<HTMLElement>("[data-page-background]");
     const viewportBox = () =>
@@ -122,6 +206,7 @@ export default function LiquidGlassCard({
         window.matchMedia(DESKTOP_QUERY).matches !== painted.desktop;
       if (needsRepaint) paintBackground();
 
+      placePills();
       const rootRect = root.getBoundingClientRect();
       canvas.style.left = `${box.left - rootRect.left}px`;
       canvas.style.top = `${box.top - rootRect.top}px`;
@@ -158,10 +243,14 @@ export default function LiquidGlassCard({
         ]);
         if (cancelled || !root || !glass) return;
         image = loaded;
+        createPills();
         paintBackground();
         sync();
 
-        instance = await LiquidGlass.init({ root, glassElements: [glass] });
+        instance = await LiquidGlass.init({
+          root,
+          glassElements: [glass, ...pills.map((pill) => pill.glass)],
+        });
         if (cancelled) {
           instance.destroy();
           instance = null;
@@ -214,6 +303,7 @@ export default function LiquidGlassCard({
       visualViewport?.removeEventListener("resize", schedule);
       instance?.destroy();
       instance = null;
+      for (const pill of pills) pill.cleanup();
     };
   }, [src, mobileSrc, opacity, color, blurPx]);
 
@@ -243,7 +333,9 @@ export default function LiquidGlassCard({
         />
       </div>
 
-      <div className={`relative z-10 ${contentClassName}`}>{children}</div>
+      <div ref={contentRef} className={`relative z-10 ${contentClassName}`}>
+        {children}
+      </div>
     </div>
   );
 }
