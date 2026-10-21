@@ -10,6 +10,16 @@ export function formatGameDate(iso: string): string {
   });
 }
 
+/** Compact date for cards: "Fr., 2. Okt." (short) or "Freitag, 2. Oktober" (long). */
+export function formatGameDateCompact(iso: string, long = false): string {
+  return new Date(iso).toLocaleDateString("de-DE", {
+    weekday: long ? "long" : "short",
+    day: "numeric",
+    month: long ? "long" : "short",
+    timeZone: GAME_TIME_ZONE,
+  });
+}
+
 export function formatGameTime(iso: string): string {
   return new Date(iso).toLocaleTimeString("de-DE", {
     hour: "2-digit",

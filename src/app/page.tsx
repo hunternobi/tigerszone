@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Calendar, Clock } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { auth } from "@/auth";
 import FadingBackground from "@/components/FadingBackground";
 import GlassButtonExact from "@/components/GlassButtonExact";
@@ -10,7 +10,7 @@ import Reveal from "@/components/Reveal";
 import { SITE_DESCRIPTION, SITE_NAME } from "@/lib/constants";
 import { getUpcomingGames } from "@/lib/games";
 import { getTeamById, getTeamName } from "@/lib/teams";
-import { formatGameDate, formatGameTime } from "@/utils/format";
+import { formatGameDateCompact, formatGameTime } from "@/utils/format";
 import NextGameHeroCountdown from "@/components/NextGameHeroCountdown";
 
 const INSTAGRAM_POSTS = ["https://www.instagram.com/p/DVG8cgaDHBf/"];
@@ -55,50 +55,63 @@ export default async function Home() {
             <Reveal>
               <LiquidGlassCard
                 className="mx-auto mt-4 max-w-2xl text-left sm:mt-10"
-                contentClassName="p-3.5 sm:p-8"
+                contentClassName="p-3.5 sm:p-7"
                 background={HERO_GLASS_BACKGROUND}
               >
-                <h2 className="text-lg font-bold text-white sm:text-center sm:text-2xl">
-                  Nächstes Spiel
-                </h2>
-                <p className="mt-2 hidden text-center text-sm text-white sm:block">
-                  Bereit für den nächsten Spieltag? Tippe und zeig deinen Mitstreitern, wer
-                  wirklich Ahnung vom Eishockey hat!
-                </p>
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between sm:gap-8">
+                  <div className="min-w-0">
+                    {/* Sans-serif inline: the global heading rule would otherwise force the serif font. */}
+                    <h2
+                      style={{ fontFamily: "var(--font-sans), Arial, Helvetica, sans-serif" }}
+                      className="text-[11px] font-semibold tracking-[0.14em] text-white/60 uppercase sm:text-xs"
+                    >
+                      Nächstes Spiel
+                      {nextGame.competition === "Vorbereitung"
+                        ? " · Vorbereitung"
+                        : nextGame.matchday
+                          ? ` · ${nextGame.matchday}. Spieltag`
+                          : ""}
+                    </h2>
 
-                <div className="mt-2 flex flex-col gap-3 sm:mt-6 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
-                  <div>
-                    <p className="hidden text-xs font-semibold uppercase tracking-wide text-white sm:block">
-                      {nextGame.competition === "Vorbereitung" ? "Vorbereitungsspiel" : "DEL"}
-                    </p>
-                    <p className="text-base font-bold text-white sm:mt-1 sm:text-xl">
+                    <p className="mt-1.5 text-[22px] leading-[1.15] font-semibold tracking-tight text-balance text-white sm:mt-2.5 sm:text-4xl">
                       <span className="sm:hidden">
-                        {shortTeamName(nextGame.homeTeamId)} vs. {shortTeamName(nextGame.awayTeamId)}
+                        {shortTeamName(nextGame.homeTeamId)}{" "}
+                        <span className="font-medium text-white/50">vs.</span>{" "}
+                        {shortTeamName(nextGame.awayTeamId)}
                       </span>
                       <span className="hidden sm:inline">
-                        {getTeamName(nextGame.homeTeamId)} vs. {getTeamName(nextGame.awayTeamId)}
+                        {getTeamName(nextGame.homeTeamId)}{" "}
+                        <span className="font-medium text-white/50">vs.</span>{" "}
+                        {getTeamName(nextGame.awayTeamId)}
                       </span>
                     </p>
-                    <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-white sm:mt-2 sm:text-sm">
-                      <span className="flex items-center gap-1">
-                        <Calendar size={14} /> {formatGameDate(nextGame.kickoff)}
+
+                    <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-[13px] text-white/70 sm:mt-3 sm:text-base">
+                      <span>
+                        <span className="sm:hidden">{formatGameDateCompact(nextGame.kickoff)}</span>
+                        <span className="hidden sm:inline">
+                          {formatGameDateCompact(nextGame.kickoff, true)}
+                        </span>
+                        <span aria-hidden> · </span>
+                        {formatGameTime(nextGame.kickoff)} Uhr
                       </span>
-                      <span className="flex items-center gap-1">
-                        <Clock size={14} /> {formatGameTime(nextGame.kickoff)} Uhr
-                      </span>
+                      {nextGame.isDerby && (
+                        <span className="rounded-full border border-amber-300/30 bg-amber-500/15 px-2 py-0.5 text-[11px] font-semibold text-amber-100 sm:text-xs">
+                          Doppelte Punkte
+                        </span>
+                      )}
                     </div>
                   </div>
 
-                  <div className="flex w-full items-center justify-between gap-3 text-left sm:block sm:w-auto sm:text-center">
-                    <div>
-                      <NextGameHeroCountdown kickoff={nextGame.kickoff} />
-                    </div>
+                  <div className="flex items-center justify-between gap-3 sm:flex-col sm:items-end sm:gap-4">
+                    <NextGameHeroCountdown kickoff={nextGame.kickoff} />
+                    {/* after:-inset keeps the touch target at 44px while the button itself stays compact */}
                     <Link
                       href="/tippspiel"
-                      className="inline-flex min-h-[44px] shrink-0 items-center justify-center gap-1.5 rounded-full bg-white px-5 text-[15px] font-semibold whitespace-nowrap text-tigers-primary shadow-[0_6px_18px_rgba(0,0,0,0.35)] transition duration-200 hover:bg-white/90 active:scale-[0.96] sm:mt-3"
+                      className="relative inline-flex min-h-[38px] shrink-0 items-center justify-center gap-1.5 rounded-full bg-white px-4 text-sm font-semibold whitespace-nowrap text-tigers-primary shadow-[0_6px_18px_rgba(0,0,0,0.35)] transition duration-200 after:absolute after:-inset-[3px] after:content-[''] hover:bg-white/90 active:scale-[0.96] sm:min-h-[44px] sm:px-5 sm:text-[15px]"
                     >
                       Jetzt tippen
-                      <ArrowRight size={16} strokeWidth={2.5} />
+                      <ArrowRight size={15} strokeWidth={2.5} />
                     </Link>
                   </div>
                 </div>
