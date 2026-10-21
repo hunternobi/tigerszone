@@ -42,7 +42,7 @@ export default async function Home() {
         blurPx={HERO_BLUR_PX}
       >
         <LiquidGlassScene background={HERO_SCENE}>
-          <section className="relative overflow-hidden px-7 pt-4 pb-8 sm:min-h-screen sm:px-6 sm:py-24">
+          <section className="relative overflow-hidden px-7 pt-4 pb-4 sm:px-6 sm:pt-24 sm:pb-6">
             <div className="relative mx-auto max-w-4xl text-left sm:text-center">
               <h1 className="font-ui text-[2.15rem] leading-[1.06] font-semibold tracking-tight text-white sm:text-6xl">
                 Willkommen in der
@@ -122,7 +122,7 @@ export default async function Home() {
           </section>
 
           {!session?.user && (
-            <section className="relative overflow-hidden px-7 py-12 text-center sm:px-6 sm:py-16">
+            <section className="relative overflow-hidden px-7 pt-8 pb-12 text-center sm:px-6 sm:pt-10 sm:pb-16">
               <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
                 <span className="select-none text-[56px] font-black whitespace-nowrap text-white opacity-35 blur-[1.5px] sm:text-[10rem] lg:text-[13rem]">
                   2026/27
