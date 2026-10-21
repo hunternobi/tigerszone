@@ -3,7 +3,7 @@ import { ChevronRight } from "lucide-react";
 import { auth } from "@/auth";
 import FadingBackground from "@/components/FadingBackground";
 import InstagramEmbed from "@/components/InstagramEmbed";
-import LiquidGlassScene, { type SceneBackground } from "@/components/LiquidGlassScene";
+import LiquidGlassScene, { STADIUM_SCENE, type SceneBackground } from "@/components/LiquidGlassScene";
 import NextGameHeroCountdown from "@/components/NextGameHeroCountdown";
 import PartnerBar from "@/components/PartnerBar";
 import PillButton from "@/components/PillButton";
@@ -26,16 +26,8 @@ const HERO_SCENE: SceneBackground = {
   blurPx: HERO_BLUR_PX,
 };
 
-// Plain navy section: soft blue glows give the glass something to refract.
-const INSTAGRAM_SCENE: SceneBackground = {
-  color: "#0a0f3d",
-  glows: [
-    { x: 30, y: 35, radius: 320, rgb: [91, 127, 199], alpha: 0.14 },
-    { x: 70, y: 72, radius: 360, rgb: [91, 127, 199], alpha: 0.28 },
-  ],
-};
-
-const shortTeamName = (teamId: string) => getTeamById(teamId)?.shortName ?? getTeamName(teamId);
+const shortTeamName = (teamId: string) =>
+  getTeamById(teamId)?.shortName ?? getTeamName(teamId);
 
 export default async function Home() {
   const session = await auth();
@@ -54,7 +46,9 @@ export default async function Home() {
             <div className="relative mx-auto max-w-4xl text-left sm:text-center">
               <h1 className="font-ui text-[2.15rem] leading-[1.06] font-semibold tracking-tight text-white sm:text-6xl">
                 Willkommen in der
-                <span className="script-heading block text-tigers-secondary">{SITE_NAME}</span>
+                <span className="script-heading block text-tigers-secondary">
+                  {SITE_NAME}
+                </span>
               </h1>
 
               <p className="mt-3 max-w-xl text-base leading-snug text-white/80 sm:mx-auto sm:mt-5 sm:text-xl">
@@ -81,19 +75,25 @@ export default async function Home() {
                         <p className="mt-1.5 text-[22px] leading-[1.15] font-semibold tracking-tight text-balance text-white sm:mt-2.5 sm:text-4xl">
                           <span className="sm:hidden">
                             {shortTeamName(nextGame.homeTeamId)}{" "}
-                            <span className="font-medium text-white/50">vs.</span>{" "}
+                            <span className="font-medium text-white/50">
+                              vs.
+                            </span>{" "}
                             {shortTeamName(nextGame.awayTeamId)}
                           </span>
                           <span className="hidden sm:inline">
                             {getTeamName(nextGame.homeTeamId)}{" "}
-                            <span className="font-medium text-white/50">vs.</span>{" "}
+                            <span className="font-medium text-white/50">
+                              vs.
+                            </span>{" "}
                             {getTeamName(nextGame.awayTeamId)}
                           </span>
                         </p>
 
                         <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-[13px] text-white/70 sm:mt-3 sm:text-base">
                           <span>
-                            <span className="sm:hidden">{formatGameDateCompact(nextGame.kickoff)}</span>
+                            <span className="sm:hidden">
+                              {formatGameDateCompact(nextGame.kickoff)}
+                            </span>
                             <span className="hidden sm:inline">
                               {formatGameDateCompact(nextGame.kickoff, true)}
                             </span>
@@ -135,8 +135,8 @@ export default async function Home() {
                     Bereit für die neue Saison?
                   </h2>
                   <p className="mx-auto mt-3 max-w-xl text-base leading-snug text-white/75 sm:text-lg">
-                    Werde Teil der TigersZone-Community, erlebe Eishockey neu, nimm am Tippspiel teil
-                    und kämpfe um Ruhm und Ehre!
+                    Werde Teil der TigersZone-Community, erlebe Eishockey neu,
+                    nimm am Tippspiel teil und kämpfe um Ruhm und Ehre!
                   </p>
                   <div className="mt-6">
                     <PillButton href="/register">Jetzt registrieren</PillButton>
@@ -148,21 +148,27 @@ export default async function Home() {
         </LiquidGlassScene>
       </FadingBackground>
 
-      <section className="border-t border-white/10 bg-tigers-primary px-7 py-12 sm:px-6 sm:py-16">
-        <LiquidGlassScene background={INSTAGRAM_SCENE}>
+      <LiquidGlassScene
+        background={STADIUM_SCENE}
+        className="border-t border-white/10"
+      >
+        <section className="px-7 py-12 sm:px-6 sm:py-16">
           <Reveal>
             <div className="mx-auto max-w-6xl text-center">
               <h2 className="font-ui text-[2rem] leading-tight font-semibold tracking-tight text-white sm:text-5xl">
                 Folge uns auf Instagram
               </h2>
               <p className="mx-auto mt-3 max-w-xl text-base leading-snug text-white/70 sm:text-lg">
-                Bleibe auf dem Laufenden mit den neuesten Memes, Designs und Fanbeiträgen rund um
-                den besten Eishockeyverein der Welt
+                Bleibe auf dem Laufenden mit den neuesten Memes, Designs und
+                Fanbeiträgen rund um den besten Eishockeyverein der Welt
               </p>
 
               <div className="mt-8 flex flex-col items-stretch justify-center gap-6 sm:mt-10 sm:flex-row">
                 {INSTAGRAM_POSTS.map((url) => (
-                  <div key={url} className="overflow-hidden rounded-2xl sm:w-80">
+                  <div
+                    key={url}
+                    className="overflow-hidden rounded-2xl sm:w-80"
+                  >
                     <InstagramEmbed url={url} />
                   </div>
                 ))}
@@ -175,8 +181,8 @@ export default async function Home() {
                     Werde Teil der Tigers-Zone
                   </h3>
                   <p className="mt-2 hidden text-[15px] leading-snug text-white/70 sm:block">
-                    Folg&apos; uns auf Instagram, um die volle Bandbreite der Tigers mitzuerleben und
-                    immer auf dem Laufenden zu bleiben.
+                    Folg&apos; uns auf Instagram, um die volle Bandbreite der
+                    Tigers mitzuerleben und immer auf dem Laufenden zu bleiben.
                   </p>
 
                   <ul className="mt-4 space-y-2.5 text-[15px] text-white/90">
@@ -189,24 +195,26 @@ export default async function Home() {
                   </ul>
 
                   <div className="mt-5">
-                    <PillButton href="/community">Community entdecken</PillButton>
+                    <PillButton href="/community">
+                      Community entdecken
+                    </PillButton>
                   </div>
                 </div>
               </div>
             </div>
           </Reveal>
-        </LiquidGlassScene>
-      </section>
+        </section>
 
-      <section className="border-t border-white/10 bg-tigers-primary px-7 py-8 text-center sm:px-6">
-        <Link
-          href="/community#faq"
-          className="inline-flex items-center gap-1 text-[15px] font-medium text-tigers-secondary hover:underline"
-        >
-          Fragen? Schau in unserem FAQ-Bereich vorbei
-          <ChevronRight size={17} strokeWidth={2.25} />
-        </Link>
-      </section>
+        <section className="border-t border-white/10 px-7 py-8 text-center sm:px-6">
+          <Link
+            href="/community#faq"
+            className="inline-flex items-center gap-1 text-[15px] font-medium text-white/85 transition-colors hover:text-white"
+          >
+            Fragen? Schau in unserem FAQ-Bereich vorbei
+            <ChevronRight size={17} strokeWidth={2.25} />
+          </Link>
+        </section>
+      </LiquidGlassScene>
     </>
   );
 }

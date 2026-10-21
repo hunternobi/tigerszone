@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Feather } from "lucide-react";
+import LiquidGlassScene, { STADIUM_SCENE } from "@/components/LiquidGlassScene";
 import { SITE_DESCRIPTION, SITE_NAME } from "@/lib/constants";
 
 const QUICK_LINKS = [
@@ -16,54 +17,64 @@ const LEGAL_LINKS = [
   { href: "/impressum", label: "Impressum" },
 ];
 
+const LINK_CLASS =
+  "inline-block py-1 text-[15px] text-white/65 transition-colors hover:text-white sm:text-sm";
+
+function LinkColumn({ title, links }: { title: string; links: typeof QUICK_LINKS }) {
+  return (
+    <div>
+      <h4 className="font-ui text-[13px] font-semibold tracking-wide text-white">{title}</h4>
+      <ul className="mt-2">
+        {links.map((link) => (
+          <li key={link.href}>
+            <Link href={link.href} className={LINK_CLASS}>
+              {link.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 export default function Footer() {
   return (
-    <footer className="border-t border-white/10 bg-tigers-primary">
-      <div className="mx-auto grid max-w-7xl gap-10 px-6 py-14 md:grid-cols-3">
-        <div>
-          <h3 className="mb-3 text-lg font-bold text-tigers-secondary">{SITE_NAME}</h3>
-          <p className="text-sm text-white">{SITE_DESCRIPTION}</p>
-          <p className="mt-4 flex items-center gap-2 text-sm text-white">
-            <Feather size={16} />
-            Made with passion for Tigers fans
+    <LiquidGlassScene background={STADIUM_SCENE} className="border-t border-white/10">
+      <footer className="px-7 pt-10 pb-8 sm:px-6 sm:pt-14">
+        <div
+          data-liquid-glass="card"
+          className="glass-panel mx-auto grid max-w-5xl gap-7 p-5 sm:gap-10 sm:p-8 md:grid-cols-[1.4fr_1fr_1fr]"
+        >
+          <div className="md:pr-6">
+            <h3 className="font-ui text-xl font-semibold tracking-tight text-tigers-secondary">
+              {SITE_NAME}
+            </h3>
+            <p className="mt-2 text-[15px] leading-snug text-white/70 sm:text-sm">
+              {SITE_DESCRIPTION}
+            </p>
+            <p className="mt-3 flex items-center gap-2 text-[13px] text-white/70">
+              <Feather size={14} />
+              Made with passion for Tigers fans
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-6 md:contents">
+            <LinkColumn title="Schnellzugriff" links={QUICK_LINKS} />
+            <LinkColumn title="Rechtliches" links={LEGAL_LINKS} />
+          </div>
+        </div>
+
+        <div className="mx-auto mt-6 max-w-5xl px-1 text-center text-[11px] leading-relaxed text-white/70">
+          <p>
+            {SITE_NAME} ist eine unabhängige Fan-Plattform und nicht offiziell mit dem Straubing
+            Tigers Eishockey Club verbunden. Alle Marken und Logos sind Eigentum ihrer jeweiligen
+            Besitzer.
+          </p>
+          <p className="mt-1.5">
+            © {new Date().getFullYear()} {SITE_NAME}. Alle Rechte vorbehalten.
           </p>
         </div>
-
-        <div>
-          <h4 className="mb-3 font-semibold text-white">Schnellzugriff</h4>
-          <ul className="space-y-2">
-            {QUICK_LINKS.map((link) => (
-              <li key={link.href}>
-                <Link href={link.href} className="text-sm text-white hover:text-white">
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div>
-          <h4 className="mb-3 font-semibold text-white">Rechtliches</h4>
-          <ul className="space-y-2">
-            {LEGAL_LINKS.map((link) => (
-              <li key={link.href}>
-                <Link href={link.href} className="text-sm text-white hover:text-white">
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-
-      <div className="border-t border-white/10 px-6 py-6 text-center text-xs text-white">
-        <p>
-          {SITE_NAME} ist eine unabhängige Fan-Plattform und nicht offiziell mit dem Straubing
-          Tigers Eishockey Club verbunden. Alle Marken und Logos sind Eigentum ihrer jeweiligen
-          Besitzer.
-        </p>
-        <p className="mt-2">© {new Date().getFullYear()} {SITE_NAME}. Alle Rechte vorbehalten.</p>
-      </div>
-    </footer>
+      </footer>
+    </LiquidGlassScene>
   );
 }

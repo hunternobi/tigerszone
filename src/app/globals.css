@@ -186,6 +186,19 @@ h6 {
       0 8px 32px rgba(0, 0, 0, 0.35);
   }
 
+  /* Scene with its own photo (LiquidGlassScene staticPhoto): the photo under a colour tint. */
+  .lg-photo {
+    background-image: linear-gradient(var(--lg-tint), var(--lg-tint)), var(--lg-photo-m);
+    background-size: cover;
+    background-position: center;
+  }
+
+  @media (min-width: 640px) {
+    .lg-photo {
+      background-image: linear-gradient(var(--lg-tint), var(--lg-tint)), var(--lg-photo);
+    }
+  }
+
   .lg-scene[data-webgl="true"] a[data-liquid-glass]:hover {
     transform: none;
     filter: none;
