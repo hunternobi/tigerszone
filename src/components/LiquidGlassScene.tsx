@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import type { LiquidGlassInstance } from "@/vendor/liquidglass";
 
 const DESKTOP_QUERY = "(min-width: 640px)";
@@ -28,21 +28,15 @@ export interface SceneBackground {
    * scene's CSS background, so what the glass refracts matches what is visible.
    */
   glows?: SceneGlow[];
-  /**
-   * Static scene with a photo that belongs to the scene itself (not the fixed page photo): covers the
-   * scene box, darkened by `color` at `tint` opacity. Also applied as the scene's CSS background.
-   */
-  staticPhoto?: { src: string; mobileSrc?: string; tint: number };
 }
 
-/** The stadium photo under a dark tint, for the sections below the hero (landing page, footer). */
-export const STADIUM_SCENE: SceneBackground = {
+/** Dark navy with soft blue glows, for the sections below the hero (landing page, footer). */
+export const NAVY_SCENE: SceneBackground = {
   color: "#0a0f3d",
-  staticPhoto: {
-    src: "/_next/image?url=%2Fimages%2Fhero-stadium-tinted.jpg&w=1920&q=75",
-    mobileSrc: "/_next/image?url=%2Fimages%2Fhero-stadium-mobile.jpg&w=828&q=75",
-    tint: 0.68,
-  },
+  glows: [
+    { x: 25, y: 30, radius: 320, rgb: [91, 127, 199], alpha: 0.16 },
+    { x: 75, y: 65, radius: 380, rgb: [91, 127, 199], alpha: 0.28 },
+  ],
 };
 
 const PRESETS = {
@@ -61,11 +55,6 @@ interface Surface {
   rawOpacity: number;
   cleanup: () => void;
 }
-
-const hexToRgb = (hex: string): [number, number, number] => {
-  const n = parseInt(hex.replace("#", ""), 16);
-  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
-};
 
 const glowCss = (glows: SceneGlow[]) =>
   glows
@@ -102,9 +91,8 @@ export default function LiquidGlassScene({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [webglActive, setWebglActive] = useState(false);
 
-  const { color, src, mobileSrc, opacity = 1, blurPx, glows, staticPhoto } = background;
+  const { color, src, mobileSrc, opacity = 1, blurPx, glows } = background;
   const glowKey = JSON.stringify(glows ?? null);
-  const staticKey = JSON.stringify(staticPhoto ?? null);
 
   useEffect(() => {
     const wrapper = wrapperRef.current;
@@ -113,8 +101,6 @@ export default function LiquidGlassScene({
     if (!wrapper || !root || !canvas) return;
 
     const photoMode = Boolean(src);
-    const still: SceneBackground["staticPhoto"] = JSON.parse(staticKey) ?? undefined;
-    const needsImage = photoMode || Boolean(still);
     const sceneGlows: SceneGlow[] = JSON.parse(glowKey) ?? [];
 
     let cancelled = false;
@@ -145,14 +131,7 @@ export default function LiquidGlassScene({
       ctx.fillStyle = color;
       ctx.fillRect(0, 0, w, h);
 
-      if (!photoMode && still && image) {
-        const scale = Math.max(w / image.naturalWidth, h / image.naturalHeight);
-        const dw = image.naturalWidth * scale;
-        const dh = image.naturalHeight * scale;
-        ctx.drawImage(image, (w - dw) / 2, (h - dh) / 2, dw, dh);
-        ctx.fillStyle = `rgba(${hexToRgb(color).join(",")},${still.tint})`;
-        ctx.fillRect(0, 0, w, h);
-      } else if (photoMode && image) {
+      if (photoMode && image) {
         // object-fit: cover, centred - the same mapping the page background uses
         const scale = Math.max(w / image.naturalWidth, h / image.naturalHeight);
         const dw = image.naturalWidth * scale;
@@ -234,8 +213,11 @@ export default function LiquidGlassScene({
         ) {
           paintBackground();
         }
-        canvas!.style.left = `${box.left - rootRect.left}px`;
-        canvas!.style.top = `${box.top - rootRect.top}px`;
+        // Fixed, like the page photo it copies: an absolute canvas that follows the viewport down the
+        // page would keep stretching the document's scroll height.
+        canvas!.style.position = "fixed";
+        canvas!.style.left = `${box.left}px`;
+        canvas!.style.top = `${box.top}px`;
         canvas!.style.width = `${box.width}px`;
         canvas!.style.height = `${box.height}px`;
       } else {
@@ -245,10 +227,11 @@ export default function LiquidGlassScene({
           Math.round(rootRect.height * ratio) !== painted.h
         ) {
           paintBackground();
-          canvas!.style.width = `${rootRect.width}px`;
-          canvas!.style.height = `${rootRect.height}px`;
           changed = true;
         }
+        // Always applied (not only after a repaint): the first paint happens before the first sync.
+        canvas!.style.width = `${rootRect.width}px`;
+        canvas!.style.height = `${rootRect.height}px`;
       }
 
       // Cheap (a few layout reads); every surface is kept current so none is stale when it scrolls in.
@@ -318,8 +301,7 @@ export default function LiquidGlassScene({
         const img = new Image();
         img.onload = () => resolve(img);
         img.onerror = reject;
-        const [full, small] = photoMode ? [src!, mobileSrc] : [still!.src, still!.mobileSrc];
-        img.src = window.matchMedia(DESKTOP_QUERY).matches ? full : (small ?? full);
+        img.src = window.matchMedia(DESKTOP_QUERY).matches ? src! : (mobileSrc ?? src!);
       });
     }
 
@@ -327,7 +309,7 @@ export default function LiquidGlassScene({
       try {
         const [{ LiquidGlass }, loaded] = await Promise.all([
           import("@/vendor/liquidglass"),
-          needsImage ? loadImage() : Promise.resolve(null),
+          photoMode ? loadImage() : Promise.resolve(null),
         ]);
         if (cancelled) return;
         image = loaded;
@@ -354,7 +336,7 @@ export default function LiquidGlassScene({
     // The phone and desktop photo can differ: reload it when the breakpoint flips.
     const mq = window.matchMedia(DESKTOP_QUERY);
     const onBreakpoint = () => {
-      if (!needsImage) return;
+      if (!photoMode) return;
       loadImage().then((img) => {
         if (cancelled) return;
         image = img;
@@ -385,25 +367,14 @@ export default function LiquidGlassScene({
       instance = null;
       for (const surface of surfaces) surface.cleanup();
     };
-  }, [src, mobileSrc, opacity, color, blurPx, glowKey, staticKey]);
-
-  const sceneStyle: CSSProperties | undefined = staticPhoto
-    ? ({
-        backgroundColor: color,
-        "--lg-photo": `url("${staticPhoto.src}")`,
-        "--lg-photo-m": `url("${staticPhoto.mobileSrc ?? staticPhoto.src}")`,
-        "--lg-tint": `rgba(${hexToRgb(color).join(",")},${staticPhoto.tint})`,
-      } as CSSProperties)
-    : glows?.length
-      ? { backgroundImage: glowCss(glows) }
-      : undefined;
+  }, [src, mobileSrc, opacity, color, blurPx, glowKey]);
 
   return (
     <div
       ref={wrapperRef}
-      className={`lg-scene relative isolate ${staticPhoto ? "lg-photo" : ""} ${className}`}
+      className={`lg-scene relative isolate ${className}`}
       data-webgl={webglActive ? "true" : undefined}
-      style={sceneStyle}
+      style={glows?.length ? { backgroundImage: glowCss(glows) } : undefined}
     >
       {/* Glass root: sits behind the content (z -10 inside this stacking context) and never holds any. */}
       <div ref={rootRef} aria-hidden className="pointer-events-none absolute inset-0 -z-10">

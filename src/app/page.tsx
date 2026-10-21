@@ -3,7 +3,7 @@ import { ChevronRight } from "lucide-react";
 import { auth } from "@/auth";
 import FadingBackground from "@/components/FadingBackground";
 import InstagramEmbed from "@/components/InstagramEmbed";
-import LiquidGlassScene, { STADIUM_SCENE, type SceneBackground } from "@/components/LiquidGlassScene";
+import LiquidGlassScene, { NAVY_SCENE, type SceneBackground } from "@/components/LiquidGlassScene";
 import NextGameHeroCountdown from "@/components/NextGameHeroCountdown";
 import PartnerBar from "@/components/PartnerBar";
 import PillButton from "@/components/PillButton";
@@ -149,8 +149,8 @@ export default async function Home() {
       </FadingBackground>
 
       <LiquidGlassScene
-        background={STADIUM_SCENE}
-        className="border-t border-white/10"
+        background={NAVY_SCENE}
+        className="border-t border-white/10 bg-tigers-primary"
       >
         <section className="px-7 py-12 sm:px-6 sm:py-16">
           <Reveal>

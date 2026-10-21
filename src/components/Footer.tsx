@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Feather } from "lucide-react";
-import LiquidGlassScene, { STADIUM_SCENE } from "@/components/LiquidGlassScene";
+import LiquidGlassScene, { NAVY_SCENE } from "@/components/LiquidGlassScene";
 import { SITE_DESCRIPTION, SITE_NAME } from "@/lib/constants";
 
 const QUICK_LINKS = [
@@ -39,7 +39,7 @@ function LinkColumn({ title, links }: { title: string; links: typeof QUICK_LINKS
 
 export default function Footer() {
   return (
-    <LiquidGlassScene background={STADIUM_SCENE} className="border-t border-white/10">
+    <LiquidGlassScene background={NAVY_SCENE} className="border-t border-white/10 bg-tigers-primary">
       <footer className="px-7 pt-10 pb-8 sm:px-6 sm:pt-14">
         <div
           data-liquid-glass="card"
