@@ -158,6 +158,16 @@ h6 {
     border-color: rgba(255, 255, 255, 0.28);
   }
 
+  /* Cards with WebGL glass (LiquidGlassCard): once the shader runs it draws the glass itself, so the
+     CSS glass underneath (kept as the fallback) is switched off. */
+  .lg-card[data-webgl="true"] {
+    background: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-color: transparent;
+    box-shadow: none;
+  }
+
   /* Shared hover behaviour for every glass element (panels, pills, tiles) */
   .glass-interactive {
     transition:

@@ -27,6 +27,7 @@ export default function FadingBackground({
   return (
     <div className="relative -mt-[4.5rem] overflow-hidden">
       <div
+        data-page-background
         style={{ opacity, filter: blurPx ? `blur(${blurPx}px)` : undefined }}
         className={`pointer-events-none fixed inset-0 -z-10 ${scaleClassName}`}
       >

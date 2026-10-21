@@ -3,6 +3,7 @@ import { ArrowRight, Calendar, Clock } from "lucide-react";
 import { auth } from "@/auth";
 import FadingBackground from "@/components/FadingBackground";
 import GlassButtonExact from "@/components/GlassButtonExact";
+import LiquidGlassCard from "@/components/LiquidGlassCard";
 import InstagramEmbed from "@/components/InstagramEmbed";
 import PartnerBar from "@/components/PartnerBar";
 import Reveal from "@/components/Reveal";
@@ -13,6 +14,17 @@ import { formatGameDate, formatGameTime } from "@/utils/format";
 import NextGameHeroCountdown from "@/components/NextGameHeroCountdown";
 
 const INSTAGRAM_POSTS = ["https://www.instagram.com/p/DVG8cgaDHBf/"];
+
+// The page photo as FadingBackground draws it; the glass card refracts a matching copy of it.
+const HERO_OPACITY = 0.55;
+const HERO_BLUR_PX = 1.5;
+const HERO_GLASS_BACKGROUND = {
+  src: "/_next/image?url=%2Fimages%2Fhero-stadium-tinted.jpg&w=1920&q=75",
+  mobileSrc: "/_next/image?url=%2Fimages%2Fhero-stadium-mobile.jpg&w=828&q=75",
+  opacity: HERO_OPACITY,
+  color: "#0a0f3d",
+  blurPx: HERO_BLUR_PX,
+};
 
 const shortTeamName = (teamId: string) => getTeamById(teamId)?.shortName ?? getTeamName(teamId);
 
@@ -25,8 +37,8 @@ export default async function Home() {
       <FadingBackground
         src="/images/hero-stadium-tinted.jpg"
         mobileSrc="/images/hero-stadium-mobile.jpg"
-        opacity={0.55}
-        blurPx={1.5}
+        opacity={HERO_OPACITY}
+        blurPx={HERO_BLUR_PX}
       >
       <section className="relative overflow-hidden px-7 pt-4 pb-8 sm:min-h-screen sm:px-6 sm:py-24">
         <div className="relative mx-auto max-w-4xl text-left sm:text-center">
@@ -41,7 +53,11 @@ export default async function Home() {
 
           {nextGame && (
             <Reveal>
-              <div className="glass-panel mx-auto mt-4 max-w-2xl p-3.5 text-left sm:mt-10 sm:p-8">
+              <LiquidGlassCard
+                className="mx-auto mt-4 max-w-2xl text-left sm:mt-10"
+                contentClassName="p-3.5 sm:p-8"
+                background={HERO_GLASS_BACKGROUND}
+              >
                 <h2 className="text-lg font-bold text-white sm:text-center sm:text-2xl">
                   Nächstes Spiel
                 </h2>
@@ -86,7 +102,7 @@ export default async function Home() {
                     </GlassButtonExact>
                   </div>
                 </div>
-              </div>
+              </LiquidGlassCard>
             </Reveal>
           )}
 
