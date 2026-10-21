@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 
 declare global {
   interface Window {
@@ -16,7 +16,23 @@ interface InstagramEmbedProps {
   url: string;
 }
 
+// Instagram's embed never gets narrower than this; in a narrower box its right edge would be cut off.
+const MIN_EMBED_WIDTH = 326;
+
 export default function InstagramEmbed({ url }: InstagramEmbedProps) {
+  const boxRef = useRef<HTMLDivElement>(null);
+  const [zoom, setZoom] = useState(1);
+
+  // In a box narrower than the embed's minimum, lay it out at the minimum and shrink it to fit.
+  useEffect(() => {
+    const box = boxRef.current;
+    if (!box) return;
+    const update = () => setZoom(Math.min(1, box.clientWidth / MIN_EMBED_WIDTH));
+    const observer = new ResizeObserver(update);
+    observer.observe(box);
+    return () => observer.disconnect();
+  }, []);
+
   useEffect(() => {
     const scriptId = "instagram-embed-script";
 
@@ -35,11 +51,15 @@ export default function InstagramEmbed({ url }: InstagramEmbedProps) {
   }, [url]);
 
   return (
-    <blockquote
-      className="instagram-media"
-      data-instgrm-permalink={`${url}?utm_source=ig_embed&utm_campaign=loading`}
-      data-instgrm-version="14"
-      style={{ background: "#FFF", border: 0, borderRadius: "12px", margin: 0, width: "100%" }}
-    />
+    <div ref={boxRef} className="w-full">
+      <div style={zoom < 1 ? { width: MIN_EMBED_WIDTH, zoom } : undefined}>
+        <blockquote
+          className="instagram-media"
+          data-instgrm-permalink={`${url}?utm_source=ig_embed&utm_campaign=loading`}
+          data-instgrm-version="14"
+          style={{ background: "#FFF", border: 0, borderRadius: "12px", margin: 0, width: "100%" }}
+        />
+      </div>
+    </div>
   );
 }

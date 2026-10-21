@@ -167,7 +167,7 @@ export default async function Home() {
                 {INSTAGRAM_POSTS.map((url) => (
                   <div
                     key={url}
-                    className="overflow-hidden rounded-2xl sm:w-80"
+                    className="overflow-hidden rounded-2xl sm:w-[340px]"
                   >
                     <InstagramEmbed url={url} />
                   </div>
