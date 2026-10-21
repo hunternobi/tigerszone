@@ -95,10 +95,10 @@ export default async function Home() {
                     </div>
                     <Link
                       href="/tippspiel"
-                      data-glass-button
-                      className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium whitespace-nowrap text-white sm:mt-3"
+                      className="inline-flex min-h-[44px] shrink-0 items-center justify-center gap-1.5 rounded-full bg-white px-5 text-[15px] font-semibold whitespace-nowrap text-tigers-primary shadow-[0_6px_18px_rgba(0,0,0,0.35)] transition duration-200 hover:bg-white/90 active:scale-[0.96] sm:mt-3"
                     >
-                      Jetzt Tippen
+                      Jetzt tippen
+                      <ArrowRight size={16} strokeWidth={2.5} />
                     </Link>
                   </div>
                 </div>
