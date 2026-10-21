@@ -29,8 +29,10 @@ export default function PartnerBar() {
   return (
     <Reveal>
       <div className="mx-auto mt-6 max-w-2xl sm:mt-12">
-        <h2 className="text-center text-2xl font-bold text-white sm:text-3xl">Unsere Partner</h2>
-        <p className="mx-auto mt-2 max-w-xl text-center text-sm text-white sm:mt-3 sm:text-base">
+        <h2 className="font-ui text-center text-[1.4rem] font-semibold tracking-tight text-white sm:text-3xl">
+          Unsere Partner
+        </h2>
+        <p className="mx-auto mt-1.5 max-w-xl text-center text-sm text-white/65 sm:mt-3 sm:text-base">
           Gemeinsam mit starken Partnern machen wir TigersZone möglich
         </p>
 
@@ -51,6 +53,7 @@ export default function PartnerBar() {
                 key={partner.name}
                 href={partner.href}
                 aria-label={partner.name}
+                data-liquid-glass="tile"
                 className={TILE_CLASS}
               >
                 {logo}
@@ -62,6 +65,7 @@ export default function PartnerBar() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={partner.name}
+                data-liquid-glass="tile"
                 className={TILE_CLASS}
               >
                 {logo}
