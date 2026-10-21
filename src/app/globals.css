@@ -176,6 +176,16 @@ h6 {
     backdrop-filter: none !important;
   }
 
+  /* The big card keeps its CSS rim, inner highlight and shadow on top of the refracting glass; this
+     is what gives it a defined edge. */
+  .lg-scene[data-webgl="true"] [data-liquid-glass="card"] {
+    border-color: rgba(255, 255, 255, 0.14);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.35),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.03),
+      0 8px 32px rgba(0, 0, 0, 0.35);
+  }
+
   .lg-scene[data-webgl="true"] a[data-liquid-glass]:hover {
     transform: none;
     filter: none;
