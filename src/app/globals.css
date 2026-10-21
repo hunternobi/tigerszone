@@ -169,10 +169,11 @@ h6 {
      lift, the shader's button effect takes over. */
   .lg-scene[data-webgl="true"] [data-liquid-glass] {
     background: none;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
     border-color: transparent;
     box-shadow: none;
+    /* !important: without it the CSS build drops this declaration, the surface keeps its blur and
+       frosts the glass drawn behind it. */
+    backdrop-filter: none !important;
   }
 
   .lg-scene[data-webgl="true"] a[data-liquid-glass]:hover {
