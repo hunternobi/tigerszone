@@ -47,17 +47,19 @@ export default function Header({ invites, notifications }: HeaderProps) {
   ];
 
   const mobileHidden = navLinks.filter((link) => !MOBILE_HREFS.has(link.href));
+  const isHome = pathname === "/";
 
   return (
     <header
       className={`absolute inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter] duration-300 md:fixed ${scrolled || mobileOpen ? "glass-bar" : ""}`}
     >
       <div className="mx-auto flex h-[4.5rem] max-w-7xl items-center justify-between px-7 sm:px-6">
-        {/* Logo + name as one glass capsule: reads as the "home" control and is easy to hit on a phone. */}
+        {/* Logo as a glass capsule; on every page but the start page it also says "Startseite", so it
+            reads as the way back home and is easy to hit on a phone. */}
         <Link
           href="/"
           aria-label={`${SITE_NAME} – zur Startseite`}
-          className="flex min-h-[40px] items-center gap-2 rounded-full border border-white/15 bg-white/10 py-1 pr-4 pl-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_4px_16px_rgba(0,0,0,0.25)] backdrop-blur-xl backdrop-saturate-150 transition duration-200 hover:bg-white/15 active:scale-[0.96]"
+          className={`flex min-h-[40px] items-center gap-2 rounded-full border border-white/15 bg-white/10 py-1 pl-1 ${isHome ? "pr-1" : "pr-4"} shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_4px_16px_rgba(0,0,0,0.25)] backdrop-blur-xl backdrop-saturate-150 transition duration-200 hover:bg-white/15 active:scale-[0.96]`}
         >
           <Image
             src="/images/TigersZone_Logo.png"
@@ -67,9 +69,11 @@ export default function Header({ invites, notifications }: HeaderProps) {
             className="h-8 w-8 rounded-full"
             priority
           />
-          <span className="font-ui text-[15px] font-semibold tracking-tight text-white">
-            {SITE_NAME}
-          </span>
+          {!isHome && (
+            <span className="font-ui text-[15px] font-semibold tracking-tight text-white">
+              Startseite
+            </span>
+          )}
         </Link>
 
         <nav className="hidden items-center gap-2 md:flex">
