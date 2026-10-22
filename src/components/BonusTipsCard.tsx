@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState, useTransition } from "react";
-import { Check, Clock } from "lucide-react";
+import { Clock } from "lucide-react";
+import SavedBadge, { SAVED_BADGE_MS } from "@/components/SavedBadge";
 import {
   submitBonusTip,
   type BonusField,
@@ -137,15 +138,19 @@ function BonusTipField({
       setSaved(next);
       setStatus("saved");
       if (savedTimeout.current) clearTimeout(savedTimeout.current);
-      savedTimeout.current = setTimeout(() => setStatus("idle"), 1800);
+      savedTimeout.current = setTimeout(
+        () => setStatus("idle"),
+        SAVED_BADGE_MS,
+      );
     });
   }
 
   return (
     <div>
-      <label className="mb-1.5 block text-[13px] font-medium text-white/70">
-        {label}
-      </label>
+      <div className="mb-1.5 flex h-[22px] items-center justify-between gap-2">
+        <label className="text-[13px] font-medium text-white/70">{label}</label>
+        {status === "saved" && <SavedBadge />}
+      </div>
       <CustomSelect
         value={value}
         onChange={handleChange}
@@ -156,12 +161,6 @@ function BonusTipField({
       {status === "error" && (
         <p className="mt-1.5 text-[11px] text-red-300">
           Konnte nicht gespeichert werden.
-        </p>
-      )}
-      {status === "saved" && (
-        <p className="mt-1.5 flex animate-[fadeIn_0.2s_ease-out] items-center gap-1 text-[11px] font-semibold text-emerald-300">
-          <Check size={11} />
-          Tipp gespeichert
         </p>
       )}
     </div>

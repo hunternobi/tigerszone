@@ -7,8 +7,8 @@ import {
   useTransition,
   type ChangeEvent,
 } from "react";
-import { Check } from "lucide-react";
 import PillButton from "@/components/PillButton";
+import SavedBadge, { SAVED_BADGE_MS } from "@/components/SavedBadge";
 import { submitPrediction } from "@/app/tippspiel/actions";
 import { SCORING } from "@/lib/constants";
 import { getTeamName } from "@/lib/teams";
@@ -111,7 +111,10 @@ function TippspielRow({
       setSaved({ predictedHome: homeNum, predictedAway: awayNum });
       setStatus("saved");
       if (savedTimeout.current) clearTimeout(savedTimeout.current);
-      savedTimeout.current = setTimeout(() => setStatus("idle"), 1800);
+      savedTimeout.current = setTimeout(
+        () => setStatus("idle"),
+        SAVED_BADGE_MS,
+      );
     });
   }
 
@@ -146,8 +149,17 @@ function TippspielRow({
             </span>
           )}
         </span>
-        <span className="text-xs whitespace-nowrap text-white/60">
-          {formatPostDate(game.kickoff)} · {formatGameTime(game.kickoff)} Uhr
+        <span className="relative text-xs whitespace-nowrap text-white/60">
+          <span
+            className={`transition-opacity duration-200 ${status === "saved" && !isDraw ? "opacity-0" : ""}`}
+          >
+            {formatPostDate(game.kickoff)} · {formatGameTime(game.kickoff)} Uhr
+          </span>
+          {status === "saved" && !isDraw && (
+            <span className="absolute inset-y-0 right-0 flex items-center">
+              <SavedBadge />
+            </span>
+          )}
         </span>
       </div>
       <div className="mt-2 grid grid-cols-[minmax(0,1fr)_3.25rem] items-center gap-x-3 gap-y-2 sm:mt-1 sm:grid-cols-[minmax(0,1fr)_2.75rem_auto_2.75rem_minmax(0,1fr)] sm:gap-x-2.5 sm:gap-y-0">
@@ -192,12 +204,6 @@ function TippspielRow({
       {!isDraw && status === "error" && (
         <p className="mt-1.5 text-center text-[11px] text-red-300">
           Tipp konnte nicht gespeichert werden.
-        </p>
-      )}
-      {!isDraw && status === "saved" && (
-        <p className="mt-1.5 flex animate-[fadeIn_0.2s_ease-out] items-center justify-center gap-1 text-center text-[11px] font-semibold text-emerald-300">
-          <Check size={12} />
-          Tipp gespeichert
         </p>
       )}
     </div>
