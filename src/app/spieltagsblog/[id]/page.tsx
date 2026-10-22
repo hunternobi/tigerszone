@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import FadingBackground from "@/components/FadingBackground";
+import LiquidGlassScene from "@/components/LiquidGlassScene";
+import { FANS_SCENE } from "@/lib/glassScenes";
 import { getBlogPostById } from "@/lib/blogPosts";
 import { formatPostDate } from "@/utils/format";
 
@@ -28,35 +30,41 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   if (!post) notFound();
 
   return (
-    <FadingBackground src="/images/Fans.jpg" opacity={0.55} blurPx={1.5}>
-      <section className="mx-auto max-w-3xl px-7 py-10 sm:px-6 sm:py-16">
-        <Link
-          href="/spieltagsblog"
-          className="inline-flex items-center gap-2 text-sm text-white hover:underline"
-        >
-          <ArrowLeft size={16} />
-          Zurück zum Spieltagsblog
-        </Link>
+    <FadingBackground
+      src="/images/Fans.jpg"
+      opacity={FANS_SCENE.opacity}
+      blurPx={FANS_SCENE.blurPx}
+    >
+      <LiquidGlassScene background={FANS_SCENE}>
+        <section className="mx-auto max-w-3xl px-7 py-10 sm:px-6 sm:py-16">
+          <Link
+            href="/spieltagsblog"
+            className="-ml-1 inline-flex min-h-[44px] items-center gap-0.5 text-[15px] font-medium text-white/85 transition hover:text-white"
+          >
+            <ChevronLeft size={20} />
+            Spieltagsblog
+          </Link>
 
-        <article className="glass-panel mt-6 p-5 sm:p-8">
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <h1 className="text-2xl font-bold text-white sm:text-3xl">{post.title}</h1>
-            <span className="shrink-0 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-semibold text-white">
+          <article data-liquid-glass="card" className="glass-panel mt-2 p-5 sm:p-8">
+            <p className="font-ui text-[11px] font-semibold tracking-[0.14em] text-white/60 uppercase sm:text-xs">
               {formatPostDate(post.publishedAt)}
-            </span>
-          </div>
+            </p>
+            <h1 className="font-ui mt-2 text-[26px] leading-[1.12] font-semibold tracking-tight text-balance text-white sm:text-4xl">
+              {post.title}
+            </h1>
 
-          <div className="mt-6 space-y-4 text-white">
-            {post.content.split("\n\n").map((paragraph, index) => (
-              <p key={index} className="whitespace-pre-line">
-                {paragraph}
-              </p>
-            ))}
-          </div>
+            <div className="mt-5 space-y-4 text-[17px] leading-[1.6] text-white/90">
+              {post.content.split("\n\n").map((paragraph, index) => (
+                <p key={index} className="whitespace-pre-line">
+                  {paragraph}
+                </p>
+              ))}
+            </div>
 
-          <p className="mt-4 text-right text-xs text-white">von {post.authorName}</p>
-        </article>
-      </section>
+            <p className="mt-6 text-right text-[13px] text-white/60">von {post.authorName}</p>
+          </article>
+        </section>
+      </LiquidGlassScene>
     </FadingBackground>
   );
 }

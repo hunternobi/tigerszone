@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 import FadingBackground from "@/components/FadingBackground";
-import GlassButtonExact from "@/components/GlassButtonExact";
+import LiquidGlassScene from "@/components/LiquidGlassScene";
+import { FANS_SCENE } from "@/lib/glassScenes";
+import PillButton from "@/components/PillButton";
 import { getAllBlogPosts } from "@/lib/blogPosts";
 import { formatExcerpt, formatPostDate } from "@/utils/format";
 
@@ -18,66 +22,84 @@ export default async function SpieltagsblogPage() {
 
   return (
     <>
-      <FadingBackground src="/images/Fans.jpg" opacity={0.55} blurPx={1.5}>
-        <section className="mx-auto max-w-5xl px-7 py-10 sm:px-6 sm:py-16">
-          <h1 className="text-3xl font-bold text-white">Spieltagsblog</h1>
+      <FadingBackground
+        src="/images/Fans.jpg"
+        opacity={FANS_SCENE.opacity}
+        blurPx={FANS_SCENE.blurPx}
+      >
+        <LiquidGlassScene background={FANS_SCENE}>
+          <section className="mx-auto max-w-3xl px-7 py-10 sm:px-6 sm:py-16">
+            <h1 className="font-ui text-[2.15rem] leading-[1.06] font-semibold tracking-tight text-white sm:text-5xl">
+              Spieltagsblog
+            </h1>
 
-          {!latestPost ? (
-            <p className="glass-panel mt-8 p-5 text-center text-white sm:p-8">
-              Noch keine Beiträge vorhanden.
-            </p>
-          ) : (
-            <article className="glass-panel mt-8 p-5 sm:p-8">
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <h2 className="text-xl font-bold text-white sm:text-3xl">{latestPost.title}</h2>
-                <span className="shrink-0 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-semibold text-white">
-                  {formatPostDate(latestPost.publishedAt)}
-                </span>
-              </div>
+            {!latestPost ? (
+              <p
+                data-liquid-glass="card"
+                className="glass-panel mt-8 p-5 text-center text-[17px] text-white/85 sm:p-8"
+              >
+                Noch keine Beiträge vorhanden.
+              </p>
+            ) : (
+              <article data-liquid-glass="card" className="glass-panel mt-6 p-5 sm:mt-8 sm:p-8">
+                <p className="font-ui text-[11px] font-semibold tracking-[0.14em] text-white/60 uppercase sm:text-xs">
+                  Neuester Beitrag · {formatPostDate(latestPost.publishedAt)}
+                </p>
+                <h2 className="font-ui mt-2 text-[24px] leading-[1.15] font-semibold tracking-tight text-balance text-white sm:text-4xl">
+                  {latestPost.title}
+                </h2>
 
-              <div className="mt-6 space-y-4 text-white">
-                {latestPost.content.split("\n\n").map((paragraph, index) => (
-                  <p key={index} className="whitespace-pre-line">
-                    {paragraph}
-                  </p>
-                ))}
-              </div>
-
-              <p className="mt-4 text-right text-xs text-white">von {latestPost.authorName}</p>
-            </article>
-          )}
-
-          {olderPosts.length > 0 && (
-            <div className="mt-12">
-              <h2 className="text-2xl font-bold text-white sm:text-3xl">Spieltagsarchiv</h2>
-
-              <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {olderPosts.map((post) => (
-                  <article
-                    key={post._id}
-                    className="glass-panel-sm glass-interactive flex flex-col p-5 sm:p-6"
-                  >
-                    <span className="w-fit shrink-0 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-semibold text-white">
-                      {formatPostDate(post.publishedAt)}
-                    </span>
-
-                    <h3 className="mt-4 text-lg font-bold text-white">{post.title}</h3>
-                    <p className="mt-2 flex-1 text-sm text-white">
-                      {formatExcerpt(post.content)}
+                <div className="mt-5 space-y-4 text-[17px] leading-[1.6] text-white/90">
+                  {latestPost.content.split("\n\n").map((paragraph, index) => (
+                    <p key={index} className="whitespace-pre-line">
+                      {paragraph}
                     </p>
+                  ))}
+                </div>
 
-                    <div className="mt-4 flex items-center justify-between gap-3 border-t border-white/10 pt-4">
-                      <span className="text-xs text-white">von {post.authorName}</span>
-                      <GlassButtonExact href={`/spieltagsblog/${post._id}`} size="0.75rem">
-                        Weiterlesen
-                      </GlassButtonExact>
-                    </div>
-                  </article>
-                ))}
+                <p className="mt-6 text-right text-[13px] text-white/60">
+                  von {latestPost.authorName}
+                </p>
+              </article>
+            )}
+
+            {olderPosts.length > 0 && (
+              <div className="mt-12">
+                <h2 className="font-ui text-[26px] font-semibold tracking-tight text-white sm:text-4xl">
+                  Spieltagsarchiv
+                </h2>
+
+                {/* One grouped list in a single glass card (like iOS settings), however many posts there are. */}
+                <ul
+                  data-liquid-glass="card"
+                  className="glass-panel mt-4 divide-y divide-white/10 p-1.5 sm:mt-5 sm:p-2"
+                >
+                  {olderPosts.map((post) => (
+                    <li key={post._id}>
+                      <Link
+                        href={`/spieltagsblog/${post._id}`}
+                        className="flex items-center gap-3 rounded-2xl px-3.5 py-4 transition hover:bg-white/10 active:bg-white/15 sm:px-4"
+                      >
+                        <span className="min-w-0 flex-1">
+                          <span className="block text-xs font-medium text-white/60">
+                            {formatPostDate(post.publishedAt)} · von {post.authorName}
+                          </span>
+                          <span className="font-ui mt-1 block text-[18px] leading-snug font-semibold tracking-tight text-white">
+                            {post.title}
+                          </span>
+                          <span className="mt-1 line-clamp-2 block text-[15px] leading-snug text-white/70">
+                            {formatExcerpt(post.content)}
+                          </span>
+                        </span>
+                        <ChevronRight size={20} className="shrink-0 text-white/50" />
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               </div>
-            </div>
-          )}
-        </section>
+            )}
+          </section>
+        </LiquidGlassScene>
       </FadingBackground>
 
       <section className="relative overflow-hidden border-t border-white/10 bg-tigers-primary px-7 py-12 text-center sm:px-6 sm:py-16">
@@ -87,19 +109,23 @@ export default async function SpieltagsblogPage() {
             alt=""
             width={550}
             height={309}
-            className="scale-110 opacity-55 blur-[1.5px]"
+            className="scale-110 opacity-40 blur-[1.5px]"
           />
         </div>
 
         <div className="relative">
-          <h2 className="text-3xl font-bold text-white">Über den Autor</h2>
-          <p className="mx-auto mt-3 max-w-xl text-white">
+          <h2 className="font-ui text-[2rem] leading-tight font-semibold tracking-tight text-white sm:text-5xl">
+            Über den Autor
+          </h2>
+          <p className="mx-auto mt-3 max-w-xl text-base leading-snug text-white/75 sm:text-lg">
             Ein besonderer Dank geht an unsere Freunde von der TigersCorner, die sich hier mit
             einbringen – lasst gerne auch bei ihnen Support da.
           </p>
-          <GlassButtonExact href="http://tigers-corner.de/" size="1rem" wrapperClassName="mt-6">
-            Zur TigersCorner
-          </GlassButtonExact>
+          <div className="mt-6">
+            <PillButton href="http://tigers-corner.de/" external>
+              Zur TigersCorner
+            </PillButton>
+          </div>
         </div>
       </section>
     </>
