@@ -5,6 +5,12 @@ import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState, useTransition, type FormEvent } from "react";
 import { registerAction } from "./actions";
+import AuthShell, {
+  AUTH_BUTTON_CLASS,
+  AUTH_LINK_CLASS,
+  AuthField,
+} from "@/components/AuthShell";
+import { PillActionButton } from "@/components/PillButton";
 
 function RegisterForm() {
   const [name, setName] = useState("");
@@ -32,7 +38,11 @@ function RegisterForm() {
         return;
       }
 
-      const signInResult = await signIn("credentials", { email, password, redirect: false });
+      const signInResult = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
       if (signInResult?.error) {
         setError("Konto erstellt. Bitte logge dich manuell ein.");
         return;
@@ -45,12 +55,16 @@ function RegisterForm() {
 
   if (checkEmail) {
     return (
-      <div className="glass-panel mt-8 p-6 text-center">
-        <p className="text-white">
-          Fast geschafft! Wir haben dir eine E-Mail an <strong>{email}</strong> geschickt.
-          Klicke auf den Bestätigungslink darin, um dein Konto zu aktivieren.
+      <div className="text-center">
+        <p className="font-ui text-[20px] font-semibold tracking-tight text-white">
+          Fast geschafft!
         </p>
-        <p className="mt-3 text-sm text-white/70">
+        <p className="mt-2 text-[16px] leading-snug text-white/85">
+          Wir haben dir eine E-Mail an{" "}
+          <strong className="text-white">{email}</strong> geschickt. Klicke auf
+          den Bestätigungslink darin, um dein Konto zu aktivieren.
+        </p>
+        <p className="mt-3 text-[14px] leading-snug text-white/60">
           Nichts angekommen? Bitte auch im Spam- bzw. Junk-Ordner nachschauen.
         </p>
       </div>
@@ -58,57 +72,48 @@ function RegisterForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="glass-panel mt-8 flex flex-col gap-4 p-6">
-      <div>
-        <label htmlFor="name" className="mb-1 block text-sm font-medium text-white">
-          Benutzername
-        </label>
-        <input
-          id="name"
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-          className="glass-panel-sm w-full px-4 py-2 text-white focus:outline-none"
-        />
-      </div>
-      <div>
-        <label htmlFor="email" className="mb-1 block text-sm font-medium text-white">
-          E-Mail
-        </label>
-        <input
-          id="email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          className="glass-panel-sm w-full px-4 py-2 text-white focus:outline-none"
-        />
-      </div>
-      <div>
-        <label htmlFor="password" className="mb-1 block text-sm font-medium text-white">
-          Passwort
-        </label>
-        <input
-          id="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          minLength={8}
-          className="glass-panel-sm w-full px-4 py-2 text-white focus:outline-none"
-        />
-      </div>
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <AuthField
+        id="name"
+        label="Benutzername"
+        type="text"
+        autoComplete="username"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        required
+      />
+      <AuthField
+        id="email"
+        label="E-Mail"
+        type="email"
+        autoComplete="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
+      />
+      <AuthField
+        id="password"
+        label="Passwort"
+        type="password"
+        autoComplete="new-password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        required
+        minLength={8}
+      />
+      <p className="-mt-2 text-[13px] text-white/55">Mindestens 8 Zeichen.</p>
 
-      {error && <p className="text-sm text-red-400">{error}</p>}
+      {error && (
+        <p className="text-[14px] leading-snug text-red-300">{error}</p>
+      )}
 
-      <button
+      <PillActionButton
         type="submit"
         disabled={isPending}
-        className="mt-2 rounded-full bg-tigers-secondary px-5 py-2 text-sm font-semibold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
+        className={`mt-1 ${AUTH_BUTTON_CLASS}`}
       >
         {isPending ? "Wird erstellt…" : "Konto erstellen"}
-      </button>
+      </PillActionButton>
     </form>
   );
 }
@@ -116,12 +121,14 @@ function RegisterForm() {
 function LoginLink() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl");
-  const href = callbackUrl ? `/login?callbackUrl=${encodeURIComponent(callbackUrl)}` : "/login";
+  const href = callbackUrl
+    ? `/login?callbackUrl=${encodeURIComponent(callbackUrl)}`
+    : "/login";
 
   return (
-    <p className="mt-4 text-center text-sm text-white">
+    <p>
       Schon registriert?{" "}
-      <Link href={href} className="text-tigers-secondary hover:underline">
+      <Link href={href} className={AUTH_LINK_CLASS}>
         Jetzt einloggen
       </Link>
     </p>
@@ -130,17 +137,18 @@ function LoginLink() {
 
 export default function RegisterPage() {
   return (
-    <section className="mx-auto max-w-md px-7 sm:px-6 py-16">
-      <h1 className="text-3xl font-bold text-white">Registrieren</h1>
-      <p className="mt-2 text-white">Werde Teil der TigersZone-Community und tippe mit.</p>
-
+    <AuthShell
+      title="Registrieren"
+      subtitle="Werde Teil der TigersZone-Community und tippe mit."
+      footer={
+        <Suspense fallback={null}>
+          <LoginLink />
+        </Suspense>
+      }
+    >
       <Suspense fallback={null}>
         <RegisterForm />
       </Suspense>
-
-      <Suspense fallback={null}>
-        <LoginLink />
-      </Suspense>
-    </section>
+    </AuthShell>
   );
 }

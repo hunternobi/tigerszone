@@ -3,6 +3,12 @@
 import Link from "next/link";
 import { useState, useTransition, type FormEvent } from "react";
 import { forgotPasswordAction } from "./actions";
+import AuthShell, {
+  AUTH_BUTTON_CLASS,
+  AUTH_LINK_CLASS,
+  AuthField,
+} from "@/components/AuthShell";
+import { PillActionButton } from "@/components/PillButton";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -24,52 +30,45 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <section className="mx-auto max-w-md px-7 sm:px-6 py-16">
-      <h1 className="text-3xl font-bold text-white">Passwort vergessen</h1>
-      <p className="mt-2 text-white">
-        Gib deine E-Mail-Adresse ein, wir schicken dir einen Link zum Zurücksetzen.
-      </p>
-
-      {sent ? (
-        <div className="glass-panel mt-8 p-6">
-          <p className="text-white">
-            Falls ein Konto mit dieser E-Mail-Adresse existiert, haben wir dir einen Link zum
-            Zurücksetzen deines Passworts geschickt.
-          </p>
-        </div>
-      ) : (
-        <form onSubmit={handleSubmit} className="glass-panel mt-8 flex flex-col gap-4 p-6">
-          <div>
-            <label htmlFor="email" className="mb-1 block text-sm font-medium text-white">
-              E-Mail
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="glass-panel-sm w-full px-4 py-2 text-white focus:outline-none"
-            />
-          </div>
-
-          {error && <p className="text-sm text-red-400">{error}</p>}
-
-          <button
-            type="submit"
-            disabled={isPending}
-            className="mt-2 rounded-full bg-tigers-secondary px-5 py-2 text-sm font-semibold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {isPending ? "Wird gesendet…" : "Link anfordern"}
-          </button>
-        </form>
-      )}
-
-      <p className="mt-4 text-center text-sm text-white">
-        <Link href="/login" className="text-tigers-secondary hover:underline">
+    <AuthShell
+      title="Passwort vergessen"
+      subtitle="Gib deine E-Mail-Adresse ein, wir schicken dir einen Link zum Zurücksetzen."
+      footer={
+        <Link href="/login" className={AUTH_LINK_CLASS}>
           Zurück zum Login
         </Link>
-      </p>
-    </section>
+      }
+    >
+      {sent ? (
+        <p className="text-center text-[16px] leading-snug text-white/85">
+          Falls ein Konto mit dieser E-Mail-Adresse existiert, haben wir dir
+          einen Link zum Zurücksetzen deines Passworts geschickt.
+        </p>
+      ) : (
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <AuthField
+            id="email"
+            label="E-Mail"
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+
+          {error && (
+            <p className="text-[14px] leading-snug text-red-300">{error}</p>
+          )}
+
+          <PillActionButton
+            type="submit"
+            disabled={isPending}
+            className={`mt-1 ${AUTH_BUTTON_CLASS}`}
+          >
+            {isPending ? "Wird gesendet…" : "Link anfordern"}
+          </PillActionButton>
+        </form>
+      )}
+    </AuthShell>
   );
 }

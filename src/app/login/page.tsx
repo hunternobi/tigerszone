@@ -5,13 +5,21 @@ import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState, useTransition, type FormEvent } from "react";
 import { resendVerificationEmail } from "@/app/register/actions";
+import AuthShell, {
+  AUTH_BUTTON_CLASS,
+  AUTH_LINK_CLASS,
+  AuthField,
+} from "@/components/AuthShell";
+import { PillActionButton } from "@/components/PillButton";
 
 function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [needsVerification, setNeedsVerification] = useState(false);
-  const [resendState, setResendState] = useState<"idle" | "sending" | "sent">("idle");
+  const [resendState, setResendState] = useState<"idle" | "sending" | "sent">(
+    "idle",
+  );
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -23,14 +31,22 @@ function LoginForm() {
     setNeedsVerification(false);
     setResendState("idle");
     startTransition(async () => {
-      const result = await signIn("credentials", { email, password, redirect: false });
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
       if (result?.code === "email-not-verified") {
         setNeedsVerification(true);
-        setError("Bitte bestätige zuerst deine E-Mail-Adresse. Schau in dein Postfach.");
+        setError(
+          "Bitte bestätige zuerst deine E-Mail-Adresse. Schau in dein Postfach.",
+        );
         return;
       }
       if (result?.code === "too-many-attempts") {
-        setError("Zu viele Login-Versuche. Bitte warte einige Minuten und versuche es erneut.");
+        setError(
+          "Zu viele Login-Versuche. Bitte warte einige Minuten und versuche es erneut.",
+        );
         return;
       }
       if (result?.error) {
@@ -48,7 +64,9 @@ function LoginForm() {
       const result = await resendVerificationEmail(email);
       if (!result.success) {
         setResendState("idle");
-        setError(result.error ?? "Bestätigungs-E-Mail konnte nicht gesendet werden.");
+        setError(
+          result.error ?? "Bestätigungs-E-Mail konnte nicht gesendet werden.",
+        );
         return;
       }
       setResendState("sent");
@@ -56,42 +74,36 @@ function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="glass-panel mt-8 flex flex-col gap-4 p-6">
-      <div>
-        <label htmlFor="email" className="mb-1 block text-sm font-medium text-white">
-          E-Mail
-        </label>
-        <input
-          id="email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          className="glass-panel-sm w-full px-4 py-2 text-white focus:outline-none"
-        />
-      </div>
-      <div>
-        <label htmlFor="password" className="mb-1 block text-sm font-medium text-white">
-          Passwort
-        </label>
-        <input
-          id="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          className="glass-panel-sm w-full px-4 py-2 text-white focus:outline-none"
-        />
-      </div>
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <AuthField
+        id="email"
+        label="E-Mail"
+        type="email"
+        autoComplete="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
+      />
+      <AuthField
+        id="password"
+        label="Passwort"
+        type="password"
+        autoComplete="current-password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        required
+      />
 
-      {error && <p className="text-sm text-red-400">{error}</p>}
+      {error && (
+        <p className="text-[14px] leading-snug text-red-300">{error}</p>
+      )}
 
       {needsVerification && (
         <button
           type="button"
           onClick={handleResend}
           disabled={resendState !== "idle"}
-          className="text-left text-sm text-tigers-secondary hover:underline disabled:cursor-not-allowed disabled:opacity-60"
+          className={`${AUTH_LINK_CLASS} text-left text-[14px] disabled:cursor-not-allowed disabled:opacity-60`}
         >
           {resendState === "sent"
             ? "Bestätigungs-E-Mail erneut gesendet."
@@ -101,52 +113,57 @@ function LoginForm() {
         </button>
       )}
 
-      <Link href="/forgot-password" className="text-sm text-tigers-secondary hover:underline">
-        Passwort vergessen?
-      </Link>
-
-      <button
+      <PillActionButton
         type="submit"
         disabled={isPending}
-        className="mt-2 rounded-full bg-tigers-secondary px-5 py-2 text-sm font-semibold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
-        style={{ transform: "translateZ(0)" }}
+        className={`mt-1 ${AUTH_BUTTON_CLASS}`}
       >
         <span key={isPending ? "pending" : "idle"}>
           {isPending ? "Wird eingeloggt…" : "Einloggen"}
         </span>
-      </button>
+      </PillActionButton>
+
+      <Link
+        href="/forgot-password"
+        className="text-center text-[15px] text-white/70 transition hover:text-white"
+      >
+        Passwort vergessen?
+      </Link>
     </form>
-  );
-}
-
-export default function LoginPage() {
-  return (
-    <section className="mx-auto max-w-md px-7 sm:px-6 py-16">
-      <h1 className="text-3xl font-bold text-white">Login</h1>
-      <p className="mt-2 text-white">Melde dich an, um mitzutippen.</p>
-
-      <Suspense fallback={null}>
-        <LoginForm />
-      </Suspense>
-
-      <Suspense fallback={null}>
-        <RegisterLink />
-      </Suspense>
-    </section>
   );
 }
 
 function RegisterLink() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl");
-  const href = callbackUrl ? `/register?callbackUrl=${encodeURIComponent(callbackUrl)}` : "/register";
+  const href = callbackUrl
+    ? `/register?callbackUrl=${encodeURIComponent(callbackUrl)}`
+    : "/register";
 
   return (
-    <p className="mt-4 text-center text-sm text-white">
+    <p>
       Noch kein Konto?{" "}
-      <Link href={href} className="text-tigers-secondary hover:underline">
+      <Link href={href} className={AUTH_LINK_CLASS}>
         Jetzt registrieren
       </Link>
     </p>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <AuthShell
+      title="Login"
+      subtitle="Melde dich an, um mitzutippen."
+      footer={
+        <Suspense fallback={null}>
+          <RegisterLink />
+        </Suspense>
+      }
+    >
+      <Suspense fallback={null}>
+        <LoginForm />
+      </Suspense>
+    </AuthShell>
   );
 }
