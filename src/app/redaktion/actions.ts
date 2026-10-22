@@ -52,6 +52,7 @@ export async function createBlogPost(
   });
 
   revalidatePath("/spieltagsblog");
+  revalidatePath("/spieltagsblog/archiv");
   revalidatePath("/redaktion");
 
   return { success: true };
@@ -68,6 +69,7 @@ export async function deleteBlogPost(postId: string): Promise<ActionResult> {
   await BlogPostModel.deleteOne({ _id: postId });
 
   revalidatePath("/spieltagsblog");
+  revalidatePath("/spieltagsblog/archiv");
   revalidatePath("/redaktion");
 
   return { success: true };

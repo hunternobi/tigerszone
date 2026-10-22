@@ -12,7 +12,9 @@ interface BlogPostPageProps {
   params: Promise<{ id: string }>;
 }
 
-export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: BlogPostPageProps): Promise<Metadata> {
   const { id } = await params;
   const post = await getBlogPostById(id);
   if (!post) return { title: "Beitrag nicht gefunden" };
@@ -45,7 +47,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             Spieltagsblog
           </Link>
 
-          <article data-liquid-glass="card" className="glass-panel mt-2 p-5 sm:p-8">
+          <article
+            data-liquid-glass="card"
+            className="glass-panel mt-2 p-5 sm:p-8"
+          >
             <p className="font-ui text-[11px] font-semibold tracking-[0.14em] text-white/60 uppercase sm:text-xs">
               {formatPostDate(post.publishedAt)}
             </p>
@@ -61,7 +66,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               ))}
             </div>
 
-            <p className="mt-6 text-right text-[13px] text-white/60">von {post.authorName}</p>
+            <p className="mt-6 text-right text-[13px] text-white/60">
+              von {post.authorName}
+            </p>
           </article>
         </section>
       </LiquidGlassScene>

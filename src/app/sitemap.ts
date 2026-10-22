@@ -3,7 +3,7 @@ import { SITE_URL } from "@/lib/constants";
 import { getAllBlogPosts } from "@/lib/blogPosts";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const routes = ["", "/tippspiel", "/spieltagsblog", "/community"];
+  const routes = ["", "/tippspiel", "/spieltagsblog", "/spieltagsblog/archiv", "/community"];
   const posts = await getAllBlogPosts();
 
   return [
