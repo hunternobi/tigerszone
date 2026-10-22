@@ -2,8 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { Calendar, Clock } from "lucide-react";
-import { getTeamName } from "@/lib/teams";
+import { getTeamById, getTeamName } from "@/lib/teams";
 import { formatGameDate, formatGameTime } from "@/utils/format";
+
+const shortTeamName = (teamId: string) =>
+  getTeamById(teamId)?.shortName ?? getTeamName(teamId);
 
 function formatRemaining(ms: number): string {
   if (ms <= 0) return "Anpfiff läuft";
@@ -33,35 +36,59 @@ export default function NextGameCountdown({
   const [now, setNow] = useState<number | null>(null);
 
   useEffect(() => {
-    setNow(Date.now());
-    const interval = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(interval);
+    // Timer callbacks only: setting state straight in the effect body would render twice.
+    const tick = () => setNow(Date.now());
+    const first = setTimeout(tick, 0);
+    const interval = setInterval(tick, 1000);
+    return () => {
+      clearTimeout(first);
+      clearInterval(interval);
+    };
   }, [kickoff]);
 
-  if (now === null) return null;
+  const remaining = now === null ? null : new Date(kickoff).getTime() - now;
+  const isUrgent =
+    remaining !== null && remaining > 0 && remaining <= 10 * 60 * 1000;
 
-  const remaining = new Date(kickoff).getTime() - now;
-  const isUrgent = remaining > 0 && remaining <= 10 * 60 * 1000;
-
+  // The card itself always renders (it is a glass surface that must exist when the shader starts);
+  // only the live countdown waits for the client clock.
   return (
-    <div className="glass-panel-sm mt-4 grid grid-cols-[1fr_auto] items-center gap-x-3 gap-y-0.5 p-3 sm:p-4">
-      <p className="text-xs font-semibold tracking-wide text-white uppercase">Nächstes Spiel</p>
-      <p
-        className={`col-start-2 row-start-1 text-sm font-semibold whitespace-nowrap sm:row-span-3 sm:text-base ${
-          isUrgent ? "text-red-400" : "text-white"
-        }`}
-      >
-        {formatRemaining(remaining)}
-      </p>
-      <p className="col-span-2 text-base font-bold text-white sm:col-span-1">
-        {getTeamName(homeTeamId)} vs. {getTeamName(awayTeamId)}
-      </p>
-      <div className="col-span-2 mt-0.5 flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-white sm:col-span-1">
-        <span className="flex items-center gap-1">
-          <Calendar size={12} /> {formatGameDate(kickoff)}
+    <div
+      data-liquid-glass="card"
+      className="glass-panel mt-5 p-4 sm:mt-6 sm:p-5"
+    >
+      <div className="flex items-baseline justify-between gap-3">
+        <p className="font-ui text-[11px] font-semibold tracking-[0.14em] text-white/60 uppercase sm:text-xs">
+          Nächstes Spiel
+        </p>
+        <p
+          className={`font-ui text-[13px] font-semibold whitespace-nowrap tabular-nums sm:text-sm ${
+            isUrgent ? "text-red-400" : "text-white/85"
+          }`}
+        >
+          {remaining === null ? " " : formatRemaining(remaining)}
+        </p>
+      </div>
+
+      <p className="font-ui mt-1.5 text-[22px] leading-[1.15] font-semibold tracking-tight text-balance text-white sm:text-3xl">
+        <span className="sm:hidden">
+          {shortTeamName(homeTeamId)}{" "}
+          <span className="font-medium text-white/50">vs.</span>{" "}
+          {shortTeamName(awayTeamId)}
         </span>
-        <span className="flex items-center gap-1">
-          <Clock size={12} /> {formatGameTime(kickoff)} Uhr
+        <span className="hidden sm:inline">
+          {getTeamName(homeTeamId)}{" "}
+          <span className="font-medium text-white/50">vs.</span>{" "}
+          {getTeamName(awayTeamId)}
+        </span>
+      </p>
+
+      <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-[13px] text-white/70 sm:text-sm">
+        <span className="flex items-center gap-1.5">
+          <Calendar size={13} /> {formatGameDate(kickoff)}
+        </span>
+        <span className="flex items-center gap-1.5">
+          <Clock size={13} /> {formatGameTime(kickoff)} Uhr
         </span>
       </div>
     </div>

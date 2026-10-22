@@ -1,8 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition, type ChangeEvent } from "react";
-import Link from "next/link";
+import {
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+  type ChangeEvent,
+} from "react";
 import { Check } from "lucide-react";
+import PillButton from "@/components/PillButton";
 import { submitPrediction } from "@/app/tippspiel/actions";
 import { SCORING } from "@/lib/constants";
 import { getTeamName } from "@/lib/teams";
@@ -29,7 +35,9 @@ function sanitizeDigits(value: string): string {
 function advanceFocus(current: HTMLInputElement) {
   setTimeout(() => {
     const inputs = Array.from(
-      document.querySelectorAll<HTMLInputElement>("input[data-tip-input]:not(:disabled)")
+      document.querySelectorAll<HTMLInputElement>(
+        "input[data-tip-input]:not(:disabled)",
+      ),
     );
     const index = inputs.indexOf(current);
     const next = index >= 0 ? inputs[index + 1] : undefined;
@@ -50,13 +58,27 @@ interface TippspielRowProps {
   started: boolean;
 }
 
-function TippspielRow({ index, game, initial, disabled, started }: TippspielRowProps) {
-  const [home, setHome] = useState(initial ? String(initial.predictedHome) : "");
-  const [away, setAway] = useState(initial ? String(initial.predictedAway) : "");
+function TippspielRow({
+  index,
+  game,
+  initial,
+  disabled,
+  started,
+}: TippspielRowProps) {
+  const [home, setHome] = useState(
+    initial ? String(initial.predictedHome) : "",
+  );
+  const [away, setAway] = useState(
+    initial ? String(initial.predictedAway) : "",
+  );
   const [saved, setSaved] = useState<PredictionInfo | undefined>(initial);
-  const [status, setStatus] = useState<"idle" | "saving" | "error" | "saved">("idle");
+  const [status, setStatus] = useState<"idle" | "saving" | "error" | "saved">(
+    "idle",
+  );
   const [isPending, startTransition] = useTransition();
-  const savedTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const savedTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
 
   useEffect(() => {
     return () => {
@@ -72,7 +94,12 @@ function TippspielRow({ index, game, initial, disabled, started }: TippspielRowP
     const homeNum = Number(nextHome);
     const awayNum = Number(nextAway);
     if (homeNum === awayNum) return;
-    if (saved && saved.predictedHome === homeNum && saved.predictedAway === awayNum) return;
+    if (
+      saved &&
+      saved.predictedHome === homeNum &&
+      saved.predictedAway === awayNum
+    )
+      return;
 
     setStatus("saving");
     startTransition(async () => {
@@ -97,29 +124,34 @@ function TippspielRow({ index, game, initial, disabled, started }: TippspielRowP
   }
 
   const inputClass = (invalid: boolean) =>
-    `h-11 w-full rounded-lg border text-center text-[16px] font-semibold text-white focus:outline-none disabled:opacity-40 sm:h-8 sm:text-sm ${
+    `h-11 w-full rounded-xl border text-center text-[17px] font-semibold tabular-nums text-white transition focus:outline-none disabled:opacity-40 sm:h-9 sm:text-base ${
       invalid
-        ? "border-red-500 focus:border-red-500"
-        : "border-white/15 bg-white/5 focus:border-tigers-secondary"
+        ? "border-red-500/80 bg-red-500/10 focus:border-red-400"
+        : "border-white/15 bg-white/10 focus:border-white/60 focus:bg-white/15"
     }`;
 
   return (
-    <div className={`rounded-lg px-3 py-3 odd:bg-white/5 sm:px-3 sm:py-2 ${started ? "opacity-60" : ""}`}>
+    <div
+      className={`px-3 py-3.5 sm:px-4 sm:py-3 ${started ? "opacity-60" : ""}`}
+    >
       <div className="flex items-center justify-between gap-2">
-        <span className="flex items-center gap-2 text-xs whitespace-nowrap text-white/60">
+        <span className="flex items-center gap-2 text-xs font-medium whitespace-nowrap text-white/60">
           {index}. Spieltag
           {game.isDerby && (
-            <span title="Derby" className="rounded-full border border-amber-300/30 bg-amber-500/15 px-2 py-0.5 text-[10px] font-bold tracking-wide text-amber-100 uppercase">
+            <span
+              title="Derby"
+              className="rounded-full border border-amber-300/30 bg-amber-500/15 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-amber-100 uppercase"
+            >
               Doppelte Punkte
             </span>
           )}
         </span>
-        <span className="text-xs whitespace-nowrap text-white/50">
+        <span className="text-xs whitespace-nowrap text-white/60">
           {formatPostDate(game.kickoff)} · {formatGameTime(game.kickoff)} Uhr
         </span>
       </div>
       <div className="mt-2 grid grid-cols-[minmax(0,1fr)_3.25rem] items-center gap-x-3 gap-y-2 sm:mt-1 sm:grid-cols-[minmax(0,1fr)_2.75rem_auto_2.75rem_minmax(0,1fr)] sm:gap-x-2.5 sm:gap-y-0">
-        <span className="col-start-1 row-start-1 text-left text-[0.9375rem] font-medium text-white sm:col-auto sm:row-auto sm:text-right sm:text-sm">
+        <span className="col-start-1 row-start-1 text-left font-ui text-[17px] font-medium tracking-tight text-white sm:col-auto sm:row-auto sm:text-right sm:text-base">
           {getTeamName(game.homeTeamId)}
         </span>
         <input
@@ -133,7 +165,9 @@ function TippspielRow({ index, game, initial, disabled, started }: TippspielRowP
           aria-label={`Tipp Heimtore ${getTeamName(game.homeTeamId)}`}
           className={`col-start-2 row-start-1 sm:col-auto sm:row-auto ${inputClass(isDraw)}`}
         />
-        <span className="hidden text-center text-sm text-white/60 sm:block">:</span>
+        <span className="hidden text-center text-base text-white/60 sm:block">
+          :
+        </span>
         <input
           type="text"
           inputMode="numeric"
@@ -145,23 +179,23 @@ function TippspielRow({ index, game, initial, disabled, started }: TippspielRowP
           aria-label={`Tipp Auswärtstore ${getTeamName(game.awayTeamId)}`}
           className={`col-start-2 row-start-2 sm:col-auto sm:row-auto ${inputClass(isDraw)}`}
         />
-        <span className="col-start-1 row-start-2 text-left text-[0.9375rem] font-medium text-white sm:col-auto sm:row-auto sm:text-sm">
+        <span className="col-start-1 row-start-2 text-left font-ui text-[17px] font-medium tracking-tight text-white sm:col-auto sm:row-auto sm:text-base">
           {getTeamName(game.awayTeamId)}
         </span>
       </div>
 
       {isDraw && (
-        <p className="mt-1 text-center text-[10px] text-red-400">
+        <p className="mt-1.5 text-center text-[11px] text-red-300">
           Ungültiger Tipp – ein Unentschieden ist nicht möglich.
         </p>
       )}
       {!isDraw && status === "error" && (
-        <p className="mt-1 text-center text-[10px] text-red-400">
+        <p className="mt-1.5 text-center text-[11px] text-red-300">
           Tipp konnte nicht gespeichert werden.
         </p>
       )}
       {!isDraw && status === "saved" && (
-        <p className="mt-1 flex animate-[fadeIn_0.2s_ease-out] items-center justify-center gap-1 text-center text-[10px] font-semibold text-emerald-400">
+        <p className="mt-1.5 flex animate-[fadeIn_0.2s_ease-out] items-center justify-center gap-1 text-center text-[11px] font-semibold text-emerald-300">
           <Check size={12} />
           Tipp gespeichert
         </p>
@@ -184,11 +218,17 @@ function CompetitionTable({
   if (games.length === 0) return null;
 
   return (
-    <div className="mt-8 first:mt-0">
-      <h3 className="text-lg font-bold text-white">{title}</h3>
-      <div className="glass-panel-sm mt-3 divide-y divide-white/5 p-2 sm:p-3">
+    <div className="first:mt-0">
+      <h2 className="font-ui text-[22px] font-semibold tracking-tight text-white sm:text-3xl">
+        {title}
+      </h2>
+      <div
+        data-liquid-glass="card"
+        className="glass-panel mt-3 divide-y divide-white/10 p-1.5 sm:p-2"
+      >
         {games.map((game, index) => {
-          const deadlinePassed = game.status !== "scheduled" || new Date(game.kickoff) <= new Date();
+          const deadlinePassed =
+            game.status !== "scheduled" || new Date(game.kickoff) <= new Date();
           return (
             <TippspielRow
               key={game._id}
@@ -200,24 +240,43 @@ function CompetitionTable({
             />
           );
         })}
-        <div className="pt-3 pb-1 lg:hidden">
+        <div className="px-2 pt-4 pb-2 lg:hidden">
           <div className="grid grid-cols-3 gap-2 text-center">
             {[
               { points: SCORING.WINNER, label: "Richtiger Sieger" },
-              { points: SCORING.GOAL_DIFF - SCORING.WINNER, label: "Richtige Tordifferenz" },
-              { points: SCORING.EXACT_SCORE - SCORING.GOAL_DIFF, label: "Richtiges Ergebnis" },
+              {
+                points: SCORING.GOAL_DIFF - SCORING.WINNER,
+                label: "Richtige Tordifferenz",
+              },
+              {
+                points: SCORING.EXACT_SCORE - SCORING.GOAL_DIFF,
+                label: "Richtiges Ergebnis",
+              },
             ].map((rule) => (
-              <div key={rule.label} className="rounded-xl bg-white/5 px-1 py-2">
-                <p className="text-base font-bold text-white">+{rule.points}</p>
-                <p className="text-[11px] leading-tight text-white/70">{rule.label}</p>
+              <div
+                key={rule.label}
+                className="rounded-2xl bg-white/10 px-1 py-2.5"
+              >
+                <p className="font-ui text-lg font-semibold tabular-nums text-white">
+                  +{rule.points}
+                </p>
+                <p className="text-[11px] leading-tight text-white/70">
+                  {rule.label}
+                </p>
               </div>
             ))}
           </div>
-          <div className="mt-2 flex items-center justify-center gap-2 rounded-xl bg-white/5 px-1 py-2 text-center">
-            <p className="text-base font-bold text-white">×{SCORING.DERBY_MULTIPLIER}</p>
-            <p className="text-[11px] leading-tight text-white/70">Derbys zählen doppelt</p>
+          <div className="mt-2 flex items-center justify-center gap-2 rounded-2xl bg-white/10 px-1 py-2.5 text-center">
+            <p className="font-ui text-lg font-semibold text-white">
+              ×{SCORING.DERBY_MULTIPLIER}
+            </p>
+            <p className="text-[11px] leading-tight text-white/70">
+              Derbys zählen doppelt
+            </p>
           </div>
-          <p className="mt-2 text-center text-xs text-white/60">Tippabgabe endet mit Spielbeginn</p>
+          <p className="mt-2 text-center text-xs text-white/60">
+            Tippabgabe endet mit Spielbeginn
+          </p>
         </div>
       </div>
     </div>
@@ -232,13 +291,15 @@ export default function TippspielTable({
   return (
     <div>
       {!isAuthenticated && (
-        <p className="glass-panel-sm mb-6 p-4 text-center text-sm text-white">
-          Bitte{" "}
-          <Link href="/login" className="text-tigers-secondary hover:underline">
-            einloggen
-          </Link>
-          , um zu tippen.
-        </p>
+        <div
+          data-liquid-glass="card"
+          className="glass-panel mb-8 flex flex-wrap items-center justify-between gap-x-4 gap-y-3 p-4 sm:p-5"
+        >
+          <p className="font-ui text-[17px] font-semibold tracking-tight text-white">
+            Melde dich an, um zu tippen.
+          </p>
+          <PillButton href="/login">Einloggen</PillButton>
+        </div>
       )}
 
       <CompetitionTable

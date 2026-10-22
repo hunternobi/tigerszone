@@ -17,6 +17,8 @@ interface LeaderboardProps {
   title?: string;
   medals?: boolean;
   footer?: ReactNode;
+  /** Renders only the content: the caller provides the surrounding glass panel. */
+  bare?: boolean;
 }
 
 const MEDALS = ["🥇", "🥈", "🥉"];
@@ -26,7 +28,11 @@ const ROLE_BADGES = {
   assistant: { Icon: MdOutlineEditNote, label: "Assistant Coach" },
 } as const;
 
-export function RoleBadge({ role }: { role?: "owner" | "assistant" | "member" }) {
+export function RoleBadge({
+  role,
+}: {
+  role?: "owner" | "assistant" | "member";
+}) {
   if (role !== "owner" && role !== "assistant") return null;
   const { Icon, label } = ROLE_BADGES[role];
   return (
@@ -60,39 +66,53 @@ export default function Leaderboard({
   title = "Rangliste",
   medals = false,
   footer,
+  bare = false,
 }: LeaderboardProps) {
   return (
-    <div className="glass-panel p-4 sm:p-6">
-      <h3 className="mb-4 text-lg font-bold text-white">{title}</h3>
+    <div className={bare ? "" : "glass-panel p-5 sm:p-6"}>
+      <h3 className="font-ui mb-3 text-xl font-semibold tracking-tight text-white">
+        {title}
+      </h3>
       {entries.length === 0 ? (
-        <p className="text-sm text-white">Noch keine Einträge vorhanden.</p>
+        <p className="text-[15px] text-white/70">
+          Noch keine Einträge vorhanden.
+        </p>
       ) : (
-        <ol className="space-y-2">
+        <ol className="divide-y divide-white/10">
           {entries.map((entry, index) => (
             <li
               key={entry.userId}
-              className="flex items-center justify-between gap-3 rounded-lg px-3 py-2 odd:bg-white/5"
+              className="flex items-center justify-between gap-3 py-2.5"
             >
               <span className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-1 text-white">
                 <span className="flex min-w-0 items-center gap-2">
-                  <span className={medals ? "shrink-0 text-lg" : "shrink-0 text-tigers-secondary"}>
+                  <span
+                    className={
+                      medals
+                        ? "shrink-0 text-lg"
+                        : "shrink-0 text-tigers-secondary"
+                    }
+                  >
                     {medals ? MEDALS[index] : `${index + 1}.`}
                   </span>
-                  <Link href={`/spieler/${entry.userId}`} className="break-words hover:underline">
+                  <Link
+                    href={`/spieler/${entry.userId}`}
+                    className="break-words hover:underline"
+                  >
                     {entry.name}
                   </Link>
                   <TrendIcon trend={entry.trend} />
                 </span>
                 <RoleBadge role={entry.role} />
               </span>
-              <span className="shrink-0 font-semibold whitespace-nowrap text-white">
+              <span className="shrink-0 font-semibold tabular-nums whitespace-nowrap text-white">
                 {entry.points} Pkt.
               </span>
             </li>
           ))}
         </ol>
       )}
-      {footer && <div className="mt-3">{footer}</div>}
+      {footer && <div className="mt-4">{footer}</div>}
     </div>
   );
 }

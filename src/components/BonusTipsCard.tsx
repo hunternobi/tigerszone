@@ -2,7 +2,11 @@
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import { Check, Clock } from "lucide-react";
-import { submitBonusTip, type BonusField, type MyBonusPrediction } from "@/app/tippspiel/bonusActions";
+import {
+  submitBonusTip,
+  type BonusField,
+  type MyBonusPrediction,
+} from "@/app/tippspiel/bonusActions";
 import { DEL_CLUBS } from "@/lib/delClubs";
 import { TIGERS_SKATERS } from "@/lib/tigersRoster";
 import CustomSelect from "@/components/CustomSelect";
@@ -30,9 +34,14 @@ function DeadlineCountdown({ deadline }: { deadline: string }) {
   const [now, setNow] = useState<number | null>(null);
 
   useEffect(() => {
-    setNow(Date.now());
-    const interval = setInterval(() => setNow(Date.now()), 30000);
-    return () => clearInterval(interval);
+    // Timer callbacks only: setting state straight in the effect body would render twice.
+    const tick = () => setNow(Date.now());
+    const first = setTimeout(tick, 0);
+    const interval = setInterval(tick, 30000);
+    return () => {
+      clearTimeout(first);
+      clearInterval(interval);
+    };
   }, [deadline]);
 
   if (now === null) return null;
@@ -40,7 +49,7 @@ function DeadlineCountdown({ deadline }: { deadline: string }) {
   const remaining = new Date(deadline).getTime() - now;
 
   return (
-    <span className="flex shrink-0 items-center gap-1 text-[11px] font-semibold whitespace-nowrap text-amber-100/90 sm:text-xs">
+    <span className="flex shrink-0 items-center gap-1 rounded-full border border-amber-300/30 bg-amber-500/15 px-2.5 py-1 text-[11px] font-semibold whitespace-nowrap text-amber-100 sm:text-xs">
       <Clock size={12} className="shrink-0" />
       {formatRemaining(remaining)}
     </span>
@@ -58,7 +67,10 @@ const PLACEMENT_OPTIONS = Array.from({ length: 14 }, (_, i) => ({
   label: `${i + 1}. Platz`,
 }));
 
-const CLUB_OPTIONS = DEL_CLUBS.map((club) => ({ value: club.id, label: club.name }));
+const CLUB_OPTIONS = DEL_CLUBS.map((club) => ({
+  value: club.id,
+  label: club.name,
+}));
 
 const SKATER_OPTIONS = TIGERS_SKATERS.map((player) => ({
   value: player.id,
@@ -66,10 +78,26 @@ const SKATER_OPTIONS = TIGERS_SKATERS.map((player) => ({
 }));
 
 const FIELDS: FieldConfig[] = [
-  { field: "hauptrundensieger", label: "Hauptrundensieger", options: CLUB_OPTIONS },
-  { field: "platzierungTigers", label: "Platzierung der Tigers", options: PLACEMENT_OPTIONS },
-  { field: "topscorerTigers", label: "Topscorer der Tigers", options: SKATER_OPTIONS },
-  { field: "meisteToreTigers", label: "Meiste Tore bei den Tigers", options: SKATER_OPTIONS },
+  {
+    field: "hauptrundensieger",
+    label: "Hauptrundensieger",
+    options: CLUB_OPTIONS,
+  },
+  {
+    field: "platzierungTigers",
+    label: "Platzierung der Tigers",
+    options: PLACEMENT_OPTIONS,
+  },
+  {
+    field: "topscorerTigers",
+    label: "Topscorer der Tigers",
+    options: SKATER_OPTIONS,
+  },
+  {
+    field: "meisteToreTigers",
+    label: "Meiste Tore bei den Tigers",
+    options: SKATER_OPTIONS,
+  },
 ];
 
 function BonusTipField({
@@ -81,9 +109,13 @@ function BonusTipField({
 }: FieldConfig & { initialValue: string; disabled: boolean }) {
   const [value, setValue] = useState(initialValue);
   const [saved, setSaved] = useState(initialValue);
-  const [status, setStatus] = useState<"idle" | "saving" | "error" | "saved">("idle");
+  const [status, setStatus] = useState<"idle" | "saving" | "error" | "saved">(
+    "idle",
+  );
   const [isPending, startTransition] = useTransition();
-  const savedTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const savedTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
 
   useEffect(() => {
     return () => {
@@ -111,7 +143,9 @@ function BonusTipField({
 
   return (
     <div>
-      <label className="mb-1 block text-xs font-semibold text-amber-100/90">{label}</label>
+      <label className="mb-1.5 block text-[13px] font-medium text-white/70">
+        {label}
+      </label>
       <CustomSelect
         value={value}
         onChange={handleChange}
@@ -119,9 +153,13 @@ function BonusTipField({
         disabled={disabled || isPending}
         aria-label={label}
       />
-      {status === "error" && <p className="mt-1 text-[11px] text-red-400">Konnte nicht gespeichert werden.</p>}
+      {status === "error" && (
+        <p className="mt-1.5 text-[11px] text-red-300">
+          Konnte nicht gespeichert werden.
+        </p>
+      )}
       {status === "saved" && (
-        <p className="mt-1 flex animate-[fadeIn_0.2s_ease-out] items-center gap-1 text-[11px] font-semibold text-emerald-400">
+        <p className="mt-1.5 flex animate-[fadeIn_0.2s_ease-out] items-center gap-1 text-[11px] font-semibold text-emerald-300">
           <Check size={11} />
           Tipp gespeichert
         </p>
@@ -130,35 +168,48 @@ function BonusTipField({
   );
 }
 
-export default function BonusTipsCard({ initial, isAuthenticated, deadline }: BonusTipsCardProps) {
+export default function BonusTipsCard({
+  initial,
+  isAuthenticated,
+  deadline,
+}: BonusTipsCardProps) {
   const disabled = !isAuthenticated;
 
   return (
-    <div className="glass-panel mb-8 border border-amber-300/30 bg-gradient-to-br from-amber-500/15 via-amber-400/5 to-transparent p-4 sm:p-6">
-      <div className="flex flex-wrap items-start justify-between gap-2">
-        <h2 className="text-lg font-bold text-amber-100">Bonustipps</h2>
-        {deadline && <DeadlineCountdown deadline={deadline} />}
-      </div>
-      <p className="mt-2 text-sm text-amber-50/90">
-        Tippe vor der Saison und sichere dir zusätzliche Punkte, jeder richtige Bonustipp erhält
-        10 Extrapunkte am Ende der Hauptrunde.
-      </p>
+    <div data-liquid-glass="card" className="glass-panel p-4 sm:p-6">
+      {/* Amber wash that stays when the glass shader replaces the surface's own background. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 rounded-[inherit] bg-gradient-to-br from-amber-400/20 via-amber-300/5 to-transparent"
+      />
+      <div className="relative">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="font-ui text-xl font-semibold tracking-tight text-white sm:text-2xl">
+            Bonustipps
+          </h2>
+          {deadline && <DeadlineCountdown deadline={deadline} />}
+        </div>
+        <p className="mt-2 text-[15px] leading-snug text-white/75">
+          Tippe vor der Saison und sichere dir zusätzliche Punkte, jeder
+          richtige Bonustipp erhält 10 Extrapunkte am Ende der Hauptrunde.
+        </p>
 
-      <div className="mt-4 grid gap-4 sm:grid-cols-2">
-        {FIELDS.map((config) => (
-          <BonusTipField
-            key={config.field}
-            {...config}
-            initialValue={
-              config.field === "platzierungTigers"
-                ? initial.platzierungTigers != null
-                  ? String(initial.platzierungTigers)
-                  : ""
-                : (initial[config.field] as string | undefined) ?? ""
-            }
-            disabled={disabled}
-          />
-        ))}
+        <div className="mt-5 grid gap-4 sm:grid-cols-2">
+          {FIELDS.map((config) => (
+            <BonusTipField
+              key={config.field}
+              {...config}
+              initialValue={
+                config.field === "platzierungTigers"
+                  ? initial.platzierungTigers != null
+                    ? String(initial.platzierungTigers)
+                    : ""
+                  : ((initial[config.field] as string | undefined) ?? "")
+              }
+              disabled={disabled}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

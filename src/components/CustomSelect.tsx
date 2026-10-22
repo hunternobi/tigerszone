@@ -37,7 +37,9 @@ export default function CustomSelect({
 }: CustomSelectProps) {
   const isPanel = variant === "panel";
   const [open, setOpen] = useState(false);
-  const [panelPosition, setPanelPosition] = useState<PanelPosition | null>(null);
+  const [panelPosition, setPanelPosition] = useState<PanelPosition | null>(
+    null,
+  );
   const buttonRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const selected = options.find((option) => option.value === value);
@@ -45,7 +47,11 @@ export default function CustomSelect({
   function openPanel() {
     const rect = buttonRef.current?.getBoundingClientRect();
     if (!rect) return;
-    setPanelPosition({ top: rect.bottom + 8, left: rect.left, width: rect.width });
+    setPanelPosition({
+      top: rect.bottom + 8,
+      left: rect.left,
+      width: rect.width,
+    });
     setOpen(true);
   }
 
@@ -89,10 +95,8 @@ export default function CustomSelect({
         disabled={disabled}
         onClick={() => (open ? setOpen(false) : openPanel())}
         aria-label={aria["aria-label"]}
-        className={`glass-interactive flex w-full items-center justify-between text-left text-sm text-white disabled:cursor-not-allowed disabled:opacity-50 ${
-          isPanel
-            ? "glass-panel-sm gap-3 p-4 font-semibold"
-            : "glass-select h-9 rounded-xl px-2"
+        className={`flex h-11 w-full items-center justify-between gap-3 rounded-xl border border-white/15 bg-white/10 px-3.5 text-left text-[15px] text-white transition hover:bg-white/15 focus:border-white/50 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 ${
+          isPanel ? "font-semibold" : ""
         }`}
       >
         <span className={`truncate ${selected ? "" : "text-white/60"}`}>
@@ -118,11 +122,9 @@ export default function CustomSelect({
               left: panelPosition.left,
               width: panelPosition.width,
             }}
-            className={`z-50 max-h-64 space-y-1.5 overflow-y-auto p-2 ${
-              isPanel ? "glass-panel-sm" : "glass-select"
-            }`}
+            className="z-50 max-h-64 space-y-0.5 overflow-y-auto rounded-2xl border border-white/15 bg-[#10164d]/90 p-1.5 shadow-[0_12px_40px_rgba(0,0,0,0.5)] backdrop-blur-xl"
           >
-            {options.map((option, index) => (
+            {options.map((option) => (
               <button
                 key={option.value}
                 type="button"
@@ -130,20 +132,20 @@ export default function CustomSelect({
                   onChange(option.value);
                   setOpen(false);
                 }}
-                className={`flex w-full items-center justify-between gap-2 rounded-xl border border-white/10 px-3 py-2 text-left text-sm transition ${
-                  isPanel
-                    ? "bg-white/5 hover:bg-white/15"
-                    : `hover:brightness-125 ${
-                        index % 2 === 0 ? "bg-tigers-secondary/60" : "bg-tigers-tertiary/75"
-                      }`
-                } ${option.value === value ? "font-semibold text-white" : "text-white/70"}`}
+                className={`flex w-full items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-left text-[15px] transition hover:bg-white/10 ${
+                  option.value === value
+                    ? "font-semibold text-white"
+                    : "text-white/75"
+                }`}
               >
                 <span className="truncate">{option.label}</span>
-                {option.value === value && <Check size={14} className="shrink-0" />}
+                {option.value === value && (
+                  <Check size={14} className="shrink-0" />
+                )}
               </button>
             ))}
           </div>,
-          document.body
+          document.body,
         )}
     </div>
   );
