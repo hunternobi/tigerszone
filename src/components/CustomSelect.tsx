@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Check, ChevronDown } from "lucide-react";
+import { Check, ChevronsUpDown } from "lucide-react";
 
 export interface CustomSelectOption {
   value: string;
@@ -102,9 +102,9 @@ export default function CustomSelect({
         <span className={`truncate ${selected ? "" : "text-white/60"}`}>
           {selected ? selected.label : placeholder}
         </span>
-        <ChevronDown
-          size={isPanel ? 16 : 14}
-          className={`shrink-0 transition-transform ${open ? "rotate-180" : ""}`}
+        <ChevronsUpDown
+          size={isPanel ? 17 : 15}
+          className="shrink-0 text-white/60"
         />
       </button>
 
@@ -122,28 +122,33 @@ export default function CustomSelect({
               left: panelPosition.left,
               width: panelPosition.width,
             }}
-            className="z-50 max-h-64 space-y-0.5 overflow-y-auto rounded-2xl border border-white/15 bg-[#10164d]/90 p-1.5 shadow-[0_12px_40px_rgba(0,0,0,0.5)] backdrop-blur-xl"
+            className="z-50 max-h-72 origin-top animate-[menuIn_0.16s_ease-out] overflow-y-auto rounded-2xl border border-white/20 bg-[#141a5c]/55 p-1 shadow-[0_18px_50px_rgba(0,0,0,0.55),inset_0_1px_0_rgba(255,255,255,0.25)] backdrop-blur-2xl backdrop-saturate-[1.8]"
           >
-            {options.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => {
-                  onChange(option.value);
-                  setOpen(false);
-                }}
-                className={`flex w-full items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-left text-[15px] transition hover:bg-white/10 ${
-                  option.value === value
-                    ? "font-semibold text-white"
-                    : "text-white/75"
-                }`}
-              >
-                <span className="truncate">{option.label}</span>
-                {option.value === value && (
-                  <Check size={14} className="shrink-0" />
-                )}
-              </button>
-            ))}
+            {options.map((option) => {
+              const isSelected = option.value === value;
+              return (
+                <div
+                  key={option.value}
+                  className="border-t border-white/10 py-0.5 first:border-t-0"
+                >
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onChange(option.value);
+                      setOpen(false);
+                    }}
+                    className={`flex min-h-[44px] w-full items-center gap-2 rounded-xl px-3 text-left text-[16px] transition hover:bg-white/10 active:bg-white/20 ${
+                      isSelected ? "font-semibold text-white" : "text-white/85"
+                    }`}
+                  >
+                    <span className="flex w-4 shrink-0 justify-center">
+                      {isSelected && <Check size={16} strokeWidth={2.5} />}
+                    </span>
+                    <span className="truncate">{option.label}</span>
+                  </button>
+                </div>
+              );
+            })}
           </div>,
           document.body,
         )}
