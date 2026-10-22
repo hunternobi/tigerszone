@@ -53,16 +53,23 @@ export default function Header({ invites, notifications }: HeaderProps) {
       className={`absolute inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter] duration-300 md:fixed ${scrolled || mobileOpen ? "glass-bar" : ""}`}
     >
       <div className="mx-auto flex h-[4.5rem] max-w-7xl items-center justify-between px-7 sm:px-6">
-        <Link href="/" className="flex items-center gap-2">
+        {/* Logo + name as one glass capsule: reads as the "home" control and is easy to hit on a phone. */}
+        <Link
+          href="/"
+          aria-label={`${SITE_NAME} – zur Startseite`}
+          className="flex min-h-[40px] items-center gap-2 rounded-full border border-white/15 bg-white/10 py-1 pr-4 pl-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_4px_16px_rgba(0,0,0,0.25)] backdrop-blur-xl backdrop-saturate-150 transition duration-200 hover:bg-white/15 active:scale-[0.96]"
+        >
           <Image
             src="/images/TigersZone_Logo.png"
-            alt={SITE_NAME}
-            width={40}
-            height={40}
-            className="rounded-full"
+            alt=""
+            width={32}
+            height={32}
+            className="h-8 w-8 rounded-full"
             priority
           />
-          <span className="sr-only">{SITE_NAME}</span>
+          <span className="font-ui text-[15px] font-semibold tracking-tight text-white">
+            {SITE_NAME}
+          </span>
         </Link>
 
         <nav className="hidden items-center gap-2 md:flex">
