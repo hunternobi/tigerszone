@@ -70,7 +70,6 @@ export default function LeaderboardWidget({
             bare
             entries={globalEntries}
             title="Gesamtrangliste"
-            medals
             footer={
               <Link
                 href="/tippspiel/rangliste"

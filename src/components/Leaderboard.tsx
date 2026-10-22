@@ -15,13 +15,18 @@ export interface LeaderboardEntry {
 interface LeaderboardProps {
   entries: LeaderboardEntry[];
   title?: string;
-  medals?: boolean;
   footer?: ReactNode;
   /** Renders only the content: the caller provides the surrounding glass panel. */
   bare?: boolean;
 }
 
-const MEDALS = ["🥇", "🥈", "🥉"];
+// Gold, silver and bronze for the names of the first three places (used by every ranking list).
+const PODIUM_COLORS = ["text-[#f6c445]", "text-[#aeb8cc]", "text-[#d58a4a]"];
+
+/** Text colour of a rank (0-based): podium colour for the first three, white otherwise. */
+export function rankColor(index: number): string {
+  return PODIUM_COLORS[index] ?? "text-white";
+}
 
 const ROLE_BADGES = {
   owner: { Icon: FaUserTie, label: "Head Coach" },
@@ -64,7 +69,6 @@ export function TrendIcon({ trend }: { trend?: "up" | "down" }) {
 export default function Leaderboard({
   entries,
   title = "Rangliste",
-  medals = false,
   footer,
   bare = false,
 }: LeaderboardProps) {
@@ -87,17 +91,13 @@ export default function Leaderboard({
               <span className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-1 text-white">
                 <span className="flex min-w-0 items-center gap-2">
                   <span
-                    className={
-                      medals
-                        ? "shrink-0 text-lg"
-                        : "shrink-0 text-tigers-secondary"
-                    }
+                    className={`shrink-0 ${index < 3 ? `${rankColor(index)} font-semibold` : "text-white/60"}`}
                   >
-                    {medals ? MEDALS[index] : `${index + 1}.`}
+                    {index + 1}.
                   </span>
                   <Link
                     href={`/spieler/${entry.userId}`}
-                    className="break-words hover:underline"
+                    className={`break-words hover:underline ${rankColor(index)} ${index < 3 ? "font-semibold" : ""}`}
                   >
                     {entry.name}
                   </Link>

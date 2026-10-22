@@ -23,6 +23,7 @@ import {
 import {
   RoleBadge,
   TrendIcon,
+  rankColor,
   type LeaderboardEntry,
 } from "@/components/Leaderboard";
 
@@ -169,15 +170,13 @@ export default function GroupMemberTable({
                 <span className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-1 text-white">
                   <span className="flex min-w-0 items-center gap-2">
                     <span
-                      className={
-                        index === 0 ? "shrink-0 text-base" : "shrink-0"
-                      }
+                      className={`shrink-0 ${index < 3 ? `${rankColor(index)} font-semibold` : "text-white/60"}`}
                     >
-                      {index === 0 ? "🥇" : `${index + 1}.`}
+                      {index + 1}.
                     </span>
                     <Link
                       href={`/spieler/${entry.userId}`}
-                      className="break-words hover:underline"
+                      className={`break-words hover:underline ${rankColor(index)} ${index < 3 ? "font-semibold" : ""}`}
                     >
                       {entry.name}
                     </Link>
