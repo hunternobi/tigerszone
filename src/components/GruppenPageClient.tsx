@@ -74,22 +74,32 @@ export default function GruppenPageClient({
         </button>
       </div>
 
-      {/* One persistent glass surface: the create form and the groups only change its content. */}
+      {/* Every glass surface stays mounted (the shader sets them up once): the create form and the
+          "nothing found" note are hidden instead of removed, as are filtered-out groups. */}
       <div
         data-liquid-glass="card"
-        className="glass-panel mt-3 divide-y divide-white/10"
+        className={`glass-panel mt-3 ${showCreateForm ? "" : "hidden"}`}
       >
-        {showCreateForm && <CreateGroupForm />}
+        <CreateGroupForm />
+      </div>
 
-        {filteredGroups.length === 0 ? (
-          <p className="p-5 text-[15px] leading-snug text-white/75">
-            {groups.length === 0
-              ? "Du bist noch in keiner Gruppe. Erstelle deine erste Gruppe oder nutze einen Einladungslink von einem Freund."
-              : "Keine Gruppen gefunden."}
-          </p>
-        ) : (
-          <GroupList groups={filteredGroups} leaderboards={leaderboards} />
-        )}
+      <div
+        data-liquid-glass="card"
+        className={`glass-panel mt-4 p-5 text-[15px] leading-snug text-white/75 ${
+          filteredGroups.length === 0 ? "" : "hidden"
+        }`}
+      >
+        {groups.length === 0
+          ? "Du bist noch in keiner Gruppe. Erstelle deine erste Gruppe oder nutze einen Einladungslink von einem Freund."
+          : "Keine Gruppen gefunden."}
+      </div>
+
+      <div className="mt-4">
+        <GroupList
+          groups={groups}
+          leaderboards={leaderboards}
+          visibleIds={new Set(filteredGroups.map((group) => group._id))}
+        />
       </div>
 
       <PublicGroupsList

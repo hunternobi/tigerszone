@@ -11,9 +11,15 @@ import type { LeaderboardEntry } from "@/components/Leaderboard";
 interface GroupListProps {
   groups: MyGroup[];
   leaderboards: Record<string, LeaderboardEntry[]>;
+  /** Groups outside this set (search filter) are hidden, not unmounted: every card is a glass surface. */
+  visibleIds?: Set<string>;
 }
 
-export default function GroupList({ groups, leaderboards }: GroupListProps) {
+export default function GroupList({
+  groups,
+  leaderboards,
+  visibleIds,
+}: GroupListProps) {
   const router = useRouter();
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [nameDraft, setNameDraft] = useState("");
@@ -48,7 +54,7 @@ export default function GroupList({ groups, leaderboards }: GroupListProps) {
   }
 
   return (
-    <div className="divide-y divide-white/10">
+    <div className="space-y-4">
       {groups.map((group) => {
         const isRenaming = renamingId === group._id;
         const canManage =
@@ -56,7 +62,11 @@ export default function GroupList({ groups, leaderboards }: GroupListProps) {
         const isOpen = !closedIds[group._id];
 
         return (
-          <div key={group._id} className="p-4 sm:p-5">
+          <div
+            key={group._id}
+            data-liquid-glass="card"
+            className={`glass-panel p-4 sm:p-5 ${visibleIds && !visibleIds.has(group._id) ? "hidden" : ""}`}
+          >
             <div className="flex items-start gap-2">
               <div className="min-w-0 flex-1 text-left">
                 {isRenaming ? (
