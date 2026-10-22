@@ -20,3 +20,12 @@ export const JUBEL_SCENE: SceneBackground = {
   color: "#0a0f3d",
   blurPx: 1.5,
 };
+
+/** The photo of the Community page (light, so it is dimmed a lot). */
+export const COMMUNITY_SCENE: SceneBackground = {
+  src: "/_next/image?url=%2Fimages%2FCommunity_.jpg&w=1920&q=75",
+  mobileSrc: "/_next/image?url=%2Fimages%2FCommunity_.jpg&w=1080&q=75",
+  opacity: 0.22,
+  color: "#0a0f3d",
+  blurPx: 1.5,
+};

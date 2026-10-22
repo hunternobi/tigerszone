@@ -31,7 +31,8 @@ const FAQ_ITEMS: FaqItem[] = [
   {
     id: "tipp-aendern",
     question: "Kann ich meinen Tipp nachträglich ändern?",
-    answer: "Ja, dein Tipp kann bis zum Eröffnungsbully beliebig oft geändert werden.",
+    answer:
+      "Ja, dein Tipp kann bis zum Eröffnungsbully beliebig oft geändert werden.",
   },
   {
     id: "mehrere-gruppen",
@@ -41,13 +42,15 @@ const FAQ_ITEMS: FaqItem[] = [
   },
   {
     id: "gruppen-rechte",
-    question: "Welche Rechte haben Head Coach und Assistant Coach in einer Gruppe?",
+    question:
+      "Welche Rechte haben Head Coach und Assistant Coach in einer Gruppe?",
     answer:
       "Jede Gruppe hat einen Head Coach (den Ersteller) und kann einen Assistant Coach haben. Beide können Mitglieder aus der Gruppe entfernen und den Gruppennamen ändern.",
   },
   {
     id: "fremde-tipps",
-    question: "Warum sehe ich auf fremden Profilen nicht alle abgegebenen Tipps?",
+    question:
+      "Warum sehe ich auf fremden Profilen nicht alle abgegebenen Tipps?",
     answer:
       "Der Tipp eines anderen Mitglieds für ein Spiel wird auf seinem Profil erst nach dem Eröffnungsbully dieses Spiels angezeigt. So kann niemand seinen eigenen Tipp nachträglich an einen bereits sichtbaren Tipp anpassen. Auf deinem eigenen Profil siehst du deine Tipps natürlich sofort.",
   },
@@ -67,14 +70,14 @@ const FAQ_ITEMS: FaqItem[] = [
           href="https://www.instagram.com/tigerszoneofficial"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-tigers-secondary hover:underline"
+          className="font-semibold text-white underline underline-offset-2"
         >
           @tigerszoneofficial
         </a>{" "}
         oder per Mail an{" "}
         <a
           href="mailto:tigerszoneofficial@gmail.com"
-          className="text-tigers-secondary hover:underline"
+          className="font-semibold text-white underline underline-offset-2"
         >
           tigerszoneofficial@gmail.com
         </a>
@@ -92,7 +95,9 @@ function FaqRow({ item }: { item: FaqItem }) {
       if (window.location.hash === `#${item.id}`) {
         setOpen(true);
         requestAnimationFrame(() => {
-          document.getElementById(item.id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+          document
+            .getElementById(item.id)
+            ?.scrollIntoView({ behavior: "smooth", block: "start" });
         });
       }
     }
@@ -102,22 +107,34 @@ function FaqRow({ item }: { item: FaqItem }) {
   }, [item.id]);
 
   return (
-    <div id={item.id} className="glass-panel-sm scroll-mt-24 overflow-hidden">
+    <div id={item.id} className="scroll-mt-24">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center justify-between gap-4 p-4 text-left sm:p-5"
+        className="flex min-h-[56px] w-full items-center justify-between gap-4 rounded-2xl px-4 py-3.5 text-left transition hover:bg-white/10 active:bg-white/15 sm:px-5"
         aria-expanded={open}
       >
-        <span className="font-semibold text-white">{item.question}</span>
+        <span className="font-ui text-[17px] leading-snug font-semibold tracking-tight text-white">
+          {item.question}
+        </span>
         <ChevronDown
-          size={18}
-          className={`shrink-0 text-white transition-transform ${open ? "rotate-180" : ""}`}
+          size={20}
+          className={`shrink-0 text-white/60 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
         />
       </button>
-      {open && (
-        <div className="px-4 pb-4 text-sm text-white sm:px-5 sm:pb-5">{item.answer}</div>
-      )}
+      {/* Answers stay in the DOM and open with a height transition (0fr -> 1fr). */}
+      <div
+        className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${
+          open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+        }`}
+        aria-hidden={!open}
+      >
+        <div className="overflow-hidden">
+          <div className="px-4 pb-4 text-[16px] leading-[1.55] text-white/80 sm:px-5 sm:pb-5">
+            {item.answer}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -125,8 +142,14 @@ function FaqRow({ item }: { item: FaqItem }) {
 export default function Faq() {
   return (
     <div id="faq" className="scroll-mt-24">
-      <h2 className="text-2xl font-bold text-white sm:text-3xl">Häufige Fragen</h2>
-      <div className="mt-6 space-y-3">
+      <h2 className="font-ui text-[26px] font-semibold tracking-tight text-white sm:text-4xl">
+        Häufige Fragen
+      </h2>
+      {/* One persistent glass card with a grouped list (like iOS settings); the rows only grow and shrink. */}
+      <div
+        data-liquid-glass="card"
+        className="glass-panel mt-4 divide-y divide-white/10 p-1.5 sm:mt-5 sm:p-2"
+      >
         {FAQ_ITEMS.map((item) => (
           <FaqRow key={item.question} item={item} />
         ))}
