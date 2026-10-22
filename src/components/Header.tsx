@@ -62,11 +62,11 @@ export default function Header({ invites, notifications }: HeaderProps) {
           className={`flex min-h-[40px] items-center gap-2 rounded-full border border-white/15 bg-white/10 py-1 pl-1 ${isHome ? "pr-1" : "pr-4"} shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_4px_16px_rgba(0,0,0,0.25)] backdrop-blur-xl backdrop-saturate-150 transition duration-200 hover:bg-white/15 active:scale-[0.96]`}
         >
           <Image
-            src="/images/TigersZone_Logo.png"
+            src="/images/TigersZone_Logo_transparent.png"
             alt=""
-            width={32}
-            height={32}
-            className="h-8 w-8 rounded-full"
+            width={36}
+            height={36}
+            className="h-9 w-9 drop-shadow-[0_1px_3px_rgba(5,0,70,0.75)]"
             priority
           />
           {!isHome && (
