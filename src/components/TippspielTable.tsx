@@ -127,7 +127,7 @@ function TippspielRow({
     `h-11 w-full rounded-xl border text-center text-[17px] font-semibold tabular-nums text-white transition focus:outline-none disabled:opacity-40 sm:h-9 sm:text-base ${
       invalid
         ? "border-red-500/80 bg-red-500/10 focus:border-red-400"
-        : "border-white/15 bg-white/10 focus:border-white/60 focus:bg-white/15"
+        : "border-white/25 bg-white/15 focus:border-white/70 focus:bg-white/20"
     }`;
 
   return (

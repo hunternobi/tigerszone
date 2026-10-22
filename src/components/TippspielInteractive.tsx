@@ -14,7 +14,8 @@ import type { LeaderboardEntry } from "@/components/Leaderboard";
 import type { GroupLeaderboardData } from "@/lib/leaderboard";
 import type { MyBonusPrediction } from "@/app/tippspiel/bonusActions";
 
-const PAGE_OPACITY = 0.55;
+// Darker than the other pages (0.55): the tip fields on a phone have to stay easy to read.
+const PAGE_OPACITY = 0.38;
 const PAGE_BLUR_PX = 1.5;
 
 // The page photo as FadingBackground draws it; the glass surfaces refract a matching copy of it.
