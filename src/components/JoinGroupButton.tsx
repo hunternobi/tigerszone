@@ -3,16 +3,20 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { joinGroupByInviteCode } from "@/app/gruppen/actions";
+import { PillActionButton } from "@/components/PillButton";
 
-export default function JoinGroupButton({ inviteCode }: { inviteCode: string }) {
+export default function JoinGroupButton({
+  inviteCode,
+}: {
+  inviteCode: string;
+}) {
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
   return (
     <div>
-      <button
-        type="button"
+      <PillActionButton
         disabled={isPending}
         onClick={() =>
           startTransition(async () => {
@@ -25,11 +29,10 @@ export default function JoinGroupButton({ inviteCode }: { inviteCode: string }) 
             router.refresh();
           })
         }
-        className="glass-pill glass-pill-primary glass-interactive px-6 py-3 text-sm font-semibold text-white disabled:opacity-50"
       >
         {isPending ? "Trete bei…" : "Jetzt beitreten"}
-      </button>
-      {error && <p className="mt-3 text-sm text-red-400">{error}</p>}
+      </PillActionButton>
+      {error && <p className="mt-3 text-sm text-red-300">{error}</p>}
     </div>
   );
 }

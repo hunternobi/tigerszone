@@ -1,6 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type MouseEvent as ReactMouseEvent,
+} from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -15,7 +20,11 @@ import {
   promoteToAssistant,
   type ActionResult,
 } from "@/app/gruppen/actions";
-import { RoleBadge, TrendIcon, type LeaderboardEntry } from "@/components/Leaderboard";
+import {
+  RoleBadge,
+  TrendIcon,
+  type LeaderboardEntry,
+} from "@/components/Leaderboard";
 
 interface GroupMemberTableProps {
   groupId: string;
@@ -52,7 +61,8 @@ export default function GroupMemberTable({
   useEffect(() => {
     if (!menu) return;
     function handleClickOutside(e: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenu(null);
+      if (menuRef.current && !menuRef.current.contains(e.target as Node))
+        setMenu(null);
     }
     function handleEscape(e: KeyboardEvent) {
       if (e.key === "Escape") setMenu(null);
@@ -66,17 +76,34 @@ export default function GroupMemberTable({
   }, [menu]);
 
   function handleContextMenu(e: ReactMouseEvent, entry: LeaderboardEntry) {
-    if (!canManage || entry.userId === currentUserId || entry.role === "owner") return;
+    if (!canManage || entry.userId === currentUserId || entry.role === "owner")
+      return;
     e.preventDefault();
-    setMenu({ userId: entry.userId, role: entry.role ?? "member", x: e.clientX, y: e.clientY });
+    setMenu({
+      userId: entry.userId,
+      role: entry.role ?? "member",
+      x: e.clientX,
+      y: e.clientY,
+    });
   }
 
-  function handleMenuButton(e: ReactMouseEvent<HTMLButtonElement>, entry: LeaderboardEntry) {
+  function handleMenuButton(
+    e: ReactMouseEvent<HTMLButtonElement>,
+    entry: LeaderboardEntry,
+  ) {
     e.stopPropagation();
     const rect = e.currentTarget.getBoundingClientRect();
     const menuWidth = 220;
-    const x = Math.max(8, Math.min(rect.right - menuWidth, window.innerWidth - menuWidth - 8));
-    setMenu({ userId: entry.userId, role: entry.role ?? "member", x, y: rect.bottom + 4 });
+    const x = Math.max(
+      8,
+      Math.min(rect.right - menuWidth, window.innerWidth - menuWidth - 8),
+    );
+    setMenu({
+      userId: entry.userId,
+      role: entry.role ?? "member",
+      x,
+      y: rect.bottom + 4,
+    });
   }
 
   function runAction(action: () => Promise<ActionResult>) {
@@ -102,42 +129,56 @@ export default function GroupMemberTable({
   return (
     <div>
       <div className="flex items-center justify-between gap-3">
-        <h3 className="text-base font-bold text-white sm:text-lg">{title}</h3>
+        <h3 className="font-ui text-[17px] font-semibold tracking-tight text-white">
+          {title}
+        </h3>
         <button
           type="button"
           onClick={handleLeave}
           disabled={isPending}
-          className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-white/15 px-3 py-1.5 text-xs font-semibold text-red-300 transition hover:bg-white/10 disabled:opacity-50"
+          className="inline-flex min-h-[36px] shrink-0 items-center gap-1.5 rounded-full px-3 text-[14px] font-semibold text-red-300 transition hover:bg-white/10 active:bg-white/15 disabled:opacity-50"
         >
           <LogOut size={14} />
           Verlassen
         </button>
       </div>
       {canManage && (
-        <p className="mt-1 mb-3 text-xs text-white">
+        <p className="mt-1 mb-2 text-[13px] text-white/60">
           Über das Menü-Symbol neben einem Mitglied öffnest du die Optionen.
         </p>
       )}
       {entries.length === 0 ? (
-        <p className="mt-3 text-sm text-white">Noch keine Einträge vorhanden.</p>
+        <p className="mt-3 text-[15px] text-white/70">
+          Noch keine Einträge vorhanden.
+        </p>
       ) : (
-        <ol className="mt-3 space-y-2 text-sm">
+        <ol className="mt-2 divide-y divide-white/10 text-[16px]">
           {visibleEntries.map((entry, index) => {
-            const manageable = canManage && entry.userId !== currentUserId && entry.role !== "owner";
+            const manageable =
+              canManage &&
+              entry.userId !== currentUserId &&
+              entry.role !== "owner";
             return (
               <li
                 key={entry.userId}
                 onContextMenu={(e) => handleContextMenu(e, entry)}
-                className={`flex items-center justify-between gap-3 rounded-lg px-3 py-2 odd:bg-white/5 ${
+                className={`flex items-center justify-between gap-3 py-2.5 ${
                   manageable ? "cursor-context-menu" : ""
                 }`}
               >
                 <span className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-1 text-white">
                   <span className="flex min-w-0 items-center gap-2">
-                    <span className={index === 0 ? "shrink-0 text-base" : "shrink-0"}>
+                    <span
+                      className={
+                        index === 0 ? "shrink-0 text-base" : "shrink-0"
+                      }
+                    >
                       {index === 0 ? "🥇" : `${index + 1}.`}
                     </span>
-                    <Link href={`/spieler/${entry.userId}`} className="break-words hover:underline">
+                    <Link
+                      href={`/spieler/${entry.userId}`}
+                      className="break-words hover:underline"
+                    >
                       {entry.name}
                     </Link>
                     <TrendIcon trend={entry.trend} />
@@ -145,7 +186,7 @@ export default function GroupMemberTable({
                   <RoleBadge role={entry.role} />
                 </span>
                 <span className="flex shrink-0 items-center gap-1">
-                  <span className="w-14 text-right font-semibold whitespace-nowrap text-white">
+                  <span className="w-16 text-right font-semibold tabular-nums whitespace-nowrap text-white">
                     {entry.points} Pkt.
                   </span>
                   <span className="flex w-6 shrink-0 justify-center">
@@ -154,7 +195,7 @@ export default function GroupMemberTable({
                         type="button"
                         onClick={(e) => handleMenuButton(e, entry)}
                         aria-label="Mitglied-Optionen"
-                        className="rounded-full p-1 text-white/60 transition hover:bg-white/10 hover:text-white"
+                        className="rounded-full p-1.5 text-white/60 transition hover:bg-white/10 hover:text-white"
                       >
                         <MoreVertical size={16} />
                       </button>
@@ -171,10 +212,13 @@ export default function GroupMemberTable({
         <button
           type="button"
           onClick={() => setShowAll((v) => !v)}
-          className="mt-3 flex w-full items-center justify-center gap-1 rounded-lg py-1.5 text-xs font-semibold text-white/70 transition hover:bg-white/5 hover:text-white"
+          className="mt-2 flex min-h-[40px] w-full items-center justify-center gap-1 rounded-xl text-[15px] font-semibold text-white/80 transition hover:bg-white/10 hover:text-white"
         >
           {showAll ? "Weniger anzeigen" : `Alle ${entries.length} anzeigen`}
-          <ChevronDown size={14} className={`transition-transform ${showAll ? "rotate-180" : ""}`} />
+          <ChevronDown
+            size={14}
+            className={`transition-transform ${showAll ? "rotate-180" : ""}`}
+          />
         </button>
       )}
 
@@ -183,14 +227,16 @@ export default function GroupMemberTable({
           <div
             ref={menuRef}
             style={{ position: "fixed", top: menu.y, left: menu.x }}
-            className="glass-panel-sm z-50 min-w-[220px] space-y-0.5 p-1"
+            className="glass-popover z-50 min-w-[220px] rounded-2xl p-1"
           >
             {viewerRole === "owner" && menu.role !== "assistant" && (
               <button
                 type="button"
                 disabled={isPending}
-                onClick={() => runAction(() => promoteToAssistant(groupId, menu.userId))}
-                className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-white transition hover:bg-white/10 disabled:opacity-50"
+                onClick={() =>
+                  runAction(() => promoteToAssistant(groupId, menu.userId))
+                }
+                className="flex min-h-[44px] w-full items-center gap-2 rounded-xl px-3 text-left text-[15px] text-white transition hover:bg-white/10 disabled:opacity-50"
               >
                 <MdOutlineEditNote className="h-4 w-4 shrink-0" />
                 Zum Assistant Coach befördern
@@ -200,8 +246,10 @@ export default function GroupMemberTable({
               <button
                 type="button"
                 disabled={isPending}
-                onClick={() => runAction(() => demoteAssistant(groupId, menu.userId))}
-                className="block w-full rounded-lg px-3 py-2 text-left text-sm text-white transition hover:bg-white/10 disabled:opacity-50"
+                onClick={() =>
+                  runAction(() => demoteAssistant(groupId, menu.userId))
+                }
+                className="flex min-h-[44px] w-full items-center rounded-xl px-3 text-left text-[15px] text-white transition hover:bg-white/10 disabled:opacity-50"
               >
                 Assistant Coach Status entfernen
               </button>
@@ -209,13 +257,15 @@ export default function GroupMemberTable({
             <button
               type="button"
               disabled={isPending}
-              onClick={() => runAction(() => kickGroupMember(groupId, menu.userId))}
-              className="block w-full rounded-lg px-3 py-2 text-left text-sm text-red-400 transition hover:bg-white/10 disabled:opacity-50"
+              onClick={() =>
+                runAction(() => kickGroupMember(groupId, menu.userId))
+              }
+              className="flex min-h-[44px] w-full items-center rounded-xl px-3 text-left text-[15px] text-red-300 transition hover:bg-white/10 disabled:opacity-50"
             >
               Aus der Gruppe entfernen
             </button>
           </div>,
-          document.body
+          document.body,
         )}
     </div>
   );

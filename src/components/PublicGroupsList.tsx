@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { joinPublicGroup, type PublicGroup } from "@/app/gruppen/actions";
+import { PillActionButton } from "@/components/PillButton";
 
 interface PublicGroupsListProps {
   groups: PublicGroup[];
@@ -19,28 +20,40 @@ export default function PublicGroupsList({
   if (groups.length === 0 && !hasResultsBeforeFilter) return null;
 
   return (
-    <div className="mt-8">
-      <h2 className="text-lg font-bold text-white">Öffentliche Gruppen</h2>
-      <p className="mt-1 text-sm text-white">
+    <div className="mt-10">
+      <h2 className="font-ui text-[22px] font-semibold tracking-tight text-white sm:text-3xl">
+        Öffentliche Gruppen
+      </h2>
+      <p className="mt-1 text-[15px] leading-snug text-white/70">
         Diesen Gruppen kannst du ohne Einladungslink direkt beitreten.
       </p>
-      {groups.length === 0 ? (
-        <p className="glass-panel-sm mt-4 p-4 text-sm text-white">Keine Gruppen gefunden.</p>
-      ) : (
-        <div className="mt-4 space-y-3">
-          {groups.map((group) => (
+
+      <div
+        data-liquid-glass="card"
+        className="glass-panel mt-3 divide-y divide-white/10"
+      >
+        {groups.length === 0 ? (
+          <p className="p-5 text-[15px] text-white/75">
+            Keine Gruppen gefunden.
+          </p>
+        ) : (
+          groups.map((group) => (
             <div
               key={group._id}
-              className="glass-panel-sm flex items-start justify-between gap-3 p-4"
+              className="flex items-center justify-between gap-3 px-4 py-3.5 sm:px-5"
             >
               <div className="min-w-0 flex-1">
-                <p className="font-bold break-words text-white">{group.name}</p>
-                <p className="text-xs text-white">
-                  {group.memberCount} Mitglieder · Ersteller: {group.ownerName}
+                <p className="font-ui text-[17px] leading-snug font-semibold tracking-tight break-words text-white">
+                  {group.name}
+                </p>
+                <p className="mt-0.5 text-[13px] text-white/60">
+                  {group.memberCount}{" "}
+                  {group.memberCount === 1 ? "Mitglied" : "Mitglieder"} ·
+                  Ersteller: {group.ownerName}
                 </p>
               </div>
-              <button
-                type="button"
+              <PillActionButton
+                compact
                 disabled={isPending}
                 onClick={() =>
                   startTransition(async () => {
@@ -48,14 +61,13 @@ export default function PublicGroupsList({
                     router.refresh();
                   })
                 }
-                className="glass-pill glass-pill-primary glass-interactive shrink-0 px-4 py-2 text-xs font-semibold text-white disabled:opacity-50"
               >
                 Beitreten
-              </button>
+              </PillActionButton>
             </div>
-          ))}
-        </div>
-      )}
+          ))
+        )}
+      </div>
     </div>
   );
 }
