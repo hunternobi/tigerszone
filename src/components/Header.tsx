@@ -59,7 +59,7 @@ export default function Header({ invites, notifications }: HeaderProps) {
         <Link
           href="/"
           aria-label={`${SITE_NAME} – zur Startseite`}
-          className={`flex min-h-[40px] items-center gap-2 rounded-full border border-white/15 bg-tigers-primary/60 py-1 pl-1 ${isHome ? "pr-1" : "pr-4"} shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_4px_16px_rgba(0,0,0,0.25)] backdrop-blur-xl backdrop-saturate-150 transition duration-200 hover:bg-tigers-primary/45 active:scale-[0.96]`}
+          className={`glass-capsule flex min-h-[40px] items-center gap-2 rounded-full py-1 pl-1 ${isHome ? "pr-1" : "pr-4"} active:scale-[0.96]`}
         >
           <Image
             src="/images/TigersZone_Logo_transparent.png"

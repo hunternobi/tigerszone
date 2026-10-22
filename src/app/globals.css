@@ -113,6 +113,29 @@ h6 {
       0 4px 20px rgba(0, 0, 0, 0.28);
   }
 
+  /* Dark liquid-glass look in plain CSS (header "home" capsule): top sheen, bright rim, soft light
+     pooling at the bottom edge. No WebGL on purpose - it sits on every page. */
+  .glass-capsule {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background:
+      radial-gradient(120% 160% at 18% -30%, rgba(255, 255, 255, 0.32), transparent 55%),
+      radial-gradient(90% 90% at 50% 130%, rgba(122, 155, 224, 0.35), transparent 70%),
+      color-mix(in srgb, var(--color-tigers-primary) 62%, transparent);
+    backdrop-filter: blur(18px) saturate(1.8);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.45),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.08),
+      inset 0 0 14px rgba(255, 255, 255, 0.06),
+      0 6px 20px rgba(0, 0, 0, 0.35);
+    transition:
+      filter 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .glass-capsule:hover {
+    filter: brightness(1.18);
+  }
+
   /* Liquid Glass select: a visibly blue-toned variant of glass-panel-sm for
      dropdown/selection controls (Gruppen-Auswahl, Bonustipps), so they read
      as distinct, interactive controls instead of blending into the page. */
