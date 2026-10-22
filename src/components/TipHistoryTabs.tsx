@@ -27,12 +27,12 @@ const STATUS_LABELS: Record<string, string> = {
   cancelled: "Abgesagt",
 };
 
-const GRID_COLUMNS = "grid-cols-[minmax(0,1fr)_2rem_2rem_2.75rem]";
+const GRID_COLUMNS = "grid-cols-[minmax(0,1fr)_2.25rem_2.25rem_3rem]";
 
 function TeamName({ teamId }: { teamId: string }) {
   const shortName = getTeamById(teamId)?.shortName ?? getTeamName(teamId);
   return (
-    <span className="text-sm font-medium text-white">
+    <span className="font-ui text-[16px] font-medium tracking-tight text-white">
       <span className="sm:hidden">{shortName}</span>
       <span className="hidden sm:inline">{getTeamName(teamId)}</span>
     </span>
@@ -41,7 +41,7 @@ function TeamName({ teamId }: { teamId: string }) {
 
 function ScoreBox({ value }: { value: number }) {
   return (
-    <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/15 bg-white/5 text-sm font-semibold text-white">
+    <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/20 bg-white/15 text-[16px] font-semibold text-white tabular-nums">
       {value}
     </span>
   );
@@ -49,7 +49,7 @@ function ScoreBox({ value }: { value: number }) {
 
 function ResultCell({ value }: { value: number | undefined }) {
   return (
-    <span className="text-center text-sm font-semibold text-white/75">
+    <span className="text-center text-[16px] font-semibold text-white/75 tabular-nums">
       {value === undefined ? <span className="text-white/35">–</span> : value}
     </span>
   );
@@ -62,10 +62,10 @@ function PointsBadge({ entry }: { entry: TipHistoryEntry }) {
   const points = entry.pointsAwarded ?? 0;
   return (
     <span
-      className={`self-center rounded-full border px-2 py-1 text-center text-xs font-bold ${
+      className={`self-center rounded-full border px-2.5 py-1 text-center text-[13px] font-bold tabular-nums ${
         points > 0
           ? "border-emerald-300/30 bg-emerald-400/15 text-emerald-300"
-          : "border-white/15 bg-white/5 text-white/60"
+          : "border-white/15 bg-white/10 text-white/60"
       }`}
     >
       {points > 0 ? `+${points}` : "0"}
@@ -73,23 +73,35 @@ function PointsBadge({ entry }: { entry: TipHistoryEntry }) {
   );
 }
 
-export default function TipHistoryTabs({ entries, defaultTab = "Vorbereitung" }: TipHistoryTabsProps) {
+export default function TipHistoryTabs({
+  entries,
+  defaultTab = "Vorbereitung",
+}: TipHistoryTabsProps) {
   const [tab, setTab] = useState<Competition>(defaultTab);
   const filtered = entries.filter((entry) => entry.competition === tab);
 
   return (
-    <div className="glass-panel mt-8 p-4 sm:p-6">
-      <h2 className="text-lg font-bold text-white">Tipphistorie</h2>
-      <div className="mt-3 flex flex-wrap gap-2">
+    <div data-liquid-glass="card" className="glass-panel mt-6 p-4 sm:p-6">
+      <h2 className="font-ui text-xl font-semibold tracking-tight text-white sm:text-2xl">
+        Tipphistorie
+      </h2>
+
+      {/* Segmented control, iOS style */}
+      <div
+        role="tablist"
+        className="mt-3 flex rounded-full border border-white/15 bg-white/10 p-1"
+      >
         {TABS.map((t) => (
           <button
             key={t.key}
             type="button"
+            role="tab"
+            aria-selected={tab === t.key}
             onClick={() => setTab(t.key)}
-            className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
+            className={`min-h-[36px] flex-1 rounded-full px-1 text-[13px] font-semibold transition sm:text-[15px] ${
               tab === t.key
-                ? "border-tigers-secondary bg-tigers-secondary/20 text-white"
-                : "border-white/15 text-white/70 hover:bg-white/5"
+                ? "bg-white text-tigers-primary shadow-[0_2px_8px_rgba(0,0,0,0.3)]"
+                : "text-white/75 hover:text-white"
             }`}
           >
             {t.label}
@@ -98,36 +110,47 @@ export default function TipHistoryTabs({ entries, defaultTab = "Vorbereitung" }:
       </div>
 
       {filtered.length === 0 ? (
-        <p className="mt-4 text-sm text-white/60">Noch keine Tipps in dieser Kategorie.</p>
+        <p className="mt-4 text-[15px] text-white/65">
+          Noch keine Tipps in dieser Kategorie.
+        </p>
       ) : (
-        <div className="glass-panel-sm mt-4 p-2 sm:p-3">
+        <div className="mt-4">
           <div
-            className={`grid ${GRID_COLUMNS} gap-x-2 px-3 pt-1 pb-1 text-[10px] font-semibold tracking-wide text-white/50 uppercase`}
+            className={`grid ${GRID_COLUMNS} gap-x-2 px-1 pb-1 text-[11px] font-semibold tracking-wide text-white/55 uppercase`}
           >
             <span />
             <span className="text-center">Tipp</span>
             <span className="text-center">Erg.</span>
             <span className="text-center">Pkt.</span>
           </div>
-          <div className="divide-y divide-white/5">
+          <div className="divide-y divide-white/10">
             {filtered.map((entry) => {
               const statusLabel = STATUS_LABELS[entry.status];
               return (
-                <div key={entry.gameId} className="rounded-lg px-3 py-2 odd:bg-white/5">
-                  <p className="text-[11px] text-white/50">
-                    {formatPostDate(entry.kickoff)} · {formatGameTime(entry.kickoff)} Uhr
+                <div key={entry.gameId} className="px-1 py-3">
+                  <p className="text-[12px] font-medium text-white/60">
+                    {formatPostDate(entry.kickoff)} ·{" "}
+                    {formatGameTime(entry.kickoff)} Uhr
                     {statusLabel ? ` · ${statusLabel}` : ""}
                   </p>
-                  <div className={`mt-1 grid ${GRID_COLUMNS} items-center gap-x-2 gap-y-1`}>
+                  <div
+                    className={`mt-1.5 grid ${GRID_COLUMNS} items-center gap-x-2 gap-y-1.5`}
+                  >
                     <TeamName teamId={entry.homeTeamId} />
                     {entry.hidden ? (
-                      <p className="col-span-3 row-span-2 self-center text-right text-[11px] leading-tight text-white/60">
+                      <p className="col-span-3 row-span-2 self-center text-right text-[12px] leading-tight text-white/65">
                         Tipp abgegeben – sichtbar nach dem Eröffnungsbully
                       </p>
                     ) : (
                       <>
                         <ScoreBox value={entry.predictedHome} />
-                        <ResultCell value={entry.status === "finished" ? entry.homeScore : undefined} />
+                        <ResultCell
+                          value={
+                            entry.status === "finished"
+                              ? entry.homeScore
+                              : undefined
+                          }
+                        />
                         <span className="row-span-2 flex justify-center">
                           <PointsBadge entry={entry} />
                         </span>
@@ -137,7 +160,13 @@ export default function TipHistoryTabs({ entries, defaultTab = "Vorbereitung" }:
                     {!entry.hidden && (
                       <>
                         <ScoreBox value={entry.predictedAway} />
-                        <ResultCell value={entry.status === "finished" ? entry.awayScore : undefined} />
+                        <ResultCell
+                          value={
+                            entry.status === "finished"
+                              ? entry.awayScore
+                              : undefined
+                          }
+                        />
                       </>
                     )}
                   </div>

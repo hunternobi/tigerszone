@@ -6,19 +6,30 @@ interface PointsHistorySectionProps {
   history: PointsHistoryEntry[];
 }
 
-export default function PointsHistorySection({ playerName, history }: PointsHistorySectionProps) {
+export default function PointsHistorySection({
+  playerName,
+  history,
+}: PointsHistorySectionProps) {
   return (
-    <div className="glass-panel mt-8 p-4 sm:p-6">
-      <h2 className="text-lg font-bold text-white">Punkteverlauf</h2>
+    <div data-liquid-glass="card" className="glass-panel mt-6 p-4 sm:p-6">
+      <h2 className="font-ui text-xl font-semibold tracking-tight text-white sm:text-2xl">
+        Punkteverlauf
+      </h2>
       {history.length === 0 ? (
-        <p className="mt-3 text-sm text-white/60">
-          Noch keine ausgewerteten Spieltage – der Verlauf startet nach dem ersten Ergebnis.
+        <p className="mt-3 text-[15px] leading-snug text-white/65">
+          Noch keine ausgewerteten Spieltage – der Verlauf startet nach dem
+          ersten Ergebnis.
         </p>
       ) : (
         <div className="mt-3">
           <PunkteverlaufChart
             spieltage={history.map((entry) => entry.label)}
-            players={[{ name: playerName, points: history.map((entry) => entry.cumulative) }]}
+            players={[
+              {
+                name: playerName,
+                points: history.map((entry) => entry.cumulative),
+              },
+            ]}
           />
         </div>
       )}

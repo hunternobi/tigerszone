@@ -1,22 +1,36 @@
 "use client";
 
-import { useRef, useState, useTransition, type ChangeEvent } from "react";
-import { Check } from "lucide-react";
+import { useRef, useState, useTransition } from "react";
 import { updateFavoritePlayer } from "@/app/profile/actions";
+import CustomSelect from "@/components/CustomSelect";
+import SavedBadge, { SAVED_BADGE_MS } from "@/components/SavedBadge";
 import { TIGERS_ROSTER } from "@/lib/tigersRoster";
 
 interface FavoritePlayerSelectProps {
   initialPlayerId: string;
 }
 
-export default function FavoritePlayerSelect({ initialPlayerId }: FavoritePlayerSelectProps) {
-  const [value, setValue] = useState(initialPlayerId);
-  const [status, setStatus] = useState<"idle" | "saving" | "error" | "saved">("idle");
-  const [isPending, startTransition] = useTransition();
-  const savedTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+const OPTIONS = [
+  { value: "", label: "Kein Lieblingsspieler ausgewählt" },
+  ...TIGERS_ROSTER.map((player) => ({
+    value: player.id,
+    label: `#${player.number} ${player.name}`,
+  })),
+];
 
-  function handleChange(e: ChangeEvent<HTMLSelectElement>) {
-    const next = e.target.value;
+export default function FavoritePlayerSelect({
+  initialPlayerId,
+}: FavoritePlayerSelectProps) {
+  const [value, setValue] = useState(initialPlayerId);
+  const [status, setStatus] = useState<"idle" | "saving" | "error" | "saved">(
+    "idle",
+  );
+  const [isPending, startTransition] = useTransition();
+  const savedTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
+
+  function handleChange(next: string) {
     setValue(next);
     setStatus("saving");
     startTransition(async () => {
@@ -27,35 +41,33 @@ export default function FavoritePlayerSelect({ initialPlayerId }: FavoritePlayer
       }
       setStatus("saved");
       if (savedTimeout.current) clearTimeout(savedTimeout.current);
-      savedTimeout.current = setTimeout(() => setStatus("idle"), 1800);
+      savedTimeout.current = setTimeout(
+        () => setStatus("idle"),
+        SAVED_BADGE_MS,
+      );
     });
   }
 
   return (
     <div>
-      <label className="mb-1 block text-sm text-white">Lieblingsspieler</label>
-      <select
-        value={value}
-        onChange={handleChange}
-        disabled={isPending}
-        className="glass-panel-sm h-10 w-full max-w-xs rounded-lg border-white/15 bg-transparent px-3 text-sm text-white focus:outline-none disabled:opacity-50"
-      >
-        <option className="text-black" value="">
-          Kein Lieblingsspieler ausgewählt
-        </option>
-        {TIGERS_ROSTER.map((player) => (
-          <option key={player.id} className="text-black" value={player.id}>
-            #{player.number} {player.name}
-          </option>
-        ))}
-      </select>
+      <div className="flex h-[22px] items-center justify-between gap-2">
+        <label className="font-ui text-[11px] font-semibold tracking-[0.14em] text-white/60 uppercase">
+          Lieblingsspieler
+        </label>
+        {status === "saved" && <SavedBadge label="Gespeichert" />}
+      </div>
+      <div className="mt-1.5">
+        <CustomSelect
+          value={value}
+          onChange={handleChange}
+          options={OPTIONS}
+          disabled={isPending}
+          aria-label="Lieblingsspieler"
+        />
+      </div>
       {status === "error" && (
-        <p className="mt-1 text-xs text-red-400">Konnte nicht gespeichert werden.</p>
-      )}
-      {status === "saved" && (
-        <p className="mt-1 flex animate-[fadeIn_0.2s_ease-out] items-center gap-1 text-xs font-semibold text-emerald-400">
-          <Check size={12} />
-          Gespeichert
+        <p className="mt-1.5 text-xs text-red-300">
+          Konnte nicht gespeichert werden.
         </p>
       )}
     </div>

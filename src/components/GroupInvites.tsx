@@ -2,8 +2,12 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Users } from "lucide-react";
-import { acceptGroupInvite, declineGroupInvite, type MyGroupInvite } from "@/app/gruppen/actions";
+import {
+  acceptGroupInvite,
+  declineGroupInvite,
+  type MyGroupInvite,
+} from "@/app/gruppen/actions";
+import { PillActionButton } from "@/components/PillButton";
 
 interface GroupInvitesProps {
   invites: MyGroupInvite[];
@@ -16,15 +20,19 @@ export default function GroupInvites({ invites }: GroupInvitesProps) {
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
+  // No invites at load time: nothing to render. Once the last one is answered the card is hidden, not
+  // unmounted (it is a glass surface that has to stay mounted).
+  if (invites.length === 0) return null;
   const visible = invites.filter((invite) => !dismissed.has(invite.inviteId));
-  if (visible.length === 0) return null;
 
   function respond(inviteId: string, action: "accept" | "decline") {
     setError(null);
     setPendingId(inviteId);
     startTransition(async () => {
       const result =
-        action === "accept" ? await acceptGroupInvite(inviteId) : await declineGroupInvite(inviteId);
+        action === "accept"
+          ? await acceptGroupInvite(inviteId)
+          : await declineGroupInvite(inviteId);
       if (!result.success) {
         setError(result.error ?? "Aktion fehlgeschlagen.");
         setPendingId(null);
@@ -37,36 +45,43 @@ export default function GroupInvites({ invites }: GroupInvitesProps) {
   }
 
   return (
-    <div className="glass-panel mt-8 p-6">
-      <h2 className="text-lg font-bold text-white">Gruppeneinladungen</h2>
-      {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
-      <div className="mt-4 space-y-3">
+    <div
+      data-liquid-glass="card"
+      className={`glass-panel mt-6 p-5 ${visible.length === 0 ? "hidden" : ""}`}
+    >
+      <h2 className="font-ui text-xl font-semibold tracking-tight text-white">
+        Gruppeneinladungen
+      </h2>
+      {error && <p className="mt-2 text-sm text-red-300">{error}</p>}
+      <div className="mt-2 divide-y divide-white/10">
         {visible.map((invite) => (
           <div
             key={invite.inviteId}
-            className="glass-panel-sm flex flex-wrap items-center justify-between gap-3 p-3"
+            className="flex flex-wrap items-center justify-between gap-3 py-3.5"
           >
-            <span className="flex items-center gap-2 text-sm text-white">
-              <Users size={16} className="shrink-0 text-tigers-secondary" />
-              <span>
-                <span className="font-semibold">{invite.invitedByName}</span> hat dich zur Gruppe{" "}
-                <span className="font-semibold">{invite.groupName}</span> eingeladen.
-              </span>
-            </span>
+            <p className="min-w-0 flex-1 text-[16px] leading-snug text-white/85">
+              <span className="font-semibold text-white">
+                {invite.invitedByName}
+              </span>{" "}
+              hat dich zur Gruppe{" "}
+              <span className="font-semibold text-white">
+                {invite.groupName}
+              </span>{" "}
+              eingeladen.
+            </p>
             <span className="flex shrink-0 items-center gap-2">
-              <button
-                type="button"
+              <PillActionButton
+                compact
                 disabled={isPending && pendingId === invite.inviteId}
                 onClick={() => respond(invite.inviteId, "accept")}
-                className="rounded-full bg-tigers-secondary px-3 py-1.5 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Annehmen
-              </button>
+              </PillActionButton>
               <button
                 type="button"
                 disabled={isPending && pendingId === invite.inviteId}
                 onClick={() => respond(invite.inviteId, "decline")}
-                className="rounded-full border border-white/20 px-3 py-1.5 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
+                className="min-h-[34px] rounded-full border border-white/20 px-3.5 text-[13px] font-semibold text-white transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Ablehnen
               </button>

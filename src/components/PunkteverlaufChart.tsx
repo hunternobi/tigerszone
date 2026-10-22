@@ -8,7 +8,7 @@ interface PunkteverlaufChartProps {
   players: PlayerSeries[];
 }
 
-const LINE_COLORS = ["#5b7fc7", "#f2b84b", "#4ade80", "#f87171", "#c084fc"];
+const LINE_COLORS = ["#8fb0ff", "#f2b84b", "#4ade80", "#f87171", "#c084fc"];
 
 const WIDTH = 640;
 const HEIGHT = 260;
@@ -17,7 +17,10 @@ const PADDING_RIGHT = 16;
 const PADDING_TOP = 16;
 const PADDING_BOTTOM = 32;
 
-export default function PunkteverlaufChart({ spieltage, players }: PunkteverlaufChartProps) {
+export default function PunkteverlaufChart({
+  spieltage,
+  players,
+}: PunkteverlaufChartProps) {
   const maxPoints = Math.max(1, ...players.flatMap((p) => p.points));
   const plotWidth = WIDTH - PADDING_LEFT - PADDING_RIGHT;
   const plotHeight = HEIGHT - PADDING_TOP - PADDING_BOTTOM;
@@ -32,11 +35,25 @@ export default function PunkteverlaufChart({ spieltage, players }: Punkteverlauf
   }
 
   const yTicks = 4;
-  const yTickValues = Array.from({ length: yTicks + 1 }, (_, i) => Math.round((maxPoints / yTicks) * i));
+  const yTickValues = Array.from({ length: yTicks + 1 }, (_, i) =>
+    Math.round((maxPoints / yTicks) * i),
+  );
 
   return (
     <div>
-      <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} className="w-full" role="img" aria-label="Punkteverlauf">
+      <svg
+        viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
+        className="w-full"
+        role="img"
+        aria-label="Punkteverlauf"
+      >
+        <defs>
+          <linearGradient id="punkteverlauf-fill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={LINE_COLORS[0]} stopOpacity={0.35} />
+            <stop offset="100%" stopColor={LINE_COLORS[0]} stopOpacity={0} />
+          </linearGradient>
+        </defs>
+
         {yTickValues.map((value) => (
           <g key={value}>
             <line
@@ -44,10 +61,16 @@ export default function PunkteverlaufChart({ spieltage, players }: Punkteverlauf
               x2={WIDTH - PADDING_RIGHT}
               y1={y(value)}
               y2={y(value)}
-              stroke="rgba(255,255,255,0.08)"
+              stroke="rgba(255,255,255,0.12)"
               strokeWidth={1}
             />
-            <text x={PADDING_LEFT - 8} y={y(value) + 4} textAnchor="end" fontSize={10} fill="rgba(255,255,255,0.5)">
+            <text
+              x={PADDING_LEFT - 8}
+              y={y(value) + 4}
+              textAnchor="end"
+              fontSize={15}
+              fill="rgba(255,255,255,0.6)"
+            >
               {value}
             </text>
           </g>
@@ -59,8 +82,8 @@ export default function PunkteverlaufChart({ spieltage, players }: Punkteverlauf
             x={x(index)}
             y={HEIGHT - 10}
             textAnchor="middle"
-            fontSize={10}
-            fill="rgba(255,255,255,0.5)"
+            fontSize={15}
+            fill="rgba(255,255,255,0.6)"
           >
             {label}
           </text>
@@ -73,9 +96,30 @@ export default function PunkteverlaufChart({ spieltage, players }: Punkteverlauf
             .join(" ");
           return (
             <g key={player.name}>
-              <path d={pathD} fill="none" stroke={color} strokeWidth={2} strokeLinejoin="round" />
+              {players.length === 1 && player.points.length > 1 && (
+                <path
+                  d={`${pathD} L ${x(player.points.length - 1)} ${y(0)} L ${x(0)} ${y(0)} Z`}
+                  fill="url(#punkteverlauf-fill)"
+                />
+              )}
+              <path
+                d={pathD}
+                fill="none"
+                stroke={color}
+                strokeWidth={3}
+                strokeLinejoin="round"
+                strokeLinecap="round"
+              />
               {player.points.map((value, i) => (
-                <circle key={i} cx={x(i)} cy={y(value)} r={3} fill={color} />
+                <circle
+                  key={i}
+                  cx={x(i)}
+                  cy={y(value)}
+                  r={4}
+                  fill={color}
+                  stroke="#0a0f3d"
+                  strokeWidth={1.5}
+                />
               ))}
             </g>
           );
@@ -84,10 +128,15 @@ export default function PunkteverlaufChart({ spieltage, players }: Punkteverlauf
 
       <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
         {players.map((player, index) => (
-          <span key={player.name} className="flex items-center gap-1.5 text-xs text-white">
+          <span
+            key={player.name}
+            className="flex items-center gap-1.5 text-[13px] text-white/85"
+          >
             <span
               className="h-2 w-2 shrink-0 rounded-full"
-              style={{ backgroundColor: LINE_COLORS[index % LINE_COLORS.length] }}
+              style={{
+                backgroundColor: LINE_COLORS[index % LINE_COLORS.length],
+              }}
             />
             {player.name}
           </span>

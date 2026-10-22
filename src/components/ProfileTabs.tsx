@@ -1,6 +1,11 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore, type ReactNode } from "react";
+import {
+  useEffect,
+  useState,
+  useSyncExternalStore,
+  type ReactNode,
+} from "react";
 
 export interface ProfileTab {
   id: string;
@@ -31,7 +36,8 @@ export default function ProfileTabs({ tabs }: { tabs: ProfileTab[] }) {
 
   // The browser's own jump to the anchor misses because the panel was still hidden at load.
   useEffect(() => {
-    if (hashTab && hashTab === active) document.getElementById(hashTab)?.scrollIntoView();
+    if (hashTab && hashTab === active)
+      document.getElementById(hashTab)?.scrollIntoView();
   }, [hashTab, active]);
 
   function select(id: string) {
@@ -41,7 +47,11 @@ export default function ProfileTabs({ tabs }: { tabs: ProfileTab[] }) {
 
   return (
     <div>
-      <div className="mt-6 flex border-b border-white/15" role="tablist">
+      {/* Segmented control, iOS style: a dark track with a white thumb on the active tab. */}
+      <div
+        className="mt-6 flex rounded-full border border-white/15 bg-white/10 p-1"
+        role="tablist"
+      >
         {tabs.map((tab) => {
           const isActive = tab.id === active;
           return (
@@ -51,10 +61,10 @@ export default function ProfileTabs({ tabs }: { tabs: ProfileTab[] }) {
               role="tab"
               aria-selected={isActive}
               onClick={() => select(tab.id)}
-              className={`-mb-px flex-1 border-b-2 px-2 pt-2 pb-3 text-sm font-semibold transition-colors ${
+              className={`min-h-[36px] flex-1 rounded-full px-1 text-[14px] font-semibold transition sm:text-[15px] ${
                 isActive
-                  ? "border-white text-white"
-                  : "border-transparent text-white/55 hover:text-white/80"
+                  ? "bg-white text-tigers-primary shadow-[0_2px_8px_rgba(0,0,0,0.3)]"
+                  : "text-white/75 hover:text-white"
               }`}
             >
               {tab.label}
@@ -64,7 +74,7 @@ export default function ProfileTabs({ tabs }: { tabs: ProfileTab[] }) {
       </div>
 
       {tabs.map((tab) => (
-        <div key={tab.id} role="tabpanel" hidden={tab.id !== active} className="-mt-2">
+        <div key={tab.id} role="tabpanel" hidden={tab.id !== active}>
           {tab.content}
         </div>
       ))}

@@ -1,4 +1,3 @@
-import { Trophy } from "lucide-react";
 import { getDelClubName } from "@/lib/delClubs";
 import { getPlayerName } from "@/lib/tigersRoster";
 import type { MyBonusPrediction } from "@/app/tippspiel/bonusActions";
@@ -8,57 +7,83 @@ interface MyBonusSummaryProps {
   bonusPlayoffs: MyBonusPrediction;
 }
 
-function BonusRound({ title, prediction }: { title: string; prediction: MyBonusPrediction }) {
+function BonusRound({
+  title,
+  prediction,
+}: {
+  title: string;
+  prediction: MyBonusPrediction;
+}) {
   const rows = [
     {
       label: "Hauptrundensieger",
-      value: prediction.hauptrundensieger ? getDelClubName(prediction.hauptrundensieger) : null,
+      value: prediction.hauptrundensieger
+        ? getDelClubName(prediction.hauptrundensieger)
+        : null,
     },
     {
       label: "Platzierung der Tigers",
-      value: prediction.platzierungTigers != null ? `${prediction.platzierungTigers}. Platz` : null,
+      value:
+        prediction.platzierungTigers != null
+          ? `${prediction.platzierungTigers}. Platz`
+          : null,
     },
     {
       label: "Topscorer der Tigers",
-      value: prediction.topscorerTigers ? getPlayerName(prediction.topscorerTigers) : null,
+      value: prediction.topscorerTigers
+        ? getPlayerName(prediction.topscorerTigers)
+        : null,
     },
     {
       label: "Meiste Tore bei den Tigers",
-      value: prediction.meisteToreTigers ? getPlayerName(prediction.meisteToreTigers) : null,
+      value: prediction.meisteToreTigers
+        ? getPlayerName(prediction.meisteToreTigers)
+        : null,
     },
   ];
   const hasAny = rows.some((row) => row.value);
 
   return (
     <div>
-      <p className="text-xs font-semibold tracking-wide text-amber-100/70 uppercase">{title}</p>
+      <h3 className="font-ui text-xl font-semibold tracking-tight text-white">
+        {title}
+      </h3>
       {hasAny ? (
-        <div className="mt-2 grid gap-4 sm:grid-cols-2">
+        <div className="mt-3 divide-y divide-white/10">
           {rows.map((row) => (
-            <div key={row.label}>
-              <p className="mb-1 text-xs font-semibold text-amber-100/90">{row.label}</p>
-              <div className="glass-panel-sm flex h-9 items-center rounded-lg border-amber-300/20 px-2 text-sm text-white">
-                {row.value}
-              </div>
+            <div key={row.label} className="py-3 first:pt-0 last:pb-0">
+              <p className="text-[13px] font-medium text-white/60">
+                {row.label}
+              </p>
+              <p className="mt-0.5 text-[17px] font-semibold text-white">
+                {row.value ?? (
+                  <span className="font-normal text-white/40">–</span>
+                )}
+              </p>
             </div>
           ))}
         </div>
       ) : (
-        <p className="mt-2 text-sm text-amber-50/70">Noch keine Bonustipps abgegeben.</p>
+        <p className="mt-2 text-[15px] text-white/65">
+          Noch keine Bonustipps abgegeben.
+        </p>
       )}
     </div>
   );
 }
 
-export default function MyBonusSummary({ bonusHauptrunde, bonusPlayoffs }: MyBonusSummaryProps) {
+export default function MyBonusSummary({
+  bonusHauptrunde,
+  bonusPlayoffs,
+}: MyBonusSummaryProps) {
   return (
-    <div className="glass-panel mt-8 border border-amber-300/30 bg-gradient-to-br from-amber-500/15 via-amber-400/5 to-transparent p-4 sm:p-6">
-      <div className="flex items-center gap-2">
-        <Trophy size={20} className="shrink-0 text-amber-300" />
-        <h2 className="text-lg font-bold text-amber-100">Bonustipps</h2>
-      </div>
-
-      <div className="mt-4 space-y-6">
+    <div data-liquid-glass="card" className="glass-panel mt-6 p-5 sm:p-6">
+      {/* Amber wash that stays when the glass shader replaces the surface's own background. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 rounded-[inherit] bg-gradient-to-br from-amber-400/20 via-amber-300/5 to-transparent"
+      />
+      <div className="relative divide-y divide-white/10 *:py-6 first:*:pt-0 last:*:pb-0">
         <BonusRound title="Hauptrunde" prediction={bonusHauptrunde} />
         <BonusRound title="Playoffs" prediction={bonusPlayoffs} />
       </div>

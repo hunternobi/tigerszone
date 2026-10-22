@@ -3,7 +3,7 @@
 import { createPortal } from "react-dom";
 import { useState, useTransition } from "react";
 import { signOut } from "next-auth/react";
-import { AlertTriangle, Trash2, X } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { deleteMyAccount } from "@/app/profile/actions";
 
 export default function DeleteAccountButton() {
@@ -28,66 +28,56 @@ export default function DeleteAccountButton() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-1.5 text-xs font-semibold text-red-400 transition hover:underline"
+        className="inline-flex min-h-[44px] items-center gap-1.5 rounded-full px-4 text-[15px] font-semibold text-red-300 transition hover:bg-white/10 active:bg-white/15"
       >
-        <Trash2 size={13} />
+        <Trash2 size={16} />
         Account löschen
       </button>
 
       {open &&
         createPortal(
+          // Action sheet, iOS style: blurred backdrop, a popover with the warning and two stacked actions.
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+            className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-4 backdrop-blur-sm sm:items-center"
             onClick={() => !isPending && setOpen(false)}
           >
             <div
-              className="glass-panel w-full max-w-sm p-5"
+              className="glass-popover w-full max-w-sm rounded-3xl p-5"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2">
-                  <AlertTriangle size={18} className="shrink-0 text-red-400" />
-                  <h3 className="text-base font-bold text-white">Account löschen</h3>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setOpen(false)}
-                  disabled={isPending}
-                  aria-label="Schließen"
-                  className="rounded-full p-1 text-white/60 transition hover:bg-white/10 hover:text-white disabled:opacity-50"
-                >
-                  <X size={18} />
-                </button>
-              </div>
-
-              <p className="mt-3 text-sm text-white">
-                Möchtest du deinen Account wirklich löschen? Alle deine Tipps, Bonustipps und
-                Gruppenmitgliedschaften werden entfernt. Das kann nicht rückgängig gemacht werden.
+              <h3 className="font-ui text-center text-xl font-semibold tracking-tight text-white">
+                Account löschen?
+              </h3>
+              <p className="mt-2 text-center text-[15px] leading-snug text-white/80">
+                Alle deine Tipps, Bonustipps und Gruppenmitgliedschaften werden
+                entfernt. Das kann nicht rückgängig gemacht werden.
               </p>
 
-              {error && <p className="mt-3 text-xs text-red-400">{error}</p>}
+              {error && (
+                <p className="mt-3 text-center text-xs text-red-300">{error}</p>
+              )}
 
-              <div className="mt-4 flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setOpen(false)}
-                  disabled={isPending}
-                  className="rounded-full border border-white/20 px-4 py-1.5 text-xs font-semibold text-white disabled:opacity-50"
-                >
-                  Abbrechen
-                </button>
+              <div className="mt-5 space-y-2">
                 <button
                   type="button"
                   onClick={handleDelete}
                   disabled={isPending}
-                  className="rounded-full bg-red-500 px-4 py-1.5 text-xs font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
+                  className="min-h-[48px] w-full rounded-2xl bg-red-500 text-[16px] font-semibold text-white transition hover:brightness-110 active:scale-[0.98] disabled:opacity-50"
                 >
                   {isPending ? "Wird gelöscht…" : "Ja, Account löschen"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setOpen(false)}
+                  disabled={isPending}
+                  className="min-h-[48px] w-full rounded-2xl bg-white/15 text-[16px] font-semibold text-white transition hover:bg-white/20 active:scale-[0.98] disabled:opacity-50"
+                >
+                  Abbrechen
                 </button>
               </div>
             </div>
           </div>,
-          document.body
+          document.body,
         )}
     </>
   );
