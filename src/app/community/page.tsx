@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { auth } from "@/auth";
 import Faq from "@/components/Faq";
 import FadingBackground from "@/components/FadingBackground";
 import LiquidGlassScene from "@/components/LiquidGlassScene";
@@ -10,15 +11,16 @@ import { COMMUNITY_SCENE } from "@/lib/glassScenes";
 export const metadata: Metadata = {
   title: "Community",
   description:
-    "Statistiken, Umfragen und häufige Fragen rund um TigersZone und die Straubing Tigers.",
+    "Häufige Fragen rund um TigersZone – freut euch auf coole Aktionen, Preise und Umfragen.",
   alternates: { canonical: "/community" },
 };
 
-// The statistics change on match days only; the page is rebuilt at most once an hour.
-export const revalidate = 3600;
-
 export default async function CommunityPage() {
-  const stats = await getLeagueStats();
+  // Statistiken/Umfragen are still being tried out: only admins see the switch, everybody else gets the
+  // plain FAQ page. The league numbers are not even requested for other visitors.
+  const session = await auth();
+  const showStats = session?.user?.role === "admin";
+  const stats = showStats ? await getLeagueStats() : null;
 
   return (
     <FadingBackground
@@ -32,54 +34,56 @@ export default async function CommunityPage() {
             Community
           </h1>
 
-          <ProfileTabs
-            tabs={[
-              {
-                id: "statistiken",
-                label: "Statistiken",
-                content: (
-                  <div className="mt-6">
-                    {stats ? (
-                      <StatsDashboard stats={stats} />
-                    ) : (
-                      <div
-                        data-liquid-glass="card"
-                        className="glass-panel p-5 sm:p-6"
-                      >
-                        <h3 className="font-ui text-xl font-semibold tracking-tight text-white">
-                          Statistiken gerade nicht verfügbar
-                        </h3>
-                        <p className="mt-2 text-[15px] leading-snug text-white/70">
-                          Die Zahlen der Liga konnten gerade nicht geladen
-                          werden. Schau bitte später noch einmal vorbei.
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                ),
-              },
-              {
-                id: "umfragen",
-                label: "Umfragen",
-                content: (
-                  <div
-                    data-liquid-glass="card"
-                    className="glass-panel mt-6 p-5 sm:p-6"
-                  >
-                    <h3 className="font-ui text-xl font-semibold tracking-tight text-white">
-                      Umfragen
-                    </h3>
-                    <p className="mt-2 text-[15px] leading-snug text-white/70">
-                      Hier entstehen bald Umfragen rund um die Tigers. Schau
-                      regelmäßig vorbei.
-                    </p>
-                  </div>
-                ),
-              },
-            ]}
-          />
+          {showStats && (
+            <ProfileTabs
+              tabs={[
+                {
+                  id: "statistiken",
+                  label: "Statistiken",
+                  content: (
+                    <div className="mt-6">
+                      {stats ? (
+                        <StatsDashboard stats={stats} />
+                      ) : (
+                        <div
+                          data-liquid-glass="card"
+                          className="glass-panel p-5 sm:p-6"
+                        >
+                          <h3 className="font-ui text-xl font-semibold tracking-tight text-white">
+                            Statistiken gerade nicht verfügbar
+                          </h3>
+                          <p className="mt-2 text-[15px] leading-snug text-white/70">
+                            Die Zahlen der Liga konnten gerade nicht geladen
+                            werden. Schau bitte später noch einmal vorbei.
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  ),
+                },
+                {
+                  id: "umfragen",
+                  label: "Umfragen",
+                  content: (
+                    <div
+                      data-liquid-glass="card"
+                      className="glass-panel mt-6 p-5 sm:p-6"
+                    >
+                      <h3 className="font-ui text-xl font-semibold tracking-tight text-white">
+                        Umfragen
+                      </h3>
+                      <p className="mt-2 text-[15px] leading-snug text-white/70">
+                        Hier entstehen bald Umfragen rund um die Tigers. Schau
+                        regelmäßig vorbei.
+                      </p>
+                    </div>
+                  ),
+                },
+              ]}
+            />
+          )}
 
-          <div className="mt-10 sm:mt-14">
+          <div className={showStats ? "mt-10 sm:mt-14" : "mt-8 sm:mt-12"}>
             <Faq />
           </div>
         </section>
