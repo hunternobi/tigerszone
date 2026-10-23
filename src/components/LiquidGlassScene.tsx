@@ -5,6 +5,34 @@ import type { LiquidGlassInstance } from "@/vendor/liquidglass";
 
 const DESKTOP_QUERY = "(min-width: 640px)";
 
+// Once a device proved too slow for the shader the choice is kept for the whole visit (all scenes, all pages).
+const DISABLED_KEY = "tz-glass-off";
+// Touch devices: re-render the glass at most this often while scrolling, and at a lower pixel ratio.
+const TOUCH_SCROLL_INTERVAL_MS = 90;
+// Frames slower than this while scrolling count as "slow"; this many of them switch the shader off.
+const SLOW_FRAME_MS = 50;
+const SLOW_FRAME_LIMIT = 12;
+
+const isTouchDevice = () => window.matchMedia("(pointer: coarse)").matches;
+
+function glassDisabled(): boolean {
+  try {
+    const param = new URLSearchParams(window.location.search).get("glass");
+    if (param === "off") {
+      // Stays off for the rest of the visit (?glass=on switches it back on).
+      sessionStorage.setItem(DISABLED_KEY, "1");
+      return true;
+    }
+    if (param === "on") {
+      sessionStorage.removeItem(DISABLED_KEY);
+      return false;
+    }
+    return sessionStorage.getItem(DISABLED_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
 export interface SceneGlow {
   /** Centre, as a percentage of the scene box. */
   x: number;
@@ -100,7 +128,11 @@ export default function LiquidGlassScene({
     const canvas = canvasRef.current;
     if (!wrapper || !root || !canvas) return;
 
+    // CSS glass only (the surfaces keep their normal look): forced, or a slow device remembered earlier.
+    if (glassDisabled()) return;
+
     const photoMode = Boolean(src);
+    const touch = isTouchDevice();
     const sceneGlows: SceneGlow[] = JSON.parse(glowKey) ?? [];
 
     let cancelled = false;
@@ -110,10 +142,17 @@ export default function LiquidGlassScene({
     let painted = { w: 0, h: 0, desktop: false };
     let frame = 0;
     let settleUntil = 0;
+    let off = false;
+    let lastSync = 0;
+    let lastScroll = 0;
+    let trailing: ReturnType<typeof setTimeout> | undefined;
+    let monitorFrame = 0;
+    let slowFrames = 0;
     const surfaces: Surface[] = [];
 
-    const dpr = () => Math.min(window.devicePixelRatio || 1, 2);
-    const pageBackground = () => document.querySelector<HTMLElement>("[data-page-background]");
+    const dpr = () => Math.min(window.devicePixelRatio || 1, touch ? 1.5 : 2);
+    const pageBackground = () =>
+      document.querySelector<HTMLElement>("[data-page-background]");
     const viewportBox = () =>
       pageBackground()?.getBoundingClientRect() ??
       new DOMRect(0, 0, window.innerWidth, window.innerHeight);
@@ -158,7 +197,11 @@ export default function LiquidGlassScene({
 
     function effectiveOpacity(target: HTMLElement) {
       let value = 1;
-      for (let el: HTMLElement | null = target; el && el !== wrapper; el = el.parentElement) {
+      for (
+        let el: HTMLElement | null = target;
+        el && el !== wrapper;
+        el = el.parentElement
+      ) {
         const own = parseFloat(getComputedStyle(el).opacity);
         if (!Number.isNaN(own)) value *= own;
       }
@@ -172,10 +215,19 @@ export default function LiquidGlassScene({
       // offsetWidth/Height ignore transforms (hover lift, the Reveal scale-in)
       const w = target.offsetWidth;
       const h = target.offsetHeight;
-      const left = Math.round((r.left + (r.width - w) / 2 - rootRect.left) * 10) / 10;
-      const top = Math.round((r.top + (r.height - h) / 2 - rootRect.top) * 10) / 10;
+      const left =
+        Math.round((r.left + (r.width - w) / 2 - rootRect.left) * 10) / 10;
+      const top =
+        Math.round((r.top + (r.height - h) / 2 - rootRect.top) * 10) / 10;
       const radius = Math.round(
-        Math.max(0, Math.min(parseFloat(getComputedStyle(target).borderTopLeftRadius) || 0, h / 2, w / 2)),
+        Math.max(
+          0,
+          Math.min(
+            parseFloat(getComputedStyle(target).borderTopLeftRadius) || 0,
+            h / 2,
+            w / 2,
+          ),
+        ),
       );
       const rawOpacity = effectiveOpacity(target);
       const animating = Math.abs(rawOpacity - surface.rawOpacity) > 0.0002;
@@ -199,7 +251,8 @@ export default function LiquidGlassScene({
     }
 
     function sync(): boolean {
-      if (!ready) return false;
+      if (!ready || off) return false;
+      lastSync = performance.now();
       const rootRect = root!.getBoundingClientRect();
       let changed = false;
 
@@ -240,7 +293,8 @@ export default function LiquidGlassScene({
       }
       // The expensive part is the shader: marking the backdrop copy only re-renders the glasses that
       // overlap it, which in photo mode means the ones inside the viewport.
-      if (photoMode || changed) instance?.markChanged(photoMode ? canvas! : undefined);
+      if (photoMode || changed)
+        instance?.markChanged(photoMode ? canvas! : undefined);
       return changed;
     }
 
@@ -254,11 +308,66 @@ export default function LiquidGlassScene({
       });
     }
 
+    /** Throttled on touch devices: the shader redraws every visible card, which is the expensive part. */
+    function onScroll() {
+      lastScroll = performance.now();
+      startMonitor();
+      if (!touch || !photoMode) {
+        schedule();
+        return;
+      }
+      const wait = TOUCH_SCROLL_INTERVAL_MS - (lastScroll - lastSync);
+      if (wait <= 0) {
+        schedule();
+      } else if (trailing === undefined) {
+        // Also guarantees one final update right after the scrolling stops.
+        trailing = setTimeout(() => {
+          trailing = undefined;
+          schedule();
+        }, wait);
+      }
+    }
+
+    /** While scrolling, watch the real frame rate; a device that cannot keep up gets plain CSS glass. */
+    function startMonitor() {
+      if (monitorFrame || off || !instance) return;
+      let previous = performance.now();
+      const tick = (now: number) => {
+        monitorFrame = 0;
+        const delta = now - previous;
+        previous = now;
+        if (delta > SLOW_FRAME_MS && delta < 1000) slowFrames += 1;
+        if (slowFrames >= SLOW_FRAME_LIMIT) {
+          fallBackToCss();
+          return;
+        }
+        if (now - lastScroll < 250) monitorFrame = requestAnimationFrame(tick);
+      };
+      monitorFrame = requestAnimationFrame(tick);
+    }
+
+    function fallBackToCss() {
+      if (off) return;
+      off = true;
+      try {
+        sessionStorage.setItem(DISABLED_KEY, "1");
+      } catch {
+        // storage unavailable: only this scene falls back
+      }
+      if (trailing !== undefined) clearTimeout(trailing);
+      instance?.destroy();
+      instance = null;
+      setWebglActive(false);
+    }
+
     function createSurfaces() {
-      for (const target of wrapper!.querySelectorAll<HTMLElement>("[data-liquid-glass]")) {
-        const kind = (target.dataset.liquidGlass as SurfaceKind) in PRESETS
-          ? (target.dataset.liquidGlass as SurfaceKind)
-          : "card";
+      for (const target of wrapper!.querySelectorAll<HTMLElement>(
+        "[data-liquid-glass]",
+      )) {
+        const kind =
+          (target.dataset.liquidGlass as SurfaceKind) in PRESETS
+            ? (target.dataset.liquidGlass as SurfaceKind)
+            : "card";
         const isButton = target.tagName === "A";
         const glass = document.createElement("div");
         glass.style.position = "absolute";
@@ -267,14 +376,30 @@ export default function LiquidGlassScene({
         // The glass sits below the link: forward hover/press to drive the library's button effect.
         const handlers: Array<[string, () => void]> = isButton
           ? [
-              ["pointerenter", () => glass.dispatchEvent(new PointerEvent("pointerover"))],
-              ["pointerleave", () => glass.dispatchEvent(new PointerEvent("pointerout"))],
-              ["pointerdown", () => glass.dispatchEvent(new PointerEvent("pointerdown"))],
-              ["pointerup", () => glass.dispatchEvent(new PointerEvent("pointerup"))],
-              ["pointercancel", () => glass.dispatchEvent(new PointerEvent("pointerup"))],
+              [
+                "pointerenter",
+                () => glass.dispatchEvent(new PointerEvent("pointerover")),
+              ],
+              [
+                "pointerleave",
+                () => glass.dispatchEvent(new PointerEvent("pointerout")),
+              ],
+              [
+                "pointerdown",
+                () => glass.dispatchEvent(new PointerEvent("pointerdown")),
+              ],
+              [
+                "pointerup",
+                () => glass.dispatchEvent(new PointerEvent("pointerup")),
+              ],
+              [
+                "pointercancel",
+                () => glass.dispatchEvent(new PointerEvent("pointerup")),
+              ],
             ]
           : [];
-        for (const [type, handler] of handlers) target.addEventListener(type, handler);
+        for (const [type, handler] of handlers)
+          target.addEventListener(type, handler);
 
         const resizeObserver = new ResizeObserver(() => schedule());
         resizeObserver.observe(target);
@@ -287,7 +412,8 @@ export default function LiquidGlassScene({
           last: "",
           rawOpacity: -1,
           cleanup: () => {
-            for (const [type, handler] of handlers) target.removeEventListener(type, handler);
+            for (const [type, handler] of handlers)
+              target.removeEventListener(type, handler);
             resizeObserver.disconnect();
             glass.remove();
           },
@@ -301,7 +427,9 @@ export default function LiquidGlassScene({
         const img = new Image();
         img.onload = () => resolve(img);
         img.onerror = reject;
-        img.src = window.matchMedia(DESKTOP_QUERY).matches ? src! : (mobileSrc ?? src!);
+        img.src = window.matchMedia(DESKTOP_QUERY).matches
+          ? src!
+          : (mobileSrc ?? src!);
       });
     }
 
@@ -319,7 +447,10 @@ export default function LiquidGlassScene({
         paintBackground();
         sync();
 
-        instance = await LiquidGlass.init({ root: root!, glassElements: surfaces.map((s) => s.glass) });
+        instance = await LiquidGlass.init({
+          root: root!,
+          glassElements: surfaces.map((s) => s.glass),
+        });
         if (cancelled) {
           instance.destroy();
           instance = null;
@@ -350,7 +481,7 @@ export default function LiquidGlassScene({
     rootObserver.observe(root);
 
     setup();
-    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", schedule);
     const visualViewport = window.visualViewport;
     visualViewport?.addEventListener("resize", schedule);
@@ -360,7 +491,9 @@ export default function LiquidGlassScene({
       if (frame) cancelAnimationFrame(frame);
       mq.removeEventListener("change", onBreakpoint);
       rootObserver.disconnect();
-      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("scroll", onScroll);
+      if (trailing !== undefined) clearTimeout(trailing);
+      if (monitorFrame) cancelAnimationFrame(monitorFrame);
       window.removeEventListener("resize", schedule);
       visualViewport?.removeEventListener("resize", schedule);
       instance?.destroy();
@@ -377,9 +510,16 @@ export default function LiquidGlassScene({
       style={glows?.length ? { backgroundImage: glowCss(glows) } : undefined}
     >
       {/* Glass root: sits behind the content (z -10 inside this stacking context) and never holds any. */}
-      <div ref={rootRef} aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+      <div
+        ref={rootRef}
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10"
+      >
         {/* Invisible copy of what is behind the glass - the library draws it into the glass scene. */}
-        <canvas ref={canvasRef} className="pointer-events-none invisible absolute left-0 top-0" />
+        <canvas
+          ref={canvasRef}
+          className="pointer-events-none invisible absolute left-0 top-0"
+        />
       </div>
       {children}
     </div>

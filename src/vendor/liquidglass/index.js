@@ -95,6 +95,12 @@ function getImageSize(targetNode, options = {}) {
   const height = options.height || getNodeHeight(targetNode);
   return { width, height };
 }
+// Local patch: cap the pixel ratio. Phones report 3x; the glass renders full-card canvases on every scroll
+// frame and its blur/refraction does not need that resolution (1.5x on touch devices, 2x elsewhere).
+var MAX_DPR = typeof window !== "undefined" && window.matchMedia && window.matchMedia("(pointer: coarse)").matches ? 1.5 : 2;
+function capDpr(ratio) {
+  return Math.min(ratio, MAX_DPR);
+}
 function getPixelRatio() {
   let ratio;
   let FINAL_PROCESS;
@@ -109,7 +115,7 @@ function getPixelRatio() {
       ratio = 1;
     }
   }
-  return ratio || window.devicePixelRatio || 1;
+  return capDpr(ratio || window.devicePixelRatio || 1);
 }
 var canvasDimensionLimit = 16384;
 function checkCanvasDimensions(canvas) {
@@ -2009,7 +2015,7 @@ var LiquidGlass = class _LiquidGlass {
       this._glassDirty.add(element);
     }
     const rootRect = this.root.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
+    const dpr = capDpr(window.devicePixelRatio || 1);
     const elementDOMRect = rectOverride ?? element.getBoundingClientRect();
     const elementBox = this._getPixelRect(
       elementDOMRect,
@@ -2046,7 +2052,7 @@ var LiquidGlass = class _LiquidGlass {
    */
   _markGlassesIntersecting(element) {
     const rootRect = this.root.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
+    const dpr = capDpr(window.devicePixelRatio || 1);
     const elementBox = this._getPixelRect(
       element.getBoundingClientRect(),
       rootRect,
@@ -2304,7 +2310,7 @@ var LiquidGlass = class _LiquidGlass {
   // Resize
   // ────────────────────────────────────────────
   _handleResize() {
-    const dpr = window.devicePixelRatio || 1;
+    const dpr = capDpr(window.devicePixelRatio || 1);
     const rect = this.root.getBoundingClientRect();
     this.capture.resize(dpr);
     this.renderer.resize(Math.round(rect.width * dpr), Math.round(rect.height * dpr));
@@ -2318,7 +2324,7 @@ var LiquidGlass = class _LiquidGlass {
   _updateGlassCanvasSize(el) {
     const canvas = this.glassCanvases.get(el);
     if (!canvas) return;
-    const dpr = window.devicePixelRatio || 1;
+    const dpr = capDpr(window.devicePixelRatio || 1);
     const elW = Math.round(el.offsetWidth);
     const elH = Math.round(el.offsetHeight);
     const padW = SHADOW_PAD * 2;
@@ -2472,7 +2478,7 @@ var LiquidGlass = class _LiquidGlass {
     this._rafId = requestAnimationFrame(() => this._renderLoop());
   }
   _renderFrame() {
-    const dpr = window.devicePixelRatio || 1;
+    const dpr = capDpr(window.devicePixelRatio || 1);
     const rootRect = this.root.getBoundingClientRect();
     const isDragging = this._drag.active;
     if (this._userMarkedChanged.size > 0) {

@@ -12,3 +12,6 @@
 It base64-embeds every page web font for html-to-image captures of glass *content*. We keep glass elements
 empty (content lives in a separate layer), and the step requested all font files from `/media/...` (404) on
 each page load. Re-apply this change when updating the vendored file.
+
+Second patch: `capDpr()` / `MAX_DPR` near `getPixelRatio` - every `window.devicePixelRatio` read goes through it
+(max 1.5 on touch devices, 2 elsewhere). Re-apply when updating the vendored file.
