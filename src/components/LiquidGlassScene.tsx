@@ -10,11 +10,34 @@ const DISABLED_KEY = "tz-glass-off";
 // Touch devices: the glass is redrawn this long after the last scroll event (not while scrolling), at a
 // lower pixel ratio.
 const TOUCH_SCROLL_IDLE_MS = 120;
-// Frames slower than this while scrolling count as "slow"; this many of them switch the shader off.
-const SLOW_FRAME_MS = 50;
-const SLOW_FRAME_LIMIT = 12;
+// The shader is only switched off for sustained stutter: this many slow frames IN A ROW while scrolling,
+// and never during the first seconds after start-up (hydration and shader set-up are heavy anyway).
+const SLOW_FRAME_MS = 60;
+const SLOW_STREAK_LIMIT = 20;
+const STARTUP_GRACE_MS = 4000;
 
 const isTouchDevice = () => window.matchMedia("(pointer: coarse)").matches;
+
+/** `?glass=debug` shows a small status badge, so a phone can tell us why the glass is (not) active. */
+function report(status: string) {
+  try {
+    if (new URLSearchParams(window.location.search).get("glass") !== "debug")
+      return;
+    let badge = document.getElementById("tz-glass-debug");
+    if (!badge) {
+      badge = document.createElement("div");
+      badge.id = "tz-glass-debug";
+      badge.style.cssText =
+        "position:fixed;left:8px;right:8px;top:calc(env(safe-area-inset-top) + 56px);z-index:99999;" +
+        "background:rgba(0,0,0,.8);color:#fff;font:12px/1.4 monospace;padding:6px 8px;border-radius:8px;" +
+        "pointer-events:none;white-space:pre-wrap";
+      document.body.appendChild(badge);
+    }
+    badge.textContent = `glass: ${status}`;
+  } catch {
+    // diagnostics only
+  }
+}
 
 function glassDisabled(): boolean {
   try {
@@ -24,7 +47,7 @@ function glassDisabled(): boolean {
       sessionStorage.setItem(DISABLED_KEY, "1");
       return true;
     }
-    if (param === "on") {
+    if (param === "on" || param === "debug") {
       sessionStorage.removeItem(DISABLED_KEY);
       return false;
     }
@@ -130,7 +153,12 @@ export default function LiquidGlassScene({
     if (!wrapper || !root || !canvas) return;
 
     // CSS glass only (the surfaces keep their normal look): forced, or a slow device remembered earlier.
-    if (glassDisabled()) return;
+    if (glassDisabled()) {
+      report(
+        "off - switched off earlier on this device (open with ?glass=on to switch it back on)",
+      );
+      return;
+    }
 
     const photoMode = Boolean(src);
     const touch = isTouchDevice();
@@ -147,7 +175,8 @@ export default function LiquidGlassScene({
     let lastScroll = 0;
     let trailing: ReturnType<typeof setTimeout> | undefined;
     let monitorFrame = 0;
-    let slowFrames = 0;
+    let slowStreak = 0;
+    let startedAt = 0;
     const surfaces: Surface[] = [];
 
     const dpr = () => Math.min(window.devicePixelRatio || 1, touch ? 1.5 : 2);
@@ -334,9 +363,13 @@ export default function LiquidGlassScene({
         monitorFrame = 0;
         const delta = now - previous;
         previous = now;
-        if (delta > SLOW_FRAME_MS && delta < 1000) slowFrames += 1;
-        if (slowFrames >= SLOW_FRAME_LIMIT) {
-          fallBackToCss();
+        const settled = now - startedAt > STARTUP_GRACE_MS;
+        if (delta > SLOW_FRAME_MS && delta < 1000 && settled) slowStreak += 1;
+        else slowStreak = 0;
+        if (slowStreak >= SLOW_STREAK_LIMIT) {
+          fallBackToCss(
+            `too slow (${slowStreak} frames over ${SLOW_FRAME_MS} ms in a row)`,
+          );
           return;
         }
         if (now - lastScroll < 250) monitorFrame = requestAnimationFrame(tick);
@@ -344,9 +377,10 @@ export default function LiquidGlassScene({
       monitorFrame = requestAnimationFrame(tick);
     }
 
-    function fallBackToCss() {
+    function fallBackToCss(reason: string) {
       if (off) return;
       off = true;
+      report(`off - ${reason}`);
       try {
         sessionStorage.setItem(DISABLED_KEY, "1");
       } catch {
@@ -455,10 +489,17 @@ export default function LiquidGlassScene({
           return;
         }
         setWebglActive(true);
+        startedAt = performance.now();
+        report(
+          `active (${touch ? "touch" : "desktop"}, dpr ${window.devicePixelRatio})`,
+        );
         settleUntil = performance.now() + 1600;
         schedule();
       } catch (error) {
         console.warn("LiquidGlassScene: falling back to CSS glass.", error);
+        report(
+          `off - init failed: ${error instanceof Error ? error.message : String(error)}`,
+        );
       }
     }
 
