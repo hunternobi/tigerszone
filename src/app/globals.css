@@ -31,6 +31,18 @@
   }
 }
 
+/* The fixed page photo is slightly blurred. That filter makes the browser re-rasterise a full-screen layer
+   while scrolling, which is too much for phones: touch devices skip it (the difference is 1.5px). */
+.page-bg {
+  filter: blur(var(--page-bg-blur, 0px));
+}
+
+@media (pointer: coarse) {
+  .page-bg {
+    filter: none;
+  }
+}
+
 @keyframes menuIn {
   from {
     opacity: 0;

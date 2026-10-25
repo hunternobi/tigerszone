@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
 interface FadingBackgroundProps {
   src: string;
@@ -28,8 +28,13 @@ export default function FadingBackground({
     <div className="relative -mt-[4.5rem] overflow-hidden">
       <div
         data-page-background
-        style={{ opacity, filter: blurPx ? `blur(${blurPx}px)` : undefined }}
-        className={`pointer-events-none fixed inset-0 -z-10 ${scaleClassName}`}
+        style={
+          {
+            opacity,
+            "--page-bg-blur": blurPx ? `${blurPx}px` : undefined,
+          } as CSSProperties
+        }
+        className={`page-bg pointer-events-none fixed inset-0 -z-10 ${scaleClassName}`}
       >
         {mobileSrc ? (
           <>
@@ -49,7 +54,13 @@ export default function FadingBackground({
             />
           </>
         ) : (
-          <Image src={src} alt={alt} fill priority className="object-cover object-center" />
+          <Image
+            src={src}
+            alt={alt}
+            fill
+            priority
+            className="object-cover object-center"
+          />
         )}
       </div>
 

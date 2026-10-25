@@ -7,8 +7,9 @@ const DESKTOP_QUERY = "(min-width: 640px)";
 
 // Once a device proved too slow for the shader the choice is kept for the whole visit (all scenes, all pages).
 const DISABLED_KEY = "tz-glass-off";
-// Touch devices: re-render the glass at most this often while scrolling, and at a lower pixel ratio.
-const TOUCH_SCROLL_INTERVAL_MS = 90;
+// Touch devices: the glass is redrawn this long after the last scroll event (not while scrolling), at a
+// lower pixel ratio.
+const TOUCH_SCROLL_IDLE_MS = 120;
 // Frames slower than this while scrolling count as "slow"; this many of them switch the shader off.
 const SLOW_FRAME_MS = 50;
 const SLOW_FRAME_LIMIT = 12;
@@ -143,7 +144,6 @@ export default function LiquidGlassScene({
     let frame = 0;
     let settleUntil = 0;
     let off = false;
-    let lastSync = 0;
     let lastScroll = 0;
     let trailing: ReturnType<typeof setTimeout> | undefined;
     let monitorFrame = 0;
@@ -252,7 +252,6 @@ export default function LiquidGlassScene({
 
     function sync(): boolean {
       if (!ready || off) return false;
-      lastSync = performance.now();
       const rootRect = root!.getBoundingClientRect();
       let changed = false;
 
@@ -308,7 +307,11 @@ export default function LiquidGlassScene({
       });
     }
 
-    /** Throttled on touch devices: the shader redraws every visible card, which is the expensive part. */
+    /**
+     * Touch devices: no shader work while the page is moving. The refraction stays as it was (it moves
+     * with the card) and is redrawn once the scrolling pauses; the expensive part is redrawing every
+     * visible card on every frame.
+     */
     function onScroll() {
       lastScroll = performance.now();
       startMonitor();
@@ -316,16 +319,11 @@ export default function LiquidGlassScene({
         schedule();
         return;
       }
-      const wait = TOUCH_SCROLL_INTERVAL_MS - (lastScroll - lastSync);
-      if (wait <= 0) {
+      if (trailing !== undefined) clearTimeout(trailing);
+      trailing = setTimeout(() => {
+        trailing = undefined;
         schedule();
-      } else if (trailing === undefined) {
-        // Also guarantees one final update right after the scrolling stops.
-        trailing = setTimeout(() => {
-          trailing = undefined;
-          schedule();
-        }, wait);
-      }
+      }, TOUCH_SCROLL_IDLE_MS);
     }
 
     /** While scrolling, watch the real frame rate; a device that cannot keep up gets plain CSS glass. */

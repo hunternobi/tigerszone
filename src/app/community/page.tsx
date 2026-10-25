@@ -16,10 +16,12 @@ export const metadata: Metadata = {
 };
 
 export default async function CommunityPage() {
-  // Statistiken/Umfragen are still being tried out: only admins see the switch, everybody else gets the
-  // plain FAQ page. The league numbers are not even requested for other visitors.
+  // Statistiken/Umfragen are still being tried out. The league numbers are only requested when they are shown.
   const session = await auth();
-  const showStats = session?.user?.role === "admin";
+  // On the live site (production) only admins; in previews and local development everybody, so the page can
+  // be tried out.
+  const showStats =
+    session?.user?.role === "admin" || process.env.VERCEL_ENV !== "production";
   const stats = showStats ? await getLeagueStats() : null;
 
   return (
