@@ -1,15 +1,18 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import type { LiquidGlassInstance } from "@/vendor/liquidglass";
+import { GlassGL, type GlassDrawParams } from "@/lib/glassRenderer";
 
 const DESKTOP_QUERY = "(min-width: 640px)";
 
 // Once a device proved too slow for the shader the choice is kept for the whole visit (all scenes, all pages).
 const DISABLED_KEY = "tz-glass-off";
-// Touch devices: the glass is redrawn this long after the last scroll event (not while scrolling), at a
-// lower pixel ratio.
-const TOUCH_SCROLL_IDLE_MS = 120;
+// The glass canvas reaches this far around each surface (room for the soft shadow of tiles).
+const PAD = 24;
+// A resize of the backdrop (e.g. Safari's toolbar collapsing) is repainted only after it settled.
+const REPAINT_DELAY_MS = 150;
+// Contexts lost this often (memory pressure) switch the shader off.
+const LOST_LIMIT = 6;
 // The shader is only switched off for sustained stutter: this many slow frames IN A ROW while scrolling,
 // and never during the first seconds after start-up (hydration and shader set-up are heavy anyway).
 const SLOW_FRAME_MS = 60;
@@ -70,7 +73,7 @@ export interface SceneGlow {
 export interface SceneBackground {
   /** Colour behind everything (the page background). */
   color: string;
-  /** Fixed full-page photo (same-origin): the scene refracts a viewport-sized copy that follows the scroll. */
+  /** Fixed full-page photo (same-origin): the glass refracts a viewport-sized copy of it. */
   src?: string;
   mobileSrc?: string;
   opacity?: number;
@@ -92,19 +95,28 @@ export const NAVY_SCENE: SceneBackground = {
 };
 
 const PRESETS = {
-  card: { refraction: 0.85, blurAmount: 0.4, chromAberration: 0.05 },
-  tile: { refraction: 0.7, blurAmount: 0.35, chromAberration: 0.05 },
+  card: { refraction: 1.0, blurLod: 1.6, chroma: 0.04, shadow: 0 },
+  tile: { refraction: 0.85, blurLod: 1.4, chroma: 0.04, shadow: 0.3 },
 } as const;
 type SurfaceKind = keyof typeof PRESETS;
 
 interface Surface {
   target: HTMLElement;
-  glass: HTMLElement;
   kind: SurfaceKind;
-  isButton: boolean;
-  last: string;
-  /** Unrounded opacity of the last pass: while it still moves, an animation (Reveal) is running. */
-  rawOpacity: number;
+  canvas: HTMLCanvasElement | null;
+  gl: GlassGL | null;
+  /** Near the viewport: only these surfaces own a canvas and a WebGL context. */
+  visible: boolean;
+  w: number;
+  h: number;
+  radius: number;
+  left: number;
+  top: number;
+  opacity: number;
+  /** Fades (Reveal) are tracked until then; afterwards the opacity is not read again while scrolling. */
+  opacityUntil: number;
+  key: string;
+  backdropVersion: number;
   cleanup: () => void;
 }
 
@@ -117,17 +129,14 @@ const glowCss = (glows: SceneGlow[]) =>
     .join(", ");
 
 /**
- * A group of real refracting "liquid glass" surfaces (WebGL, ybouane/liquidglass) sharing ONE WebGL
- * context and one copy of the backdrop.
+ * A group of refracting "liquid glass" surfaces (own WebGL2 shader, see lib/glassRenderer).
  *
  * Mark any element inside with `data-liquid-glass="card" | "tile"` and give it the normal CSS glass look
- * (e.g. `glass-panel`). Once the shader runs, that CSS look is switched off (see globals.css) and the
- * glass is drawn behind the element, matching its box and corner radius. The element keeps its content,
- * links and focus as usual - the glass never contains content (the library would re-rasterise it).
- * Links also get the library's hover/press effect. Without WebGL the CSS look simply stays.
- *
- * The page photo is `position: fixed`, so in photo mode the scene refracts a viewport-sized copy of it
- * that is kept aligned while scrolling; surfaces off-screen are not re-rendered.
+ * (e.g. `glass-panel`). Once the shader runs, that CSS look is switched off (see globals.css) and a glass
+ * canvas is drawn behind the element, matching its box and corner radius. The canvas scrolls with the
+ * element, so its edges always stay in place; only the refracted picture is redrawn (cheaply) when the
+ * fixed page photo moves relative to it. The element keeps its content, links and focus as usual.
+ * Without WebGL2 the CSS look simply stays.
  */
 export default function LiquidGlassScene({
   children,
@@ -140,7 +149,6 @@ export default function LiquidGlassScene({
 }) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const rootRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [webglActive, setWebglActive] = useState(false);
 
   const { color, src, mobileSrc, opacity = 1, blurPx, glows } = background;
@@ -149,8 +157,7 @@ export default function LiquidGlassScene({
   useEffect(() => {
     const wrapper = wrapperRef.current;
     const root = rootRef.current;
-    const canvas = canvasRef.current;
-    if (!wrapper || !root || !canvas) return;
+    if (!wrapper || !root) return;
 
     // CSS glass only (the surfaces keep their normal look): forced, or a slow device remembered earlier.
     if (glassDisabled()) {
@@ -164,37 +171,44 @@ export default function LiquidGlassScene({
     const touch = isTouchDevice();
     const sceneGlows: SceneGlow[] = JSON.parse(glowKey) ?? [];
 
-    let cancelled = false;
-    let instance: LiquidGlassInstance | null = null;
+    // Offscreen copy of what is behind the glass. Photo mode: the viewport-sized page photo (it is fixed);
+    // otherwise the scene box with its soft glows (it scrolls with the glass).
+    const backdrop = document.createElement("canvas");
+    let backdropVersion = 0;
+    let backdropBox = { w: 0, h: 0 };
     let image: HTMLImageElement | null = null;
+
+    let cancelled = false;
     let ready = false;
-    let painted = { w: 0, h: 0, desktop: false };
+    let off = false;
     let frame = 0;
     let settleUntil = 0;
-    let off = false;
     let lastScroll = 0;
-    let trailing: ReturnType<typeof setTimeout> | undefined;
     let monitorFrame = 0;
     let slowStreak = 0;
     let startedAt = 0;
+    let lostCount = 0;
+    let repaintTimer: ReturnType<typeof setTimeout> | undefined;
+    let announced = false;
     const surfaces: Surface[] = [];
 
     const dpr = () => Math.min(window.devicePixelRatio || 1, touch ? 1.5 : 2);
+    // The backdrop is blurred anyway: soft glows need very few pixels, the photo about one per CSS px.
+    const backdropRatio = () => (photoMode ? Math.min(dpr(), 1.25) : 0.5);
     const pageBackground = () =>
       document.querySelector<HTMLElement>("[data-page-background]");
     const viewportBox = () =>
       pageBackground()?.getBoundingClientRect() ??
       new DOMRect(0, 0, window.innerWidth, window.innerHeight);
 
-    function paintBackground() {
-      const ctx = canvas!.getContext("2d");
+    function paintBackdrop(box: { width: number; height: number }) {
+      const ctx = backdrop.getContext("2d");
       if (!ctx) return;
-      const ratio = dpr();
-      const box = photoMode ? viewportBox() : root!.getBoundingClientRect();
+      const ratio = backdropRatio();
       const w = Math.max(1, Math.round(box.width * ratio));
       const h = Math.max(1, Math.round(box.height * ratio));
-      canvas!.width = w;
-      canvas!.height = h;
+      backdrop.width = w;
+      backdrop.height = h;
 
       ctx.fillStyle = color;
       ctx.fillRect(0, 0, w, h);
@@ -221,7 +235,8 @@ export default function LiquidGlassScene({
           ctx.fillRect(0, 0, w, h);
         }
       }
-      painted = { w, h, desktop: window.matchMedia(DESKTOP_QUERY).matches };
+      backdropBox = { w: box.width, h: box.height };
+      backdropVersion += 1;
     }
 
     function effectiveOpacity(target: HTMLElement) {
@@ -237,127 +252,176 @@ export default function LiquidGlassScene({
       return value;
     }
 
-    /** Moves one glass element onto its surface. Returns true when anything changed. */
-    function place(surface: Surface, rootRect: DOMRect) {
-      const { target, glass } = surface;
-      const r = target.getBoundingClientRect();
-      // offsetWidth/Height ignore transforms (hover lift, the Reveal scale-in)
-      const w = target.offsetWidth;
-      const h = target.offsetHeight;
-      const left =
-        Math.round((r.left + (r.width - w) / 2 - rootRect.left) * 10) / 10;
-      const top =
-        Math.round((r.top + (r.height - h) / 2 - rootRect.top) * 10) / 10;
-      const radius = Math.round(
-        Math.max(
-          0,
-          Math.min(
-            parseFloat(getComputedStyle(target).borderTopLeftRadius) || 0,
-            h / 2,
-            w / 2,
-          ),
-        ),
-      );
-      const rawOpacity = effectiveOpacity(target);
-      const animating = Math.abs(rawOpacity - surface.rawOpacity) > 0.0002;
-      surface.rawOpacity = rawOpacity;
-      const cfg = JSON.stringify({
-        floating: false,
-        button: surface.isButton,
-        cornerRadius: radius,
-        ...PRESETS[surface.kind],
-        opacity: Math.round(rawOpacity * 100) / 100,
-      });
-      const signature = `${left}|${top}|${w}|${h}|${cfg}`;
-      if (signature === surface.last) return animating;
-      surface.last = signature;
-      glass.style.left = `${left}px`;
-      glass.style.top = `${top}px`;
-      glass.style.width = `${w}px`;
-      glass.style.height = `${h}px`;
-      glass.dataset.config = cfg;
+    function destroyGl(surface: Surface) {
+      surface.gl?.destroy();
+      surface.canvas?.remove();
+      surface.gl = null;
+      surface.canvas = null;
+      surface.key = "";
+    }
+
+    /** Own canvas + WebGL context for a surface that came near the viewport. */
+    function ensureGl(surface: Surface): boolean {
+      if (surface.gl && !surface.gl.isLost) return true;
+      destroyGl(surface);
+      const canvas = document.createElement("canvas");
+      canvas.style.cssText = "position:absolute;pointer-events:none;";
+      root!.appendChild(canvas);
+      const gl = GlassGL.create(canvas);
+      if (!gl) {
+        canvas.remove();
+        fallBackToCss("WebGL2 is not available");
+        return false;
+      }
+      gl.onLost = () => {
+        lostCount += 1;
+        if (lostCount > LOST_LIMIT) {
+          fallBackToCss("WebGL context lost too often");
+        } else {
+          destroyGl(surface);
+          schedule();
+        }
+      };
+      gl.setBackdrop(backdrop);
+      surface.canvas = canvas;
+      surface.gl = gl;
+      surface.backdropVersion = backdropVersion;
+      surface.key = "";
+      // A fresh canvas has no size or position yet: force the set-up below.
+      surface.w = 0;
+      surface.left = NaN;
+      surface.top = NaN;
       return true;
     }
 
-    function sync(): boolean {
+    /** Positions and redraws every surface near the viewport. Returns true while something still moves. */
+    function sync(now: number): boolean {
       if (!ready || off) return false;
       const rootRect = root!.getBoundingClientRect();
-      let changed = false;
+      const box = photoMode ? viewportBox() : rootRect;
 
-      if (photoMode) {
-        const box = viewportBox();
-        const ratio = dpr();
-        if (
-          Math.round(box.width * ratio) !== painted.w ||
-          Math.round(box.height * ratio) !== painted.h ||
-          window.matchMedia(DESKTOP_QUERY).matches !== painted.desktop
-        ) {
-          paintBackground();
-        }
-        // Fixed, like the page photo it copies: an absolute canvas that follows the viewport down the
-        // page would keep stretching the document's scroll height.
-        canvas!.style.position = "fixed";
-        canvas!.style.left = `${box.left}px`;
-        canvas!.style.top = `${box.top}px`;
-        canvas!.style.width = `${box.width}px`;
-        canvas!.style.height = `${box.height}px`;
-      } else {
-        const ratio = dpr();
-        if (
-          Math.round(rootRect.width * ratio) !== painted.w ||
-          Math.round(rootRect.height * ratio) !== painted.h
-        ) {
-          paintBackground();
-          changed = true;
-        }
-        // Always applied (not only after a repaint): the first paint happens before the first sync.
-        canvas!.style.width = `${rootRect.width}px`;
-        canvas!.style.height = `${rootRect.height}px`;
+      // Repaint the backdrop when its size changed - but not in the middle of a scroll (Safari's toolbar
+      // collapsing resizes the viewport), only once it settled.
+      const resized =
+        Math.abs(box.width - backdropBox.w) > 0.5 ||
+        Math.abs(box.height - backdropBox.h) > 0.5;
+      if (backdropVersion === 0) {
+        paintBackdrop(box);
+      } else if (resized && repaintTimer === undefined) {
+        repaintTimer = setTimeout(() => {
+          repaintTimer = undefined;
+          if (cancelled || off) return;
+          paintBackdrop(
+            photoMode ? viewportBox() : root!.getBoundingClientRect(),
+          );
+          schedule();
+        }, REPAINT_DELAY_MS);
       }
 
-      // Cheap (a few layout reads); every surface is kept current so none is stale when it scrolls in.
+      let animating = false;
       for (const surface of surfaces) {
-        if (place(surface, rootRect)) changed = true;
+        if (!surface.visible) continue;
+        const { target } = surface;
+        const r = target.getBoundingClientRect();
+        // offsetWidth/Height ignore transforms (hover lift, the Reveal scale-in)
+        const w = target.offsetWidth;
+        const h = target.offsetHeight;
+        if (w === 0 || h === 0) continue;
+        if (!ensureGl(surface) || !surface.gl || !surface.canvas) continue;
+
+        const originX = r.left + (r.width - w) / 2 - PAD; // canvas top-left, viewport coords
+        const originY = r.top + (r.height - h) / 2 - PAD;
+        const left = Math.round((originX - rootRect.left) * 10) / 10;
+        const top = Math.round((originY - rootRect.top) * 10) / 10;
+
+        if (w !== surface.w || h !== surface.h) {
+          surface.w = w;
+          surface.h = h;
+          const radius =
+            parseFloat(getComputedStyle(target).borderTopLeftRadius) || 0;
+          surface.radius = Math.max(0, Math.min(radius, h / 2, w / 2));
+          surface.canvas.style.width = `${w + PAD * 2}px`;
+          surface.canvas.style.height = `${h + PAD * 2}px`;
+          surface.gl.resize(w + PAD * 2, h + PAD * 2, dpr());
+          surface.key = "";
+        }
+        if (left !== surface.left || top !== surface.top) {
+          surface.left = left;
+          surface.top = top;
+          surface.canvas.style.left = `${left}px`;
+          surface.canvas.style.top = `${top}px`;
+        }
+        if (surface.backdropVersion !== backdropVersion) {
+          surface.gl.setBackdrop(backdrop);
+          surface.backdropVersion = backdropVersion;
+          surface.key = "";
+        }
+        if (now < surface.opacityUntil) {
+          const next = Math.round(effectiveOpacity(target) * 100) / 100;
+          if (next !== surface.opacity) {
+            surface.opacity = next;
+            surface.key = "";
+          }
+          animating = true;
+        }
+
+        const backdropX = originX - box.left;
+        const backdropY = originY - box.top;
+        const key = `${Math.round(backdropX * 2)}|${Math.round(backdropY * 2)}|${box.width}|${box.height}|${surface.opacity}`;
+        if (key === surface.key) continue;
+        surface.key = key;
+
+        const preset = PRESETS[surface.kind];
+        const params: GlassDrawParams = {
+          canvasW: w + PAD * 2,
+          canvasH: h + PAD * 2,
+          width: w,
+          height: h,
+          pad: PAD,
+          radius: surface.radius,
+          backdropX,
+          backdropY,
+          backdropW: box.width,
+          backdropH: box.height,
+          refraction: preset.refraction,
+          blurLod: preset.blurLod,
+          chroma: preset.chroma,
+          opacity: surface.opacity,
+          shadow: preset.shadow,
+        };
+        surface.gl.draw(params);
+
+        if (!announced) {
+          announced = true;
+          startedAt = now;
+          setWebglActive(true);
+          report(
+            `active (${touch ? "touch" : "desktop"}, dpr ${window.devicePixelRatio}, own shader)`,
+          );
+        }
       }
-      // The expensive part is the shader: marking the backdrop copy only re-renders the glasses that
-      // overlap it, which in photo mode means the ones inside the viewport.
-      if (photoMode || changed)
-        instance?.markChanged(photoMode ? canvas! : undefined);
-      return changed;
+      return animating;
     }
 
     function schedule() {
       if (frame) return;
-      frame = requestAnimationFrame(() => {
+      frame = requestAnimationFrame((now) => {
         frame = 0;
-        const changed = sync();
-        // Keep going while something still moves (the Reveal scale-in) and briefly after start-up.
-        if (changed || performance.now() < settleUntil) schedule();
+        const animating = sync(now);
+        // Keep going while a fade runs and briefly after start-up.
+        if (animating || performance.now() < settleUntil) schedule();
       });
     }
 
-    /**
-     * Touch devices: no shader work while the page is moving. The refraction stays as it was (it moves
-     * with the card) and is redrawn once the scrolling pauses; the expensive part is redrawing every
-     * visible card on every frame.
-     */
     function onScroll() {
       lastScroll = performance.now();
       startMonitor();
-      if (!touch || !photoMode) {
-        schedule();
-        return;
-      }
-      if (trailing !== undefined) clearTimeout(trailing);
-      trailing = setTimeout(() => {
-        trailing = undefined;
-        schedule();
-      }, TOUCH_SCROLL_IDLE_MS);
+      schedule();
     }
 
     /** While scrolling, watch the real frame rate; a device that cannot keep up gets plain CSS glass. */
     function startMonitor() {
-      if (monitorFrame || off || !instance) return;
+      if (monitorFrame || off || !announced) return;
       let previous = performance.now();
       const tick = (now: number) => {
         monitorFrame = 0;
@@ -386,11 +450,25 @@ export default function LiquidGlassScene({
       } catch {
         // storage unavailable: only this scene falls back
       }
-      if (trailing !== undefined) clearTimeout(trailing);
-      instance?.destroy();
-      instance = null;
+      for (const surface of surfaces) destroyGl(surface);
       setWebglActive(false);
     }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const now = performance.now();
+        for (const entry of entries) {
+          const surface = surfaces.find((s) => s.target === entry.target);
+          if (!surface) continue;
+          surface.visible = entry.isIntersecting;
+          if (surface.visible) surface.opacityUntil = now + 1500;
+          else destroyGl(surface);
+        }
+        schedule();
+      },
+      // A little room so the glass is already drawn when a card scrolls into view.
+      { rootMargin: "300px 0px" },
+    );
 
     function createSurfaces() {
       for (const target of wrapper!.querySelectorAll<HTMLElement>(
@@ -400,57 +478,30 @@ export default function LiquidGlassScene({
           (target.dataset.liquidGlass as SurfaceKind) in PRESETS
             ? (target.dataset.liquidGlass as SurfaceKind)
             : "card";
-        const isButton = target.tagName === "A";
-        const glass = document.createElement("div");
-        glass.style.position = "absolute";
-        root!.appendChild(glass);
-
-        // The glass sits below the link: forward hover/press to drive the library's button effect.
-        const handlers: Array<[string, () => void]> = isButton
-          ? [
-              [
-                "pointerenter",
-                () => glass.dispatchEvent(new PointerEvent("pointerover")),
-              ],
-              [
-                "pointerleave",
-                () => glass.dispatchEvent(new PointerEvent("pointerout")),
-              ],
-              [
-                "pointerdown",
-                () => glass.dispatchEvent(new PointerEvent("pointerdown")),
-              ],
-              [
-                "pointerup",
-                () => glass.dispatchEvent(new PointerEvent("pointerup")),
-              ],
-              [
-                "pointercancel",
-                () => glass.dispatchEvent(new PointerEvent("pointerup")),
-              ],
-            ]
-          : [];
-        for (const [type, handler] of handlers)
-          target.addEventListener(type, handler);
-
         const resizeObserver = new ResizeObserver(() => schedule());
         resizeObserver.observe(target);
+        observer.observe(target);
 
-        const surface: Surface = {
+        surfaces.push({
           target,
-          glass,
           kind,
-          isButton,
-          last: "",
-          rawOpacity: -1,
+          canvas: null,
+          gl: null,
+          visible: false,
+          w: 0,
+          h: 0,
+          radius: 0,
+          left: NaN,
+          top: NaN,
+          opacity: 1,
+          opacityUntil: performance.now() + 2500,
+          key: "",
+          backdropVersion: -1,
           cleanup: () => {
-            for (const [type, handler] of handlers)
-              target.removeEventListener(type, handler);
             resizeObserver.disconnect();
-            glass.remove();
+            observer.unobserve(target);
           },
-        };
-        surfaces.push(surface);
+        });
       }
     }
 
@@ -467,32 +518,11 @@ export default function LiquidGlassScene({
 
     async function setup() {
       try {
-        const [{ LiquidGlass }, loaded] = await Promise.all([
-          import("@/vendor/liquidglass"),
-          photoMode ? loadImage() : Promise.resolve(null),
-        ]);
+        image = photoMode ? await loadImage() : null;
         if (cancelled) return;
-        image = loaded;
         createSurfaces();
         if (surfaces.length === 0) return;
         ready = true;
-        paintBackground();
-        sync();
-
-        instance = await LiquidGlass.init({
-          root: root!,
-          glassElements: surfaces.map((s) => s.glass),
-        });
-        if (cancelled) {
-          instance.destroy();
-          instance = null;
-          return;
-        }
-        setWebglActive(true);
-        startedAt = performance.now();
-        report(
-          `active (${touch ? "touch" : "desktop"}, dpr ${window.devicePixelRatio})`,
-        );
         settleUntil = performance.now() + 1600;
         schedule();
       } catch (error) {
@@ -510,7 +540,7 @@ export default function LiquidGlassScene({
       loadImage().then((img) => {
         if (cancelled) return;
         image = img;
-        paintBackground();
+        paintBackdrop(viewportBox());
         schedule();
       });
     };
@@ -528,16 +558,18 @@ export default function LiquidGlassScene({
     return () => {
       cancelled = true;
       if (frame) cancelAnimationFrame(frame);
+      if (monitorFrame) cancelAnimationFrame(monitorFrame);
+      if (repaintTimer !== undefined) clearTimeout(repaintTimer);
       mq.removeEventListener("change", onBreakpoint);
       rootObserver.disconnect();
+      observer.disconnect();
       window.removeEventListener("scroll", onScroll);
-      if (trailing !== undefined) clearTimeout(trailing);
-      if (monitorFrame) cancelAnimationFrame(monitorFrame);
       window.removeEventListener("resize", schedule);
       visualViewport?.removeEventListener("resize", schedule);
-      instance?.destroy();
-      instance = null;
-      for (const surface of surfaces) surface.cleanup();
+      for (const surface of surfaces) {
+        destroyGl(surface);
+        surface.cleanup();
+      }
     };
   }, [src, mobileSrc, opacity, color, blurPx, glowKey]);
 
@@ -553,13 +585,7 @@ export default function LiquidGlassScene({
         ref={rootRef}
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10"
-      >
-        {/* Invisible copy of what is behind the glass - the library draws it into the glass scene. */}
-        <canvas
-          ref={canvasRef}
-          className="pointer-events-none invisible absolute left-0 top-0"
-        />
-      </div>
+      />
       {children}
     </div>
   );

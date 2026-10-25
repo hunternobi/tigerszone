@@ -12,8 +12,6 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
-    // Vendored third-party bundle (see src/vendor/liquidglass/README.md)
-    "src/vendor/**",
   ]),
 ]);
 
