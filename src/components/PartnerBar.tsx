@@ -20,10 +20,24 @@ const PARTNERS: Partner[] = [
     logoWidth: 460,
     logoHeight: 498,
   },
+  {
+    name: "Erl Bräu",
+    href: "https://www.erl-braeu.de/",
+    logoSrc: "/images/partners/erl-braeu.png",
+    logoWidth: 460,
+    logoHeight: 519,
+  },
+  {
+    name: "Sigl Immobilien",
+    href: "https://www.sigl-immobiliengruppe.de/",
+    logoSrc: "/images/partners/sigl-immobilien.png",
+    logoWidth: 640,
+    logoHeight: 341,
+  },
 ];
 
 const TILE_CLASS =
-  "glass-panel glass-interactive flex h-24 w-32 items-center justify-center p-3 sm:h-40 sm:w-48 sm:p-4";
+  "glass-panel glass-interactive flex h-24 min-w-0 items-center justify-center p-2.5 sm:h-40 sm:w-48 sm:p-4";
 
 export default function PartnerBar() {
   return (
@@ -36,7 +50,7 @@ export default function PartnerBar() {
           Gemeinsam mit starken Partnern machen wir TigersZone möglich
         </p>
 
-        <div className="mt-4 flex justify-center gap-3 sm:mt-8 sm:gap-4">
+        <div className="mt-4 grid grid-cols-3 gap-2.5 sm:mt-8 sm:flex sm:flex-wrap sm:justify-center sm:gap-4">
           {PARTNERS.map((partner) => {
             const logo = (
               <Image
