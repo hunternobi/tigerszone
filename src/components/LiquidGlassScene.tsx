@@ -209,7 +209,7 @@ export default function LiquidGlassScene({
 
     const dpr = () => Math.min(window.devicePixelRatio || 1, 2);
     // The backdrop is blurred anyway: soft glows need very few pixels, the photo about one per CSS px.
-    const backdropRatio = () => (photoMode ? 0.6 : 0.5);
+    const backdropRatio = () => (photoMode ? 1 : 0.5);
     const pageBackground = () =>
       document.querySelector<HTMLElement>("[data-page-background]");
     const viewportBox = () =>
@@ -234,6 +234,9 @@ export default function LiquidGlassScene({
         const dw = image.naturalWidth * scale;
         const dh = image.naturalHeight * scale;
         ctx.globalAlpha = opacity;
+        // A multi-megapixel photo drawn tiny aliases into blocks unless smoothing is on high.
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
         if (blurPx && "filter" in ctx) ctx.filter = `blur(${blurPx * ratio}px)`;
         ctx.drawImage(image, (w - dw) / 2, (h - dh) / 2, dw, dh);
         ctx.filter = "none";
