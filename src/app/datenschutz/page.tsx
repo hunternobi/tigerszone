@@ -12,13 +12,13 @@ const list = "mt-2 list-disc space-y-1 pl-5 text-sm text-white";
 
 export default function DatenschutzPage() {
   return (
-    <section className="mx-auto max-w-3xl px-7 sm:px-6 py-16">
-      <h1 className="text-3xl font-bold text-white">Datenschutzerklärung</h1>
+    <section className="mx-auto max-w-3xl px-7 py-10 sm:px-6 sm:py-16">
+      <h1 className="font-ui text-[2.15rem] leading-[1.06] font-semibold tracking-tight text-white sm:text-5xl">Datenschutzerklärung</h1>
       <p className="mt-2 text-sm text-white/60">Stand: August 2026</p>
 
       <div className="glass-panel mt-8 space-y-8 p-6 sm:p-8">
         <div>
-          <h2 className="text-lg font-bold text-white">1. Verantwortliche</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">1. Verantwortliche</h2>
           <p className="mt-2 text-sm text-white">
             Verantwortlich für die Verarbeitung personenbezogener Daten auf dieser Website ist:
           </p>
@@ -52,7 +52,7 @@ export default function DatenschutzPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">2. Allgemeine Hinweise zur Datenverarbeitung</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">2. Allgemeine Hinweise zur Datenverarbeitung</h2>
           <p className="mt-2 text-sm text-white">
             Der Schutz deiner personenbezogenen Daten ist uns wichtig. Wir verarbeiten
             personenbezogene Daten ausschließlich im Rahmen der geltenden datenschutzrechtlichen
@@ -72,7 +72,7 @@ export default function DatenschutzPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">3. Aufruf der Website und Server-Logdaten</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">3. Aufruf der Website und Server-Logdaten</h2>
           <p className="mt-2 text-sm text-white">
             Beim Aufruf unserer Website werden durch den technischen Betrieb der Website
             automatisch bestimmte Informationen verarbeitet.
@@ -118,7 +118,7 @@ export default function DatenschutzPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">4. Hosting durch Vercel</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">4. Hosting durch Vercel</h2>
           <p className="mt-2 text-sm text-white">
             Unsere Website wird derzeit über <strong>Vercel</strong> bereitgestellt.
           </p>
@@ -151,7 +151,7 @@ export default function DatenschutzPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">5. Domain und DNS</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">5. Domain und DNS</h2>
           <p className="mt-2 text-sm text-white">
             Die Domain <strong>tigerszone.de</strong> wird über <strong>IONOS SE</strong>{" "}
             verwaltet.
@@ -180,7 +180,7 @@ export default function DatenschutzPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">6. Benutzerkonto und Registrierung</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">6. Benutzerkonto und Registrierung</h2>
           <p className="mt-2 text-sm text-white">
             Für bestimmte Funktionen von {SITE_NAME} ist die Erstellung eines Benutzerkontos
             erforderlich.
@@ -211,7 +211,7 @@ export default function DatenschutzPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">7. Authentifizierung und Sitzungen</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">7. Authentifizierung und Sitzungen</h2>
           <p className="mt-2 text-sm text-white">
             Für die Anmeldung und Authentifizierung verwenden wir <strong>Auth.js (NextAuth.js)</strong>{" "}
             mit einem Credentials-Provider.
@@ -234,7 +234,7 @@ export default function DatenschutzPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">
             8. Cookies und vergleichbare Technologien
           </h2>
           <p className="mt-2 text-sm text-white">
@@ -285,7 +285,7 @@ export default function DatenschutzPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">9. Vercel Analytics</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">9. Vercel Analytics</h2>
           <p className="mt-2 text-sm text-white">
             Wir verwenden <strong>Vercel Analytics</strong> zur statistischen Auswertung der
             Nutzung unserer Website.
@@ -322,7 +322,7 @@ export default function DatenschutzPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">10. MongoDB Atlas</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">10. MongoDB Atlas</h2>
           <p className="mt-2 text-sm text-white">
             Für die Speicherung der für den Betrieb von {SITE_NAME} erforderlichen Daten verwenden
             wir <strong>MongoDB Atlas</strong>, einen Datenbankdienst der MongoDB, Inc.
@@ -364,7 +364,7 @@ export default function DatenschutzPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">11. E-Mail-Versand über Resend</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">11. E-Mail-Versand über Resend</h2>
           <p className="mt-2 text-sm text-white">
             Für den Versand von E-Mails im Zusammenhang mit Benutzerkonten und technischen
             Funktionen von {SITE_NAME} verwenden wir <strong>Resend</strong>.
@@ -420,7 +420,7 @@ export default function DatenschutzPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">12. Selbst gehostete Google Fonts</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">12. Selbst gehostete Google Fonts</h2>
           <p className="mt-2 text-sm text-white">
             Auf unserer Website werden Schriftarten von Google Fonts verwendet.
           </p>
@@ -441,7 +441,7 @@ export default function DatenschutzPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">13. Instagram-Einbettungen</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">13. Instagram-Einbettungen</h2>
           <p className="mt-2 text-sm text-white">
             Auf einzelnen Seiten können Inhalte von <strong>Instagram</strong> eingebettet sein.
           </p>
@@ -488,7 +488,7 @@ export default function DatenschutzPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">14. Bilder und sonstige Inhalte</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">14. Bilder und sonstige Inhalte</h2>
           <p className="mt-2 text-sm text-white">
             Die auf {SITE_NAME} verwendeten Bilder werden grundsätzlich von unserem eigenen
             Webserver bzw. über die von uns eingesetzte Hosting-Infrastruktur ausgeliefert.
@@ -505,7 +505,7 @@ export default function DatenschutzPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">15. Community-Funktionen und Nutzerinhalte</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">15. Community-Funktionen und Nutzerinhalte</h2>
           <p className="mt-2 text-sm text-white">
             {SITE_NAME} bietet Community- und Tippspielfunktionen, über die Nutzer bestimmte
             Inhalte und Informationen innerhalb der Plattform bereitstellen können.
@@ -537,7 +537,7 @@ export default function DatenschutzPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">16. Kontaktaufnahme per E-Mail</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">16. Kontaktaufnahme per E-Mail</h2>
           <p className="mt-2 text-sm text-white">
             Wenn du uns per E-Mail kontaktierst, werden die von dir mitgeteilten
             personenbezogenen Daten verarbeitet.
@@ -562,7 +562,7 @@ export default function DatenschutzPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">17. Zahlungsabwicklung</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">17. Zahlungsabwicklung</h2>
           <p className="mt-2 text-sm text-white">
             Derzeit bietet {SITE_NAME} keine kostenpflichtigen Leistungen an.
           </p>
@@ -574,7 +574,7 @@ export default function DatenschutzPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">18. Rechtsgrundlagen der Verarbeitung</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">18. Rechtsgrundlagen der Verarbeitung</h2>
           <p className="mt-2 text-sm text-white">
             Soweit in dieser Datenschutzerklärung keine speziellere Rechtsgrundlage genannt wird,
             erfolgt die Verarbeitung personenbezogener Daten auf Grundlage von:
@@ -600,7 +600,7 @@ export default function DatenschutzPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">19. Speicherdauer</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">19. Speicherdauer</h2>
           <p className="mt-2 text-sm text-white">
             Wir speichern personenbezogene Daten grundsätzlich nur so lange, wie dies für den
             jeweiligen Zweck erforderlich ist.
@@ -623,7 +623,7 @@ export default function DatenschutzPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">20. Empfänger personenbezogener Daten</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">20. Empfänger personenbezogener Daten</h2>
           <p className="mt-2 text-sm text-white">
             Personenbezogene Daten können im Rahmen des Betriebs von {SITE_NAME} an folgende
             Kategorien von Empfängern bzw. Dienstleistern übermittelt werden:
@@ -646,7 +646,7 @@ export default function DatenschutzPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">21. Übermittlung in Drittländer</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">21. Übermittlung in Drittländer</h2>
           <p className="mt-2 text-sm text-white">
             Soweit personenbezogene Daten an Dienstleister außerhalb des Europäischen
             Wirtschaftsraums übermittelt werden oder dort verarbeitet werden, erfolgt dies unter
@@ -664,7 +664,7 @@ export default function DatenschutzPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">22. Rechte der betroffenen Personen</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">22. Rechte der betroffenen Personen</h2>
           <p className="mt-2 text-sm text-white">
             Betroffene Personen haben nach Maßgabe der gesetzlichen Voraussetzungen insbesondere
             folgende Rechte:
@@ -684,7 +684,7 @@ export default function DatenschutzPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">23. Widerspruch gegen die Verarbeitung</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">23. Widerspruch gegen die Verarbeitung</h2>
           <p className="mt-2 text-sm text-white">
             Soweit wir personenbezogene Daten auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO
             verarbeiten, kann die betroffene Person aus Gründen, die sich aus ihrer besonderen
@@ -697,7 +697,7 @@ export default function DatenschutzPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">
             24. Beschwerderecht bei einer Aufsichtsbehörde
           </h2>
           <p className="mt-2 text-sm text-white">
@@ -722,7 +722,7 @@ export default function DatenschutzPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">25. Datensicherheit</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">25. Datensicherheit</h2>
           <p className="mt-2 text-sm text-white">
             Wir treffen angemessene technische und organisatorische Maßnahmen, um
             personenbezogene Daten vor Verlust, Zerstörung, Manipulation, unberechtigtem Zugriff
@@ -735,7 +735,7 @@ export default function DatenschutzPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">26. Keine automatisierte Entscheidungsfindung</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">26. Keine automatisierte Entscheidungsfindung</h2>
           <p className="mt-2 text-sm text-white">
             Eine automatisierte Entscheidungsfindung einschließlich Profiling im Sinne des Art.
             22 DSGVO findet im Rahmen der Nutzung von {SITE_NAME} nicht statt.
@@ -743,7 +743,7 @@ export default function DatenschutzPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">27. Änderungen dieser Datenschutzerklärung</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">27. Änderungen dieser Datenschutzerklärung</h2>
           <p className="mt-2 text-sm text-white">
             Wir behalten uns vor, diese Datenschutzerklärung anzupassen, wenn dies aufgrund
             technischer Änderungen, neuer Funktionen der Plattform, Änderungen der eingesetzten

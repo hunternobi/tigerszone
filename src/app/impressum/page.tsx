@@ -11,8 +11,8 @@ const link = "text-tigers-secondary hover:underline";
 
 export default function ImpressumPage() {
   return (
-    <section className="mx-auto max-w-3xl px-7 sm:px-6 py-16">
-      <h1 className="text-3xl font-bold text-white">Impressum</h1>
+    <section className="mx-auto max-w-3xl px-7 py-10 sm:px-6 sm:py-16">
+      <h1 className="font-ui text-[2.15rem] leading-[1.06] font-semibold tracking-tight text-white sm:text-5xl">Impressum</h1>
 
       <div className="glass-panel mt-8 space-y-8 p-6 sm:p-8">
         <div>
@@ -20,7 +20,7 @@ export default function ImpressumPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">Geschäftsanschrift</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">Geschäftsanschrift</h2>
           <p className="mt-2 text-sm text-white">
             Puchhausener Straße 6
             <br />
@@ -31,7 +31,7 @@ export default function ImpressumPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">Vertreten durch die Gesellschafter</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">Vertreten durch die Gesellschafter</h2>
           <p className="mt-2 text-sm text-white">
             Tobias Dominik Ernst
             <br />
@@ -40,7 +40,7 @@ export default function ImpressumPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">E-Mail</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">E-Mail</h2>
           <p className="mt-2 text-sm text-white">
             <a href="mailto:Tigerszoneofficial@gmail.com" className={link}>
               Tigerszoneofficial@gmail.com
@@ -49,7 +49,7 @@ export default function ImpressumPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">
             Verantwortlich für den Inhalt gemäß § 18 Abs. 2 MStV
           </h2>
           <p className="mt-2 text-sm text-white">
@@ -64,7 +64,7 @@ export default function ImpressumPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">Bildrechte</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">Bildrechte</h2>
           <p className="mt-2 text-sm text-white">
             Die auf dieser Website verwendeten Fotografien stammen von RS-Sportfoto.de und werden
             mit entsprechender Nutzungserlaubnis verwendet. Die Urheberrechte an den Fotografien

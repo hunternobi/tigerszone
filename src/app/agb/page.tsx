@@ -12,12 +12,12 @@ const sublist = "mt-2 list-disc space-y-1 pl-5";
 
 export default function AgbPage() {
   return (
-    <section className="mx-auto max-w-3xl px-7 sm:px-6 py-16">
-      <h1 className="text-3xl font-bold text-white">Allgemeine Geschäftsbedingungen (AGB)</h1>
+    <section className="mx-auto max-w-3xl px-7 py-10 sm:px-6 sm:py-16">
+      <h1 className="font-ui text-[2.15rem] leading-[1.06] font-semibold tracking-tight text-white sm:text-5xl">Allgemeine Geschäftsbedingungen (AGB)</h1>
 
       <div className="glass-panel mt-8 space-y-8 p-6 sm:p-8">
         <div>
-          <h2 className="text-lg font-bold text-white">§ 1 Geltungsbereich</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">§ 1 Geltungsbereich</h2>
           <ol className={list}>
             <li>
               Diese Allgemeinen Geschäftsbedingungen (nachfolgend „AGB&quot;) regeln die Nutzung
@@ -68,7 +68,7 @@ export default function AgbPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">§ 2 Leistungsumfang</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">§ 2 Leistungsumfang</h2>
           <ol className={list}>
             <li>
               Die Plattform ermöglicht registrierten Nutzern die Teilnahme an digitalen
@@ -98,7 +98,7 @@ export default function AgbPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">§ 3 Kein Glücksspiel</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">§ 3 Kein Glücksspiel</h2>
           <ol className={list}>
             <li>
               Die Plattform dient ausschließlich der Unterhaltung sowie dem sportlichen
@@ -118,7 +118,7 @@ export default function AgbPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">§ 4 Registrierung und Minderjährige</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">§ 4 Registrierung und Minderjährige</h2>
           <ol className={list}>
             <li>
               Für die Nutzung der Plattform ist grundsätzlich die Erstellung eines
@@ -164,7 +164,7 @@ export default function AgbPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">§ 5 Benutzerkonto</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">§ 5 Benutzerkonto</h2>
           <ol className={list}>
             <li>
               Das Benutzerkonto ist personenbezogen und darf grundsätzlich nur von dem Nutzer
@@ -193,7 +193,7 @@ export default function AgbPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">§ 6 Vertragsschluss</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">§ 6 Vertragsschluss</h2>
           <ol className={list}>
             <li>Die Registrierung eines Benutzerkontos ist unentgeltlich.</li>
             <li>
@@ -224,7 +224,7 @@ export default function AgbPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">§ 7 Preise und Zahlungsbedingungen</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">§ 7 Preise und Zahlungsbedingungen</h2>
           <ol className={list}>
             <li>Es gelten die zum Zeitpunkt der Bestellung auf der Plattform angegebenen Preise.</li>
             <li>
@@ -249,7 +249,7 @@ export default function AgbPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">§ 8 Kostenpflichtige digitale Leistungen</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">§ 8 Kostenpflichtige digitale Leistungen</h2>
           <ol className={list}>
             <li>
               Kostenpflichtige digitale Leistungen werden nach erfolgreichem Abschluss des
@@ -278,7 +278,7 @@ export default function AgbPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">§ 9 Verfügbarkeit</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">§ 9 Verfügbarkeit</h2>
           <ol className={list}>
             <li>
               Der Betreiber bemüht sich um eine möglichst unterbrechungsfreie Verfügbarkeit der
@@ -302,7 +302,7 @@ export default function AgbPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">§ 10 Durchführung der Tippspiele</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">§ 10 Durchführung der Tippspiele</h2>
           <ol className={list}>
             <li>
               Für die Durchführung der jeweiligen Tippspiele gelten die auf der Plattform
@@ -331,7 +331,7 @@ export default function AgbPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">§ 11 Verhaltenspflichten</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">§ 11 Verhaltenspflichten</h2>
           <ol className={list}>
             <li>
               Der Nutzer verpflichtet sich, die Plattform ausschließlich im Rahmen der geltenden
@@ -373,7 +373,7 @@ export default function AgbPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">§ 12 Nutzungsrechte und Inhalte</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">§ 12 Nutzungsrechte und Inhalte</h2>
           <ol className={list}>
             <li>
               Sämtliche vom Betreiber bereitgestellten Inhalte der Plattform, insbesondere
@@ -407,7 +407,7 @@ export default function AgbPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">§ 13 Widerrufsrecht</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">§ 13 Widerrufsrecht</h2>
           <ol className={list}>
             <li>
               Verbrauchern steht bei Vorliegen der gesetzlichen Voraussetzungen ein
@@ -431,7 +431,7 @@ export default function AgbPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">§ 14 Haftung</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">§ 14 Haftung</h2>
           <ol className={list}>
             <li>
               Der Betreiber haftet unbeschränkt für Schäden, die auf einer vorsätzlichen oder
@@ -465,7 +465,7 @@ export default function AgbPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">§ 15 Sperrung und Kündigung</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">§ 15 Sperrung und Kündigung</h2>
           <ol className={list}>
             <li>
               Der Nutzer kann sein Benutzerkonto jederzeit löschen bzw. die Nutzung der
@@ -500,7 +500,7 @@ export default function AgbPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">§ 16 Datenschutz</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">§ 16 Datenschutz</h2>
           <ol className={list}>
             <li>
               Die Verarbeitung personenbezogener Daten erfolgt nach Maßgabe der jeweils
@@ -515,7 +515,7 @@ export default function AgbPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">§ 17 Änderungen dieser AGB</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">§ 17 Änderungen dieser AGB</h2>
           <ol className={list}>
             <li>
               Änderungen dieser AGB für bestehende Vertragsverhältnisse sind nur zulässig,
@@ -539,7 +539,7 @@ export default function AgbPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-white">§ 18 Schlussbestimmungen</h2>
+          <h2 className="font-ui text-lg font-semibold tracking-tight text-white">§ 18 Schlussbestimmungen</h2>
           <ol className={list}>
             <li>
               Es gilt das Recht der Bundesrepublik Deutschland unter Ausschluss des

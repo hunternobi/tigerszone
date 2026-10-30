@@ -33,8 +33,8 @@ export default async function AdminPage() {
   ]);
 
   return (
-    <section className="mx-auto max-w-5xl px-7 sm:px-6 py-16">
-      <h1 className="text-3xl font-bold text-white">Admin-Bereich</h1>
+    <section className="mx-auto max-w-5xl px-7 py-10 sm:px-6 sm:py-16">
+      <h1 className="font-ui text-[2.15rem] leading-[1.06] font-semibold tracking-tight text-white sm:text-5xl">Admin-Bereich</h1>
       <p className="mt-3 text-white">
         Ergebnisse eintragen oder korrigieren. Die Punkteauswertung aller Tipps läuft danach
         automatisch.
