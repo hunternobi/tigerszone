@@ -101,12 +101,12 @@
   --color-tigers-accent: var(--color-tigers-accent);
 }
 
-/* Phones: scale the whole rem-based UI down to 68% so it feels less overwhelming. Inputs stay
+/* Phones: scale the whole rem-based UI down to 71.4% so it feels less overwhelming. Inputs stay
    at 16px because iOS Safari zooms into anything smaller when it is focused. */
 @layer base {
   @media (max-width: 767px) {
     html {
-      font-size: 68%;
+      font-size: 71.4%;
     }
 
     input,
