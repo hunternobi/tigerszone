@@ -7,6 +7,7 @@ const DESKTOP_QUERY = "(min-width: 640px)";
 
 // Once a device proved too slow for the shader the choice is kept for the whole visit (all scenes, all pages).
 const DISABLED_KEY = "tz-glass-off";
+const ENABLED_KEY = "tz-glass-on";
 // The glass canvas reaches this far around each surface (room for the soft shadow of tiles).
 const PAD = 24;
 // At most this many WebGL contexts per scene are kept alive; they are reused while scrolling instead of
@@ -53,15 +54,18 @@ function glassDisabled(): boolean {
     if (param === "off") {
       // Stays off for the rest of the visit (?glass=on switches it back on).
       sessionStorage.setItem(DISABLED_KEY, "1");
+      sessionStorage.removeItem(ENABLED_KEY);
       return true;
     }
     if (param === "on" || param === "debug") {
       sessionStorage.removeItem(DISABLED_KEY);
+      sessionStorage.setItem(ENABLED_KEY, "1");
       return false;
     }
-    return sessionStorage.getItem(DISABLED_KEY) === "1";
+    // The WebGL glass is parked for now: CSS glass over the fixed page background unless ?glass=on.
+    return sessionStorage.getItem(ENABLED_KEY) !== "1";
   } catch {
-    return false;
+    return true;
   }
 }
 
