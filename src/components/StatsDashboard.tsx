@@ -270,8 +270,7 @@ export default function StatsDashboard({
       />
 
       <p className="px-2 text-center text-[0.75rem] leading-relaxed text-white/50">
-        Stand {formatDate(stats.fetchedAt)} Uhr · aktualisiert sich nach jedem
-        Spieltag · Quelle: penny-del.org
+        Stand {formatDate(stats.fetchedAt)} Uhr · Quelle: penny-del.org
       </p>
     </div>
   );
