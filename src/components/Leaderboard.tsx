@@ -10,6 +10,8 @@ export interface LeaderboardEntry {
   points: number;
   role?: "owner" | "assistant" | "member";
   trend?: "up" | "down";
+  /** Overrides the place shown (the list may be filtered). */
+  rank?: number;
 }
 
 interface LeaderboardProps {
@@ -18,6 +20,8 @@ interface LeaderboardProps {
   footer?: ReactNode;
   /** Renders only the content: the caller provides the surrounding glass panel. */
   bare?: boolean;
+  /** Marks this player's row (and lets "jump to me" find it). */
+  highlightUserId?: string;
 }
 
 // Gold, silver and bronze for the names of the first three places (used by every ranking list).
@@ -71,6 +75,7 @@ export default function Leaderboard({
   title = "Rangliste",
   footer,
   bare = false,
+  highlightUserId,
 }: LeaderboardProps) {
   return (
     <div className={bare ? "" : "glass-panel p-5 sm:p-6"}>
@@ -83,33 +88,38 @@ export default function Leaderboard({
         </p>
       ) : (
         <ol className="divide-y divide-white/10">
-          {entries.map((entry, index) => (
-            <li
-              key={entry.userId}
-              className="flex items-center justify-between gap-3 py-2.5"
-            >
-              <span className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-1 text-white">
-                <span className="flex min-w-0 items-center gap-2">
-                  <span
-                    className={`shrink-0 ${index < 3 ? `${rankColor(index)} font-semibold` : "text-white/60"}`}
-                  >
-                    {index + 1}.
+          {entries.map((entry, listIndex) => {
+            const index = (entry.rank ?? listIndex + 1) - 1;
+            const isMe = highlightUserId === entry.userId;
+            return (
+              <li
+                key={entry.userId}
+                data-me={isMe ? "" : undefined}
+                className={`flex items-center justify-between gap-3 py-2.5 ${isMe ? "-mx-2 rounded-xl bg-white/15 px-2" : ""}`}
+              >
+                <span className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-1 text-white">
+                  <span className="flex min-w-0 items-center gap-2">
+                    <span
+                      className={`shrink-0 ${index < 3 ? `${rankColor(index)} font-semibold` : "text-white/60"}`}
+                    >
+                      {index + 1}.
+                    </span>
+                    <Link
+                      href={`/spieler/${entry.userId}`}
+                      className={`-my-2 inline-block py-2 break-words hover:underline ${rankColor(index)} ${index < 3 ? "font-semibold" : ""}`}
+                    >
+                      {entry.name}
+                    </Link>
+                    <TrendIcon trend={entry.trend} />
                   </span>
-                  <Link
-                    href={`/spieler/${entry.userId}`}
-                    className={`break-words hover:underline ${rankColor(index)} ${index < 3 ? "font-semibold" : ""}`}
-                  >
-                    {entry.name}
-                  </Link>
-                  <TrendIcon trend={entry.trend} />
+                  <RoleBadge role={entry.role} />
                 </span>
-                <RoleBadge role={entry.role} />
-              </span>
-              <span className="shrink-0 font-semibold tabular-nums whitespace-nowrap text-white">
-                {entry.points} Pkt.
-              </span>
-            </li>
-          ))}
+                <span className="shrink-0 font-semibold tabular-nums whitespace-nowrap text-white">
+                  {entry.points} Pkt.
+                </span>
+              </li>
+            );
+          })}
         </ol>
       )}
       {footer && <div className="mt-4">{footer}</div>}

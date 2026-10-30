@@ -98,7 +98,7 @@ export default function NotificationBell({
         type="button"
         onClick={toggleOpen}
         aria-label="Benachrichtigungen"
-        className="relative rounded-full p-2 text-white transition hover:bg-white/10"
+        className="relative flex size-[44px] items-center justify-center rounded-full text-white transition hover:bg-white/10 active:bg-white/15"
       >
         <Bell size={20} />
         {totalCount > 0 && (

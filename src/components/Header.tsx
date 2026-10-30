@@ -119,14 +119,18 @@ export default function Header({ invites, notifications }: HeaderProps) {
         {status === "authenticated" && (
           <div className="flex shrink-0 items-center gap-1 md:hidden">
             <NotificationBell invites={invites} notifications={notifications} />
-            <button
-              type="button"
-              className="p-2 text-white"
-              onClick={() => setMobileOpen((open) => !open)}
-              aria-label="Menü umschalten"
-            >
-              {mobileOpen ? <X size={22} /> : <Menu size={22} />}
-            </button>
+            {/* Only editors/admins have extra pages that are not in the bottom bar; everybody else signs
+                out on the profile page, so a menu button would open an almost empty menu. */}
+            {mobileHidden.length > 0 && (
+              <button
+                type="button"
+                className="flex size-[44px] items-center justify-center text-white"
+                onClick={() => setMobileOpen((open) => !open)}
+                aria-label="Menü umschalten"
+              >
+                {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+              </button>
+            )}
           </div>
         )}
       </div>

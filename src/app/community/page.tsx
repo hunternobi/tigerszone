@@ -4,6 +4,7 @@ import Faq from "@/components/Faq";
 import FadingBackground from "@/components/FadingBackground";
 import LiquidGlassScene from "@/components/LiquidGlassScene";
 import ProfileTabs from "@/components/ProfileTabs";
+import PillButton from "@/components/PillButton";
 import StatsDashboard from "@/components/StatsDashboard";
 import { getDelClubName } from "@/lib/delClubs";
 import { getAllGames, getUpcomingGames } from "@/lib/games";
@@ -20,13 +21,15 @@ export const metadata: Metadata = {
 export default async function CommunityPage() {
   // Statistiken/Umfragen are still being tried out. The league numbers are only requested when they are shown.
   const session = await auth();
-  // On the live site (production) only admins; in previews and local development everybody, so the page can
-  // be tried out.
+  // The statistics tab exists on the live site (production) only for admins, in previews and local development
+  // for everybody - but the numbers themselves are only shown to signed-in users.
   const showStats =
     session?.user?.role === "admin" || process.env.VERCEL_ENV !== "production";
-  const stats = showStats ? await getLeagueStats() : null;
-  const [nextGame] = showStats ? await getUpcomingGames(1) : [];
-  const recentGames = showStats
+  const signedIn = Boolean(session?.user);
+  const loadStats = showStats && signedIn;
+  const stats = loadStats ? await getLeagueStats() : null;
+  const [nextGame] = loadStats ? await getUpcomingGames(1) : [];
+  const recentGames = loadStats
     ? (await getAllGames()).filter(
         (game) =>
           game.status === "finished" &&
@@ -60,7 +63,25 @@ export default async function CommunityPage() {
                   label: "Statistiken",
                   content: (
                     <div className="mt-6">
-                      {stats ? (
+                      {!signedIn ? (
+                        <div
+                          data-liquid-glass="card"
+                          className="glass-panel flex flex-wrap items-center justify-between gap-x-4 gap-y-3 p-5 sm:p-6"
+                        >
+                          <div className="min-w-0">
+                            <h3 className="font-ui text-xl font-semibold tracking-tight text-white">
+                              Statistiken nur mit Anmeldung
+                            </h3>
+                            <p className="mt-1 text-[0.9375rem] leading-snug text-white/80">
+                              Melde dich an, um Head2Head, Form, Tabelle und
+                              mehr zu sehen.
+                            </p>
+                          </div>
+                          <PillButton href="/login?callbackUrl=/community">
+                            Einloggen
+                          </PillButton>
+                        </div>
+                      ) : stats ? (
                         <StatsDashboard
                           stats={stats}
                           recentGames={recentGames}

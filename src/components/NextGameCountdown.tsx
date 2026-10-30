@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Calendar, Clock } from "lucide-react";
+import { Calendar, Check, Clock } from "lucide-react";
 import { getTeamById, getTeamName } from "@/lib/teams";
 import { formatGameDate, formatGameTime } from "@/utils/format";
 
@@ -22,13 +22,31 @@ function formatRemaining(ms: number): string {
   return `Noch ${minutes}:${String(seconds).padStart(2, "0")} Min.`;
 }
 
+/** Scrolls to the tip fields of a game and puts the cursor into the first one. */
+function focusTipField(gameId: string) {
+  const field = document.querySelector<HTMLInputElement>(
+    `input[data-game-id="${gameId}"]:not(:disabled)`,
+  );
+  if (!field) return;
+  field.scrollIntoView({ behavior: "smooth", block: "center" });
+  field.focus({ preventScroll: true });
+  field.select();
+}
+
 interface NextGameCountdownProps {
+  gameId: string;
+  /** Show "Dein Tipp ..." (only for signed-in users). */
+  showTipStatus: boolean;
+  prediction?: { predictedHome: number; predictedAway: number };
   homeTeamId: string;
   awayTeamId: string;
   kickoff: string;
 }
 
 export default function NextGameCountdown({
+  gameId,
+  showTipStatus,
+  prediction,
   homeTeamId,
   awayTeamId,
   kickoff,
@@ -91,6 +109,28 @@ export default function NextGameCountdown({
           <Clock size={13} /> {formatGameTime(kickoff)} Uhr
         </span>
       </div>
+
+      {showTipStatus && (
+        <div className="mt-3 flex items-center justify-between gap-3 border-t border-white/10 pt-3">
+          {prediction ? (
+            <p className="font-ui flex items-center gap-1.5 text-[0.9375rem] font-semibold text-white">
+              <Check size={16} strokeWidth={3} className="text-emerald-300" />
+              Dein Tipp {prediction.predictedHome}:{prediction.predictedAway}
+            </p>
+          ) : (
+            <p className="font-ui text-[0.9375rem] font-semibold text-amber-200">
+              Noch kein Tipp abgegeben
+            </p>
+          )}
+          <button
+            type="button"
+            onClick={() => focusTipField(gameId)}
+            className="font-ui min-h-[36px] shrink-0 rounded-full border border-white/25 bg-white/15 px-4 text-[0.8125rem] font-semibold text-white transition active:scale-[0.96]"
+          >
+            {prediction ? "Ändern" : "Jetzt tippen"}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

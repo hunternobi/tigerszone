@@ -77,6 +77,9 @@ export default function TippspielInteractive({
 
               {nextGame && (
                 <NextGameCountdown
+                  gameId={nextGame._id}
+                  showTipStatus={isAuthenticated}
+                  prediction={predictions[nextGame._id]}
                   homeTeamId={nextGame.homeTeamId}
                   awayTeamId={nextGame.awayTeamId}
                   kickoff={nextGame.kickoff}

@@ -95,22 +95,16 @@ export default function CustomSelect({
         disabled={disabled}
         onClick={() => (open ? setOpen(false) : openPanel())}
         aria-label={aria["aria-label"]}
-        className={`flex h-11 w-full items-center justify-between gap-3 border border-white/15 bg-white/10 text-left text-[0.9375rem] text-white transition hover:bg-white/15 focus:border-white/50 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 ${
-          isPanel
-            ? "font-ui rounded-full px-4 font-semibold shadow-[inset_0_1px_0_rgba(255,255,255,0.25)] active:scale-[0.99]"
-            : "rounded-xl px-3.5"
+        className={`font-ui flex h-[46px] w-full items-center justify-between gap-3 border border-white/15 bg-white/10 px-4 text-left text-[1.0625rem] text-white ${isPanel ? "font-semibold" : "font-medium"} shadow-[inset_0_1px_0_rgba(255,255,255,0.25)] transition hover:bg-white/15 focus:border-white/50 focus:outline-none active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 ${
+          isPanel ? "rounded-full" : "rounded-2xl"
         }`}
       >
         <span className={`truncate ${selected ? "" : "text-white/60"}`}>
           {selected ? selected.label : placeholder}
         </span>
-        {isPanel ? (
-          <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-white/15">
-            <ChevronsUpDown size={14} className="text-white" />
-          </span>
-        ) : (
-          <ChevronsUpDown size={15} className="shrink-0 text-white/60" />
-        )}
+        <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-white/15">
+          <ChevronsUpDown size={14} className="text-white" />
+        </span>
       </button>
 
       {/* Rendered via portal so it always paints above every other card, regardless of
@@ -127,49 +121,15 @@ export default function CustomSelect({
               left: panelPosition.left,
               width: panelPosition.width,
             }}
-            className={`z-50 max-h-96 origin-top animate-[menuIn_0.16s_ease-out] overflow-y-auto ${
-              isPanel
-                ? "rounded-[1.375rem] border border-white/15 bg-[#10154f]/80 py-1.5 shadow-[0_24px_60px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.22)] backdrop-blur-3xl backdrop-saturate-[1.8]"
-                : "rounded-2xl border border-white/20 bg-[#141a5c]/55 p-1 shadow-[0_18px_50px_rgba(0,0,0,0.55),inset_0_1px_0_rgba(255,255,255,0.25)] backdrop-blur-2xl backdrop-saturate-[1.8]"
-            }`}
+            className="z-50 max-h-96 origin-top animate-[menuIn_0.16s_ease-out] overflow-y-auto rounded-[1.375rem] border border-white/15 bg-[#10154f]/80 py-1.5 shadow-[0_24px_60px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.22)] backdrop-blur-3xl backdrop-saturate-[1.8]"
           >
             {options.map((option, index) => {
               const isSelected = option.value === value;
-              if (isPanel) {
-                // iOS menu row: label left, checkmark right, hairline separator inset from the edges.
-                return (
-                  <div
-                    key={option.value}
-                    className={`mx-4 border-t ${index > 0 ? "border-white/10" : "border-transparent"}`}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => {
-                        onChange(option.value);
-                        setOpen(false);
-                      }}
-                      className="-mx-4 flex min-h-[46px] w-[calc(100%+2rem)] items-center justify-between gap-3 px-4 text-left text-[1.0625rem] text-white transition active:bg-white/15"
-                    >
-                      <span
-                        className={`truncate ${isSelected ? "font-semibold" : "font-normal text-white/90"}`}
-                      >
-                        {option.label}
-                      </span>
-                      {isSelected && (
-                        <Check
-                          size={18}
-                          strokeWidth={2.75}
-                          className="shrink-0 text-white"
-                        />
-                      )}
-                    </button>
-                  </div>
-                );
-              }
+              // iOS menu row: label left, checkmark right, hairline separator inset from the edges.
               return (
                 <div
                   key={option.value}
-                  className="border-t border-white/10 py-0.5 first:border-t-0"
+                  className={`mx-4 border-t ${index > 0 ? "border-white/10" : "border-transparent"}`}
                 >
                   <button
                     type="button"
@@ -177,14 +137,20 @@ export default function CustomSelect({
                       onChange(option.value);
                       setOpen(false);
                     }}
-                    className={`flex min-h-[44px] w-full items-center gap-2 rounded-xl px-3 text-left text-[1rem] transition hover:bg-white/10 active:bg-white/20 ${
-                      isSelected ? "font-semibold text-white" : "text-white/85"
-                    }`}
+                    className="-mx-4 flex min-h-[46px] w-[calc(100%+2rem)] items-center justify-between gap-3 px-4 text-left text-[1.0625rem] text-white transition active:bg-white/15"
                   >
-                    <span className="flex w-4 shrink-0 justify-center">
-                      {isSelected && <Check size={16} strokeWidth={2.5} />}
+                    <span
+                      className={`truncate ${isSelected ? "font-semibold" : "font-normal text-white/90"}`}
+                    >
+                      {option.label}
                     </span>
-                    <span className="truncate">{option.label}</span>
+                    {isSelected && (
+                      <Check
+                        size={18}
+                        strokeWidth={2.75}
+                        className="shrink-0 text-white"
+                      />
+                    )}
                   </button>
                 </div>
               );

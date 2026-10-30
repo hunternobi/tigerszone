@@ -15,6 +15,7 @@ import MyBonusSummary from "@/components/MyBonusSummary";
 import TipHistoryTabs from "@/components/TipHistoryTabs";
 import UsernameEditForm from "@/components/UsernameEditForm";
 import DeleteAccountButton from "@/components/DeleteAccountButton";
+import SignOutButton from "@/components/SignOutButton";
 import ProfileTabs from "@/components/ProfileTabs";
 
 export const metadata: Metadata = {
@@ -102,7 +103,8 @@ export default async function ProfilePage() {
 
                   <GroupInvites invites={invites} />
 
-                  <div className="mt-8 flex justify-center">
+                  <div className="mt-8 flex flex-col items-center gap-4">
+                    <SignOutButton />
                     <DeleteAccountButton />
                   </div>
                 </>

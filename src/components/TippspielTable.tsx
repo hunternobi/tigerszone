@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import {
   useEffect,
   useRef,
@@ -7,6 +8,7 @@ import {
   useTransition,
   type ChangeEvent,
 } from "react";
+import { Check } from "lucide-react";
 import PillButton from "@/components/PillButton";
 import SavedBadge, { SAVED_BADGE_MS } from "@/components/SavedBadge";
 import { submitPrediction } from "@/app/tippspiel/actions";
@@ -54,7 +56,10 @@ interface TippspielRowProps {
   index: number;
   game: Game;
   initial: PredictionInfo | undefined;
+  /** Tipping is over (kickoff passed). */
   disabled: boolean;
+  /** Not signed in: the fields are shown but tapping one leads to the login. */
+  needsLogin: boolean;
   started: boolean;
 }
 
@@ -63,8 +68,10 @@ function TippspielRow({
   game,
   initial,
   disabled,
+  needsLogin,
   started,
 }: TippspielRowProps) {
+  const router = useRouter();
   const [home, setHome] = useState(
     initial ? String(initial.predictedHome) : "",
   );
@@ -126,12 +133,24 @@ function TippspielRow({
     };
   }
 
+  const hasSavedTip = saved !== undefined;
+  // Fixed px heights on a phone: rem sizes shrink with the smaller root and would fall below a thumb-sized target.
   const inputClass = (invalid: boolean) =>
-    `h-11 w-full rounded-xl border text-center text-[1.0625rem] font-semibold tabular-nums text-white transition focus:outline-none disabled:opacity-40 sm:h-9 sm:text-base ${
+    `h-[46px] w-full rounded-xl border text-center text-[1.0625rem] font-semibold tabular-nums text-white transition focus:outline-none disabled:opacity-40 sm:h-9 sm:text-base ${needsLogin ? "cursor-pointer" : ""} ${
       invalid
         ? "border-red-500/80 bg-red-500/10 focus:border-red-400"
-        : "border-white/25 bg-white/15 focus:border-white/70 focus:bg-white/20"
+        : hasSavedTip
+          ? "border-emerald-300/45 bg-emerald-400/10 focus:border-white/70 focus:bg-white/20"
+          : "border-white/25 bg-white/15 focus:border-white/70 focus:bg-white/20"
     }`;
+
+  /** Fields are readOnly (not disabled) while signed out, so a tap still reaches us and can open the login. */
+  const loginProps = needsLogin
+    ? {
+        readOnly: true,
+        onFocus: () => router.push("/login?callbackUrl=/tippspiel"),
+      }
+    : {};
 
   return (
     <div
@@ -153,6 +172,14 @@ function TippspielRow({
           <span
             className={`transition-opacity duration-200 ${status === "saved" && !isDraw ? "opacity-0" : ""}`}
           >
+            {hasSavedTip && !disabled && (
+              <Check
+                size={13}
+                strokeWidth={3}
+                aria-label="Tipp gespeichert"
+                className="mr-1 inline text-emerald-300"
+              />
+            )}
             {formatPostDate(game.kickoff)} · {formatGameTime(game.kickoff)} Uhr
           </span>
           {status === "saved" && !isDraw && (
@@ -162,7 +189,7 @@ function TippspielRow({
           )}
         </span>
       </div>
-      <div className="mt-2 grid grid-cols-[minmax(0,1fr)_3.25rem] items-center gap-x-3 gap-y-2 sm:mt-1 sm:grid-cols-[minmax(0,1fr)_2.75rem_auto_2.75rem_minmax(0,1fr)] sm:gap-x-2.5 sm:gap-y-0">
+      <div className="mt-2 grid grid-cols-[minmax(0,1fr)_52px] items-center gap-x-3 gap-y-2 sm:mt-1 sm:grid-cols-[minmax(0,1fr)_2.75rem_auto_2.75rem_minmax(0,1fr)] sm:gap-x-2.5 sm:gap-y-0">
         <span className="col-start-1 row-start-1 text-left font-ui text-[1.0625rem] font-medium tracking-tight text-white sm:col-auto sm:row-auto sm:text-right sm:text-base">
           {getTeamName(game.homeTeamId)}
         </span>
@@ -172,8 +199,10 @@ function TippspielRow({
           value={home}
           onChange={handleChange(setHome, home)}
           data-tip-input
+          data-game-id={game._id}
           onBlur={() => trySave(home, away)}
           disabled={disabled || isPending}
+          {...loginProps}
           aria-label={`Tipp Heimtore ${getTeamName(game.homeTeamId)}`}
           className={`col-start-2 row-start-1 sm:col-auto sm:row-auto ${inputClass(isDraw)}`}
         />
@@ -186,8 +215,10 @@ function TippspielRow({
           value={away}
           onChange={handleChange(setAway, away)}
           data-tip-input
+          data-game-id={game._id}
           onBlur={() => trySave(home, away)}
           disabled={disabled || isPending}
+          {...loginProps}
           aria-label={`Tipp Auswärtstore ${getTeamName(game.awayTeamId)}`}
           className={`col-start-2 row-start-2 sm:col-auto sm:row-auto ${inputClass(isDraw)}`}
         />
@@ -241,12 +272,17 @@ function CompetitionTable({
               index={game.matchday ?? index + 1}
               game={game}
               initial={predictions[game._id]}
-              disabled={!isAuthenticated || deadlinePassed}
+              disabled={deadlinePassed}
+              needsLogin={!isAuthenticated}
               started={deadlinePassed}
             />
           );
         })}
         <div className="px-2 pt-4 pb-2 lg:hidden">
+          <p className="mb-2 text-center text-xs text-white/70">
+            Pro Spiel bis zu {SCORING.EXACT_SCORE} Punkte – die Punkte zählen
+            zusammen
+          </p>
           <div className="grid grid-cols-3 gap-2 text-center">
             {[
               { points: SCORING.WINNER, label: "Sieger" },

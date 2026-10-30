@@ -120,17 +120,18 @@
 /* Phones: the 71.4% root makes the small text sizes unreadable, so everything below body size gets a
    fixed floor (px) instead of shrinking with the root. Larger headings keep scaling with it. */
 @media (max-width: 767px) {
-  .text-\[0\.625rem\] { font-size: 10px !important; }
-  .text-\[0\.6875rem\] { font-size: 10.5px !important; }
+  body { font-size: 14px; }
+  .text-\[0\.625rem\] { font-size: 11px !important; }
+  .text-\[0\.6875rem\] { font-size: 11.5px !important; }
   .text-xs,
-  .text-\[0\.75rem\] { font-size: 11.5px !important; }
-  .text-\[0\.8125rem\] { font-size: 12px !important; }
+  .text-\[0\.75rem\] { font-size: 12px !important; }
+  .text-\[0\.8125rem\] { font-size: 12.5px !important; }
   .text-sm,
-  .text-\[0\.875rem\] { font-size: 13px !important; }
-  .text-\[0\.9375rem\] { font-size: 14px !important; }
+  .text-\[0\.875rem\] { font-size: 13.5px !important; }
+  .text-\[0\.9375rem\] { font-size: 14.5px !important; }
   .text-base,
-  .text-\[1rem\] { font-size: 14.5px !important; }
-  .text-\[1\.0625rem\] { font-size: 15.5px !important; }
+  .text-\[1rem\] { font-size: 15px !important; }
+  .text-\[1\.0625rem\] { font-size: 16px !important; }
 }
 
 /* Readability over the photo backgrounds: dimmed white text gets more opaque and all text a soft dark
