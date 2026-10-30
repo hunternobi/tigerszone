@@ -44,14 +44,14 @@ export default async function Home() {
         <LiquidGlassScene background={HERO_SCENE}>
           <section className="relative overflow-hidden px-7 pt-4 pb-4 sm:px-6 sm:pt-24 sm:pb-6">
             <div className="relative mx-auto max-w-4xl text-left sm:text-center">
-              <h1 className="font-ui text-[2.15rem] leading-[1.06] font-semibold tracking-tight text-white sm:text-6xl">
+              <h1 className="font-ui text-center text-[2.4rem] leading-[1.06] font-semibold tracking-tight text-white sm:text-6xl">
                 Willkommen in der
                 <span className="script-heading block text-tigers-secondary">
                   {SITE_NAME}
                 </span>
               </h1>
 
-              <p className="mt-3 max-w-xl text-base leading-snug text-white/80 sm:mx-auto sm:mt-5 sm:text-xl">
+              <p className="mt-6 max-w-xl text-base leading-snug text-white/80 sm:mx-auto sm:mt-5 sm:text-xl">
                 {SITE_DESCRIPTION}
               </p>
 
