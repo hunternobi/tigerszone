@@ -1,14 +1,13 @@
 import type { ReactNode } from "react";
+import GoalieCard, { type GoalieView } from "@/components/GoalieCard";
 import Head2Head, { findOpponent } from "@/components/Head2Head";
 import {
   STRAUBING_TEAM_ID,
+  type GoalieStat,
   type LeagueStats,
   type PlayerStat,
   type TeamStanding,
 } from "@/lib/pennyDel";
-
-const LABEL_CLASS =
-  "font-ui text-[0.6875rem] font-semibold tracking-[0.14em] text-white/60 uppercase";
 
 const fmt = (value: number, digits = 0) =>
   value.toLocaleString("de-DE", {
@@ -85,7 +84,9 @@ function BarRow({
             {name}
           </span>
           {detail && (
-            <span className="shrink-0 text-[0.75rem] text-white/50">{detail}</span>
+            <span className="shrink-0 text-[0.75rem] text-white/50">
+              {detail}
+            </span>
           )}
         </span>
         <span className="font-ui shrink-0 text-[1.0625rem] font-semibold text-white tabular-nums">
@@ -111,26 +112,6 @@ function topBy(
     .filter((player) => pick(player) !== null)
     .sort((a, b) => (pick(b) as number) - (pick(a) as number))
     .slice(0, count);
-}
-
-function SummaryTile({
-  label,
-  value,
-  note,
-}: {
-  label: string;
-  value: string;
-  note: string;
-}) {
-  return (
-    <div>
-      <p className={LABEL_CLASS}>{label}</p>
-      <p className="font-ui mt-1 text-[1.875rem] leading-none font-semibold tracking-tight text-white tabular-nums">
-        {value}
-      </p>
-      <p className="mt-1.5 text-[0.8125rem] leading-snug text-white/60">{note}</p>
-    </div>
-  );
 }
 
 function StandingsCard({ standings }: { standings: TeamStanding[] }) {
@@ -186,210 +167,44 @@ export default function StatsDashboard({
     ? findOpponent(stats.standings, opponentName)
     : null;
   const { standings, players } = stats;
-  const tigers = standings.find((team) => team.id === STRAUBING_TEAM_ID);
-  const tigersPlayers = players.filter(
-    (player) => player.teamId === STRAUBING_TEAM_ID,
+  const tigersSkaters = players.filter(
+    (player) => player.teamId === STRAUBING_TEAM_ID && player.position !== "G",
   );
-  const skaters = players.filter((player) => player.position !== "G");
-  const tigersSkaters = tigersPlayers.filter(
-    (player) => player.position !== "G",
-  );
-
-  const scorers = topBy(tigersSkaters, (p) => p.points, 5);
-  const scorerMax = scorers[0]?.points || 1;
-
-  const leagueGoals = topBy(skaters, (p) => p.goals, 5);
-  const goalsMax = leagueGoals[0]?.goals || 1;
-
-  const withXg = tigersSkaters.filter(
-    (p) => p.xg !== null && p.xgDiff !== null && (p.xg ?? 0) >= 1,
-  );
-  const overperformers = topBy(withXg, (p) => p.xgDiff, 3).filter(
-    (p) => (p.xgDiff ?? 0) > 0,
-  );
-  const underperformers = topBy(withXg, (p) => -(p.xgDiff ?? 0), 3).filter(
-    (p) => (p.xgDiff ?? 0) < 0,
-  );
-
   const pimLeaders = topBy(tigersSkaters, (p) => p.pim, 3).filter(
     (p) => p.pim > 0,
   );
 
-  // "Fun" records: league-wide best, plus the best Tigers player with his league rank.
-  const records = [
-    {
-      label: "Schnellster Läufer",
-      unit: "km/h",
-      digits: 1,
-      pick: (p: PlayerStat) => p.topSpeed,
-    },
-    {
-      label: "Härtester Schuss",
-      unit: "km/h",
-      digits: 1,
-      pick: (p: PlayerStat) => p.topShot,
-    },
-    {
-      label: "Längste Laufstrecke",
-      unit: "km",
-      digits: 1,
-      pick: (p: PlayerStat) => p.distanceKm,
-    },
-  ].map((record) => {
-    const ranked = topBy(skaters, record.pick, skaters.length);
-    const leader = ranked[0];
-    const bestTiger = ranked.find((p) => p.teamId === STRAUBING_TEAM_ID);
-    return {
-      ...record,
-      leader,
-      bestTiger,
-      tigerRank: bestTiger ? ranked.indexOf(bestTiger) + 1 : null,
-    };
-  });
-
-  const goalDiffVsXg = tigers ? tigers.gf - tigers.xgf : 0;
+  // Goalies need some playing time before a league rank means anything.
+  const MIN_MINUTES = 180;
+  const qualified = stats.goalies.filter((g) => g.minutes >= MIN_MINUTES);
+  const rankIn = (
+    goalie: GoalieStat,
+    better: (a: GoalieStat, b: GoalieStat) => number,
+  ) =>
+    goalie.minutes >= MIN_MINUTES
+      ? [...qualified].sort(better).findIndex((g) => g.id === goalie.id) + 1
+      : null;
+  const tigersGoalies: GoalieView[] = stats.goalies
+    .filter((g) => g.teamId === STRAUBING_TEAM_ID)
+    .sort((a, b) => b.minutes - a.minutes)
+    .map((g) => ({
+      id: String(g.id ?? g.name),
+      name: g.name,
+      lastName: g.name.split(" ").slice(-1)[0],
+      gp: g.gp,
+      minutes: g.minutes,
+      svPct: g.svPct,
+      gaa: g.gaa,
+      svRank: rankIn(g, (a, b) => b.svPct - a.svPct),
+      gaaRank: rankIn(g, (a, b) => a.gaa - b.gaa),
+    }));
 
   return (
     <div className="space-y-6">
       {opponent && <Head2Head stats={stats} opponent={opponent} />}
-      {tigers && (
-        <section data-liquid-glass="card" className="glass-panel p-5 sm:p-6">
-          <p className={LABEL_CLASS}>
-            Straubing Tigers · Saison {stats.seasonLabel}
-          </p>
-          <div className="mt-4 grid grid-cols-2 gap-x-6 gap-y-6">
-            <SummaryTile
-              label="Platz"
-              value={`${tigers.rank}.`}
-              note={`von ${standings.length} Teams`}
-            />
-            <SummaryTile
-              label="Punkte"
-              value={fmt(tigers.points)}
-              note={`${fmt(tigers.pointsPerGame, 2)} pro Spiel · ${tigers.gp} Spiele`}
-            />
-            <SummaryTile
-              label="Tore"
-              value={`${tigers.gf}:${tigers.ga}`}
-              note={`Tordifferenz ${signed(tigers.gd)}`}
-            />
-            <SummaryTile
-              label="Effizienz"
-              value={signed(goalDiffVsXg, 0)}
-              note={
-                goalDiffVsXg >= 0
-                  ? `Tore mehr als erwartet (${fmt(tigers.xgf)} xG)`
-                  : `Tore weniger als erwartet (${fmt(tigers.xgf)} xG)`
-              }
-            />
-          </div>
-        </section>
-      )}
+      {tigersGoalies.length > 0 && <GoalieCard goalies={tigersGoalies} />}
 
       <StandingsCard standings={standings} />
-
-      {scorers.length > 0 && (
-        <Card title="Topscorer der Tigers" subtitle="Tore und Assists zusammen">
-          <ol>
-            {scorers.map((player, index) => (
-              <BarRow
-                key={player.id ?? player.name}
-                rank={index + 1}
-                name={player.name}
-                detail={`${player.goals} T · ${player.assists} A`}
-                value={fmt(player.points)}
-                fraction={player.points / scorerMax}
-                highlight={index === 0}
-              />
-            ))}
-          </ol>
-        </Card>
-      )}
-
-      {leagueGoals.length > 0 && (
-        <Card
-          title="Torjäger der Liga"
-          subtitle="Die meisten Tore der Hauptrunde"
-        >
-          <ol>
-            {leagueGoals.map((player, index) => (
-              <BarRow
-                key={player.id ?? player.name}
-                rank={index + 1}
-                name={player.name}
-                detail={player.teamAbbr}
-                value={fmt(player.goals)}
-                fraction={player.goals / goalsMax}
-                highlight={player.teamId === STRAUBING_TEAM_ID}
-              />
-            ))}
-          </ol>
-        </Card>
-      )}
-
-      {(overperformers.length > 0 || underperformers.length > 0) && (
-        <Card
-          title="Glück oder Können?"
-          subtitle="Tore im Vergleich zu den Torchancen (Expected Goals)"
-        >
-          <div className="space-y-5">
-            {overperformers.length > 0 && (
-              <div>
-                <p className={LABEL_CLASS}>Mehr Tore als erwartet</p>
-                <ul className="mt-2 divide-y divide-white/10">
-                  {overperformers.map((player) => (
-                    <XgRow key={player.id ?? player.name} player={player} />
-                  ))}
-                </ul>
-              </div>
-            )}
-            {underperformers.length > 0 && (
-              <div>
-                <p className={LABEL_CLASS}>Weniger Tore als erwartet</p>
-                <ul className="mt-2 divide-y divide-white/10">
-                  {underperformers.map((player) => (
-                    <XgRow key={player.id ?? player.name} player={player} />
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        </Card>
-      )}
-
-      <Card title="Rekorde" subtitle="Bestwerte der Liga und der beste Tiger">
-        <ul className="divide-y divide-white/10">
-          {records.map((record) =>
-            record.leader ? (
-              <li key={record.label} className="py-3.5 first:pt-0 last:pb-0">
-                <p className={LABEL_CLASS}>{record.label}</p>
-                <p className="mt-1 flex items-baseline justify-between gap-3">
-                  <span className="font-ui min-w-0 truncate text-[1.0625rem] font-semibold tracking-tight text-white">
-                    {record.leader.name}
-                    <span className="ml-2 text-[0.75rem] font-normal text-white/50">
-                      {record.leader.teamAbbr}
-                    </span>
-                  </span>
-                  <span className="font-ui shrink-0 text-[1.25rem] font-semibold text-white tabular-nums">
-                    {fmt(record.pick(record.leader) ?? 0, record.digits)}{" "}
-                    <span className="text-[0.8125rem] font-medium text-white/60">
-                      {record.unit}
-                    </span>
-                  </span>
-                </p>
-                {record.bestTiger &&
-                  record.leader.teamId !== STRAUBING_TEAM_ID && (
-                    <p className="mt-1 text-[0.8125rem] text-white/60">
-                      Bester Tiger: {record.bestTiger.name} ·{" "}
-                      {fmt(record.pick(record.bestTiger) ?? 0, record.digits)}{" "}
-                      {record.unit} (Platz {record.tigerRank})
-                    </p>
-                  )}
-              </li>
-            ) : null,
-          )}
-        </ul>
-      </Card>
 
       {pimLeaders.length > 0 && (
         <Card
@@ -416,30 +231,5 @@ export default function StatsDashboard({
         Spieltag · Quelle: penny-del.org
       </p>
     </div>
-  );
-}
-
-function XgRow({ player }: { player: PlayerStat }) {
-  const diff = player.xgDiff ?? 0;
-  return (
-    <li className="flex items-center justify-between gap-3 py-2.5 first:pt-0 last:pb-0">
-      <span className="min-w-0">
-        <span className="font-ui block truncate text-[1rem] font-medium tracking-tight text-white">
-          {player.name}
-        </span>
-        <span className="text-[0.8125rem] text-white/60">
-          {player.goals} Tore · {fmt(player.xg ?? 0, 1)} erwartet
-        </span>
-      </span>
-      <span
-        className={`shrink-0 rounded-full border px-2.5 py-1 text-[0.8125rem] font-bold tabular-nums ${
-          diff > 0
-            ? "border-emerald-300/30 bg-emerald-400/15 text-emerald-300"
-            : "border-red-300/30 bg-red-400/15 text-red-300"
-        }`}
-      >
-        {signed(diff, 1)}
-      </span>
-    </li>
   );
 }

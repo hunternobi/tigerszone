@@ -66,12 +66,27 @@ export interface TeamSpecialStat {
   shootingPct: number;
 }
 
+export interface GoalieStat {
+  id: number | null;
+  name: string;
+  teamId: number;
+  gp: number;
+  /** Minutes played, e.g. 599.3. */
+  minutes: number;
+  /** Save percentage in percent, goals against per 60 minutes. */
+  svPct: number;
+  gaa: number;
+  goalsAgainst: number;
+  shutouts: number;
+}
+
 export interface LeagueStats {
   seasonLabel: string;
   fetchedAt: string;
   standings: TeamStanding[];
   players: PlayerStat[];
   teamStats: TeamSpecialStat[];
+  goalies: GoalieStat[];
 }
 
 // ── helpers ────────────────────────────────────────────────────────────────
@@ -251,6 +266,27 @@ function parseShooting(pageHtml: string) {
   return result;
 }
 
+/** goaliestats/basis: cells are #, logo, jersey, name, nat, pos, GP, minutes, W, L, SO, GA, GAA, saves, SV% */
+function parseGoalies(pageHtml: string): GoalieStat[] {
+  return parseTable(pageHtml)
+    .rows.filter((row) => row.teamId !== null && row.cells.length >= 15)
+    .map((row) => {
+      const c = row.cells;
+      const [min, sec] = (c[7] ?? "0:0").split(":");
+      return {
+        id: row.playerId,
+        name: fullName(c[3] ?? ""),
+        teamId: row.teamId as number,
+        gp: integer(c[6]),
+        minutes: Number(min) + Number(sec ?? 0) / 60,
+        svPct: decimal(c[14]) ?? 0,
+        gaa: decimal(c[12]) ?? 0,
+        goalsAgainst: integer(c[11]),
+        shutouts: integer(c[10]),
+      };
+    });
+}
+
 type PlayerTab = Map<number, Record<string, string>>;
 
 /** Player tables share the columns: rank, team logo, jersey, name, nationality, position, ...stats. */
@@ -291,6 +327,7 @@ async function loadLeagueStats(): Promise<LeagueStats> {
     shotsHtml,
     specialHtml,
     teamShotsHtml,
+    goaliesHtml,
   ] = await Promise.all([
     fetchPage(`${base}/tabelle`),
     fetchPage(`${base}/playerstats/basis`),
@@ -299,6 +336,7 @@ async function loadLeagueStats(): Promise<LeagueStats> {
     fetchPage(`${base}/playerstats/schuesse`),
     fetchPage(`${base}/teamstats/special-teams`),
     fetchPage(`${base}/teamstats/schuesse`),
+    fetchPage(`${base}/goaliestats/basis`),
   ]);
 
   const standings = parseStandings(standingsHtml);
@@ -359,12 +397,13 @@ async function loadLeagueStats(): Promise<LeagueStats> {
     standings,
     players,
     teamStats,
+    goalies: parseGoalies(goaliesHtml),
   };
 }
 
 const cachedLeagueStats = unstable_cache(
   loadLeagueStats,
-  ["penny-del-league-stats-v2"],
+  ["penny-del-league-stats-v3"],
   {
     revalidate: CACHE_SECONDS,
     tags: ["del-stats"],
