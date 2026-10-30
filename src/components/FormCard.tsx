@@ -53,7 +53,7 @@ export default function FormCard({ games }: { games: Game[] }) {
         Form
       </h3>
       <p className="mt-1 text-[0.8125rem] leading-snug text-white/60">
-        Die letzten {recent.length} Spiele, Tigers-Tore zuerst
+        Die letzten {recent.length} Spiele der Tigers
       </p>
 
       <div className="mt-4 flex gap-2">
@@ -75,48 +75,55 @@ export default function FormCard({ games }: { games: Game[] }) {
 
       <ul className="mt-4 divide-y divide-white/10">
         {recent.map((game) => {
-          const home = game.homeTeamId === TIGERS_ID;
-          const opponent = getDelClubName(
-            home ? game.awayTeamId : game.homeTeamId,
-          );
           const outcome = outcomeOf(game);
           const style = outcome ? OUTCOME_STYLE[outcome] : null;
           const extra =
             game.overtime === "OT"
-              ? " n. V."
+              ? "n. V."
               : game.overtime === "SO"
-                ? " n. P."
+                ? "n. P."
                 : "";
+          const teams = [
+            { id: game.homeTeamId, score: game.homeScore },
+            { id: game.awayTeamId, score: game.awayScore },
+          ];
           return (
-            <li
-              key={game._id}
-              className="flex items-center justify-between gap-3 py-2.5 first:pt-0 last:pb-0"
-            >
-              <span className="min-w-0">
-                <span className="font-ui block truncate text-[1rem] font-medium tracking-tight text-white">
-                  {home ? "gegen" : "bei"} {opponent}
-                </span>
-                <span className="text-[0.8125rem] text-white/60">
-                  {formatDay(game.kickoff)}
-                  {game.matchday ? ` · ${game.matchday}. Spieltag` : ""}
-                </span>
-              </span>
-              <span className="flex shrink-0 items-center gap-2">
-                <span className="font-ui text-[1.0625rem] font-semibold text-white tabular-nums">
-                  {home ? game.homeScore : game.awayScore}:
-                  {home ? game.awayScore : game.homeScore}
-                  <span className="text-[0.75rem] font-normal text-white/60">
-                    {extra}
-                  </span>
-                </span>
+            <li key={game._id} className="py-3 first:pt-0 last:pb-0">
+              <p className="text-[0.75rem] text-white/60">
+                {formatDay(game.kickoff)}
+                {game.matchday ? ` · ${game.matchday}. Spieltag` : ""}
+                {extra && ` · ${extra}`}
+              </p>
+              <div className="mt-1.5 flex items-center gap-3">
+                <div className="min-w-0 flex-1 space-y-1.5">
+                  {teams.map((team) => (
+                    <div
+                      key={team.id}
+                      className="flex items-center justify-between gap-3"
+                    >
+                      <span
+                        className={`font-ui min-w-0 truncate text-[1rem] tracking-tight ${
+                          team.id === TIGERS_ID
+                            ? "font-semibold text-white"
+                            : "font-medium text-white/85"
+                        }`}
+                      >
+                        {getDelClubName(team.id)}
+                      </span>
+                      <span className="font-ui flex size-8 shrink-0 items-center justify-center rounded-lg border border-white/20 bg-white/10 text-[1.0625rem] font-semibold text-white tabular-nums">
+                        {team.score}
+                      </span>
+                    </div>
+                  ))}
+                </div>
                 <span
-                  className={`font-ui flex size-6 items-center justify-center rounded-full border text-[0.75rem] font-bold ${
+                  className={`font-ui flex size-7 shrink-0 items-center justify-center rounded-full border text-[0.8125rem] font-bold ${
                     style?.className ?? ""
                   }`}
                 >
                   {style?.letter}
                 </span>
-              </span>
+              </div>
             </li>
           );
         })}
