@@ -141,13 +141,13 @@ h6 {
 @layer components {
   /* Liquid Glass: frosted panel with rim-light + soft specular highlight */
   .glass-panel {
-    @apply backdrop-blur-xl backdrop-saturate-150;
+    @apply backdrop-blur-lg backdrop-saturate-150;
     position: relative;
     border-radius: 1.75rem;
     border: 1px solid rgba(255, 255, 255, 0.14);
     background:
-      radial-gradient(120% 140% at 12% -10%, rgba(255, 255, 255, 0.22), transparent 55%),
-      rgba(255, 255, 255, 0.025);
+      radial-gradient(120% 140% at 12% -10%, rgba(255, 255, 255, 0.12), transparent 55%),
+      rgba(255, 255, 255, 0.008);
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.35),
       inset 0 0 0 1px rgba(255, 255, 255, 0.03),
@@ -160,8 +160,8 @@ h6 {
     border-radius: 1.25rem;
     border: 1px solid rgba(255, 255, 255, 0.12);
     background:
-      radial-gradient(130% 150% at 15% -15%, rgba(255, 255, 255, 0.18), transparent 55%),
-      rgba(255, 255, 255, 0.02);
+      radial-gradient(130% 150% at 15% -15%, rgba(255, 255, 255, 0.1), transparent 55%),
+      rgba(255, 255, 255, 0.005);
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.3),
       0 4px 20px rgba(0, 0, 0, 0.28);
