@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import type { Game } from "@/types";
+import FormCard from "@/components/FormCard";
 import GoalieCard, { type GoalieView } from "@/components/GoalieCard";
 import StatsPicker from "@/components/StatsPicker";
 import Head2Head, { findOpponent } from "@/components/Head2Head";
@@ -159,10 +161,13 @@ function StandingsCard({ standings }: { standings: TeamStanding[] }) {
 export default function StatsDashboard({
   stats,
   opponentName,
+  recentGames = [],
 }: {
   stats: LeagueStats;
   /** Name of the next opponent; the Head2Head card is shown when it can be matched to a DEL team. */
   opponentName?: string | null;
+  /** Finished Tigers games, oldest first. */
+  recentGames?: Game[];
 }) {
   const opponent = opponentName
     ? findOpponent(stats.standings, opponentName)
@@ -209,6 +214,11 @@ export default function StatsDashboard({
       <StatsPicker
         initial="torhueter"
         options={[
+          {
+            value: "form",
+            label: "Form",
+            content: <FormCard games={recentGames} />,
+          },
           {
             value: "strafminuten",
             label: "Strafminuten",

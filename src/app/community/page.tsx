@@ -6,7 +6,7 @@ import LiquidGlassScene from "@/components/LiquidGlassScene";
 import ProfileTabs from "@/components/ProfileTabs";
 import StatsDashboard from "@/components/StatsDashboard";
 import { getDelClubName } from "@/lib/delClubs";
-import { getUpcomingGames } from "@/lib/games";
+import { getAllGames, getUpcomingGames } from "@/lib/games";
 import { getLeagueStats } from "@/lib/pennyDel";
 import { COMMUNITY_SCENE } from "@/lib/glassScenes";
 
@@ -26,6 +26,14 @@ export default async function CommunityPage() {
     session?.user?.role === "admin" || process.env.VERCEL_ENV !== "production";
   const stats = showStats ? await getLeagueStats() : null;
   const [nextGame] = showStats ? await getUpcomingGames(1) : [];
+  const recentGames = showStats
+    ? (await getAllGames()).filter(
+        (game) =>
+          game.status === "finished" &&
+          game.competition !== "Vorbereitung" &&
+          game.homeScore !== undefined,
+      )
+    : [];
   const opponentId = nextGame
     ? nextGame.homeTeamId === "straubing-tigers"
       ? nextGame.awayTeamId
@@ -55,6 +63,7 @@ export default async function CommunityPage() {
                       {stats ? (
                         <StatsDashboard
                           stats={stats}
+                          recentGames={recentGames}
                           opponentName={
                             opponentId ? getDelClubName(opponentId) : null
                           }
