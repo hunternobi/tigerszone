@@ -10,9 +10,6 @@ import {
   type TeamStanding,
 } from "@/lib/pennyDel";
 
-const LABEL_CLASS =
-  "font-ui text-[0.6875rem] font-semibold tracking-[0.14em] text-white/60 uppercase";
-
 const fmt = (value: number, digits = 0) =>
   value.toLocaleString("de-DE", {
     minimumFractionDigits: digits,
@@ -177,16 +174,6 @@ export default function StatsDashboard({
   const scorers = topBy(tigersSkaters, (p) => p.points, 5);
   const scorerMax = scorers[0]?.points || 1;
 
-  const withXg = tigersSkaters.filter(
-    (p) => p.xg !== null && p.xgDiff !== null && (p.xg ?? 0) >= 1,
-  );
-  const overperformers = topBy(withXg, (p) => p.xgDiff, 3).filter(
-    (p) => (p.xgDiff ?? 0) > 0,
-  );
-  const underperformers = topBy(withXg, (p) => -(p.xgDiff ?? 0), 3).filter(
-    (p) => (p.xgDiff ?? 0) < 0,
-  );
-
   const pimLeaders = topBy(tigersSkaters, (p) => p.pim, 3).filter(
     (p) => p.pim > 0,
   );
@@ -222,45 +209,6 @@ export default function StatsDashboard({
       <StatsPicker
         initial="torhueter"
         options={[
-          {
-            value: "xg",
-            label: "Expected Goals",
-            content: (
-              <Card
-                title="Glück oder Können?"
-                subtitle="Tore im Vergleich zu den Torchancen (Expected Goals)"
-              >
-                <div className="space-y-5">
-                  {overperformers.length > 0 && (
-                    <div>
-                      <p className={LABEL_CLASS}>Mehr Tore als erwartet</p>
-                      <ul className="mt-2 divide-y divide-white/10">
-                        {overperformers.map((player) => (
-                          <XgRow
-                            key={player.id ?? player.name}
-                            player={player}
-                          />
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                  {underperformers.length > 0 && (
-                    <div>
-                      <p className={LABEL_CLASS}>Weniger Tore als erwartet</p>
-                      <ul className="mt-2 divide-y divide-white/10">
-                        {underperformers.map((player) => (
-                          <XgRow
-                            key={player.id ?? player.name}
-                            player={player}
-                          />
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              </Card>
-            ),
-          },
           {
             value: "strafminuten",
             label: "Strafminuten",
@@ -326,30 +274,5 @@ export default function StatsDashboard({
         Spieltag · Quelle: penny-del.org
       </p>
     </div>
-  );
-}
-
-function XgRow({ player }: { player: PlayerStat }) {
-  const diff = player.xgDiff ?? 0;
-  return (
-    <li className="flex items-center justify-between gap-3 py-2.5 first:pt-0 last:pb-0">
-      <span className="min-w-0">
-        <span className="font-ui block truncate text-[1rem] font-medium tracking-tight text-white">
-          {player.name}
-        </span>
-        <span className="text-[0.8125rem] text-white/60">
-          {player.goals} Tore · {fmt(player.xg ?? 0, 1)} erwartet
-        </span>
-      </span>
-      <span
-        className={`shrink-0 rounded-full border px-2.5 py-1 text-[0.8125rem] font-bold tabular-nums ${
-          diff > 0
-            ? "border-emerald-300/30 bg-emerald-400/15 text-emerald-300"
-            : "border-red-300/30 bg-red-400/15 text-red-300"
-        }`}
-      >
-        {signed(diff, 1)}
-      </span>
-    </li>
   );
 }
