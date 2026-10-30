@@ -158,7 +158,7 @@ function buildRows(stats: LeagueStats, opponent: TeamStanding): Row[] {
 function RankPill({ rank, better }: { rank: number; better: boolean }) {
   return (
     <span
-      className={`font-ui inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-semibold tabular-nums ${
+      className={`font-ui inline-flex items-center rounded-full border px-1.5 py-px text-[10px] font-semibold tabular-nums ${
         better
           ? "border-white/40 bg-white/20 text-white"
           : "border-white/15 bg-white/5 text-white/60"
@@ -180,22 +180,22 @@ function SideCell({
 }) {
   return (
     <div
-      className={`flex min-w-0 flex-col gap-1 ${
+      className={`flex min-w-0 flex-col gap-0.5 ${
         align === "right" ? "items-end text-right" : "items-start text-left"
       }`}
     >
       <p
         className={`font-ui leading-tight font-semibold tracking-tight tabular-nums ${
           side.text
-            ? "text-[17px] sm:text-[22px]"
-            : "text-[28px] leading-none sm:text-[34px]"
+            ? "line-clamp-2 text-[15px] break-words sm:text-[20px]"
+            : "text-[24px] leading-none sm:text-[30px]"
         } ${better ? "text-white" : "text-white/60"}`}
       >
         {side.value}
       </p>
       {!side.hideRank && <RankPill rank={side.rank} better={better} />}
       {side.note && (
-        <p className="max-w-full truncate text-[12px] leading-snug text-white/50">
+        <p className="max-w-full truncate text-[11px] leading-snug text-white/50">
           {side.note}
         </p>
       )}
@@ -216,16 +216,16 @@ export default function Head2Head({
   if (!tigers || rows.length === 0) return null;
 
   return (
-    <section data-liquid-glass="card" className="glass-panel p-5 sm:p-6">
-      <p className="font-ui text-[11px] font-semibold tracking-[0.14em] text-white/60 uppercase">
+    <section data-liquid-glass="card" className="glass-panel p-4 sm:p-6">
+      <p className="font-ui text-[10px] font-semibold tracking-[0.14em] text-white/60 uppercase">
         Head2Head
       </p>
-      <div className="mt-2 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-x-3">
-        <h3 className="font-ui text-[19px] leading-tight font-semibold tracking-tight text-white sm:text-2xl">
+      <div className="mt-2 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-x-2">
+        <h3 className="font-ui text-[15px] leading-tight font-semibold tracking-tight break-words text-white sm:text-2xl">
           {tigers.name}
         </h3>
-        <span className="text-[13px] font-medium text-white/50">vs.</span>
-        <h3 className="font-ui text-right text-[19px] leading-tight font-semibold tracking-tight text-white sm:text-2xl">
+        <span className="text-[11px] font-medium text-white/50">vs.</span>
+        <h3 className="font-ui text-right text-[15px] leading-tight font-semibold tracking-tight break-words text-white sm:text-2xl">
           {opponent.name}
         </h3>
       </div>
@@ -235,11 +235,11 @@ export default function Head2Head({
           const tigersBetter = row.tigers.rank < row.opponent.rank;
           const opponentBetter = row.opponent.rank < row.tigers.rank;
           return (
-            <li key={row.label} className="py-4 first:pt-2 last:pb-0">
-              <p className="font-ui mb-2.5 text-center text-[12px] font-semibold tracking-[0.12em] text-white/70 uppercase">
+            <li key={row.label} className="py-3 first:pt-1.5 last:pb-0">
+              <p className="font-ui mb-2 text-center text-[11px] font-semibold tracking-[0.12em] text-white/70 uppercase">
                 {row.label}
               </p>
-              <div className="grid grid-cols-2 gap-x-4">
+              <div className="grid grid-cols-2 gap-x-3">
                 <SideCell
                   side={row.tigers}
                   better={tigersBetter}

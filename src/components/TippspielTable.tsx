@@ -249,24 +249,24 @@ function CompetitionTable({
         <div className="px-2 pt-4 pb-2 lg:hidden">
           <div className="grid grid-cols-3 gap-2 text-center">
             {[
-              { points: SCORING.WINNER, label: "Richtiger Sieger" },
+              { points: SCORING.WINNER, label: "Sieger" },
               {
                 points: SCORING.GOAL_DIFF - SCORING.WINNER,
-                label: "Richtige Tordifferenz",
+                label: "Tordifferenz",
               },
               {
                 points: SCORING.EXACT_SCORE - SCORING.GOAL_DIFF,
-                label: "Richtiges Ergebnis",
+                label: "Ergebnis",
               },
             ].map((rule) => (
               <div
                 key={rule.label}
-                className="rounded-2xl bg-white/10 px-1 py-2.5"
+                className="flex min-w-0 flex-col items-center justify-center rounded-2xl bg-white/10 px-1 py-2.5"
               >
                 <p className="font-ui text-lg font-semibold tabular-nums text-white">
                   +{rule.points}
                 </p>
-                <p className="text-[10px] leading-tight whitespace-nowrap text-white/70">
+                <p className="text-[11px] leading-tight text-white/70">
                   {rule.label}
                 </p>
               </div>
