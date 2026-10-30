@@ -5,6 +5,8 @@ import FadingBackground from "@/components/FadingBackground";
 import LiquidGlassScene from "@/components/LiquidGlassScene";
 import ProfileTabs from "@/components/ProfileTabs";
 import StatsDashboard from "@/components/StatsDashboard";
+import { getDelClubName } from "@/lib/delClubs";
+import { getUpcomingGames } from "@/lib/games";
 import { getLeagueStats } from "@/lib/pennyDel";
 import { COMMUNITY_SCENE } from "@/lib/glassScenes";
 
@@ -23,6 +25,12 @@ export default async function CommunityPage() {
   const showStats =
     session?.user?.role === "admin" || process.env.VERCEL_ENV !== "production";
   const stats = showStats ? await getLeagueStats() : null;
+  const [nextGame] = showStats ? await getUpcomingGames(1) : [];
+  const opponentId = nextGame
+    ? nextGame.homeTeamId === "straubing-tigers"
+      ? nextGame.awayTeamId
+      : nextGame.homeTeamId
+    : null;
 
   return (
     <FadingBackground
@@ -45,7 +53,12 @@ export default async function CommunityPage() {
                   content: (
                     <div className="mt-6">
                       {stats ? (
-                        <StatsDashboard stats={stats} />
+                        <StatsDashboard
+                          stats={stats}
+                          opponentName={
+                            opponentId ? getDelClubName(opponentId) : null
+                          }
+                        />
                       ) : (
                         <div
                           data-liquid-glass="card"

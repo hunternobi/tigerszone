@@ -51,11 +51,27 @@ export interface PlayerStat {
   shots: number | null;
 }
 
+/** Power play / penalty kill and shooting numbers of one team. */
+export interface TeamSpecialStat {
+  teamId: number;
+  /** Power play: goals, chances, success rate in percent. */
+  ppGoals: number;
+  ppChances: number;
+  ppPct: number;
+  /** Penalty kill: goals conceded, times shorthanded, success rate in percent. */
+  pkGoalsAgainst: number;
+  pkChances: number;
+  pkPct: number;
+  /** Shooting efficiency: share of shots on goal that went in, in percent. */
+  shootingPct: number;
+}
+
 export interface LeagueStats {
   seasonLabel: string;
   fetchedAt: string;
   standings: TeamStanding[];
   players: PlayerStat[];
+  teamStats: TeamSpecialStat[];
 }
 
 // ── helpers ────────────────────────────────────────────────────────────────
@@ -196,6 +212,45 @@ function parseStandings(pageHtml: string): TeamStanding[] {
     });
 }
 
+/** teamstats/special-teams: cells are #, team, GP, -, PPG, PP chances, PP%, SHGA, time, rel, -, PKGA, PK chances, PK%, ... */
+function parseSpecialTeams(pageHtml: string) {
+  const result = new Map<
+    number,
+    Pick<
+      TeamSpecialStat,
+      | "ppGoals"
+      | "ppChances"
+      | "ppPct"
+      | "pkGoalsAgainst"
+      | "pkChances"
+      | "pkPct"
+    >
+  >();
+  for (const row of parseTable(pageHtml).rows) {
+    if (row.teamId === null || row.cells.length < 14) continue;
+    const c = row.cells;
+    result.set(row.teamId, {
+      ppGoals: integer(c[4]),
+      ppChances: integer(c[5]),
+      ppPct: decimal(c[6]) ?? 0,
+      pkGoalsAgainst: integer(c[11]),
+      pkChances: integer(c[12]),
+      pkPct: decimal(c[13]) ?? 0,
+    });
+  }
+  return result;
+}
+
+/** teamstats/schuesse: cells are #, team, S+, SOG+, SOG% (goals per shot on goal), ... */
+function parseShooting(pageHtml: string) {
+  const result = new Map<number, number>();
+  for (const row of parseTable(pageHtml).rows) {
+    if (row.teamId === null || row.cells.length < 5) continue;
+    result.set(row.teamId, decimal(row.cells[4]) ?? 0);
+  }
+  return result;
+}
+
 type PlayerTab = Map<number, Record<string, string>>;
 
 /** Player tables share the columns: rank, team logo, jersey, name, nationality, position, ...stats. */
@@ -228,14 +283,23 @@ async function loadLeagueStats(): Promise<LeagueStats> {
   const { slug, label } = seasonSlug();
   const base = `/statistik/saison-${slug}/hauptrunde`;
 
-  const [standingsHtml, basisHtml, xgHtml, skatingHtml, shotsHtml] =
-    await Promise.all([
-      fetchPage(`${base}/tabelle`),
-      fetchPage(`${base}/playerstats/basis`),
-      fetchPage(`${base}/playerstats/xg`),
-      fetchPage(`${base}/playerstats/skating`),
-      fetchPage(`${base}/playerstats/schuesse`),
-    ]);
+  const [
+    standingsHtml,
+    basisHtml,
+    xgHtml,
+    skatingHtml,
+    shotsHtml,
+    specialHtml,
+    teamShotsHtml,
+  ] = await Promise.all([
+    fetchPage(`${base}/tabelle`),
+    fetchPage(`${base}/playerstats/basis`),
+    fetchPage(`${base}/playerstats/xg`),
+    fetchPage(`${base}/playerstats/skating`),
+    fetchPage(`${base}/playerstats/schuesse`),
+    fetchPage(`${base}/teamstats/special-teams`),
+    fetchPage(`${base}/teamstats/schuesse`),
+  ]);
 
   const standings = parseStandings(standingsHtml);
   if (standings.length === 0)
@@ -280,17 +344,27 @@ async function loadLeagueStats(): Promise<LeagueStats> {
     };
   });
 
+  const special = parseSpecialTeams(specialHtml);
+  const shooting = parseShooting(teamShotsHtml);
+  const teamStats: TeamSpecialStat[] = standings.flatMap((team) => {
+    const entry = special.get(team.id);
+    const shootingPct = shooting.get(team.id);
+    if (!entry || shootingPct === undefined) return [];
+    return [{ teamId: team.id, ...entry, shootingPct }];
+  });
+
   return {
     seasonLabel: label,
     fetchedAt: new Date().toISOString(),
     standings,
     players,
+    teamStats,
   };
 }
 
 const cachedLeagueStats = unstable_cache(
   loadLeagueStats,
-  ["penny-del-league-stats-v1"],
+  ["penny-del-league-stats-v2"],
   {
     revalidate: CACHE_SECONDS,
     tags: ["del-stats"],

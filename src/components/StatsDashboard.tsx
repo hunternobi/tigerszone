@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Head2Head, { findOpponent } from "@/components/Head2Head";
 import {
   STRAUBING_TEAM_ID,
   type LeagueStats,
@@ -173,7 +174,17 @@ function StandingsCard({ standings }: { standings: TeamStanding[] }) {
   );
 }
 
-export default function StatsDashboard({ stats }: { stats: LeagueStats }) {
+export default function StatsDashboard({
+  stats,
+  opponentName,
+}: {
+  stats: LeagueStats;
+  /** Name of the next opponent; the Head2Head card is shown when it can be matched to a DEL team. */
+  opponentName?: string | null;
+}) {
+  const opponent = opponentName
+    ? findOpponent(stats.standings, opponentName)
+    : null;
   const { standings, players } = stats;
   const tigers = standings.find((team) => team.id === STRAUBING_TEAM_ID);
   const tigersPlayers = players.filter(
@@ -240,6 +251,7 @@ export default function StatsDashboard({ stats }: { stats: LeagueStats }) {
 
   return (
     <div className="space-y-6">
+      {opponent && <Head2Head stats={stats} opponent={opponent} />}
       {tigers && (
         <section data-liquid-glass="card" className="glass-panel p-5 sm:p-6">
           <p className={LABEL_CLASS}>
