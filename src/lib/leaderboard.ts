@@ -30,7 +30,7 @@ async function getVorbereitungGameIds(): Promise<Types.ObjectId[]> {
 
 async function sumPointsForUsers(
   userIds: Types.ObjectId[],
-  excludeGameIds: Types.ObjectId[] = []
+  excludeGameIds: Types.ObjectId[] = [],
 ): Promise<Map<string, number>> {
   if (userIds.length === 0) return new Map();
 
@@ -53,7 +53,8 @@ async function sumPointsForUsers(
   ]);
 
   const pointsByUser = new Map<string, number>();
-  for (const entry of predictionResults) pointsByUser.set(entry._id.toString(), entry.points);
+  for (const entry of predictionResults)
+    pointsByUser.set(entry._id.toString(), entry.points);
   for (const entry of bonusResults) {
     const key = entry._id.toString();
     pointsByUser.set(key, (pointsByUser.get(key) ?? 0) + entry.points);
@@ -91,13 +92,13 @@ export async function getLatestBatchGameIds(): Promise<Types.ObjectId[]> {
 function computeTrends(
   userIds: string[],
   currentPoints: Map<string, number>,
-  previousPoints: Map<string, number>
+  previousPoints: Map<string, number>,
 ): Map<string, "up" | "down"> {
   const byCurrent = [...userIds].sort(
-    (a, b) => (currentPoints.get(b) ?? 0) - (currentPoints.get(a) ?? 0)
+    (a, b) => (currentPoints.get(b) ?? 0) - (currentPoints.get(a) ?? 0),
   );
   const byPrevious = [...userIds].sort(
-    (a, b) => (previousPoints.get(b) ?? 0) - (previousPoints.get(a) ?? 0)
+    (a, b) => (previousPoints.get(b) ?? 0) - (previousPoints.get(a) ?? 0),
   );
   const currentRank = new Map(byCurrent.map((id, i) => [id, i]));
   const previousRank = new Map(byPrevious.map((id, i) => [id, i]));
@@ -112,7 +113,25 @@ function computeTrends(
   return trends;
 }
 
-export async function getGlobalLeaderboard(limit?: number): Promise<LeaderboardEntry[]> {
+/**
+ * The first `limit` entries of a ranking plus - if the signed-in player is further down - their own entry with
+ * its real place, so a short list still shows where "I" stand.
+ */
+export function topWithMe(
+  entries: LeaderboardEntry[],
+  limit: number,
+  meId?: string,
+): LeaderboardEntry[] {
+  const top = entries.slice(0, limit);
+  if (!meId) return top;
+  const myIndex = entries.findIndex((entry) => entry.userId === meId);
+  if (myIndex < limit) return top;
+  return [...top, { ...entries[myIndex], rank: myIndex + 1 }];
+}
+
+export async function getGlobalLeaderboard(
+  limit?: number,
+): Promise<LeaderboardEntry[]> {
   await dbConnect();
 
   const [latestBatchGameIds, vorbereitungGameIds] = await Promise.all([
@@ -122,23 +141,35 @@ export async function getGlobalLeaderboard(limit?: number): Promise<LeaderboardE
   const excludedForCurrent = vorbereitungGameIds;
   const excludedForPrevious = [...vorbereitungGameIds, ...latestBatchGameIds];
 
-  const [predictionResults, bonusResults, previousPredictionResults] = await Promise.all([
-    PredictionModel.aggregate<{ _id: Types.ObjectId; points: number }>([
-      { $match: { pointsAwarded: { $ne: null }, gameId: { $nin: excludedForCurrent } } },
-      { $group: { _id: "$userId", points: { $sum: "$pointsAwarded" } } },
-    ]),
-    BonusPredictionModel.aggregate<{ _id: Types.ObjectId; points: number }>([
-      { $match: { pointsAwarded: { $ne: null } } },
-      { $group: { _id: "$userId", points: { $sum: "$pointsAwarded" } } },
-    ]),
-    PredictionModel.aggregate<{ _id: Types.ObjectId; points: number }>([
-      { $match: { pointsAwarded: { $ne: null }, gameId: { $nin: excludedForPrevious } } },
-      { $group: { _id: "$userId", points: { $sum: "$pointsAwarded" } } },
-    ]),
-  ]);
+  const [predictionResults, bonusResults, previousPredictionResults] =
+    await Promise.all([
+      PredictionModel.aggregate<{ _id: Types.ObjectId; points: number }>([
+        {
+          $match: {
+            pointsAwarded: { $ne: null },
+            gameId: { $nin: excludedForCurrent },
+          },
+        },
+        { $group: { _id: "$userId", points: { $sum: "$pointsAwarded" } } },
+      ]),
+      BonusPredictionModel.aggregate<{ _id: Types.ObjectId; points: number }>([
+        { $match: { pointsAwarded: { $ne: null } } },
+        { $group: { _id: "$userId", points: { $sum: "$pointsAwarded" } } },
+      ]),
+      PredictionModel.aggregate<{ _id: Types.ObjectId; points: number }>([
+        {
+          $match: {
+            pointsAwarded: { $ne: null },
+            gameId: { $nin: excludedForPrevious },
+          },
+        },
+        { $group: { _id: "$userId", points: { $sum: "$pointsAwarded" } } },
+      ]),
+    ]);
 
   const pointsByUser = new Map<string, number>();
-  for (const entry of predictionResults) pointsByUser.set(entry._id.toString(), entry.points);
+  for (const entry of predictionResults)
+    pointsByUser.set(entry._id.toString(), entry.points);
   for (const entry of bonusResults) {
     const key = entry._id.toString();
     pointsByUser.set(key, (pointsByUser.get(key) ?? 0) + entry.points);
@@ -150,17 +181,29 @@ export async function getGlobalLeaderboard(limit?: number): Promise<LeaderboardE
   }
   for (const entry of bonusResults) {
     const key = entry._id.toString();
-    previousPointsByUser.set(key, (previousPointsByUser.get(key) ?? 0) + entry.points);
+    previousPointsByUser.set(
+      key,
+      (previousPointsByUser.get(key) ?? 0) + entry.points,
+    );
   }
 
-  const allUserIds = new Set([...pointsByUser.keys(), ...previousPointsByUser.keys()]);
-  const trends = computeTrends(Array.from(allUserIds), pointsByUser, previousPointsByUser);
+  const allUserIds = new Set([
+    ...pointsByUser.keys(),
+    ...previousPointsByUser.keys(),
+  ]);
+  const trends = computeTrends(
+    Array.from(allUserIds),
+    pointsByUser,
+    previousPointsByUser,
+  );
 
   const userIds = Array.from(pointsByUser.keys());
   const users = await UserModel.find({ _id: { $in: userIds } })
     .select("name")
     .lean<{ _id: Types.ObjectId; name: string }[]>();
-  const nameById = new Map(users.map((user) => [user._id.toString(), user.name]));
+  const nameById = new Map(
+    users.map((user) => [user._id.toString(), user.name]),
+  );
 
   const sortedEntries = Array.from(pointsByUser.entries()).sort((a, b) => {
     if (b[1] !== a[1]) return b[1] - a[1];
@@ -180,7 +223,7 @@ export async function getGlobalLeaderboard(limit?: number): Promise<LeaderboardE
 
 export async function getGroupLeaderboard(
   groupId: string,
-  limit?: number
+  limit?: number,
 ): Promise<LeaderboardEntry[]> {
   await dbConnect();
 
@@ -198,7 +241,9 @@ export async function getGroupLeaderboard(
   const memberIds = members.map((member) => member.userId);
   if (memberIds.length === 0) return [];
 
-  const roleByUser = new Map(members.map((member) => [member.userId.toString(), member.role]));
+  const roleByUser = new Map(
+    members.map((member) => [member.userId.toString(), member.role]),
+  );
   const ownerId = group.ownerUserId.toString();
 
   const [users, pointsByUser, previousPointsByUser] = await Promise.all([
@@ -210,7 +255,11 @@ export async function getGroupLeaderboard(
   ]);
 
   const memberIdStrings = memberIds.map((id) => id.toString());
-  const trends = computeTrends(memberIdStrings, pointsByUser, previousPointsByUser);
+  const trends = computeTrends(
+    memberIdStrings,
+    pointsByUser,
+    previousPointsByUser,
+  );
 
   const sorted = users
     .map((user) => {
@@ -241,7 +290,7 @@ export interface VorbereitungLeaderboardEntry {
  * Hauptrunde Gesamtrangliste which excludes these points.
  */
 export async function getVorbereitungLeaderboard(
-  limit?: number
+  limit?: number,
 ): Promise<VorbereitungLeaderboardEntry[]> {
   await dbConnect();
 
@@ -252,7 +301,12 @@ export async function getVorbereitungLeaderboard(
     _id: Types.ObjectId;
     points: number;
   }>([
-    { $match: { pointsAwarded: { $ne: null }, gameId: { $in: vorbereitungGameIds } } },
+    {
+      $match: {
+        pointsAwarded: { $ne: null },
+        gameId: { $in: vorbereitungGameIds },
+      },
+    },
     { $group: { _id: "$userId", points: { $sum: "$pointsAwarded" } } },
   ]);
   if (predictionResults.length === 0) return [];
@@ -261,7 +315,9 @@ export async function getVorbereitungLeaderboard(
   const users = await UserModel.find({ _id: { $in: userIds } })
     .select("name")
     .lean<{ _id: Types.ObjectId; name: string }[]>();
-  const nameById = new Map(users.map((user) => [user._id.toString(), user.name]));
+  const nameById = new Map(
+    users.map((user) => [user._id.toString(), user.name]),
+  );
 
   const sorted = predictionResults
     .map((entry) => ({
@@ -319,10 +375,17 @@ export async function getSpieltagsMvp(): Promise<SpieltagsMvpData> {
     >();
   const gameById = new Map(games.map((game) => [game._id.toString(), game]));
 
-  const predictions = await PredictionModel.find({ gameId: { $in: latestBatchGameIds } })
+  const predictions = await PredictionModel.find({
+    gameId: { $in: latestBatchGameIds },
+  })
     .select("userId gameId predictedHome predictedAway")
     .lean<
-      { userId: Types.ObjectId; gameId: Types.ObjectId; predictedHome: number; predictedAway: number }[]
+      {
+        userId: Types.ObjectId;
+        gameId: Types.ObjectId;
+        predictedHome: number;
+        predictedAway: number;
+      }[]
     >();
 
   const exactUserIds = new Set<string>();
@@ -376,10 +439,15 @@ export interface PointsHistoryEntry {
  * Vorbereitung games are excluded so the graph starts fresh at 0 for the
  * Hauptrunde (see getVorbereitungLeaderboard for the preseason standings).
  */
-export async function getUserPointsHistory(userId: string): Promise<PointsHistoryEntry[]> {
+export async function getUserPointsHistory(
+  userId: string,
+): Promise<PointsHistoryEntry[]> {
   await dbConnect();
 
-  const finishedGames = await GameModel.find({ status: "finished", competition: { $ne: "Vorbereitung" } })
+  const finishedGames = await GameModel.find({
+    status: "finished",
+    competition: { $ne: "Vorbereitung" },
+  })
     .select("_id kickoff")
     .sort({ kickoff: 1 })
     .lean<{ _id: Types.ObjectId; kickoff: Date }[]>();
@@ -406,14 +474,17 @@ export async function getUserPointsHistory(userId: string): Promise<PointsHistor
     .select("gameId pointsAwarded")
     .lean<{ gameId: Types.ObjectId; pointsAwarded: number }[]>();
   const pointsByGame = new Map(
-    predictions.map((prediction) => [prediction.gameId.toString(), prediction.pointsAwarded])
+    predictions.map((prediction) => [
+      prediction.gameId.toString(),
+      prediction.pointsAwarded,
+    ]),
   );
 
   let cumulative = 0;
   return batches.map((batch, index) => {
     const points = batch.gameIds.reduce(
       (sum, gameId) => sum + (pointsByGame.get(gameId.toString()) ?? 0),
-      0
+      0,
     );
     cumulative += points;
     return { label: `${index + 1}.`, points, cumulative };

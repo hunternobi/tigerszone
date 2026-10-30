@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { FaUserTie } from "react-icons/fa";
 import { MdOutlineEditNote } from "react-icons/md";
 
@@ -30,6 +33,19 @@ const PODIUM_COLORS = ["text-[#f6c445]", "text-[#aeb8cc]", "text-[#d58a4a]"];
 /** Text colour of a rank (0-based): podium colour for the first three, white otherwise. */
 export function rankColor(index: number): string {
   return PODIUM_COLORS[index] ?? "text-white";
+}
+
+/** The signed-in player's own row in any ranking: a frosted, slightly raised capsule (iOS selected-row look). */
+export const MY_ROW_CLASS =
+  "-mx-2 rounded-xl bg-white/15 px-2 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.22),inset_0_1px_0_rgba(255,255,255,0.3)]";
+
+/** Small white "Du" pill behind the player's own name. */
+export function MeBadge() {
+  return (
+    <span className="font-ui shrink-0 rounded-full bg-white px-1.5 py-px text-[0.625rem] font-bold text-tigers-primary">
+      Du
+    </span>
+  );
 }
 
 const ROLE_BADGES = {
@@ -77,6 +93,8 @@ export default function Leaderboard({
   bare = false,
   highlightUserId,
 }: LeaderboardProps) {
+  const { data: session } = useSession();
+  const meId = highlightUserId ?? session?.user?.id;
   return (
     <div className={bare ? "" : "glass-panel p-5 sm:p-6"}>
       <h3 className="font-ui mb-3 text-xl font-semibold tracking-tight text-white">
@@ -90,12 +108,12 @@ export default function Leaderboard({
         <ol className="divide-y divide-white/10">
           {entries.map((entry, listIndex) => {
             const index = (entry.rank ?? listIndex + 1) - 1;
-            const isMe = highlightUserId === entry.userId;
+            const isMe = meId === entry.userId;
             return (
               <li
                 key={entry.userId}
                 data-me={isMe ? "" : undefined}
-                className={`flex items-center justify-between gap-3 py-2.5 ${isMe ? "-mx-2 rounded-xl bg-white/15 px-2" : ""}`}
+                className={`flex items-center justify-between gap-3 py-2.5 ${isMe ? MY_ROW_CLASS : ""}`}
               >
                 <span className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-1 text-white">
                   <span className="flex min-w-0 items-center gap-2">
@@ -110,6 +128,7 @@ export default function Leaderboard({
                     >
                       {entry.name}
                     </Link>
+                    {isMe && <MeBadge />}
                     <TrendIcon trend={entry.trend} />
                   </span>
                   <RoleBadge role={entry.role} />

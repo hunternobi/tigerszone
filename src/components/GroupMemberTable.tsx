@@ -21,6 +21,8 @@ import {
   type ActionResult,
 } from "@/app/gruppen/actions";
 import {
+  MY_ROW_CLASS,
+  MeBadge,
   RoleBadge,
   TrendIcon,
   rankColor,
@@ -55,7 +57,16 @@ export default function GroupMemberTable({
   const [showAll, setShowAll] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const VISIBLE_COUNT = 3;
-  const visibleEntries = showAll ? entries : entries.slice(0, VISIBLE_COUNT);
+  // Collapsed: the first three, plus my own row if I am further down (with my real place).
+  const myIndex = entries.findIndex((entry) => entry.userId === currentUserId);
+  const visibleEntries = showAll
+    ? entries
+    : myIndex >= VISIBLE_COUNT
+      ? [
+          ...entries.slice(0, VISIBLE_COUNT),
+          { ...entries[myIndex], rank: myIndex + 1 },
+        ]
+      : entries.slice(0, VISIBLE_COUNT);
 
   const canManage = viewerRole === "owner" || viewerRole === "assistant";
 
@@ -154,18 +165,21 @@ export default function GroupMemberTable({
         </p>
       ) : (
         <ol className="mt-2 divide-y divide-white/10 text-[1rem]">
-          {visibleEntries.map((entry, index) => {
+          {visibleEntries.map((entry, listIndex) => {
+            const index = (entry.rank ?? listIndex + 1) - 1;
             const manageable =
               canManage &&
               entry.userId !== currentUserId &&
               entry.role !== "owner";
+            const isMe = entry.userId === currentUserId;
             return (
               <li
                 key={entry.userId}
+                data-me={isMe ? "" : undefined}
                 onContextMenu={(e) => handleContextMenu(e, entry)}
                 className={`flex items-center justify-between gap-3 py-2.5 ${
                   manageable ? "cursor-context-menu" : ""
-                }`}
+                } ${isMe ? MY_ROW_CLASS : ""}`}
               >
                 <span className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-1 text-white">
                   <span className="flex min-w-0 items-center gap-2">
@@ -180,6 +194,7 @@ export default function GroupMemberTable({
                     >
                       {entry.name}
                     </Link>
+                    {isMe && <MeBadge />}
                     <TrendIcon trend={entry.trend} />
                   </span>
                   <RoleBadge role={entry.role} />

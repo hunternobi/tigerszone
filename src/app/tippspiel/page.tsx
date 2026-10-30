@@ -3,9 +3,17 @@ import { auth } from "@/auth";
 import TippspielInteractive from "@/components/TippspielInteractive";
 import { getAllGames } from "@/lib/games";
 import { getActiveGroupId, getMyGroups } from "@/app/gruppen/actions";
-import { getGlobalLeaderboard, getGroupLeaderboard, type GroupLeaderboardData } from "@/lib/leaderboard";
+import {
+  getGlobalLeaderboard,
+  getGroupLeaderboard,
+  topWithMe,
+  type GroupLeaderboardData,
+} from "@/lib/leaderboard";
 import { getUserPredictionHistory } from "@/lib/predictions";
-import { getBonusDeadline, getMyBonusPrediction } from "@/app/tippspiel/bonusActions";
+import {
+  getBonusDeadline,
+  getMyBonusPrediction,
+} from "@/app/tippspiel/bonusActions";
 
 export const metadata: Metadata = {
   title: "Tippspiel",
@@ -18,44 +26,66 @@ export default async function TippspielPage() {
   const session = await auth();
   const isAuthenticated = Boolean(session?.user);
 
-  const [activeGroupId, myGroups, allGames, history, bonusPrediction, bonusDeadline] =
-    await Promise.all([
-      getActiveGroupId(),
-      getMyGroups(),
-      getAllGames(),
-      isAuthenticated ? getUserPredictionHistory(session!.user.id) : Promise.resolve(null),
-      isAuthenticated ? getMyBonusPrediction("hauptrunde") : Promise.resolve({}),
-      getBonusDeadline("hauptrunde"),
-    ]);
+  const [
+    activeGroupId,
+    myGroups,
+    allGames,
+    history,
+    bonusPrediction,
+    bonusDeadline,
+  ] = await Promise.all([
+    getActiveGroupId(),
+    getMyGroups(),
+    getAllGames(),
+    isAuthenticated
+      ? getUserPredictionHistory(session!.user.id)
+      : Promise.resolve(null),
+    isAuthenticated ? getMyBonusPrediction("hauptrunde") : Promise.resolve({}),
+    getBonusDeadline("hauptrunde"),
+  ]);
 
   const bonusLocked = Boolean(bonusDeadline && new Date() >= bonusDeadline);
   const resolvedBonusPrediction = bonusPrediction ?? {};
 
-  const [globalEntries, groupLeaderboards] = await Promise.all([
-    getGlobalLeaderboard(3),
+  const meId = session?.user?.id;
+  const [allGlobalEntries, groupLeaderboards] = await Promise.all([
+    getGlobalLeaderboard(),
     Promise.all<GroupLeaderboardData>(
       myGroups.map(async (group) => ({
         groupId: group._id,
         groupName: group.name,
-        entries: await getGroupLeaderboard(group._id, 5),
-      }))
+        entries: topWithMe(await getGroupLeaderboard(group._id), 5, meId),
+      })),
     ),
   ]);
+
+  const globalEntries = topWithMe(allGlobalEntries, 3, meId);
 
   // Always three games: a game stays in the list (greyed out once it has started) until
   // midnight German time on its match day, then the next game moves up. Games stay in the
   // database (and in the Tipphistorie), so points are untouched - they just leave this list.
   const berlinDay = (date: Date) =>
-    new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Berlin" }).format(date);
+    new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Berlin" }).format(
+      date,
+    );
   const today = berlinDay(new Date());
   const hauptrundeGames = allGames
-    .filter((game) => game.competition === "DEL" && berlinDay(new Date(game.kickoff)) >= today)
+    .filter(
+      (game) =>
+        game.competition === "DEL" &&
+        berlinDay(new Date(game.kickoff)) >= today,
+    )
     .slice(0, 3);
   const nextGame =
-    allGames.find((game) => game.status === "scheduled" && new Date(game.kickoff) > new Date()) ??
-    null;
+    allGames.find(
+      (game) =>
+        game.status === "scheduled" && new Date(game.kickoff) > new Date(),
+    ) ?? null;
 
-  const predictions: Record<string, { predictedHome: number; predictedAway: number }> = {};
+  const predictions: Record<
+    string,
+    { predictedHome: number; predictedAway: number }
+  > = {};
 
   if (history) {
     for (const entry of history.entries) {
