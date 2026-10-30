@@ -51,7 +51,7 @@ export default async function Home() {
                 </span>
               </h1>
 
-              <p className="mt-6 max-w-xl text-base leading-snug text-white/80 sm:mx-auto sm:mt-5 sm:text-xl">
+              <p className="mx-auto mt-6 max-w-xl text-center text-base leading-snug text-white/80 sm:mx-auto sm:mt-5 sm:text-xl">
                 {SITE_DESCRIPTION}
               </p>
 

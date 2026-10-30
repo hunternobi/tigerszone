@@ -122,7 +122,7 @@ export default function CustomSelect({
               left: panelPosition.left,
               width: panelPosition.width,
             }}
-            className="z-50 max-h-72 origin-top animate-[menuIn_0.16s_ease-out] overflow-y-auto rounded-2xl border border-white/20 bg-[#141a5c]/55 p-1 shadow-[0_18px_50px_rgba(0,0,0,0.55),inset_0_1px_0_rgba(255,255,255,0.25)] backdrop-blur-2xl backdrop-saturate-[1.8]"
+            className="z-50 max-h-96 origin-top animate-[menuIn_0.16s_ease-out] overflow-y-auto rounded-2xl border border-white/20 bg-[#141a5c]/55 p-1 shadow-[0_18px_50px_rgba(0,0,0,0.55),inset_0_1px_0_rgba(255,255,255,0.25)] backdrop-blur-2xl backdrop-saturate-[1.8]"
           >
             {options.map((option) => {
               const isSelected = option.value === value;
