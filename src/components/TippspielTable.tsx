@@ -266,7 +266,7 @@ function CompetitionTable({
                 <p className="font-ui text-lg font-semibold tabular-nums text-white">
                   +{rule.points}
                 </p>
-                <p className="text-[11px] leading-tight text-white/70">
+                <p className="text-[10px] leading-tight whitespace-nowrap text-white/70">
                   {rule.label}
                 </p>
               </div>

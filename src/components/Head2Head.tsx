@@ -40,8 +40,10 @@ interface Side {
   note?: string;
   /** League rank (1 = best). */
   rank: number;
-  /** Numeric value for the comparison bar. */
-  raw: number;
+  /** The rank itself is the big number, so no "Platz" pill. */
+  hideRank?: boolean;
+  /** Text instead of a number (a player's name): smaller type. */
+  text?: boolean;
 }
 
 interface Row {
@@ -69,6 +71,11 @@ function bestScorerOf(players: PlayerStat[], teamId: number) {
   return index < 0 ? null : { player: byScoring[index], rank: index + 1 };
 }
 
+const goalsAndAssists = (player: PlayerStat) =>
+  `${player.goals} ${player.goals === 1 ? "Tor" : "Tore"} · ${player.assists} ${
+    player.assists === 1 ? "Assist" : "Assists"
+  }`;
+
 function buildRows(stats: LeagueStats, opponent: TeamStanding): Row[] {
   const { standings, players, teamStats } = stats;
   const tigers = standings.find((team) => team.id === STRAUBING_TEAM_ID);
@@ -78,16 +85,16 @@ function buildRows(stats: LeagueStats, opponent: TeamStanding): Row[] {
     {
       label: "Tabelle",
       tigers: {
-        value: `${tigers.points}`,
-        note: `Punkte · ${tigers.gp} Spiele`,
+        value: `${tigers.rank}`,
+        note: `${tigers.points} Punkte`,
         rank: tigers.rank,
-        raw: tigers.pointsPerGame,
+        hideRank: true,
       },
       opponent: {
-        value: `${opponent.points}`,
-        note: `Punkte · ${opponent.gp} Spiele`,
+        value: `${opponent.rank}`,
+        note: `${opponent.points} Punkte`,
         rank: opponent.rank,
-        raw: opponent.pointsPerGame,
+        hideRank: true,
       },
     },
   ];
@@ -98,16 +105,16 @@ function buildRows(stats: LeagueStats, opponent: TeamStanding): Row[] {
     rows.push({
       label: "Top Scorer",
       tigers: {
-        value: `${tigersScorer.player.points}`,
-        note: tigersScorer.player.name,
+        value: tigersScorer.player.name,
+        note: goalsAndAssists(tigersScorer.player),
         rank: tigersScorer.rank,
-        raw: tigersScorer.player.points,
+        text: true,
       },
       opponent: {
-        value: `${opponentScorer.player.points}`,
-        note: opponentScorer.player.name,
+        value: opponentScorer.player.name,
+        note: goalsAndAssists(opponentScorer.player),
         rank: opponentScorer.rank,
-        raw: opponentScorer.player.points,
+        text: true,
       },
     });
   }
@@ -118,17 +125,15 @@ function buildRows(stats: LeagueStats, opponent: TeamStanding): Row[] {
     const side = (
       team: TeamSpecialStat,
       pick: (t: TeamSpecialStat) => number,
-      note: (t: TeamSpecialStat) => string,
+      note?: (t: TeamSpecialStat) => string,
     ): Side => ({
       value: `${fmt(pick(team), 1)} %`,
-      note: note(team),
+      note: note?.(team),
       rank: rankOf(teamStats, team.teamId, pick),
-      raw: pick(team),
     });
     const ppNote = (t: TeamSpecialStat) => `${t.ppGoals} von ${t.ppChances}`;
     const pkNote = (t: TeamSpecialStat) =>
-      `${t.pkChances - t.pkGoalsAgainst} von ${t.pkChances} überstanden`;
-    const shotNote = (t: TeamSpecialStat) => `der Schüsse aufs Tor treffen`;
+      `${t.pkChances - t.pkGoalsAgainst} von ${t.pkChances}`;
     rows.push(
       {
         label: "Überzahl",
@@ -142,8 +147,8 @@ function buildRows(stats: LeagueStats, opponent: TeamStanding): Row[] {
       },
       {
         label: "Schusseffizienz",
-        tigers: side(mine, (t) => t.shootingPct, shotNote),
-        opponent: side(theirs, (t) => t.shootingPct, shotNote),
+        tigers: side(mine, (t) => t.shootingPct),
+        opponent: side(theirs, (t) => t.shootingPct),
       },
     );
   }
@@ -180,39 +185,20 @@ function SideCell({
       }`}
     >
       <p
-        className={`font-ui text-[28px] leading-none font-semibold tracking-tight tabular-nums sm:text-[34px] ${
-          better ? "text-white" : "text-white/60"
-        }`}
+        className={`font-ui leading-tight font-semibold tracking-tight tabular-nums ${
+          side.text
+            ? "text-[17px] sm:text-[22px]"
+            : "text-[28px] leading-none sm:text-[34px]"
+        } ${better ? "text-white" : "text-white/60"}`}
       >
         {side.value}
       </p>
-      <RankPill rank={side.rank} better={better} />
+      {!side.hideRank && <RankPill rank={side.rank} better={better} />}
       {side.note && (
         <p className="max-w-full truncate text-[12px] leading-snug text-white/50">
           {side.note}
         </p>
       )}
-    </div>
-  );
-}
-
-function CompareBar({ left, right }: { left: Side; right: Side }) {
-  const total = left.raw + right.raw || 1;
-  const leftShare = Math.max(6, Math.min(94, (left.raw / total) * 100));
-  const leftBetter = left.rank < right.rank;
-  const rightBetter = right.rank < left.rank;
-  return (
-    <div className="mt-2.5 flex h-1.5 gap-1" aria-hidden="true">
-      <div className="flex justify-end" style={{ width: `${leftShare}%` }}>
-        <div
-          className={`h-full w-full rounded-full ${leftBetter ? "bg-white" : "bg-white/30"}`}
-        />
-      </div>
-      <div className="flex flex-1">
-        <div
-          className={`h-full w-full rounded-full ${rightBetter ? "bg-white" : "bg-white/30"}`}
-        />
-      </div>
     </div>
   );
 }
@@ -265,7 +251,6 @@ export default function Head2Head({
                   align="right"
                 />
               </div>
-              <CompareBar left={row.tigers} right={row.opponent} />
             </li>
           );
         })}
