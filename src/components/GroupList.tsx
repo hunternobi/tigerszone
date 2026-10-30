@@ -139,10 +139,11 @@ export default function GroupList({
                 aria-label={
                   isOpen ? "Rangliste einklappen" : "Rangliste ausklappen"
                 }
-                className="relative h-10 w-10 shrink-0 appearance-none rounded-full border border-white/15 bg-white/10 text-white transition hover:bg-white/15 active:scale-[0.94]"
+                className="glass-icon-button relative h-10 w-10 shrink-0 appearance-none rounded-full text-white"
               >
                 <ChevronDown
                   size={18}
+                  strokeWidth={2.75}
                   className={`absolute inset-0 m-auto transition-transform ${isOpen ? "rotate-180" : ""}`}
                 />
               </button>

@@ -89,7 +89,7 @@ export default function GroupShareMenu({ group }: GroupShareMenuProps) {
         type="button"
         onClick={toggleMenu}
         aria-label="Gruppe teilen"
-        className="relative h-10 w-10 shrink-0 appearance-none rounded-full border border-white/15 bg-white/10 text-white transition hover:bg-white/15 active:scale-[0.94] sm:flex sm:h-10 sm:w-auto sm:items-center sm:justify-center sm:gap-1.5 sm:px-4"
+        className="glass-icon-button relative h-10 w-10 shrink-0 appearance-none rounded-full text-white sm:flex sm:h-10 sm:w-auto sm:items-center sm:justify-center sm:gap-1.5 sm:px-4"
       >
         {/* Phone: no flexbox on the button, the icon is absolutely centred (flex centring in a fixed-size <button> was off-centre in iOS Safari). */}
         {copied ? (
@@ -99,7 +99,8 @@ export default function GroupShareMenu({ group }: GroupShareMenuProps) {
           />
         ) : (
           <Share
-            size={16}
+            size={18}
+            strokeWidth={1.9}
             className="absolute inset-0 m-auto sm:static sm:m-0"
           />
         )}
@@ -251,7 +252,9 @@ function InviteSearchModal({
 
         <div className="mt-3 max-h-72 divide-y divide-white/10 overflow-y-auto">
           {loading && (
-            <p className="py-4 text-center text-[0.8125rem] text-white/60">Lädt…</p>
+            <p className="py-4 text-center text-[0.8125rem] text-white/60">
+              Lädt…
+            </p>
           )}
           {!loading && results.length === 0 && (
             <p className="py-4 text-center text-[0.8125rem] text-white/60">
