@@ -9,6 +9,11 @@ const DESKTOP_QUERY = "(min-width: 640px)";
 const DISABLED_KEY = "tz-glass-off";
 // The glass canvas reaches this far around each surface (room for the soft shadow of tiles).
 const PAD = 24;
+// At most this many WebGL contexts per scene are kept alive; they are reused while scrolling instead of
+// being created and destroyed (compiling the shader and uploading the backdrop would stall scrolling).
+const SLOT_LIMIT = 8;
+// Extra rows drawn above and below the visible part of a tall card, for the frame that is still to come.
+const CLIP_MARGIN = 160;
 // A resize of the backdrop (e.g. Safari's toolbar collapsing) is repainted only after it settled.
 const REPAINT_DELAY_MS = 150;
 // Contexts lost this often (memory pressure) switch the shader off.
@@ -95,17 +100,16 @@ export const NAVY_SCENE: SceneBackground = {
 };
 
 const PRESETS = {
-  card: { refraction: 1.0, blurLod: 1.6, chroma: 0.04, shadow: 0 },
-  tile: { refraction: 0.85, blurLod: 1.4, chroma: 0.04, shadow: 0.3 },
+  card: { refraction: 1.0, blurLod: 0.5, soft: 7, chroma: 0.04, shadow: 0 },
+  tile: { refraction: 0.85, blurLod: 0.5, soft: 5, chroma: 0.04, shadow: 0.3 },
 } as const;
 type SurfaceKind = keyof typeof PRESETS;
 
 interface Surface {
   target: HTMLElement;
   kind: SurfaceKind;
-  canvas: HTMLCanvasElement | null;
-  gl: GlassGL | null;
-  /** Near the viewport: only these surfaces own a canvas and a WebGL context. */
+  /** The pooled canvas + WebGL context currently showing this surface (only while it is near the viewport). */
+  slot: Slot | null;
   visible: boolean;
   w: number;
   h: number;
@@ -118,6 +122,17 @@ interface Surface {
   key: string;
   backdropVersion: number;
   cleanup: () => void;
+}
+
+/** A canvas with its WebGL context. Slots are created once and handed from surface to surface. */
+interface Slot {
+  canvas: HTMLCanvasElement;
+  gl: GlassGL;
+  surface: Surface | null;
+  backdropVersion: number;
+  /** Size the canvas was last set up for (CSS px). */
+  w: number;
+  h: number;
 }
 
 const glowCss = (glows: SceneGlow[]) =>
@@ -192,9 +207,9 @@ export default function LiquidGlassScene({
     let announced = false;
     const surfaces: Surface[] = [];
 
-    const dpr = () => Math.min(window.devicePixelRatio || 1, touch ? 1.5 : 2);
+    const dpr = () => Math.min(window.devicePixelRatio || 1, 2);
     // The backdrop is blurred anyway: soft glows need very few pixels, the photo about one per CSS px.
-    const backdropRatio = () => (photoMode ? Math.min(dpr(), 1.25) : 0.5);
+    const backdropRatio = () => (photoMode ? 0.6 : 0.5);
     const pageBackground = () =>
       document.querySelector<HTMLElement>("[data-page-background]");
     const viewportBox = () =>
@@ -252,46 +267,86 @@ export default function LiquidGlassScene({
       return value;
     }
 
-    function destroyGl(surface: Surface) {
-      surface.gl?.destroy();
-      surface.canvas?.remove();
-      surface.gl = null;
-      surface.canvas = null;
+    const slots: Slot[] = [];
+
+    /** Hands a surface's slot back (it left the viewport): the canvas is hidden, the context stays alive. */
+    function releaseSlot(surface: Surface) {
+      const slot = surface.slot;
+      if (!slot) return;
+      slot.surface = null;
+      slot.canvas.style.visibility = "hidden";
+      surface.slot = null;
       surface.key = "";
     }
 
-    /** Own canvas + WebGL context for a surface that came near the viewport. */
-    function ensureGl(surface: Surface): boolean {
-      if (surface.gl && !surface.gl.isLost) return true;
-      destroyGl(surface);
+    function destroySlot(slot: Slot) {
+      if (slot.surface) {
+        slot.surface.slot = null;
+        slot.surface.key = "";
+      }
+      slot.gl.destroy();
+      slot.canvas.remove();
+      const index = slots.indexOf(slot);
+      if (index >= 0) slots.splice(index, 1);
+    }
+
+    function createSlot(): Slot | null {
       const canvas = document.createElement("canvas");
-      canvas.style.cssText = "position:absolute;pointer-events:none;";
+      canvas.style.cssText =
+        "position:absolute;pointer-events:none;visibility:hidden;";
       root!.appendChild(canvas);
       const gl = GlassGL.create(canvas);
       if (!gl) {
         canvas.remove();
         fallBackToCss("WebGL2 is not available");
-        return false;
+        return null;
       }
+      const slot: Slot = {
+        canvas,
+        gl,
+        surface: null,
+        backdropVersion,
+        w: 0,
+        h: 0,
+      };
       gl.onLost = () => {
         lostCount += 1;
         if (lostCount > LOST_LIMIT) {
           fallBackToCss("WebGL context lost too often");
         } else {
-          destroyGl(surface);
+          destroySlot(slot);
           schedule();
         }
       };
       gl.setBackdrop(backdrop);
-      surface.canvas = canvas;
-      surface.gl = gl;
-      surface.backdropVersion = backdropVersion;
+      slots.push(slot);
+      return slot;
+    }
+
+    /** A slot (canvas + WebGL context) for a surface near the viewport; slots are reused, not recreated. */
+    function acquireSlot(surface: Surface): Slot | null {
+      if (surface.slot && !surface.slot.gl.isLost) return surface.slot;
+      if (surface.slot) destroySlot(surface.slot);
+      let slot: Slot | null =
+        slots.find((s) => !s.surface && !s.gl.isLost) ?? null;
+      if (!slot && slots.length < SLOT_LIMIT) slot = createSlot();
+      if (!slot) {
+        // All slots busy: take one from a surface that has meanwhile left the viewport.
+        const stale = slots.find((s) => s.surface && !s.surface.visible);
+        if (stale?.surface) {
+          releaseSlot(stale.surface);
+          slot = stale;
+        }
+      }
+      if (!slot) return null;
+      slot.surface = surface;
+      slot.canvas.style.visibility = "visible";
+      surface.slot = slot;
       surface.key = "";
-      // A fresh canvas has no size or position yet: force the set-up below.
       surface.w = 0;
       surface.left = NaN;
       surface.top = NaN;
-      return true;
+      return slot;
     }
 
     /** Positions and redraws every surface near the viewport. Returns true while something still moves. */
@@ -318,6 +373,7 @@ export default function LiquidGlassScene({
         }, REPAINT_DELAY_MS);
       }
 
+      const viewportH = window.innerHeight;
       let animating = false;
       for (const surface of surfaces) {
         if (!surface.visible) continue;
@@ -327,10 +383,23 @@ export default function LiquidGlassScene({
         const w = target.offsetWidth;
         const h = target.offsetHeight;
         if (w === 0 || h === 0) continue;
-        if (!ensureGl(surface) || !surface.gl || !surface.canvas) continue;
 
+        const canvasW = w + PAD * 2;
+        const canvasH = h + PAD * 2;
         const originX = r.left + (r.width - w) / 2 - PAD; // canvas top-left, viewport coords
         const originY = r.top + (r.height - h) / 2 - PAD;
+
+        // Only the rows around the viewport are drawn (a tall card is mostly off-screen).
+        const clipTop = Math.max(0, Math.floor(-originY - CLIP_MARGIN));
+        const clipBottom = Math.min(
+          canvasH,
+          Math.ceil(viewportH - originY + CLIP_MARGIN),
+        );
+        if (clipBottom <= clipTop) continue;
+
+        const slot = acquireSlot(surface);
+        if (!slot) continue;
+
         const left = Math.round((originX - rootRect.left) * 10) / 10;
         const top = Math.round((originY - rootRect.top) * 10) / 10;
 
@@ -340,20 +409,25 @@ export default function LiquidGlassScene({
           const radius =
             parseFloat(getComputedStyle(target).borderTopLeftRadius) || 0;
           surface.radius = Math.max(0, Math.min(radius, h / 2, w / 2));
-          surface.canvas.style.width = `${w + PAD * 2}px`;
-          surface.canvas.style.height = `${h + PAD * 2}px`;
-          surface.gl.resize(w + PAD * 2, h + PAD * 2, dpr());
+          surface.key = "";
+        }
+        if (slot.w !== canvasW || slot.h !== canvasH) {
+          slot.w = canvasW;
+          slot.h = canvasH;
+          slot.canvas.style.width = `${canvasW}px`;
+          slot.canvas.style.height = `${canvasH}px`;
+          slot.gl.resize(canvasW, canvasH, dpr());
           surface.key = "";
         }
         if (left !== surface.left || top !== surface.top) {
           surface.left = left;
           surface.top = top;
-          surface.canvas.style.left = `${left}px`;
-          surface.canvas.style.top = `${top}px`;
+          slot.canvas.style.left = `${left}px`;
+          slot.canvas.style.top = `${top}px`;
         }
-        if (surface.backdropVersion !== backdropVersion) {
-          surface.gl.setBackdrop(backdrop);
-          surface.backdropVersion = backdropVersion;
+        if (slot.backdropVersion !== backdropVersion) {
+          slot.gl.setBackdrop(backdrop);
+          slot.backdropVersion = backdropVersion;
           surface.key = "";
         }
         if (now < surface.opacityUntil) {
@@ -373,8 +447,8 @@ export default function LiquidGlassScene({
 
         const preset = PRESETS[surface.kind];
         const params: GlassDrawParams = {
-          canvasW: w + PAD * 2,
-          canvasH: h + PAD * 2,
+          canvasW,
+          canvasH,
           width: w,
           height: h,
           pad: PAD,
@@ -385,11 +459,13 @@ export default function LiquidGlassScene({
           backdropH: box.height,
           refraction: preset.refraction,
           blurLod: preset.blurLod,
+          soft: preset.soft,
           chroma: preset.chroma,
           opacity: surface.opacity,
           shadow: preset.shadow,
+          clip: { x: 0, y: clipTop, w: canvasW, h: clipBottom - clipTop },
         };
-        surface.gl.draw(params);
+        slot.gl.draw(params);
 
         if (!announced) {
           announced = true;
@@ -450,7 +526,7 @@ export default function LiquidGlassScene({
       } catch {
         // storage unavailable: only this scene falls back
       }
-      for (const surface of surfaces) destroyGl(surface);
+      for (const slot of [...slots]) destroySlot(slot);
       setWebglActive(false);
     }
 
@@ -462,7 +538,7 @@ export default function LiquidGlassScene({
           if (!surface) continue;
           surface.visible = entry.isIntersecting;
           if (surface.visible) surface.opacityUntil = now + 1500;
-          else destroyGl(surface);
+          else releaseSlot(surface);
         }
         schedule();
       },
@@ -485,8 +561,7 @@ export default function LiquidGlassScene({
         surfaces.push({
           target,
           kind,
-          canvas: null,
-          gl: null,
+          slot: null,
           visible: false,
           w: 0,
           h: 0,
@@ -566,10 +641,8 @@ export default function LiquidGlassScene({
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", schedule);
       visualViewport?.removeEventListener("resize", schedule);
-      for (const surface of surfaces) {
-        destroyGl(surface);
-        surface.cleanup();
-      }
+      for (const slot of [...slots]) destroySlot(slot);
+      for (const surface of surfaces) surface.cleanup();
     };
   }, [src, mobileSrc, opacity, color, blurPx, glowKey]);
 

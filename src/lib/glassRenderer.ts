@@ -23,10 +23,18 @@ export interface GlassDrawParams {
   backdropW: number;
   backdropH: number;
   refraction: number;
+  /** Mip level of the backdrop lookups (small: the smoothing comes from `soft`). */
   blurLod: number;
+  /** Spread of the smoothing taps in CSS px. */
+  soft: number;
   chroma: number;
   opacity: number;
   shadow: number;
+  /**
+   * Only this part of the canvas (CSS px, relative to its top-left corner) is drawn: the visible part of a
+   * tall card. The rest keeps its old pixels, which nobody sees.
+   */
+  clip?: { x: number; y: number; w: number; h: number };
 }
 
 const VERTEX = `#version 300 es
@@ -51,6 +59,7 @@ uniform float uPad;
 uniform float uRadius;
 uniform float uRefraction;
 uniform float uBlurLod;
+uniform float uSoft;
 uniform float uChroma;
 uniform float uOpacity;
 uniform float uShadow;
@@ -60,9 +69,21 @@ float roundBox(vec2 p, vec2 b, float r) {
   return min(max(q.x, q.y), 0.0) + length(max(q, 0.0)) - r;
 }
 
-vec3 backdrop(vec2 css, float lod) {
+vec3 backdrop(vec2 css) {
   vec2 uv = clamp(css / uBackdropSize, vec2(0.002), vec2(0.998));
-  return textureLod(uBackdrop, uv, lod).rgb;
+  return textureLod(uBackdrop, uv, uBlurLod).rgb;
+}
+
+// Soft frosted look: a centre tap plus four diagonal ones. Smoother than blurring through mip levels,
+// which shows blocky steps once the picture is magnified.
+vec3 soft(vec2 css) {
+  float s = uSoft;
+  vec3 c = backdrop(css) * 0.36;
+  c += backdrop(css + vec2(s, s)) * 0.16;
+  c += backdrop(css + vec2(-s, s)) * 0.16;
+  c += backdrop(css + vec2(s, -s)) * 0.16;
+  c += backdrop(css + vec2(-s, -s)) * 0.16;
+  return c;
 }
 
 void main() {
@@ -99,9 +120,9 @@ void main() {
 
   vec2 base = uBackdropOffset + pos;
   vec3 col;
-  col.r = backdrop(base + shift * (1.0 - uChroma), uBlurLod).r;
-  col.g = backdrop(base + shift, uBlurLod).g;
-  col.b = backdrop(base + shift * (1.0 + uChroma), uBlurLod).b;
+  col.r = soft(base + shift * (1.0 - uChroma)).r;
+  col.g = soft(base + shift).g;
+  col.b = soft(base + shift * (1.0 + uChroma)).b;
 
   // A little more colour and light, like frosted glass lit from above.
   float luma = dot(col, vec3(0.299, 0.587, 0.114));
@@ -132,6 +153,7 @@ const UNIFORMS = [
   "uRadius",
   "uRefraction",
   "uBlurLod",
+  "uSoft",
   "uChroma",
   "uOpacity",
   "uShadow",
@@ -270,6 +292,19 @@ export class GlassGL {
     if (this.lost) return;
     const { gl, uniforms: u } = this;
     gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+    if (p.clip) {
+      const sx = this.canvas.width / p.canvasW;
+      const sy = this.canvas.height / p.canvasH;
+      gl.enable(gl.SCISSOR_TEST);
+      gl.scissor(
+        Math.floor(p.clip.x * sx),
+        Math.floor((p.canvasH - p.clip.y - p.clip.h) * sy),
+        Math.ceil(p.clip.w * sx),
+        Math.ceil(p.clip.h * sy),
+      );
+    } else {
+      gl.disable(gl.SCISSOR_TEST);
+    }
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.uniform2f(u.uCanvas, p.canvasW, p.canvasH);
@@ -280,6 +315,7 @@ export class GlassGL {
     gl.uniform1f(u.uRadius, p.radius);
     gl.uniform1f(u.uRefraction, p.refraction);
     gl.uniform1f(u.uBlurLod, p.blurLod);
+    gl.uniform1f(u.uSoft, p.soft);
     gl.uniform1f(u.uChroma, p.chroma);
     gl.uniform1f(u.uOpacity, p.opacity);
     gl.uniform1f(u.uShadow, p.shadow);
