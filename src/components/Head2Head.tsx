@@ -40,6 +40,8 @@ interface Side {
   note?: string;
   /** League rank (1 = best). */
   rank: number;
+  /** Numeric value for the comparison bar. */
+  raw: number;
   /** The rank itself is the big number, so no "Platz" pill. */
   hideRank?: boolean;
   /** Text instead of a number (a player's name): smaller type. */
@@ -88,12 +90,14 @@ function buildRows(stats: LeagueStats, opponent: TeamStanding): Row[] {
         value: `${tigers.rank}`,
         note: `${tigers.points} Punkte`,
         rank: tigers.rank,
+        raw: tigers.pointsPerGame,
         hideRank: true,
       },
       opponent: {
         value: `${opponent.rank}`,
         note: `${opponent.points} Punkte`,
         rank: opponent.rank,
+        raw: opponent.pointsPerGame,
         hideRank: true,
       },
     },
@@ -108,12 +112,14 @@ function buildRows(stats: LeagueStats, opponent: TeamStanding): Row[] {
         value: tigersScorer.player.name,
         note: goalsAndAssists(tigersScorer.player),
         rank: tigersScorer.rank,
+        raw: tigersScorer.player.points,
         text: true,
       },
       opponent: {
         value: opponentScorer.player.name,
         note: goalsAndAssists(opponentScorer.player),
         rank: opponentScorer.rank,
+        raw: opponentScorer.player.points,
         text: true,
       },
     });
@@ -130,6 +136,7 @@ function buildRows(stats: LeagueStats, opponent: TeamStanding): Row[] {
       value: `${fmt(pick(team), 1)} %`,
       note: note?.(team),
       rank: rankOf(teamStats, team.teamId, pick),
+      raw: pick(team),
     });
     rows.push(
       {
@@ -200,6 +207,27 @@ function SideCell({
   );
 }
 
+function CompareBar({ left, right }: { left: Side; right: Side }) {
+  const total = left.raw + right.raw || 1;
+  const leftShare = Math.max(6, Math.min(94, (left.raw / total) * 100));
+  const leftBetter = left.rank < right.rank;
+  const rightBetter = right.rank < left.rank;
+  return (
+    <div className="mt-2.5 flex h-1.5 gap-1" aria-hidden="true">
+      <div className="flex justify-end" style={{ width: `${leftShare}%` }}>
+        <div
+          className={`h-full w-full rounded-full ${leftBetter ? "bg-white" : "bg-white/30"}`}
+        />
+      </div>
+      <div className="flex flex-1">
+        <div
+          className={`h-full w-full rounded-full ${rightBetter ? "bg-white" : "bg-white/30"}`}
+        />
+      </div>
+    </div>
+  );
+}
+
 /** Tigers against their next opponent, one comparison row per category with the league rank of each side. */
 export default function Head2Head({
   stats,
@@ -248,6 +276,7 @@ export default function Head2Head({
                   align="right"
                 />
               </div>
+              <CompareBar left={row.tigers} right={row.opponent} />
             </li>
           );
         })}
