@@ -83,7 +83,7 @@ function buildRows(stats: LeagueStats, opponent: TeamStanding): Row[] {
 
   const rows: Row[] = [
     {
-      label: "Tabelle",
+      label: "Tabellenplatz",
       tigers: {
         value: `${tigers.rank}`,
         note: `${tigers.points} Punkte`,
@@ -131,19 +131,16 @@ function buildRows(stats: LeagueStats, opponent: TeamStanding): Row[] {
       note: note?.(team),
       rank: rankOf(teamStats, team.teamId, pick),
     });
-    const ppNote = (t: TeamSpecialStat) => `${t.ppGoals} von ${t.ppChances}`;
-    const pkNote = (t: TeamSpecialStat) =>
-      `${t.pkChances - t.pkGoalsAgainst} von ${t.pkChances}`;
     rows.push(
       {
         label: "Überzahl",
-        tigers: side(mine, (t) => t.ppPct, ppNote),
-        opponent: side(theirs, (t) => t.ppPct, ppNote),
+        tigers: side(mine, (t) => t.ppPct),
+        opponent: side(theirs, (t) => t.ppPct),
       },
       {
         label: "Unterzahl",
-        tigers: side(mine, (t) => t.pkPct, pkNote),
-        opponent: side(theirs, (t) => t.pkPct, pkNote),
+        tigers: side(mine, (t) => t.pkPct),
+        opponent: side(theirs, (t) => t.pkPct),
       },
       {
         label: "Schusseffizienz",
