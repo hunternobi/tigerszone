@@ -75,8 +75,6 @@ export default function FormCard({ games }: { games: Game[] }) {
 
       <ul className="mt-4 divide-y divide-white/10">
         {recent.map((game) => {
-          const outcome = outcomeOf(game);
-          const style = outcome ? OUTCOME_STYLE[outcome] : null;
           const extra =
             game.overtime === "OT"
               ? "n. V."
@@ -116,13 +114,6 @@ export default function FormCard({ games }: { games: Game[] }) {
                     </div>
                   ))}
                 </div>
-                <span
-                  className={`font-ui flex size-7 shrink-0 items-center justify-center rounded-full border text-[0.8125rem] font-bold ${
-                    style?.className ?? ""
-                  }`}
-                >
-                  {style?.letter}
-                </span>
               </div>
             </li>
           );
