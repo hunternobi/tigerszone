@@ -133,6 +133,28 @@
   .text-\[1\.0625rem\] { font-size: 15.5px !important; }
 }
 
+/* Readability over the photo backgrounds: dimmed white text gets more opaque and all text a soft dark
+   halo, so small grey text does not melt into bright parts of the picture. */
+.text-white\/35,
+.text-white\/40,
+.text-white\/50,
+.text-white\/55 { color: rgb(255 255 255 / 0.72) !important; }
+.text-white\/60,
+.text-white\/65,
+.text-white\/70,
+.text-white\/75 { color: rgb(255 255 255 / 0.88) !important; }
+.text-white\/80,
+.text-white\/85 { color: rgb(255 255 255 / 0.94) !important; }
+
+main :is(h1, h2, h3, h4, p, span, li, label, dt, dd, td, th, a, button) {
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.55), 0 0 10px rgb(0 0 0 / 0.35);
+}
+
+/* White pill buttons carry dark text: no halo there. */
+main :is(.bg-white, .bg-white *) {
+  text-shadow: none;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
