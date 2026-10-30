@@ -114,7 +114,7 @@ function FaqRow({ item }: { item: FaqItem }) {
         className="flex min-h-[56px] w-full items-center justify-between gap-4 rounded-2xl px-4 py-3.5 text-left transition hover:bg-white/10 active:bg-white/15 sm:px-5"
         aria-expanded={open}
       >
-        <span className="font-ui text-[17px] leading-snug font-semibold tracking-tight text-white">
+        <span className="font-ui text-[1.0625rem] leading-snug font-semibold tracking-tight text-white">
           {item.question}
         </span>
         <ChevronDown
@@ -130,7 +130,7 @@ function FaqRow({ item }: { item: FaqItem }) {
         aria-hidden={!open}
       >
         <div className="overflow-hidden">
-          <div className="px-4 pb-4 text-[16px] leading-[1.55] text-white/80 sm:px-5 sm:pb-5">
+          <div className="px-4 pb-4 text-[1rem] leading-[1.55] text-white/80 sm:px-5 sm:pb-5">
             {item.answer}
           </div>
         </div>
@@ -142,7 +142,7 @@ function FaqRow({ item }: { item: FaqItem }) {
 export default function Faq() {
   return (
     <div id="faq" className="scroll-mt-24">
-      <h2 className="font-ui text-[26px] font-semibold tracking-tight text-white sm:text-4xl">
+      <h2 className="font-ui text-[1.625rem] font-semibold tracking-tight text-white sm:text-4xl">
         Häufige Fragen
       </h2>
       {/* One persistent glass card with a grouped list (like iOS settings); the rows only grow and shrink. */}

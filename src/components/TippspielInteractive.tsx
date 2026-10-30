@@ -113,7 +113,7 @@ export default function TippspielInteractive({
                 <h3 className="font-ui text-xl font-semibold tracking-tight text-white">
                   Regeln
                 </h3>
-                <ul className="mt-3 space-y-2.5 text-[15px] leading-snug text-white/85">
+                <ul className="mt-3 space-y-2.5 text-[0.9375rem] leading-snug text-white/85">
                   {RULES.map((rule) => (
                     <li key={rule} className="flex items-start gap-2.5">
                       <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-tigers-secondary" />
@@ -129,7 +129,7 @@ export default function TippspielInteractive({
                 <Link
                   href="/profile#tipphistorie"
                   data-liquid-glass="tile"
-                  className="glass-panel glass-interactive flex min-h-[56px] items-center justify-between gap-3 px-5 py-3 text-[15px] font-semibold text-white"
+                  className="glass-panel glass-interactive flex min-h-[56px] items-center justify-between gap-3 px-5 py-3 text-[0.9375rem] font-semibold text-white"
                 >
                   Hier geht es zu deiner Tipphistorie
                   <ChevronRight size={18} className="shrink-0 text-white/70" />

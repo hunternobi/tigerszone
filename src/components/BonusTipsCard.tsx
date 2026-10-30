@@ -50,7 +50,7 @@ function DeadlineCountdown({ deadline }: { deadline: string }) {
   const remaining = new Date(deadline).getTime() - now;
 
   return (
-    <span className="flex shrink-0 items-center gap-1 rounded-full border border-amber-300/30 bg-amber-500/15 px-2.5 py-1 text-[11px] font-semibold whitespace-nowrap text-amber-100 sm:text-xs">
+    <span className="flex shrink-0 items-center gap-1 rounded-full border border-amber-300/30 bg-amber-500/15 px-2.5 py-1 text-[0.6875rem] font-semibold whitespace-nowrap text-amber-100 sm:text-xs">
       <Clock size={12} className="shrink-0" />
       {formatRemaining(remaining)}
     </span>
@@ -148,7 +148,7 @@ function BonusTipField({
   return (
     <div>
       <div className="mb-1.5 flex h-[22px] items-center justify-between gap-2">
-        <label className="text-[13px] font-medium text-white/70">{label}</label>
+        <label className="text-[0.8125rem] font-medium text-white/70">{label}</label>
         {status === "saved" && <SavedBadge />}
       </div>
       <CustomSelect
@@ -159,7 +159,7 @@ function BonusTipField({
         aria-label={label}
       />
       {status === "error" && (
-        <p className="mt-1.5 text-[11px] text-red-300">
+        <p className="mt-1.5 text-[0.6875rem] text-red-300">
           Konnte nicht gespeichert werden.
         </p>
       )}
@@ -188,7 +188,7 @@ export default function BonusTipsCard({
           </h2>
           {deadline && <DeadlineCountdown deadline={deadline} />}
         </div>
-        <p className="mt-2 text-[15px] leading-snug text-white/75">
+        <p className="mt-2 text-[0.9375rem] leading-snug text-white/75">
           Tippe vor der Saison und sichere dir zusätzliche Punkte, jeder
           richtige Bonustipp erhält 10 Extrapunkte am Ende der Hauptrunde.
         </p>

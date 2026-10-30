@@ -44,7 +44,7 @@ export default function GameResultForm({ game }: { game: Game }) {
   return (
     <form onSubmit={handleSubmit} className="glass-panel-sm p-3 sm:p-5">
       <div>
-        <p className="text-[10px] tracking-wide text-white uppercase sm:text-xs">
+        <p className="text-[0.625rem] tracking-wide text-white uppercase sm:text-xs">
           {game.competition === "Vorbereitung"
             ? "Vorbereitung"
             : `DEL${game.matchday ? ` · ${game.matchday}` : ""}`}{" "}
@@ -77,7 +77,7 @@ export default function GameResultForm({ game }: { game: Game }) {
         <select
           value={overtime}
           onChange={(e) => setOvertime(e.target.value as Overtime)}
-          className="glass-panel-sm h-8 min-w-0 flex-1 rounded-lg bg-transparent px-1.5 text-[11px] text-white sm:h-10 sm:flex-none sm:px-2 sm:text-sm"
+          className="glass-panel-sm h-8 min-w-0 flex-1 rounded-lg bg-transparent px-1.5 text-[0.6875rem] text-white sm:h-10 sm:flex-none sm:px-2 sm:text-sm"
         >
           <option className="text-black" value="REG">
             Regulär

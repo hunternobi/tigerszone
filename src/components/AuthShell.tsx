@@ -27,7 +27,7 @@ export default function AuthShell({
           {title}
         </h1>
         {subtitle && (
-          <p className="mt-2 text-[17px] leading-snug text-white/70">
+          <p className="mt-2 text-[1.0625rem] leading-snug text-white/70">
             {subtitle}
           </p>
         )}
@@ -40,7 +40,7 @@ export default function AuthShell({
         </div>
 
         {footer && (
-          <div className="mt-5 text-[15px] text-white/70">{footer}</div>
+          <div className="mt-5 text-[0.9375rem] text-white/70">{footer}</div>
         )}
       </section>
     </LiquidGlassScene>
@@ -57,14 +57,14 @@ export function AuthField({
     <div>
       <label
         htmlFor={id}
-        className="mb-1.5 block text-[13px] font-medium text-white/70"
+        className="mb-1.5 block text-[0.8125rem] font-medium text-white/70"
       >
         {label}
       </label>
       <input
         id={id}
         {...inputProps}
-        className="h-12 w-full rounded-xl border border-white/20 bg-white/15 px-4 text-[17px] text-white placeholder:text-white/40 focus:border-white/60 focus:outline-none"
+        className="h-12 w-full rounded-xl border border-white/20 bg-white/15 px-4 text-[1.0625rem] text-white placeholder:text-white/40 focus:border-white/60 focus:outline-none"
       />
     </div>
   );
@@ -76,4 +76,4 @@ export const AUTH_LINK_CLASS =
 
 /** Classes that stretch the white pill to a full-width, 50px high primary button. */
 export const AUTH_BUTTON_CLASS =
-  "w-full !min-h-[50px] sm:!min-h-[50px] !text-[16px]";
+  "w-full !min-h-[50px] sm:!min-h-[50px] !text-[1rem]";

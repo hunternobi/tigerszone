@@ -18,7 +18,7 @@ import LiquidGlassScene from "@/components/LiquidGlassScene";
 import { JUBEL_SCENE } from "@/lib/glassScenes";
 
 const LABEL_CLASS =
-  "font-ui text-[11px] font-semibold tracking-[0.14em] text-white/60 uppercase";
+  "font-ui text-[0.6875rem] font-semibold tracking-[0.14em] text-white/60 uppercase";
 
 interface SpielerPageProps {
   params: Promise<{ userId: string }>;
@@ -72,7 +72,7 @@ export default async function SpielerPage({ params }: SpielerPageProps) {
         <section className="mx-auto max-w-3xl px-7 py-10 sm:px-6 sm:py-16">
           <Link
             href="/gruppen"
-            className="-ml-1 inline-flex min-h-[44px] items-center gap-0.5 text-[15px] font-medium text-white/85 transition hover:text-white"
+            className="-ml-1 inline-flex min-h-[44px] items-center gap-0.5 text-[0.9375rem] font-medium text-white/85 transition hover:text-white"
           >
             <ChevronLeft size={20} />
             Tippgruppen
@@ -84,7 +84,7 @@ export default async function SpielerPage({ params }: SpielerPageProps) {
           >
             <div className="p-5 sm:p-6">
               <p className={LABEL_CLASS}>Spieler</p>
-              <h1 className="font-ui mt-1 text-[30px] leading-[1.1] font-semibold tracking-tight break-words text-white sm:text-4xl">
+              <h1 className="font-ui mt-1 text-[1.875rem] leading-[1.1] font-semibold tracking-tight break-words text-white sm:text-4xl">
                 {history.playerName}
               </h1>
             </div>
@@ -92,13 +92,13 @@ export default async function SpielerPage({ params }: SpielerPageProps) {
             <div className="grid grid-cols-2 divide-x divide-white/10">
               <div className="p-5 sm:px-6">
                 <p className={LABEL_CLASS}>Gesamt</p>
-                <p className="font-ui mt-1 text-[24px] font-semibold tracking-tight text-white tabular-nums">
+                <p className="font-ui mt-1 text-[1.5rem] font-semibold tracking-tight text-white tabular-nums">
                   {history.totalPoints} Pkt.
                 </p>
               </div>
               <div className="p-5 sm:px-6">
                 <p className={LABEL_CLASS}>Lieblingsspieler</p>
-                <p className="font-ui mt-1 text-[17px] leading-snug font-semibold tracking-tight text-white">
+                <p className="font-ui mt-1 text-[1.0625rem] leading-snug font-semibold tracking-tight text-white">
                   {favoritePlayerId ? getPlayerName(favoritePlayerId) : "–"}
                 </p>
               </div>
@@ -107,7 +107,7 @@ export default async function SpielerPage({ params }: SpielerPageProps) {
             <div className="p-5 sm:p-6">
               <p className={LABEL_CLASS}>Gruppen</p>
               {groups.length === 0 ? (
-                <p className="mt-1.5 text-[16px] text-white/70">
+                <p className="mt-1.5 text-[1rem] text-white/70">
                   Keine Gruppen
                 </p>
               ) : (
@@ -115,7 +115,7 @@ export default async function SpielerPage({ params }: SpielerPageProps) {
                   {groups.map((group) => (
                     <span
                       key={group._id}
-                      className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[14px] font-medium text-white"
+                      className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[0.875rem] font-medium text-white"
                     >
                       {group.name}
                     </span>

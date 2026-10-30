@@ -95,7 +95,7 @@ function LoginForm() {
       />
 
       {error && (
-        <p className="text-[14px] leading-snug text-red-300">{error}</p>
+        <p className="text-[0.875rem] leading-snug text-red-300">{error}</p>
       )}
 
       {needsVerification && (
@@ -103,7 +103,7 @@ function LoginForm() {
           type="button"
           onClick={handleResend}
           disabled={resendState !== "idle"}
-          className={`${AUTH_LINK_CLASS} text-left text-[14px] disabled:cursor-not-allowed disabled:opacity-60`}
+          className={`${AUTH_LINK_CLASS} text-left text-[0.875rem] disabled:cursor-not-allowed disabled:opacity-60`}
         >
           {resendState === "sent"
             ? "Bestätigungs-E-Mail erneut gesendet."
@@ -125,7 +125,7 @@ function LoginForm() {
 
       <Link
         href="/forgot-password"
-        className="text-center text-[15px] text-white/70 transition hover:text-white"
+        className="text-center text-[0.9375rem] text-white/70 transition hover:text-white"
       >
         Passwort vergessen?
       </Link>

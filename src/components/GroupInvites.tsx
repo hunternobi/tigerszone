@@ -59,7 +59,7 @@ export default function GroupInvites({ invites }: GroupInvitesProps) {
             key={invite.inviteId}
             className="flex flex-wrap items-center justify-between gap-3 py-3.5"
           >
-            <p className="min-w-0 flex-1 text-[16px] leading-snug text-white/85">
+            <p className="min-w-0 flex-1 text-[1rem] leading-snug text-white/85">
               <span className="font-semibold text-white">
                 {invite.invitedByName}
               </span>{" "}
@@ -81,7 +81,7 @@ export default function GroupInvites({ invites }: GroupInvitesProps) {
                 type="button"
                 disabled={isPending && pendingId === invite.inviteId}
                 onClick={() => respond(invite.inviteId, "decline")}
-                className="min-h-[34px] rounded-full border border-white/20 px-3.5 text-[13px] font-semibold text-white transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
+                className="min-h-[34px] rounded-full border border-white/20 px-3.5 text-[0.8125rem] font-semibold text-white transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Ablehnen
               </button>

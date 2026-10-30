@@ -30,10 +30,10 @@ export default function BlogArchiveList({ posts }: { posts: ArchivePost[] }) {
               <span className="block text-xs font-medium text-white/60">
                 {formatPostDate(post.publishedAt)} · von {post.authorName}
               </span>
-              <span className="font-ui mt-1 block text-[18px] leading-snug font-semibold tracking-tight text-white">
+              <span className="font-ui mt-1 block text-[1.125rem] leading-snug font-semibold tracking-tight text-white">
                 {post.title}
               </span>
-              <span className="mt-1 line-clamp-2 block text-[15px] leading-snug text-white/70">
+              <span className="mt-1 line-clamp-2 block text-[0.9375rem] leading-snug text-white/70">
                 {formatExcerpt(post.content)}
               </span>
             </span>

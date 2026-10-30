@@ -103,7 +103,7 @@ export default function GroupShareMenu({ group }: GroupShareMenuProps) {
             className="absolute inset-0 m-auto sm:static sm:m-0"
           />
         )}
-        <span className="sr-only text-[14px] font-semibold whitespace-nowrap sm:not-sr-only">
+        <span className="sr-only text-[0.875rem] font-semibold whitespace-nowrap sm:not-sr-only">
           Gruppe teilen
         </span>
       </button>
@@ -115,13 +115,13 @@ export default function GroupShareMenu({ group }: GroupShareMenuProps) {
             style={{ position: "fixed", top: menu.y, left: menu.x }}
             className="glass-popover z-50 min-w-[220px] rounded-2xl p-1"
           >
-            <p className="font-ui mb-1 border-b border-white/10 px-3 pt-2.5 pb-2.5 text-[15px] font-semibold text-white">
+            <p className="font-ui mb-1 border-b border-white/10 px-3 pt-2.5 pb-2.5 text-[0.9375rem] font-semibold text-white">
               Gruppe teilen
             </p>
             <button
               type="button"
               onClick={shareLink}
-              className="flex min-h-[44px] w-full items-center gap-2.5 rounded-xl px-3 text-left text-[15px] text-white transition hover:bg-white/10"
+              className="flex min-h-[44px] w-full items-center gap-2.5 rounded-xl px-3 text-left text-[0.9375rem] text-white transition hover:bg-white/10"
             >
               <Link2 size={16} className="shrink-0" />
               Einladungslink
@@ -133,7 +133,7 @@ export default function GroupShareMenu({ group }: GroupShareMenuProps) {
                 setMenu(null);
                 setShowInvite(true);
               }}
-              className="flex min-h-[44px] w-full items-center gap-2.5 rounded-xl px-3 text-left text-[15px] text-white transition hover:bg-white/10"
+              className="flex min-h-[44px] w-full items-center gap-2.5 rounded-xl px-3 text-left text-[0.9375rem] text-white transition hover:bg-white/10"
             >
               <UserPlus size={16} className="shrink-0" />
               Spieler suchen
@@ -243,7 +243,7 @@ function InviteSearchModal({
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Name suchen…"
             autoFocus
-            className="w-full bg-transparent text-[16px] text-white placeholder:text-white/50 focus:outline-none"
+            className="w-full bg-transparent text-[1rem] text-white placeholder:text-white/50 focus:outline-none"
           />
         </div>
 
@@ -251,10 +251,10 @@ function InviteSearchModal({
 
         <div className="mt-3 max-h-72 divide-y divide-white/10 overflow-y-auto">
           {loading && (
-            <p className="py-4 text-center text-[13px] text-white/60">Lädt…</p>
+            <p className="py-4 text-center text-[0.8125rem] text-white/60">Lädt…</p>
           )}
           {!loading && results.length === 0 && (
-            <p className="py-4 text-center text-[13px] text-white/60">
+            <p className="py-4 text-center text-[0.8125rem] text-white/60">
               Keine Spieler gefunden.
             </p>
           )}
@@ -267,14 +267,14 @@ function InviteSearchModal({
                   className="flex items-center gap-3 py-2.5"
                 >
                   <span
-                    className={`min-w-0 flex-1 truncate text-[16px] ${invited ? "text-white/50" : "text-white"}`}
+                    className={`min-w-0 flex-1 truncate text-[1rem] ${invited ? "text-white/50" : "text-white"}`}
                   >
                     {user.name}
                   </span>
                   {justInvitedId === user.userId ? (
                     <SavedBadge label="Einladung gesendet" />
                   ) : invited ? (
-                    <span className="flex items-center gap-1 text-[13px] font-semibold text-emerald-300">
+                    <span className="flex items-center gap-1 text-[0.8125rem] font-semibold text-emerald-300">
                       <Check size={14} />
                       Eingeladen
                     </span>

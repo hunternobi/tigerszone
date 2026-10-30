@@ -18,12 +18,12 @@ const LEGAL_LINKS = [
 ];
 
 const LINK_CLASS =
-  "inline-block py-1 text-[15px] text-white/65 transition-colors hover:text-white sm:text-sm";
+  "inline-block py-1 text-[0.9375rem] text-white/65 transition-colors hover:text-white sm:text-sm";
 
 function LinkColumn({ title, links }: { title: string; links: typeof QUICK_LINKS }) {
   return (
     <div>
-      <h4 className="font-ui text-[13px] font-semibold tracking-wide text-white">{title}</h4>
+      <h4 className="font-ui text-[0.8125rem] font-semibold tracking-wide text-white">{title}</h4>
       <ul className="mt-2">
         {links.map((link) => (
           <li key={link.href}>
@@ -49,10 +49,10 @@ export default function Footer() {
             <h3 className="font-ui text-xl font-semibold tracking-tight text-tigers-secondary">
               {SITE_NAME}
             </h3>
-            <p className="mt-2 text-[15px] leading-snug text-white/70 sm:text-sm">
+            <p className="mt-2 text-[0.9375rem] leading-snug text-white/70 sm:text-sm">
               {SITE_DESCRIPTION}
             </p>
-            <p className="mt-3 flex items-center gap-2 text-[13px] text-white/70">
+            <p className="mt-3 flex items-center gap-2 text-[0.8125rem] text-white/70">
               <Feather size={14} />
               Made with passion for Tigers fans
             </p>
@@ -64,7 +64,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mx-auto mt-6 max-w-5xl px-1 text-center text-[11px] leading-relaxed text-white/70">
+        <div className="mx-auto mt-6 max-w-5xl px-1 text-center text-[0.6875rem] leading-relaxed text-white/70">
           <p>
             {SITE_NAME} ist eine unabhängige Fan-Plattform und nicht offiziell mit dem Straubing
             Tigers Eishockey Club verbunden. Alle Marken und Logos sind Eigentum ihrer jeweiligen

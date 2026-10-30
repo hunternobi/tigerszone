@@ -44,14 +44,14 @@ export default function NextGameHeroCountdown({ kickoff }: NextGameHeroCountdown
   if (remaining <= 0) {
     return (
       <div>
-        <p className="flex items-center gap-2 text-[26px] leading-none font-semibold tracking-tight text-white sm:text-4xl">
+        <p className="flex items-center gap-2 text-[1.625rem] leading-none font-semibold tracking-tight text-white sm:text-4xl">
           <span className="relative flex h-2.5 w-2.5">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-70" />
             <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500" />
           </span>
           Live
         </p>
-        <p className="mt-1 text-[11px] text-white/55 sm:text-xs">Das Spiel läuft</p>
+        <p className="mt-1 text-[0.6875rem] text-white/55 sm:text-xs">Das Spiel läuft</p>
       </div>
     );
   }
@@ -61,14 +61,14 @@ export default function NextGameHeroCountdown({ kickoff }: NextGameHeroCountdown
       <p className="flex items-baseline gap-x-2 text-white">
         {toParts(remaining).map((part) => (
           <span key={part.unit} className="whitespace-nowrap">
-            <span className="text-[26px] leading-none font-semibold tracking-tight sm:text-4xl">
+            <span className="text-[1.625rem] leading-none font-semibold tracking-tight sm:text-4xl">
               {part.value}
             </span>
-            <span className="ml-1 text-[13px] font-medium text-white/60 sm:text-base">{part.unit}</span>
+            <span className="ml-1 text-[0.8125rem] font-medium text-white/60 sm:text-base">{part.unit}</span>
           </span>
         ))}
       </p>
-      <p className="mt-1 text-[11px] text-white/55 sm:text-xs">bis zum Anpfiff</p>
+      <p className="mt-1 text-[0.6875rem] text-white/55 sm:text-xs">bis zum Anpfiff</p>
     </div>
   );
 }

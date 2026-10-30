@@ -67,7 +67,7 @@ export default async function CommunityPage() {
                           <h3 className="font-ui text-xl font-semibold tracking-tight text-white">
                             Statistiken gerade nicht verfügbar
                           </h3>
-                          <p className="mt-2 text-[15px] leading-snug text-white/70">
+                          <p className="mt-2 text-[0.9375rem] leading-snug text-white/70">
                             Die Zahlen der Liga konnten gerade nicht geladen
                             werden. Schau bitte später noch einmal vorbei.
                           </p>
@@ -87,7 +87,7 @@ export default async function CommunityPage() {
                       <h3 className="font-ui text-xl font-semibold tracking-tight text-white">
                         Umfragen
                       </h3>
-                      <p className="mt-2 text-[15px] leading-snug text-white/70">
+                      <p className="mt-2 text-[0.9375rem] leading-snug text-white/70">
                         Hier entstehen bald Umfragen rund um die Tigers. Schau
                         regelmäßig vorbei.
                       </p>

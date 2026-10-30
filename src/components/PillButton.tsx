@@ -18,7 +18,7 @@ export default function PillButton({
   /** Opens in a new tab (plain anchor) instead of client-side navigation. */
   external?: boolean;
 }) {
-  const classes = `relative inline-flex min-h-[38px] shrink-0 items-center justify-center gap-1.5 rounded-full bg-white px-4 text-sm font-semibold whitespace-nowrap text-tigers-primary shadow-[0_6px_18px_rgba(0,0,0,0.35)] transition duration-200 after:absolute after:-inset-[3px] after:content-[''] hover:bg-white/90 active:scale-[0.96] sm:min-h-[44px] sm:px-5 sm:text-[15px] ${className}`;
+  const classes = `relative inline-flex min-h-[38px] shrink-0 items-center justify-center gap-1.5 rounded-full bg-white px-4 text-sm font-semibold whitespace-nowrap text-tigers-primary shadow-[0_6px_18px_rgba(0,0,0,0.35)] transition duration-200 after:absolute after:-inset-[3px] after:content-[''] hover:bg-white/90 active:scale-[0.96] sm:min-h-[44px] sm:px-5 sm:text-[0.9375rem] ${className}`;
   const content = (
     <>
       {children}
@@ -57,8 +57,8 @@ export function PillActionButton({
   className?: string;
 }) {
   const size = compact
-    ? "min-h-[34px] px-3.5 text-[13px] after:-inset-y-[5px] after:-inset-x-[3px]"
-    : "min-h-[38px] px-4 text-sm after:-inset-[3px] sm:min-h-[44px] sm:px-5 sm:text-[15px]";
+    ? "min-h-[34px] px-3.5 text-[0.8125rem] after:-inset-y-[5px] after:-inset-x-[3px]"
+    : "min-h-[38px] px-4 text-sm after:-inset-[3px] sm:min-h-[44px] sm:px-5 sm:text-[0.9375rem]";
 
   return (
     <button

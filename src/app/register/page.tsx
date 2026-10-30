@@ -56,15 +56,15 @@ function RegisterForm() {
   if (checkEmail) {
     return (
       <div className="text-center">
-        <p className="font-ui text-[20px] font-semibold tracking-tight text-white">
+        <p className="font-ui text-[1.25rem] font-semibold tracking-tight text-white">
           Fast geschafft!
         </p>
-        <p className="mt-2 text-[16px] leading-snug text-white/85">
+        <p className="mt-2 text-[1rem] leading-snug text-white/85">
           Wir haben dir eine E-Mail an{" "}
           <strong className="text-white">{email}</strong> geschickt. Klicke auf
           den Bestätigungslink darin, um dein Konto zu aktivieren.
         </p>
-        <p className="mt-3 text-[14px] leading-snug text-white/60">
+        <p className="mt-3 text-[0.875rem] leading-snug text-white/60">
           Nichts angekommen? Bitte auch im Spam- bzw. Junk-Ordner nachschauen.
         </p>
       </div>
@@ -101,10 +101,10 @@ function RegisterForm() {
         required
         minLength={8}
       />
-      <p className="-mt-2 text-[13px] text-white/55">Mindestens 8 Zeichen.</p>
+      <p className="-mt-2 text-[0.8125rem] text-white/55">Mindestens 8 Zeichen.</p>
 
       {error && (
-        <p className="text-[14px] leading-snug text-red-300">{error}</p>
+        <p className="text-[0.875rem] leading-snug text-red-300">{error}</p>
       )}
 
       <PillActionButton

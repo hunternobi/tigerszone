@@ -41,7 +41,7 @@ export function RoleBadge({
   if (role !== "owner" && role !== "assistant") return null;
   const { Icon, label } = ROLE_BADGES[role];
   return (
-    <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] font-semibold text-white">
+    <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[0.625rem] font-semibold text-white">
       <Icon className="h-3 w-3" />
       {label}
     </span>
@@ -78,7 +78,7 @@ export default function Leaderboard({
         {title}
       </h3>
       {entries.length === 0 ? (
-        <p className="text-[15px] text-white/70">
+        <p className="text-[0.9375rem] text-white/70">
           Noch keine Einträge vorhanden.
         </p>
       ) : (

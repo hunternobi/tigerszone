@@ -16,7 +16,7 @@ export default function PointsHistorySection({
         Punkteverlauf
       </h2>
       {history.length === 0 ? (
-        <p className="mt-3 text-[15px] leading-snug text-white/65">
+        <p className="mt-3 text-[0.9375rem] leading-snug text-white/65">
           Noch keine ausgewerteten Spieltage – der Verlauf startet nach dem
           ersten Ergebnis.
         </p>

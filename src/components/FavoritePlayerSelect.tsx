@@ -51,7 +51,7 @@ export default function FavoritePlayerSelect({
   return (
     <div>
       <div className="flex h-[22px] items-center justify-between gap-2">
-        <label className="font-ui text-[11px] font-semibold tracking-[0.14em] text-white/60 uppercase">
+        <label className="font-ui text-[0.6875rem] font-semibold tracking-[0.14em] text-white/60 uppercase">
           Lieblingsspieler
         </label>
         {status === "saved" && <SavedBadge label="Gespeichert" />}

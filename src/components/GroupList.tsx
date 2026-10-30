@@ -79,26 +79,26 @@ export default function GroupList({
                       value={nameDraft}
                       onChange={(e) => setNameDraft(e.target.value)}
                       autoFocus
-                      className="h-10 min-w-0 flex-1 rounded-xl border border-white/20 bg-white/15 px-3 text-[16px] text-white focus:border-white/60 focus:outline-none"
+                      className="h-10 min-w-0 flex-1 rounded-xl border border-white/20 bg-white/15 px-3 text-[1rem] text-white focus:border-white/60 focus:outline-none"
                     />
                     <button
                       type="submit"
                       disabled={isPending}
-                      className="shrink-0 rounded-full bg-white px-3.5 py-2 text-[13px] font-semibold text-tigers-primary disabled:opacity-50"
+                      className="shrink-0 rounded-full bg-white px-3.5 py-2 text-[0.8125rem] font-semibold text-tigers-primary disabled:opacity-50"
                     >
                       Speichern
                     </button>
                     <button
                       type="button"
                       onClick={() => setRenamingId(null)}
-                      className="shrink-0 rounded-full border border-white/20 px-3.5 py-2 text-[13px] font-semibold text-white"
+                      className="shrink-0 rounded-full border border-white/20 px-3.5 py-2 text-[0.8125rem] font-semibold text-white"
                     >
                       Abbrechen
                     </button>
                   </form>
                 ) : (
                   <div className="flex items-center gap-1.5">
-                    <p className="font-ui min-w-0 text-[20px] leading-tight font-semibold tracking-tight break-words text-white">
+                    <p className="font-ui min-w-0 text-[1.25rem] leading-tight font-semibold tracking-tight break-words text-white">
                       {group.name}
                     </p>
                     {canManage && (
@@ -117,7 +117,7 @@ export default function GroupList({
                   <p className="mt-1 text-xs text-red-300">{renameError}</p>
                 )}
 
-                <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-white/60">
+                <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.8125rem] text-white/60">
                   <span className="inline-flex items-center gap-1">
                     {group.isPublic ? <Globe size={12} /> : <Lock size={12} />}
                     {group.isPublic ? "Öffentlich" : "Privat"}

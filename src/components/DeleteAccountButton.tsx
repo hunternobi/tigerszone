@@ -28,7 +28,7 @@ export default function DeleteAccountButton() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex min-h-[44px] items-center gap-1.5 rounded-full px-4 text-[15px] font-semibold text-red-300 transition hover:bg-white/10 active:bg-white/15"
+        className="inline-flex min-h-[44px] items-center gap-1.5 rounded-full px-4 text-[0.9375rem] font-semibold text-red-300 transition hover:bg-white/10 active:bg-white/15"
       >
         <Trash2 size={16} />
         Account löschen
@@ -48,7 +48,7 @@ export default function DeleteAccountButton() {
               <h3 className="font-ui text-center text-xl font-semibold tracking-tight text-white">
                 Account löschen?
               </h3>
-              <p className="mt-2 text-center text-[15px] leading-snug text-white/80">
+              <p className="mt-2 text-center text-[0.9375rem] leading-snug text-white/80">
                 Alle deine Tipps, Bonustipps und Gruppenmitgliedschaften werden
                 entfernt. Das kann nicht rückgängig gemacht werden.
               </p>
@@ -62,7 +62,7 @@ export default function DeleteAccountButton() {
                   type="button"
                   onClick={handleDelete}
                   disabled={isPending}
-                  className="min-h-[48px] w-full rounded-2xl bg-red-500 text-[16px] font-semibold text-white transition hover:brightness-110 active:scale-[0.98] disabled:opacity-50"
+                  className="min-h-[48px] w-full rounded-2xl bg-red-500 text-[1rem] font-semibold text-white transition hover:brightness-110 active:scale-[0.98] disabled:opacity-50"
                 >
                   {isPending ? "Wird gelöscht…" : "Ja, Account löschen"}
                 </button>
@@ -70,7 +70,7 @@ export default function DeleteAccountButton() {
                   type="button"
                   onClick={() => setOpen(false)}
                   disabled={isPending}
-                  className="min-h-[48px] w-full rounded-2xl bg-white/15 text-[16px] font-semibold text-white transition hover:bg-white/20 active:scale-[0.98] disabled:opacity-50"
+                  className="min-h-[48px] w-full rounded-2xl bg-white/15 text-[1rem] font-semibold text-white transition hover:bg-white/20 active:scale-[0.98] disabled:opacity-50"
                 >
                   Abbrechen
                 </button>

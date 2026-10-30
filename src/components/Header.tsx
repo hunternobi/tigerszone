@@ -70,7 +70,7 @@ export default function Header({ invites, notifications }: HeaderProps) {
             priority
           />
           {!isHome && (
-            <span className="font-ui text-[15px] font-semibold tracking-tight text-white">
+            <span className="font-ui text-[0.9375rem] font-semibold tracking-tight text-white">
               Startseite
             </span>
           )}

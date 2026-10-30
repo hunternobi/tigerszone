@@ -102,7 +102,7 @@ export default function NotificationBell({
       >
         <Bell size={20} />
         {totalCount > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+          <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-1 text-[0.625rem] font-bold text-white">
             {totalCount}
           </span>
         )}

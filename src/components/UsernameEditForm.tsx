@@ -62,7 +62,7 @@ export default function UsernameEditForm({
           onChange={(e) => setDraft(e.target.value)}
           autoFocus
           aria-label="Benutzername"
-          className="h-11 min-w-0 flex-1 rounded-xl border border-white/20 bg-white/15 px-3.5 text-[17px] font-semibold text-white focus:border-white/60 focus:outline-none"
+          className="h-11 min-w-0 flex-1 rounded-xl border border-white/20 bg-white/15 px-3.5 text-[1.0625rem] font-semibold text-white focus:border-white/60 focus:outline-none"
         />
         <PillActionButton type="submit" compact disabled={isPending}>
           Speichern
@@ -70,7 +70,7 @@ export default function UsernameEditForm({
         <button
           type="button"
           onClick={() => setEditing(false)}
-          className="min-h-[34px] rounded-full border border-white/20 px-3.5 text-[13px] font-semibold text-white transition hover:bg-white/10"
+          className="min-h-[34px] rounded-full border border-white/20 px-3.5 text-[0.8125rem] font-semibold text-white transition hover:bg-white/10"
         >
           Abbrechen
         </button>
@@ -81,7 +81,7 @@ export default function UsernameEditForm({
 
   return (
     <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
-      <p className="font-ui min-w-0 text-[22px] font-semibold tracking-tight break-words text-white">
+      <p className="font-ui min-w-0 text-[1.375rem] font-semibold tracking-tight break-words text-white">
         {name}
       </p>
       <button
@@ -99,7 +99,7 @@ export default function UsernameEditForm({
         <Pencil size={14} />
       </button>
       {locked && (
-        <span className="w-full text-[13px] text-white/60">
+        <span className="w-full text-[0.8125rem] text-white/60">
           Änderung wieder in {daysLeft} Tag{daysLeft === 1 ? "" : "en"} möglich
         </span>
       )}

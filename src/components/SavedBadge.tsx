@@ -13,7 +13,7 @@ export default function SavedBadge({
   return (
     <span
       role="status"
-      className="pointer-events-none inline-flex animate-[savedFlash_1.8s_cubic-bezier(0.34,1.56,0.64,1)_both] items-center gap-1.5 rounded-full border border-emerald-300/30 bg-emerald-400/15 py-0.5 pr-2.5 pl-0.5 text-[12px] font-semibold whitespace-nowrap text-emerald-100 backdrop-blur-md"
+      className="pointer-events-none inline-flex animate-[savedFlash_1.8s_cubic-bezier(0.34,1.56,0.64,1)_both] items-center gap-1.5 rounded-full border border-emerald-300/30 bg-emerald-400/15 py-0.5 pr-2.5 pl-0.5 text-[0.75rem] font-semibold whitespace-nowrap text-emerald-100 backdrop-blur-md"
     >
       <svg viewBox="0 0 20 20" className="h-[18px] w-[18px]" aria-hidden>
         <circle cx="10" cy="10" r="9" fill="#34d399" />

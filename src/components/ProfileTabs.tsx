@@ -61,7 +61,7 @@ export default function ProfileTabs({ tabs }: { tabs: ProfileTab[] }) {
               role="tab"
               aria-selected={isActive}
               onClick={() => select(tab.id)}
-              className={`min-h-[36px] flex-1 rounded-full px-1 text-[14px] font-semibold transition sm:text-[15px] ${
+              className={`min-h-[36px] flex-1 rounded-full px-1 text-[0.875rem] font-semibold transition sm:text-[0.9375rem] ${
                 isActive
                   ? "bg-white text-tigers-primary shadow-[0_2px_8px_rgba(0,0,0,0.3)]"
                   : "text-white/75 hover:text-white"

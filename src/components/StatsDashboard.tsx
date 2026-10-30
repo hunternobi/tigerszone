@@ -8,7 +8,7 @@ import {
 } from "@/lib/pennyDel";
 
 const LABEL_CLASS =
-  "font-ui text-[11px] font-semibold tracking-[0.14em] text-white/60 uppercase";
+  "font-ui text-[0.6875rem] font-semibold tracking-[0.14em] text-white/60 uppercase";
 
 const fmt = (value: number, digits = 0) =>
   value.toLocaleString("de-DE", {
@@ -43,7 +43,7 @@ function Card({
         {title}
       </h3>
       {subtitle && (
-        <p className="mt-1 text-[14px] leading-snug text-white/60">
+        <p className="mt-1 text-[0.875rem] leading-snug text-white/60">
           {subtitle}
         </p>
       )}
@@ -72,11 +72,11 @@ function BarRow({
     <li className="py-2.5 first:pt-0 last:pb-0">
       <div className="flex items-baseline justify-between gap-3">
         <span className="flex min-w-0 items-baseline gap-2">
-          <span className="w-5 shrink-0 text-[14px] font-semibold text-white/50 tabular-nums">
+          <span className="w-5 shrink-0 text-[0.875rem] font-semibold text-white/50 tabular-nums">
             {rank}
           </span>
           <span
-            className={`font-ui truncate text-[16px] tracking-tight ${
+            className={`font-ui truncate text-[1rem] tracking-tight ${
               highlight
                 ? "font-semibold text-white"
                 : "font-medium text-white/85"
@@ -85,10 +85,10 @@ function BarRow({
             {name}
           </span>
           {detail && (
-            <span className="shrink-0 text-[12px] text-white/50">{detail}</span>
+            <span className="shrink-0 text-[0.75rem] text-white/50">{detail}</span>
           )}
         </span>
-        <span className="font-ui shrink-0 text-[17px] font-semibold text-white tabular-nums">
+        <span className="font-ui shrink-0 text-[1.0625rem] font-semibold text-white tabular-nums">
           {value}
         </span>
       </div>
@@ -125,10 +125,10 @@ function SummaryTile({
   return (
     <div>
       <p className={LABEL_CLASS}>{label}</p>
-      <p className="font-ui mt-1 text-[30px] leading-none font-semibold tracking-tight text-white tabular-nums">
+      <p className="font-ui mt-1 text-[1.875rem] leading-none font-semibold tracking-tight text-white tabular-nums">
         {value}
       </p>
-      <p className="mt-1.5 text-[13px] leading-snug text-white/60">{note}</p>
+      <p className="mt-1.5 text-[0.8125rem] leading-snug text-white/60">{note}</p>
     </div>
   );
 }
@@ -136,7 +136,7 @@ function SummaryTile({
 function StandingsCard({ standings }: { standings: TeamStanding[] }) {
   return (
     <Card title="Tabelle" subtitle="Hauptrunde, nach Punkten">
-      <div className="grid grid-cols-[1.5rem_minmax(0,1fr)_2rem_2.5rem_2.25rem] items-center gap-x-2 px-2 pb-1.5 text-[11px] font-semibold tracking-wide text-white/50 uppercase">
+      <div className="grid grid-cols-[1.5rem_minmax(0,1fr)_2rem_2.5rem_2.25rem] items-center gap-x-2 px-2 pb-1.5 text-[0.6875rem] font-semibold tracking-wide text-white/50 uppercase">
         <span>#</span>
         <span>Team</span>
         <span className="text-right">Sp</span>
@@ -149,7 +149,7 @@ function StandingsCard({ standings }: { standings: TeamStanding[] }) {
           return (
             <li
               key={team.id}
-              className={`grid grid-cols-[1.5rem_minmax(0,1fr)_2rem_2.5rem_2.25rem] items-center gap-x-2 rounded-xl px-2 py-2 text-[15px] tabular-nums ${
+              className={`grid grid-cols-[1.5rem_minmax(0,1fr)_2rem_2.5rem_2.25rem] items-center gap-x-2 rounded-xl px-2 py-2 text-[0.9375rem] tabular-nums ${
                 isTigers
                   ? "bg-white/15 font-semibold text-white"
                   : "text-white/80"
@@ -364,22 +364,22 @@ export default function StatsDashboard({
               <li key={record.label} className="py-3.5 first:pt-0 last:pb-0">
                 <p className={LABEL_CLASS}>{record.label}</p>
                 <p className="mt-1 flex items-baseline justify-between gap-3">
-                  <span className="font-ui min-w-0 truncate text-[17px] font-semibold tracking-tight text-white">
+                  <span className="font-ui min-w-0 truncate text-[1.0625rem] font-semibold tracking-tight text-white">
                     {record.leader.name}
-                    <span className="ml-2 text-[12px] font-normal text-white/50">
+                    <span className="ml-2 text-[0.75rem] font-normal text-white/50">
                       {record.leader.teamAbbr}
                     </span>
                   </span>
-                  <span className="font-ui shrink-0 text-[20px] font-semibold text-white tabular-nums">
+                  <span className="font-ui shrink-0 text-[1.25rem] font-semibold text-white tabular-nums">
                     {fmt(record.pick(record.leader) ?? 0, record.digits)}{" "}
-                    <span className="text-[13px] font-medium text-white/60">
+                    <span className="text-[0.8125rem] font-medium text-white/60">
                       {record.unit}
                     </span>
                   </span>
                 </p>
                 {record.bestTiger &&
                   record.leader.teamId !== STRAUBING_TEAM_ID && (
-                    <p className="mt-1 text-[13px] text-white/60">
+                    <p className="mt-1 text-[0.8125rem] text-white/60">
                       Bester Tiger: {record.bestTiger.name} ·{" "}
                       {fmt(record.pick(record.bestTiger) ?? 0, record.digits)}{" "}
                       {record.unit} (Platz {record.tigerRank})
@@ -411,7 +411,7 @@ export default function StatsDashboard({
         </Card>
       )}
 
-      <p className="px-2 text-center text-[12px] leading-relaxed text-white/50">
+      <p className="px-2 text-center text-[0.75rem] leading-relaxed text-white/50">
         Stand {formatDate(stats.fetchedAt)} Uhr · aktualisiert sich nach jedem
         Spieltag · Quelle: penny-del.org
       </p>
@@ -424,15 +424,15 @@ function XgRow({ player }: { player: PlayerStat }) {
   return (
     <li className="flex items-center justify-between gap-3 py-2.5 first:pt-0 last:pb-0">
       <span className="min-w-0">
-        <span className="font-ui block truncate text-[16px] font-medium tracking-tight text-white">
+        <span className="font-ui block truncate text-[1rem] font-medium tracking-tight text-white">
           {player.name}
         </span>
-        <span className="text-[13px] text-white/60">
+        <span className="text-[0.8125rem] text-white/60">
           {player.goals} Tore · {fmt(player.xg ?? 0, 1)} erwartet
         </span>
       </span>
       <span
-        className={`shrink-0 rounded-full border px-2.5 py-1 text-[13px] font-bold tabular-nums ${
+        className={`shrink-0 rounded-full border px-2.5 py-1 text-[0.8125rem] font-bold tabular-nums ${
           diff > 0
             ? "border-emerald-300/30 bg-emerald-400/15 text-emerald-300"
             : "border-red-300/30 bg-red-400/15 text-red-300"

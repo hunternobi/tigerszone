@@ -130,30 +130,30 @@ export default function GroupMemberTable({
   return (
     <div>
       <div className="flex items-center justify-between gap-3">
-        <h3 className="font-ui text-[17px] font-semibold tracking-tight text-white">
+        <h3 className="font-ui text-[1.0625rem] font-semibold tracking-tight text-white">
           {title}
         </h3>
         <button
           type="button"
           onClick={handleLeave}
           disabled={isPending}
-          className="inline-flex min-h-[36px] shrink-0 items-center gap-1.5 rounded-full px-3 text-[14px] font-semibold text-red-300 transition hover:bg-white/10 active:bg-white/15 disabled:opacity-50"
+          className="inline-flex min-h-[36px] shrink-0 items-center gap-1.5 rounded-full px-3 text-[0.875rem] font-semibold text-red-300 transition hover:bg-white/10 active:bg-white/15 disabled:opacity-50"
         >
           <LogOut size={14} />
           Verlassen
         </button>
       </div>
       {canManage && (
-        <p className="mt-1 mb-2 text-[13px] text-white/60">
+        <p className="mt-1 mb-2 text-[0.8125rem] text-white/60">
           Über das Menü-Symbol neben einem Mitglied öffnest du die Optionen.
         </p>
       )}
       {entries.length === 0 ? (
-        <p className="mt-3 text-[15px] text-white/70">
+        <p className="mt-3 text-[0.9375rem] text-white/70">
           Noch keine Einträge vorhanden.
         </p>
       ) : (
-        <ol className="mt-2 divide-y divide-white/10 text-[16px]">
+        <ol className="mt-2 divide-y divide-white/10 text-[1rem]">
           {visibleEntries.map((entry, index) => {
             const manageable =
               canManage &&
@@ -211,7 +211,7 @@ export default function GroupMemberTable({
         <button
           type="button"
           onClick={() => setShowAll((v) => !v)}
-          className="mt-2 flex min-h-[40px] w-full items-center justify-center gap-1 rounded-xl text-[15px] font-semibold text-white/80 transition hover:bg-white/10 hover:text-white"
+          className="mt-2 flex min-h-[40px] w-full items-center justify-center gap-1 rounded-xl text-[0.9375rem] font-semibold text-white/80 transition hover:bg-white/10 hover:text-white"
         >
           {showAll ? "Weniger anzeigen" : `Alle ${entries.length} anzeigen`}
           <ChevronDown
@@ -235,7 +235,7 @@ export default function GroupMemberTable({
                 onClick={() =>
                   runAction(() => promoteToAssistant(groupId, menu.userId))
                 }
-                className="flex min-h-[44px] w-full items-center gap-2 rounded-xl px-3 text-left text-[15px] text-white transition hover:bg-white/10 disabled:opacity-50"
+                className="flex min-h-[44px] w-full items-center gap-2 rounded-xl px-3 text-left text-[0.9375rem] text-white transition hover:bg-white/10 disabled:opacity-50"
               >
                 <MdOutlineEditNote className="h-4 w-4 shrink-0" />
                 Zum Assistant Coach befördern
@@ -248,7 +248,7 @@ export default function GroupMemberTable({
                 onClick={() =>
                   runAction(() => demoteAssistant(groupId, menu.userId))
                 }
-                className="flex min-h-[44px] w-full items-center rounded-xl px-3 text-left text-[15px] text-white transition hover:bg-white/10 disabled:opacity-50"
+                className="flex min-h-[44px] w-full items-center rounded-xl px-3 text-left text-[0.9375rem] text-white transition hover:bg-white/10 disabled:opacity-50"
               >
                 Assistant Coach Status entfernen
               </button>
@@ -259,7 +259,7 @@ export default function GroupMemberTable({
               onClick={() =>
                 runAction(() => kickGroupMember(groupId, menu.userId))
               }
-              className="flex min-h-[44px] w-full items-center rounded-xl px-3 text-left text-[15px] text-red-300 transition hover:bg-white/10 disabled:opacity-50"
+              className="flex min-h-[44px] w-full items-center rounded-xl px-3 text-left text-[0.9375rem] text-red-300 transition hover:bg-white/10 disabled:opacity-50"
             >
               Aus der Gruppe entfernen
             </button>

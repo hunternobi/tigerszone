@@ -36,12 +36,12 @@ function ResetPasswordForm() {
   if (!token) {
     return (
       <div className="text-center">
-        <p className="text-[16px] leading-snug text-red-300">
+        <p className="text-[1rem] leading-snug text-red-300">
           Ungültiger Link. Bitte fordere einen neuen an.
         </p>
         <Link
           href="/forgot-password"
-          className={`${AUTH_LINK_CLASS} mt-4 inline-block text-[15px]`}
+          className={`${AUTH_LINK_CLASS} mt-4 inline-block text-[0.9375rem]`}
         >
           Link erneut anfordern
         </Link>
@@ -52,7 +52,7 @@ function ResetPasswordForm() {
   if (done) {
     return (
       <div className="text-center">
-        <p className="text-[16px] leading-snug text-white/85">
+        <p className="text-[1rem] leading-snug text-white/85">
           Dein Passwort wurde geändert. Du kannst dich jetzt einloggen.
         </p>
         <div className="mt-4">
@@ -79,10 +79,10 @@ function ResetPasswordForm() {
         required
         minLength={8}
       />
-      <p className="-mt-2 text-[13px] text-white/55">Mindestens 8 Zeichen.</p>
+      <p className="-mt-2 text-[0.8125rem] text-white/55">Mindestens 8 Zeichen.</p>
 
       {error && (
-        <p className="text-[14px] leading-snug text-red-300">{error}</p>
+        <p className="text-[0.875rem] leading-snug text-red-300">{error}</p>
       )}
 
       <PillActionButton

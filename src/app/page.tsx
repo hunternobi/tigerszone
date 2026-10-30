@@ -63,7 +63,7 @@ export default async function Home() {
                   >
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between sm:gap-8">
                       <div className="min-w-0">
-                        <h2 className="font-ui text-[11px] font-semibold tracking-[0.14em] text-white/60 uppercase sm:text-xs">
+                        <h2 className="font-ui text-[0.6875rem] font-semibold tracking-[0.14em] text-white/60 uppercase sm:text-xs">
                           Nächstes Spiel
                           {nextGame.competition === "Vorbereitung"
                             ? " · Vorbereitung"
@@ -72,7 +72,7 @@ export default async function Home() {
                               : ""}
                         </h2>
 
-                        <p className="mt-1.5 text-[22px] leading-[1.15] font-semibold tracking-tight text-balance text-white sm:mt-2.5 sm:text-4xl">
+                        <p className="mt-1.5 text-[1.375rem] leading-[1.15] font-semibold tracking-tight text-balance text-white sm:mt-2.5 sm:text-4xl">
                           <span className="sm:hidden">
                             {shortTeamName(nextGame.homeTeamId)}{" "}
                             <span className="font-medium text-white/50">
@@ -89,7 +89,7 @@ export default async function Home() {
                           </span>
                         </p>
 
-                        <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-[13px] text-white/70 sm:mt-3 sm:text-base">
+                        <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-[0.8125rem] text-white/70 sm:mt-3 sm:text-base">
                           <span>
                             <span className="sm:hidden">
                               {formatGameDateCompact(nextGame.kickoff)}
@@ -101,7 +101,7 @@ export default async function Home() {
                             {formatGameTime(nextGame.kickoff)} Uhr
                           </span>
                           {nextGame.isDerby && (
-                            <span className="rounded-full border border-amber-300/30 bg-amber-500/15 px-2 py-0.5 text-[11px] font-semibold text-amber-100 sm:text-xs">
+                            <span className="rounded-full border border-amber-300/30 bg-amber-500/15 px-2 py-0.5 text-[0.6875rem] font-semibold text-amber-100 sm:text-xs">
                               Doppelte Punkte
                             </span>
                           )}
@@ -124,7 +124,7 @@ export default async function Home() {
           {!session?.user && (
             <section className="relative overflow-hidden px-7 pt-8 pb-12 text-center sm:px-6 sm:pt-10 sm:pb-16">
               <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                <span className="select-none text-[56px] font-black whitespace-nowrap text-white opacity-35 blur-[1.5px] sm:text-[10rem] lg:text-[13rem]">
+                <span className="select-none text-[3.5rem] font-black whitespace-nowrap text-white opacity-35 blur-[1.5px] sm:text-[10rem] lg:text-[13rem]">
                   2026/27
                 </span>
               </div>
@@ -180,12 +180,12 @@ export default async function Home() {
                   <h3 className="font-ui text-xl font-semibold tracking-tight text-white">
                     Werde Teil der Tigers-Zone
                   </h3>
-                  <p className="mt-2 hidden text-[15px] leading-snug text-white/70 sm:block">
+                  <p className="mt-2 hidden text-[0.9375rem] leading-snug text-white/70 sm:block">
                     Folg&apos; uns auf Instagram, um die volle Bandbreite der
                     Tigers mitzuerleben und immer auf dem Laufenden zu bleiben.
                   </p>
 
-                  <ul className="mt-4 space-y-2.5 text-[15px] text-white/90">
+                  <ul className="mt-4 space-y-2.5 text-[0.9375rem] text-white/90">
                     {["Epische Designs", "Fan-Momente", "Memes"].map((item) => (
                       <li key={item} className="flex items-center gap-2.5">
                         <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-tigers-secondary" />
@@ -208,7 +208,7 @@ export default async function Home() {
         <section className="border-t border-white/10 px-7 py-8 text-center sm:px-6">
           <Link
             href="/community#faq"
-            className="inline-flex items-center gap-1 text-[15px] font-medium text-white/85 transition-colors hover:text-white"
+            className="inline-flex items-center gap-1 text-[0.9375rem] font-medium text-white/85 transition-colors hover:text-white"
           >
             Fragen? Schau in unserem FAQ-Bereich vorbei
             <ChevronRight size={17} strokeWidth={2.25} />

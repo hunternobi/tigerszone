@@ -41,7 +41,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         <section className="mx-auto max-w-3xl px-7 py-10 sm:px-6 sm:py-16">
           <Link
             href="/spieltagsblog"
-            className="-ml-1 inline-flex min-h-[44px] items-center gap-0.5 text-[15px] font-medium text-white/85 transition hover:text-white"
+            className="-ml-1 inline-flex min-h-[44px] items-center gap-0.5 text-[0.9375rem] font-medium text-white/85 transition hover:text-white"
           >
             <ChevronLeft size={20} />
             Spieltagsblog
@@ -51,14 +51,14 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             data-liquid-glass="card"
             className="glass-panel mt-2 p-5 sm:p-8"
           >
-            <p className="font-ui text-[11px] font-semibold tracking-[0.14em] text-white/60 uppercase sm:text-xs">
+            <p className="font-ui text-[0.6875rem] font-semibold tracking-[0.14em] text-white/60 uppercase sm:text-xs">
               {formatPostDate(post.publishedAt)}
             </p>
-            <h1 className="font-ui mt-2 text-[26px] leading-[1.12] font-semibold tracking-tight text-balance text-white sm:text-4xl">
+            <h1 className="font-ui mt-2 text-[1.625rem] leading-[1.12] font-semibold tracking-tight text-balance text-white sm:text-4xl">
               {post.title}
             </h1>
 
-            <div className="mt-5 space-y-4 text-[17px] leading-[1.6] text-white/90">
+            <div className="mt-5 space-y-4 text-[1.0625rem] leading-[1.6] text-white/90">
               {post.content.split("\n\n").map((paragraph, index) => (
                 <p key={index} className="whitespace-pre-line">
                   {paragraph}
@@ -66,7 +66,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               ))}
             </div>
 
-            <p className="mt-6 text-right text-[13px] text-white/60">
+            <p className="mt-6 text-right text-[0.8125rem] text-white/60">
               von {post.authorName}
             </p>
           </article>

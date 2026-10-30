@@ -21,10 +21,10 @@ export default function PublicGroupsList({
 
   return (
     <div className="mt-10">
-      <h2 className="font-ui text-[22px] font-semibold tracking-tight text-white sm:text-3xl">
+      <h2 className="font-ui text-[1.375rem] font-semibold tracking-tight text-white sm:text-3xl">
         Öffentliche Gruppen
       </h2>
-      <p className="mt-1 text-[15px] leading-snug text-white/70">
+      <p className="mt-1 text-[0.9375rem] leading-snug text-white/70">
         Diesen Gruppen kannst du ohne Einladungslink direkt beitreten.
       </p>
 
@@ -33,7 +33,7 @@ export default function PublicGroupsList({
         className="glass-panel mt-3 divide-y divide-white/10"
       >
         {groups.length === 0 ? (
-          <p className="p-5 text-[15px] text-white/75">
+          <p className="p-5 text-[0.9375rem] text-white/75">
             Keine Gruppen gefunden.
           </p>
         ) : (
@@ -43,10 +43,10 @@ export default function PublicGroupsList({
               className="flex items-center justify-between gap-3 px-4 py-3.5 sm:px-5"
             >
               <div className="min-w-0 flex-1">
-                <p className="font-ui text-[17px] leading-snug font-semibold tracking-tight break-words text-white">
+                <p className="font-ui text-[1.0625rem] leading-snug font-semibold tracking-tight break-words text-white">
                   {group.name}
                 </p>
-                <p className="mt-0.5 text-[13px] text-white/60">
+                <p className="mt-0.5 text-[0.8125rem] text-white/60">
                   {group.memberCount}{" "}
                   {group.memberCount === 1 ? "Mitglied" : "Mitglieder"} ·
                   Ersteller: {group.ownerName}

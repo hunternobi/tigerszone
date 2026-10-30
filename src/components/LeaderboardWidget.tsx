@@ -52,7 +52,7 @@ export default function LeaderboardWidget({
             role="tab"
             aria-selected={tab === value}
             onClick={() => setTab(value)}
-            className={`min-h-[36px] flex-1 rounded-full text-[15px] font-semibold transition ${
+            className={`min-h-[36px] flex-1 rounded-full text-[0.9375rem] font-semibold transition ${
               tab === value
                 ? "bg-white text-tigers-primary shadow-[0_2px_8px_rgba(0,0,0,0.3)]"
                 : "text-white/75 hover:text-white"
@@ -73,7 +73,7 @@ export default function LeaderboardWidget({
             footer={
               <Link
                 href="/tippspiel/rangliste"
-                className="flex items-center justify-center gap-1 text-[15px] font-semibold text-white/85 transition hover:text-white"
+                className="flex items-center justify-center gap-1 text-[0.9375rem] font-semibold text-white/85 transition hover:text-white"
               >
                 Gesamte Rangliste ansehen
                 <ChevronRight size={16} />
@@ -81,7 +81,7 @@ export default function LeaderboardWidget({
             }
           />
         ) : groupLeaderboards.length === 0 ? (
-          <p className="py-2 text-center text-[15px] text-white/80">
+          <p className="py-2 text-center text-[0.9375rem] text-white/80">
             Keine aktive Gruppe.{" "}
             <Link
               href="/gruppen"

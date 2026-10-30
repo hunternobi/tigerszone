@@ -24,7 +24,7 @@ export default async function VerifyEmailPage({
       <div className="text-center">
         {result.success ? (
           <>
-            <p className="text-[16px] leading-snug text-white/85">
+            <p className="text-[1rem] leading-snug text-white/85">
               Deine E-Mail-Adresse wurde bestätigt. Du kannst dich jetzt
               einloggen.
             </p>
@@ -34,12 +34,12 @@ export default async function VerifyEmailPage({
           </>
         ) : (
           <>
-            <p className="text-[16px] leading-snug text-red-300">
+            <p className="text-[1rem] leading-snug text-red-300">
               {result.error}
             </p>
             <Link
               href="/login"
-              className={`${AUTH_LINK_CLASS} mt-4 inline-block text-[15px]`}
+              className={`${AUTH_LINK_CLASS} mt-4 inline-block text-[0.9375rem]`}
             >
               Zurück zum Login
             </Link>

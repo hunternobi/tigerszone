@@ -40,7 +40,7 @@ export default function ForgotPasswordPage() {
       }
     >
       {sent ? (
-        <p className="text-center text-[16px] leading-snug text-white/85">
+        <p className="text-center text-[1rem] leading-snug text-white/85">
           Falls ein Konto mit dieser E-Mail-Adresse existiert, haben wir dir
           einen Link zum Zurücksetzen deines Passworts geschickt.
         </p>
@@ -57,7 +57,7 @@ export default function ForgotPasswordPage() {
           />
 
           {error && (
-            <p className="text-[14px] leading-snug text-red-300">{error}</p>
+            <p className="text-[0.875rem] leading-snug text-red-300">{error}</p>
           )}
 
           <PillActionButton

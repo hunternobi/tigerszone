@@ -130,7 +130,7 @@ export default function PunkteverlaufChart({
         {players.map((player, index) => (
           <span
             key={player.name}
-            className="flex items-center gap-1.5 text-[13px] text-white/85"
+            className="flex items-center gap-1.5 text-[0.8125rem] text-white/85"
           >
             <span
               className="h-2 w-2 shrink-0 rounded-full"

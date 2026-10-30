@@ -32,7 +32,7 @@ const GRID_COLUMNS = "grid-cols-[minmax(0,1fr)_2.25rem_2.25rem_3rem]";
 function TeamName({ teamId }: { teamId: string }) {
   const shortName = getTeamById(teamId)?.shortName ?? getTeamName(teamId);
   return (
-    <span className="font-ui text-[16px] font-medium tracking-tight text-white">
+    <span className="font-ui text-[1rem] font-medium tracking-tight text-white">
       <span className="sm:hidden">{shortName}</span>
       <span className="hidden sm:inline">{getTeamName(teamId)}</span>
     </span>
@@ -41,7 +41,7 @@ function TeamName({ teamId }: { teamId: string }) {
 
 function ScoreBox({ value }: { value: number }) {
   return (
-    <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/20 bg-white/15 text-[16px] font-semibold text-white tabular-nums">
+    <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/20 bg-white/15 text-[1rem] font-semibold text-white tabular-nums">
       {value}
     </span>
   );
@@ -49,7 +49,7 @@ function ScoreBox({ value }: { value: number }) {
 
 function ResultCell({ value }: { value: number | undefined }) {
   return (
-    <span className="text-center text-[16px] font-semibold text-white/75 tabular-nums">
+    <span className="text-center text-[1rem] font-semibold text-white/75 tabular-nums">
       {value === undefined ? <span className="text-white/35">–</span> : value}
     </span>
   );
@@ -62,7 +62,7 @@ function PointsBadge({ entry }: { entry: TipHistoryEntry }) {
   const points = entry.pointsAwarded ?? 0;
   return (
     <span
-      className={`self-center rounded-full border px-2.5 py-1 text-center text-[13px] font-bold tabular-nums ${
+      className={`self-center rounded-full border px-2.5 py-1 text-center text-[0.8125rem] font-bold tabular-nums ${
         points > 0
           ? "border-emerald-300/30 bg-emerald-400/15 text-emerald-300"
           : "border-white/15 bg-white/10 text-white/60"
@@ -98,7 +98,7 @@ export default function TipHistoryTabs({
             role="tab"
             aria-selected={tab === t.key}
             onClick={() => setTab(t.key)}
-            className={`min-h-[36px] flex-1 rounded-full px-1 text-[13px] font-semibold transition sm:text-[15px] ${
+            className={`min-h-[36px] flex-1 rounded-full px-1 text-[0.8125rem] font-semibold transition sm:text-[0.9375rem] ${
               tab === t.key
                 ? "bg-white text-tigers-primary shadow-[0_2px_8px_rgba(0,0,0,0.3)]"
                 : "text-white/75 hover:text-white"
@@ -110,13 +110,13 @@ export default function TipHistoryTabs({
       </div>
 
       {filtered.length === 0 ? (
-        <p className="mt-4 text-[15px] text-white/65">
+        <p className="mt-4 text-[0.9375rem] text-white/65">
           Noch keine Tipps in dieser Kategorie.
         </p>
       ) : (
         <div className="mt-4">
           <div
-            className={`grid ${GRID_COLUMNS} gap-x-2 px-1 pb-1 text-[11px] font-semibold tracking-wide text-white/55 uppercase`}
+            className={`grid ${GRID_COLUMNS} gap-x-2 px-1 pb-1 text-[0.6875rem] font-semibold tracking-wide text-white/55 uppercase`}
           >
             <span />
             <span className="text-center">Tipp</span>
@@ -128,7 +128,7 @@ export default function TipHistoryTabs({
               const statusLabel = STATUS_LABELS[entry.status];
               return (
                 <div key={entry.gameId} className="px-1 py-3">
-                  <p className="text-[12px] font-medium text-white/60">
+                  <p className="text-[0.75rem] font-medium text-white/60">
                     {formatPostDate(entry.kickoff)} ·{" "}
                     {formatGameTime(entry.kickoff)} Uhr
                     {statusLabel ? ` · ${statusLabel}` : ""}
@@ -138,7 +138,7 @@ export default function TipHistoryTabs({
                   >
                     <TeamName teamId={entry.homeTeamId} />
                     {entry.hidden ? (
-                      <p className="col-span-3 row-span-2 self-center text-right text-[12px] leading-tight text-white/65">
+                      <p className="col-span-3 row-span-2 self-center text-right text-[0.75rem] leading-tight text-white/65">
                         Tipp abgegeben – sichtbar nach dem Eröffnungsbully
                       </p>
                     ) : (

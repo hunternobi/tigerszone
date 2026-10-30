@@ -37,13 +37,13 @@ export default async function JoinGroupPage({ params }: JoinGroupPageProps) {
       <LiquidGlassScene background={JUBEL_SCENE}>
         <section className="mx-auto max-w-md px-7 py-16 text-center sm:px-6 sm:py-24">
           <div data-liquid-glass="card" className="glass-panel p-6 sm:p-8">
-            <p className="font-ui text-[11px] font-semibold tracking-[0.14em] text-white/60 uppercase sm:text-xs">
+            <p className="font-ui text-[0.6875rem] font-semibold tracking-[0.14em] text-white/60 uppercase sm:text-xs">
               Einladung
             </p>
-            <h1 className="font-ui mt-2 text-[28px] leading-[1.1] font-semibold tracking-tight text-balance text-white sm:text-4xl">
+            <h1 className="font-ui mt-2 text-[1.75rem] leading-[1.1] font-semibold tracking-tight text-balance text-white sm:text-4xl">
               {preview.name}
             </h1>
-            <p className="mt-3 text-[16px] leading-snug text-white/80">
+            <p className="mt-3 text-[1rem] leading-snug text-white/80">
               <strong className="font-semibold text-white">
                 {preview.ownerName}
               </strong>{" "}

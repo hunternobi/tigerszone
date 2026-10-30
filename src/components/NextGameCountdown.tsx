@@ -58,11 +58,11 @@ export default function NextGameCountdown({
       className="glass-panel mt-5 p-4 sm:mt-6 sm:p-5"
     >
       <div className="flex items-baseline justify-between gap-3">
-        <p className="font-ui text-[11px] font-semibold tracking-[0.14em] text-white/60 uppercase sm:text-xs">
+        <p className="font-ui text-[0.6875rem] font-semibold tracking-[0.14em] text-white/60 uppercase sm:text-xs">
           Nächstes Spiel
         </p>
         <p
-          className={`font-ui text-[13px] font-semibold whitespace-nowrap tabular-nums sm:text-sm ${
+          className={`font-ui text-[0.8125rem] font-semibold whitespace-nowrap tabular-nums sm:text-sm ${
             isUrgent ? "text-red-400" : "text-white/85"
           }`}
         >
@@ -70,7 +70,7 @@ export default function NextGameCountdown({
         </p>
       </div>
 
-      <p className="font-ui mt-1.5 text-[22px] leading-[1.15] font-semibold tracking-tight text-balance text-white sm:text-3xl">
+      <p className="font-ui mt-1.5 text-[1.375rem] leading-[1.15] font-semibold tracking-tight text-balance text-white sm:text-3xl">
         <span className="sm:hidden">
           {shortTeamName(homeTeamId)}{" "}
           <span className="font-medium text-white/50">vs.</span>{" "}
@@ -83,7 +83,7 @@ export default function NextGameCountdown({
         </span>
       </p>
 
-      <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-[13px] text-white/70 sm:text-sm">
+      <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-[0.8125rem] text-white/70 sm:text-sm">
         <span className="flex items-center gap-1.5">
           <Calendar size={13} /> {formatGameDate(kickoff)}
         </span>

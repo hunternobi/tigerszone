@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 };
 
 const LABEL_CLASS =
-  "font-ui text-[11px] font-semibold tracking-[0.14em] text-white/60 uppercase";
+  "font-ui text-[0.6875rem] font-semibold tracking-[0.14em] text-white/60 uppercase";
 
 export default async function ProfilePage() {
   const session = await auth();
@@ -83,7 +83,7 @@ export default async function ProfilePage() {
 
                     <div className="p-5">
                       <p className={LABEL_CLASS}>E-Mail</p>
-                      <p className="font-ui mt-1 text-[18px] font-semibold tracking-tight break-all text-white">
+                      <p className="font-ui mt-1 text-[1.125rem] font-semibold tracking-tight break-all text-white">
                         {account?.email ?? session.user.email ?? ""}
                       </p>
                       {session.user.role === "admin" && (

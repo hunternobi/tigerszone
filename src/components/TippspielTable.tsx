@@ -127,7 +127,7 @@ function TippspielRow({
   }
 
   const inputClass = (invalid: boolean) =>
-    `h-11 w-full rounded-xl border text-center text-[17px] font-semibold tabular-nums text-white transition focus:outline-none disabled:opacity-40 sm:h-9 sm:text-base ${
+    `h-11 w-full rounded-xl border text-center text-[1.0625rem] font-semibold tabular-nums text-white transition focus:outline-none disabled:opacity-40 sm:h-9 sm:text-base ${
       invalid
         ? "border-red-500/80 bg-red-500/10 focus:border-red-400"
         : "border-white/25 bg-white/15 focus:border-white/70 focus:bg-white/20"
@@ -143,7 +143,7 @@ function TippspielRow({
           {game.isDerby && (
             <span
               title="Derby"
-              className="rounded-full border border-amber-300/30 bg-amber-500/15 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-amber-100 uppercase"
+              className="rounded-full border border-amber-300/30 bg-amber-500/15 px-2 py-0.5 text-[0.625rem] font-semibold tracking-wide text-amber-100 uppercase"
             >
               Doppelte Punkte
             </span>
@@ -163,7 +163,7 @@ function TippspielRow({
         </span>
       </div>
       <div className="mt-2 grid grid-cols-[minmax(0,1fr)_3.25rem] items-center gap-x-3 gap-y-2 sm:mt-1 sm:grid-cols-[minmax(0,1fr)_2.75rem_auto_2.75rem_minmax(0,1fr)] sm:gap-x-2.5 sm:gap-y-0">
-        <span className="col-start-1 row-start-1 text-left font-ui text-[17px] font-medium tracking-tight text-white sm:col-auto sm:row-auto sm:text-right sm:text-base">
+        <span className="col-start-1 row-start-1 text-left font-ui text-[1.0625rem] font-medium tracking-tight text-white sm:col-auto sm:row-auto sm:text-right sm:text-base">
           {getTeamName(game.homeTeamId)}
         </span>
         <input
@@ -191,18 +191,18 @@ function TippspielRow({
           aria-label={`Tipp Auswärtstore ${getTeamName(game.awayTeamId)}`}
           className={`col-start-2 row-start-2 sm:col-auto sm:row-auto ${inputClass(isDraw)}`}
         />
-        <span className="col-start-1 row-start-2 text-left font-ui text-[17px] font-medium tracking-tight text-white sm:col-auto sm:row-auto sm:text-base">
+        <span className="col-start-1 row-start-2 text-left font-ui text-[1.0625rem] font-medium tracking-tight text-white sm:col-auto sm:row-auto sm:text-base">
           {getTeamName(game.awayTeamId)}
         </span>
       </div>
 
       {isDraw && (
-        <p className="mt-1.5 text-center text-[11px] text-red-300">
+        <p className="mt-1.5 text-center text-[0.6875rem] text-red-300">
           Ungültiger Tipp – ein Unentschieden ist nicht möglich.
         </p>
       )}
       {!isDraw && status === "error" && (
-        <p className="mt-1.5 text-center text-[11px] text-red-300">
+        <p className="mt-1.5 text-center text-[0.6875rem] text-red-300">
           Tipp konnte nicht gespeichert werden.
         </p>
       )}
@@ -225,7 +225,7 @@ function CompetitionTable({
 
   return (
     <div className="first:mt-0">
-      <h2 className="font-ui text-[22px] font-semibold tracking-tight text-white sm:text-3xl">
+      <h2 className="font-ui text-[1.375rem] font-semibold tracking-tight text-white sm:text-3xl">
         {title}
       </h2>
       <div
@@ -266,7 +266,7 @@ function CompetitionTable({
                 <p className="font-ui text-lg font-semibold tabular-nums text-white">
                   +{rule.points}
                 </p>
-                <p className="text-[11px] leading-tight text-white/70">
+                <p className="text-[0.6875rem] leading-tight text-white/70">
                   {rule.label}
                 </p>
               </div>
@@ -276,7 +276,7 @@ function CompetitionTable({
             <p className="font-ui text-lg font-semibold text-white">
               ×{SCORING.DERBY_MULTIPLIER}
             </p>
-            <p className="text-[11px] leading-tight text-white/70">
+            <p className="text-[0.6875rem] leading-tight text-white/70">
               Derbys zählen doppelt
             </p>
           </div>
@@ -301,7 +301,7 @@ export default function TippspielTable({
           data-liquid-glass="card"
           className="glass-panel mb-8 flex flex-wrap items-center justify-between gap-x-4 gap-y-3 p-4 sm:p-5"
         >
-          <p className="font-ui text-[17px] font-semibold tracking-tight text-white">
+          <p className="font-ui text-[1.0625rem] font-semibold tracking-tight text-white">
             Melde dich an, um zu tippen.
           </p>
           <PillButton href="/login">Einloggen</PillButton>

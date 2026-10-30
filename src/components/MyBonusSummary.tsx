@@ -52,10 +52,10 @@ function BonusRound({
         <div className="mt-3 divide-y divide-white/10">
           {rows.map((row) => (
             <div key={row.label} className="py-3 first:pt-0 last:pb-0">
-              <p className="text-[13px] font-medium text-white/60">
+              <p className="text-[0.8125rem] font-medium text-white/60">
                 {row.label}
               </p>
-              <p className="mt-0.5 text-[17px] font-semibold text-white">
+              <p className="mt-0.5 text-[1.0625rem] font-semibold text-white">
                 {row.value ?? (
                   <span className="font-normal text-white/40">–</span>
                 )}
@@ -64,7 +64,7 @@ function BonusRound({
           ))}
         </div>
       ) : (
-        <p className="mt-2 text-[15px] text-white/65">
+        <p className="mt-2 text-[0.9375rem] text-white/65">
           Noch keine Bonustipps abgegeben.
         </p>
       )}

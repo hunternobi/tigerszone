@@ -95,7 +95,7 @@ export default function CustomSelect({
         disabled={disabled}
         onClick={() => (open ? setOpen(false) : openPanel())}
         aria-label={aria["aria-label"]}
-        className={`flex h-11 w-full items-center justify-between gap-3 rounded-xl border border-white/15 bg-white/10 px-3.5 text-left text-[15px] text-white transition hover:bg-white/15 focus:border-white/50 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 ${
+        className={`flex h-11 w-full items-center justify-between gap-3 rounded-xl border border-white/15 bg-white/10 px-3.5 text-left text-[0.9375rem] text-white transition hover:bg-white/15 focus:border-white/50 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 ${
           isPanel ? "font-semibold" : ""
         }`}
       >
@@ -137,7 +137,7 @@ export default function CustomSelect({
                       onChange(option.value);
                       setOpen(false);
                     }}
-                    className={`flex min-h-[44px] w-full items-center gap-2 rounded-xl px-3 text-left text-[16px] transition hover:bg-white/10 active:bg-white/20 ${
+                    className={`flex min-h-[44px] w-full items-center gap-2 rounded-xl px-3 text-left text-[1rem] transition hover:bg-white/10 active:bg-white/20 ${
                       isSelected ? "font-semibold text-white" : "text-white/85"
                     }`}
                   >

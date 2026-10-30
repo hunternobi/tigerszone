@@ -45,7 +45,7 @@ export default function GruppenPageClient({
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Gruppen suchen"
           aria-label="Gruppen suchen"
-          className="w-full bg-transparent text-[16px] text-white placeholder:text-white/50 focus:outline-none"
+          className="w-full bg-transparent text-[1rem] text-white placeholder:text-white/50 focus:outline-none"
         />
         {query && (
           <button
@@ -60,14 +60,14 @@ export default function GruppenPageClient({
       </div>
 
       <div className="mt-8 flex items-center justify-between gap-3">
-        <h2 className="font-ui text-[22px] font-semibold tracking-tight text-white sm:text-3xl">
+        <h2 className="font-ui text-[1.375rem] font-semibold tracking-tight text-white sm:text-3xl">
           Meine Gruppen
         </h2>
         <button
           type="button"
           onClick={() => setShowCreateForm((open) => !open)}
           aria-expanded={showCreateForm}
-          className="inline-flex min-h-[36px] items-center gap-1 rounded-full border border-white/20 bg-white/10 pr-3.5 pl-3 text-[14px] font-semibold text-white transition hover:bg-white/15 active:scale-[0.96]"
+          className="inline-flex min-h-[36px] items-center gap-1 rounded-full border border-white/20 bg-white/10 pr-3.5 pl-3 text-[0.875rem] font-semibold text-white transition hover:bg-white/15 active:scale-[0.96]"
         >
           {showCreateForm ? <X size={16} /> : <Plus size={16} />}
           {showCreateForm ? "Schließen" : "Neue Gruppe"}
@@ -85,7 +85,7 @@ export default function GruppenPageClient({
 
       <div
         data-liquid-glass="card"
-        className={`glass-panel mt-4 p-5 text-[15px] leading-snug text-white/75 ${
+        className={`glass-panel mt-4 p-5 text-[0.9375rem] leading-snug text-white/75 ${
           filteredGroups.length === 0 ? "" : "hidden"
         }`}
       >

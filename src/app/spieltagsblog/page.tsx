@@ -39,7 +39,7 @@ export default async function SpieltagsblogPage() {
             {!latestPost ? (
               <p
                 data-liquid-glass="card"
-                className="glass-panel mt-8 p-5 text-center text-[17px] text-white/85 sm:p-8"
+                className="glass-panel mt-8 p-5 text-center text-[1.0625rem] text-white/85 sm:p-8"
               >
                 Noch keine Beiträge vorhanden.
               </p>
@@ -48,14 +48,14 @@ export default async function SpieltagsblogPage() {
                 data-liquid-glass="card"
                 className="glass-panel mt-6 p-5 sm:mt-8 sm:p-8"
               >
-                <p className="font-ui text-[11px] font-semibold tracking-[0.14em] text-white/60 uppercase sm:text-xs">
+                <p className="font-ui text-[0.6875rem] font-semibold tracking-[0.14em] text-white/60 uppercase sm:text-xs">
                   Neuester Beitrag · {formatPostDate(latestPost.publishedAt)}
                 </p>
-                <h2 className="font-ui mt-2 text-[24px] leading-[1.15] font-semibold tracking-tight text-balance text-white sm:text-4xl">
+                <h2 className="font-ui mt-2 text-[1.5rem] leading-[1.15] font-semibold tracking-tight text-balance text-white sm:text-4xl">
                   {latestPost.title}
                 </h2>
 
-                <div className="mt-5 space-y-4 text-[17px] leading-[1.6] text-white/90">
+                <div className="mt-5 space-y-4 text-[1.0625rem] leading-[1.6] text-white/90">
                   {latestPost.content.split("\n\n").map((paragraph, index) => (
                     <p key={index} className="whitespace-pre-line">
                       {paragraph}
@@ -63,7 +63,7 @@ export default async function SpieltagsblogPage() {
                   ))}
                 </div>
 
-                <p className="mt-6 text-right text-[13px] text-white/60">
+                <p className="mt-6 text-right text-[0.8125rem] text-white/60">
                   von {latestPost.authorName}
                 </p>
               </article>
@@ -71,7 +71,7 @@ export default async function SpieltagsblogPage() {
 
             {olderPosts.length > 0 && (
               <div className="mt-12">
-                <h2 className="font-ui text-[26px] font-semibold tracking-tight text-white sm:text-4xl">
+                <h2 className="font-ui text-[1.625rem] font-semibold tracking-tight text-white sm:text-4xl">
                   Spieltagsarchiv
                 </h2>
 

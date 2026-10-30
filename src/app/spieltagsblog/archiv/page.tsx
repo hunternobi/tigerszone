@@ -27,7 +27,7 @@ export default async function SpieltagsarchivPage() {
         <section className="mx-auto max-w-3xl px-7 py-10 sm:px-6 sm:py-16">
           <Link
             href="/spieltagsblog"
-            className="-ml-1 inline-flex min-h-[44px] items-center gap-0.5 text-[15px] font-medium text-white/85 transition hover:text-white"
+            className="-ml-1 inline-flex min-h-[44px] items-center gap-0.5 text-[0.9375rem] font-medium text-white/85 transition hover:text-white"
           >
             <ChevronLeft size={20} />
             Spieltagsblog
@@ -41,7 +41,7 @@ export default async function SpieltagsarchivPage() {
             {posts.length === 0 ? (
               <p
                 data-liquid-glass="card"
-                className="glass-panel p-5 text-center text-[17px] text-white/85 sm:p-8"
+                className="glass-panel p-5 text-center text-[1.0625rem] text-white/85 sm:p-8"
               >
                 Noch keine Beiträge vorhanden.
               </p>
