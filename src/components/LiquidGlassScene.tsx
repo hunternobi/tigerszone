@@ -100,8 +100,8 @@ export const NAVY_SCENE: SceneBackground = {
 };
 
 const PRESETS = {
-  card: { refraction: 1.0, blurLod: 0.5, soft: 7, chroma: 0.04, shadow: 0 },
-  tile: { refraction: 0.85, blurLod: 0.5, soft: 5, chroma: 0.04, shadow: 0.3 },
+  card: { refraction: 0.85, blurLod: 0.5, soft: 6, chroma: 0.05, shadow: 0 },
+  tile: { refraction: 0.7, blurLod: 0.5, soft: 5, chroma: 0.05, shadow: 0.3 },
 } as const;
 type SurfaceKind = keyof typeof PRESETS;
 

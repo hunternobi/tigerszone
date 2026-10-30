@@ -112,28 +112,39 @@ void main() {
   );
   vec2 n = grad / max(length(grad), 1e-4); // pointing out of the shape
 
-  // Lens: close to the rim the glass shows content from further inside, stronger towards the edge.
-  float band = min(34.0, min(halfSize.x, halfSize.y));
-  float t = 1.0 - clamp(inside / band, 0.0, 1.0);
-  float bend = t * t * t;
-  vec2 shift = -n * bend * band * 0.9 * uRefraction;
+  // Bevel like a thick glass pane: half-circle height profile of radius zR along the rim (steep at the
+  // edge, flat further in). Its slope drives both the refraction and the surface normal.
+  float zR = min(40.0, min(halfSize.x, halfSize.y));
+  float dd = clamp(inside, 0.5, zR);
+  float h = sqrt(dd * (2.0 * zR - dd));
+  float slope = inside >= zR ? 0.0 : (zR - dd) / h;
+  float depth = smoothstep(0.0, zR, inside);
+  float edge = smoothstep(min(halfSize.x, halfSize.y) * 0.35, 0.0, inside);
+  float N_z = 1.0 / sqrt(1.0 + slope * slope);
 
-  vec2 base = uBackdropOffset + pos;
+  // Refraction: entry + exit surface plus a little through the glass, pulling the picture towards the rim.
+  float thickNorm = inside >= zR ? 1.0 : h / zR;
+  float refrK = (0.667 + 0.167 * thickNorm) * 30.0 * uRefraction;
+  vec2 shift = -n * min(slope * refrK, 70.0) - p / max(halfSize, vec2(1.0)) * uRefraction * 4.0 * depth;
+
+  // Chromatic aberration along the surface normal, strongest at the rim.
+  vec2 ca = n * slope / sqrt(1.0 + slope * slope) * uChroma * 36.0 * (edge * 0.7 + 0.3);
+
+  vec2 base = uBackdropOffset + pos + shift;
   vec3 col;
-  col.r = soft(base + shift * (1.0 - uChroma)).r;
-  col.g = soft(base + shift).g;
-  col.b = soft(base + shift * (1.0 + uChroma)).b;
+  col.r = soft(base + ca).r;
+  col.g = soft(base).g;
+  col.b = soft(base - ca).b;
 
-  // A little more colour and light, like frosted glass lit from above.
-  float luma = dot(col, vec3(0.299, 0.587, 0.114));
-  col = mix(vec3(luma), col, 1.25) * 1.05 + 0.03;
-  float sheen = 1.0 - smoothstep(0.0, 0.85, length(p / uSize - vec2(-0.35, -0.55)));
-  col += sheen * 0.10;
+  col *= 1.0 + 0.06 * depth;
 
-  float rim = 1.0 - smoothstep(0.0, 2.2, inside);
+  // Fresnel: the steep rim reflects a bit of white. Top-left lit stroke on the very edge.
+  float fres = pow(1.0 - N_z, 4.0);
   float lit = clamp(dot(n, normalize(vec2(-0.55, -0.85))) * 0.5 + 0.5, 0.0, 1.0);
-  col += rim * (0.08 + 0.40 * lit);
-  col += (1.0 - smoothstep(0.0, 10.0, inside)) * 0.035;
+  float stroke = smoothstep(-2.5, -1.5, d) * (1.0 - smoothstep(-1.0, 0.0, d));
+  col += stroke * (0.10 + 0.30 * lit);
+  col += smoothstep(5.0, 0.0, inside) * 0.035;
+  col = mix(col, vec3(1.0), fres * 0.2);
 
   // Dither against banding in the dark gradients.
   col += (fract(sin(dot(gl_FragCoord.xy, vec2(12.9898, 78.233))) * 43758.5453) - 0.5) / 255.0;
