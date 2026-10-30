@@ -190,7 +190,7 @@ export default function GroupMemberTable({
                     </span>
                     <Link
                       href={`/spieler/${entry.userId}`}
-                      className={`break-words hover:underline ${rankColor(index)} ${index < 3 ? "font-semibold" : ""}`}
+                      className={`-my-2 inline-block py-2 break-words hover:underline ${rankColor(index)} ${index < 3 ? "font-semibold" : ""}`}
                     >
                       {entry.name}
                     </Link>

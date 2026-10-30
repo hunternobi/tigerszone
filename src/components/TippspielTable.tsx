@@ -8,7 +8,6 @@ import {
   useTransition,
   type ChangeEvent,
 } from "react";
-import { Check } from "lucide-react";
 import PillButton from "@/components/PillButton";
 import SavedBadge, { SAVED_BADGE_MS } from "@/components/SavedBadge";
 import { submitPrediction } from "@/app/tippspiel/actions";
@@ -172,14 +171,6 @@ function TippspielRow({
           <span
             className={`transition-opacity duration-200 ${status === "saved" && !isDraw ? "opacity-0" : ""}`}
           >
-            {hasSavedTip && !disabled && (
-              <Check
-                size={13}
-                strokeWidth={3}
-                aria-label="Tipp gespeichert"
-                className="mr-1 inline text-emerald-300"
-              />
-            )}
             {formatPostDate(game.kickoff)} · {formatGameTime(game.kickoff)} Uhr
           </span>
           {status === "saved" && !isDraw && (

@@ -18,12 +18,20 @@ const LEGAL_LINKS = [
 ];
 
 const LINK_CLASS =
-  "inline-block py-1 text-[0.9375rem] text-white/65 transition-colors hover:text-white sm:text-sm";
+  "flex min-h-[40px] items-center text-[0.9375rem] text-white/65 transition-colors hover:text-white sm:min-h-0 sm:py-1 sm:text-sm";
 
-function LinkColumn({ title, links }: { title: string; links: typeof QUICK_LINKS }) {
+function LinkColumn({
+  title,
+  links,
+}: {
+  title: string;
+  links: typeof QUICK_LINKS;
+}) {
   return (
     <div>
-      <h4 className="font-ui text-[0.8125rem] font-semibold tracking-wide text-white">{title}</h4>
+      <h4 className="font-ui text-[0.8125rem] font-semibold tracking-wide text-white">
+        {title}
+      </h4>
       <ul className="mt-2">
         {links.map((link) => (
           <li key={link.href}>
@@ -39,7 +47,10 @@ function LinkColumn({ title, links }: { title: string; links: typeof QUICK_LINKS
 
 export default function Footer() {
   return (
-    <LiquidGlassScene background={NAVY_SCENE} className="border-t border-white/10 bg-tigers-primary">
+    <LiquidGlassScene
+      background={NAVY_SCENE}
+      className="border-t border-white/10 bg-tigers-primary"
+    >
       <footer className="px-7 pt-10 pb-8 sm:px-6 sm:pt-14">
         <div
           data-liquid-glass="card"
@@ -66,9 +77,9 @@ export default function Footer() {
 
         <div className="mx-auto mt-6 max-w-5xl px-1 text-center text-[0.6875rem] leading-relaxed text-white/70">
           <p>
-            {SITE_NAME} ist eine unabhängige Fan-Plattform und nicht offiziell mit dem Straubing
-            Tigers Eishockey Club verbunden. Alle Marken und Logos sind Eigentum ihrer jeweiligen
-            Besitzer.
+            {SITE_NAME} ist eine unabhängige Fan-Plattform und nicht offiziell
+            mit dem Straubing Tigers Eishockey Club verbunden. Alle Marken und
+            Logos sind Eigentum ihrer jeweiligen Besitzer.
           </p>
           <p className="mt-1.5">
             © {new Date().getFullYear()} {SITE_NAME}. Alle Rechte vorbehalten.

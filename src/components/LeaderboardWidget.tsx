@@ -73,7 +73,7 @@ export default function LeaderboardWidget({
             footer={
               <Link
                 href="/tippspiel/rangliste"
-                className="flex items-center justify-center gap-1 text-[0.9375rem] font-semibold text-white/85 transition hover:text-white"
+                className="flex min-h-[44px] items-center justify-center gap-1 text-[0.9375rem] font-semibold text-white/85 transition hover:text-white"
               >
                 Gesamte Rangliste ansehen
                 <ChevronRight size={16} />
