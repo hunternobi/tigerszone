@@ -90,7 +90,7 @@ export default function MobileNav() {
   return (
     <nav
       aria-label="Hauptnavigation"
-      className="glass-bar fixed inset-x-0 bottom-0 z-40 border-t border-b-0 border-white/15 pb-[env(safe-area-inset-bottom)] shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_-8px_32px_rgba(0,0,0,0.35)] md:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#0d1352] pb-[env(safe-area-inset-bottom)] md:hidden"
     >
       <ul
         ref={listRef}

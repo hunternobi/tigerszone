@@ -12,7 +12,7 @@ const BASE = "https://www.penny-del.org";
 const STRAUBING_TEAM_ID = 6;
 const USER_AGENT =
   "TigersZone/1.0 (non-commercial fan project; tigerszoneofficial@gmail.com)";
-const CACHE_SECONDS = 3600;
+const CACHE_SECONDS_MAX = 86400;
 
 export interface TeamStanding {
   rank: number;
@@ -401,11 +401,21 @@ async function loadLeagueStats(): Promise<LeagueStats> {
   };
 }
 
+/** Today's date in Germany ("2026-11-01"): the numbers are refreshed once the German day changes. */
+const berlinDay = (date = new Date()) =>
+  new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Berlin" }).format(date);
+
+// The day is an argument, so it becomes part of the cache key: the first request after midnight (German
+// time) loads fresh numbers, every other request that day reuses them. A match day's results are in
+// penny-del.org by then, and the opponent shown in Head2Head moves on at the same moment.
 const cachedLeagueStats = unstable_cache(
-  loadLeagueStats,
-  ["penny-del-league-stats-v3"],
+  async (day: string) => {
+    void day;
+    return loadLeagueStats();
+  },
+  ["penny-del-league-stats-v4"],
   {
-    revalidate: CACHE_SECONDS,
+    revalidate: CACHE_SECONDS_MAX,
     tags: ["del-stats"],
   },
 );
@@ -413,7 +423,7 @@ const cachedLeagueStats = unstable_cache(
 /** League stats of the running season, or null if penny-del.org cannot be read right now. */
 export async function getLeagueStats(): Promise<LeagueStats | null> {
   try {
-    return await cachedLeagueStats();
+    return await cachedLeagueStats(berlinDay());
   } catch (error) {
     console.error("getLeagueStats failed:", error);
     return null;

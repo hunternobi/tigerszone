@@ -7,7 +7,7 @@ import ProfileTabs from "@/components/ProfileTabs";
 import PillButton from "@/components/PillButton";
 import StatsDashboard from "@/components/StatsDashboard";
 import { getDelClubName } from "@/lib/delClubs";
-import { getAllGames, getUpcomingGames } from "@/lib/games";
+import { getAllGames } from "@/lib/games";
 import { getLeagueStats } from "@/lib/pennyDel";
 import { COMMUNITY_SCENE } from "@/lib/glassScenes";
 
@@ -28,15 +28,25 @@ export default async function CommunityPage() {
   const signedIn = Boolean(session?.user);
   const loadStats = showStats && signedIn;
   const stats = loadStats ? await getLeagueStats() : null;
-  const [nextGame] = loadStats ? await getUpcomingGames(1) : [];
-  const recentGames = loadStats
-    ? (await getAllGames()).filter(
-        (game) =>
-          game.status === "finished" &&
-          game.competition !== "Vorbereitung" &&
-          game.homeScore !== undefined,
-      )
-    : [];
+  const allGames = loadStats ? await getAllGames() : [];
+  const recentGames = allGames.filter(
+    (game) =>
+      game.status === "finished" &&
+      game.competition !== "Vorbereitung" &&
+      game.homeScore !== undefined,
+  );
+  // Head2Head shows the opponent of the next match day, and a match day only counts as over at midnight
+  // (German time) - the same moment the statistics are refreshed.
+  const berlinDay = (date: Date) =>
+    new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Berlin" }).format(
+      date,
+    );
+  const today = berlinDay(new Date());
+  const nextGame = allGames.find(
+    (game) =>
+      game.competition !== "Vorbereitung" &&
+      berlinDay(new Date(game.kickoff)) >= today,
+  );
   const opponentId = nextGame
     ? nextGame.homeTeamId === "straubing-tigers"
       ? nextGame.awayTeamId
