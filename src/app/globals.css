@@ -362,12 +362,6 @@ h6 {
      the shader runs it adds a canvas inside the card that paints only the refracting, chromatic rim on
      top (see lib/glassRenderer, `rim`). On phones the canvas is hidden while the page scrolls, so
      scrolling is carried by the browser's own CSS glass alone. */
-  /* Content stays above the rim canvas (z-index 1). Absolutely/fixed placed children are left alone. */
-  .lg-scene [data-liquid-glass] > :not(canvas):not(.absolute):not(.fixed) {
-    position: relative;
-    z-index: 2;
-  }
-
   .lg-scene[data-scrolling="true"] [data-liquid-glass] > canvas {
     opacity: 0;
     transition-duration: 0.06s !important;

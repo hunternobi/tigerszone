@@ -64,9 +64,11 @@ function glassDisabled(): boolean {
       sessionStorage.setItem(ENABLED_KEY, "1");
       return false;
     }
-    return sessionStorage.getItem(DISABLED_KEY) === "1";
+    // Parked: every WebGL variant stutters on phones while the page scrolls over the fixed photo. CSS glass
+    // (with its CSS lens rim) is the default; ?glass=on opts into the experimental shader rim.
+    return sessionStorage.getItem(ENABLED_KEY) !== "1";
   } catch {
-    return false;
+    return true;
   }
 }
 
