@@ -53,7 +53,14 @@ export const metadata: Metadata = {
     title: `${SITE_NAME} – Das Tippspiel für Eishockeyfans`,
     description: SITE_DESCRIPTION,
     url: SITE_URL,
-    images: [{ url: "/images/hero-stadium-og.jpg", width: 1200, height: 630, alt: SITE_NAME }],
+    images: [
+      {
+        url: "/images/hero-stadium-og.jpg",
+        width: 1200,
+        height: 630,
+        alt: SITE_NAME,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
@@ -68,6 +75,7 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: "#0a0f3d",
+  viewportFit: "cover",
 };
 
 export default async function RootLayout({
@@ -86,9 +94,9 @@ export default async function RootLayout({
   return (
     <html
       lang="de"
-      className={`${geistSans.variable} ${geistMono.variable} ${sourceSerif.variable} h-full scroll-smooth antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${sourceSerif.variable} scroll-smooth antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-tigers-primary pb-[48px] md:pb-0">
+      <body className="flex min-h-dvh flex-col bg-tigers-primary pb-[88px] md:pb-0">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
