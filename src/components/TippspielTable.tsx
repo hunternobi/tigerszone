@@ -10,7 +10,7 @@ import {
 } from "react";
 import PillButton from "@/components/PillButton";
 import SavedBadge, { SAVED_BADGE_MS } from "@/components/SavedBadge";
-import { submitPrediction } from "@/app/tippspiel/actions";
+import { deletePrediction, submitPrediction } from "@/app/tippspiel/actions";
 import { SCORING } from "@/lib/constants";
 import { getTeamName } from "@/lib/teams";
 import { formatGameTime, formatPostDate } from "@/utils/format";
@@ -96,6 +96,22 @@ function TippspielRow({
 
   function trySave(nextHome: string, nextAway: string) {
     if (disabled) return;
+    // Both fields emptied: the tip is taken back.
+    if (nextHome === "" && nextAway === "") {
+      if (!saved) return;
+      setStatus("saving");
+      startTransition(async () => {
+        const result = await deletePrediction(game._id);
+        if (!result.success) {
+          setStatus("error");
+          return;
+        }
+        setSaved(undefined);
+        setStatus("idle");
+        router.refresh();
+      });
+      return;
+    }
     if (nextHome === "" || nextAway === "") return;
     const homeNum = Number(nextHome);
     const awayNum = Number(nextAway);
@@ -116,6 +132,8 @@ function TippspielRow({
       }
       setSaved({ predictedHome: homeNum, predictedAway: awayNum });
       setStatus("saved");
+      // The "Nächstes Spiel" card above reads the tips from the server, so it has to hear about this one.
+      router.refresh();
       if (savedTimeout.current) clearTimeout(savedTimeout.current);
       savedTimeout.current = setTimeout(
         () => setStatus("idle"),

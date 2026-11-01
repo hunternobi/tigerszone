@@ -3,8 +3,12 @@ import { ChevronRight } from "lucide-react";
 import { auth } from "@/auth";
 import FadingBackground from "@/components/FadingBackground";
 import InstagramEmbed from "@/components/InstagramEmbed";
-import LiquidGlassScene, { NAVY_SCENE, type SceneBackground } from "@/components/LiquidGlassScene";
+import LiquidGlassScene, {
+  NAVY_SCENE,
+  type SceneBackground,
+} from "@/components/LiquidGlassScene";
 import NextGameHeroCountdown from "@/components/NextGameHeroCountdown";
+import StatsAnnouncement from "@/components/StatsAnnouncement";
 import PartnerBar from "@/components/PartnerBar";
 import PillButton from "@/components/PillButton";
 import Reveal from "@/components/Reveal";
@@ -118,6 +122,12 @@ export default async function Home() {
               )}
 
               <PartnerBar />
+
+              {/* The statistics are only open to admins on the live site for now, so the notice follows suit. */}
+              {(session?.user?.role === "admin" ||
+                process.env.VERCEL_ENV !== "production") && (
+                <StatsAnnouncement />
+              )}
             </div>
           </section>
 
