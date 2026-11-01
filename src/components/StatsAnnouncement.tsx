@@ -1,8 +1,23 @@
-import { BarChart3 } from "lucide-react";
+import {
+  Activity,
+  BarChart3,
+  Hand,
+  ListOrdered,
+  Swords,
+  Target,
+  Timer,
+} from "lucide-react";
 import PillButton from "@/components/PillButton";
 import Reveal from "@/components/Reveal";
 
-const FEATURES = ["Head2Head", "Form", "Torhüter", "Tabelle", "Topscorer"];
+const FEATURES = [
+  { label: "Head2Head", Icon: Swords, tint: "from-[#7a9be0] to-[#3a54a5]" },
+  { label: "Form", Icon: Activity, tint: "from-[#4ade80] to-[#15803d]" },
+  { label: "Torhüter", Icon: Hand, tint: "from-[#fbbf24] to-[#b45309]" },
+  { label: "Tabelle", Icon: ListOrdered, tint: "from-[#a78bfa] to-[#6d28d9]" },
+  { label: "Topscorer", Icon: Target, tint: "from-[#fb7185] to-[#be123c]" },
+  { label: "Strafminuten", Icon: Timer, tint: "from-[#94a3b8] to-[#475569]" },
+];
 
 /** Big "new" notice on the landing page, in the style of an App Store feature card. */
 export default function StatsAnnouncement() {
@@ -26,18 +41,20 @@ export default function StatsAnnouncement() {
           <h2 className="font-ui mt-1 text-[1.75rem] leading-[1.1] font-semibold tracking-tight text-balance text-white sm:text-5xl">
             Statistiken rund um die Tigers
           </h2>
-          <p className="mx-auto mt-3 max-w-md text-[1rem] leading-snug text-balance text-white/85 sm:text-lg">
-            Ab jetzt im Community-Bereich: Wie stark ist der nächste Gegner, wie
-            in Form sind die Tigers – alles auf einen Blick.
-          </p>
-
-          <ul className="mt-5 flex flex-wrap justify-center gap-2">
-            {FEATURES.map((feature) => (
+          <ul className="mx-auto mt-5 max-w-sm divide-y divide-white/10 overflow-hidden rounded-2xl border border-white/15 bg-white/10 text-left">
+            {FEATURES.map(({ label, Icon, tint }) => (
               <li
-                key={feature}
-                className="font-ui rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[0.8125rem] font-semibold text-white"
+                key={label}
+                className="flex min-h-[48px] items-center gap-3 px-3"
               >
-                {feature}
+                <span
+                  className={`flex size-8 shrink-0 items-center justify-center rounded-[0.55rem] bg-gradient-to-b ${tint} shadow-[inset_0_1px_0_rgba(255,255,255,0.4)]`}
+                >
+                  <Icon size={17} strokeWidth={2.2} className="text-white" />
+                </span>
+                <span className="font-ui text-[1.0625rem] font-medium tracking-tight text-white">
+                  {label}
+                </span>
               </li>
             ))}
           </ul>
