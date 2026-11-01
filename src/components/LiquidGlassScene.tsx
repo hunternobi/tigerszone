@@ -24,6 +24,8 @@ const LOST_LIMIT = 6;
 const SLOW_FRAME_MS = 60;
 const SLOW_STREAK_LIMIT = 20;
 const STARTUP_GRACE_MS = 4000;
+/** Phones redraw the rim this long after the last scroll event. */
+const SCROLL_SETTLE_MS = 130;
 
 const isTouchDevice = () => window.matchMedia("(pointer: coarse)").matches;
 
@@ -62,10 +64,9 @@ function glassDisabled(): boolean {
       sessionStorage.setItem(ENABLED_KEY, "1");
       return false;
     }
-    // The WebGL glass is parked for now: CSS glass over the fixed page background unless ?glass=on.
-    return sessionStorage.getItem(ENABLED_KEY) !== "1";
+    return sessionStorage.getItem(DISABLED_KEY) === "1";
   } catch {
-    return true;
+    return false;
   }
 }
 
@@ -104,8 +105,22 @@ export const NAVY_SCENE: SceneBackground = {
 };
 
 const PRESETS = {
-  card: { refraction: 0.85, blurLod: 0.5, soft: 6, chroma: 0.05, shadow: 0 },
-  tile: { refraction: 0.7, blurLod: 0.5, soft: 5, chroma: 0.05, shadow: 0.3 },
+  card: {
+    refraction: 0.85,
+    blurLod: 0.5,
+    soft: 6,
+    chroma: 0.05,
+    rim: 30,
+    shadow: 0,
+  },
+  tile: {
+    refraction: 0.7,
+    blurLod: 0.5,
+    soft: 5,
+    chroma: 0.05,
+    rim: 26,
+    shadow: 0,
+  },
 } as const;
 type SurfaceKind = keyof typeof PRESETS;
 
@@ -208,6 +223,8 @@ export default function LiquidGlassScene({
     let startedAt = 0;
     let lostCount = 0;
     let repaintTimer: ReturnType<typeof setTimeout> | undefined;
+    let scrolling = false;
+    let scrollTimer: ReturnType<typeof setTimeout> | undefined;
     let announced = false;
     const surfaces: Surface[] = [];
 
@@ -300,7 +317,7 @@ export default function LiquidGlassScene({
     function createSlot(): Slot | null {
       const canvas = document.createElement("canvas");
       canvas.style.cssText =
-        "position:absolute;pointer-events:none;visibility:hidden;";
+        "position:absolute;z-index:1;pointer-events:none;visibility:hidden;transition:opacity .18s ease;";
       root!.appendChild(canvas);
       const gl = GlassGL.create(canvas);
       if (!gl) {
@@ -347,6 +364,12 @@ export default function LiquidGlassScene({
       }
       if (!slot) return null;
       slot.surface = surface;
+      // The canvas sits inside the card, above its CSS glass and shifted out by PAD, so it follows the card
+      // for free (no position bookkeeping) and only paints the lit rim on top of the card's own blur.
+      const host = surface.target;
+      if (slot.canvas.parentElement !== host) host.appendChild(slot.canvas);
+      slot.canvas.style.left = `${-PAD}px`;
+      slot.canvas.style.top = `${-PAD}px`;
       slot.canvas.style.visibility = "visible";
       surface.slot = slot;
       surface.key = "";
@@ -359,6 +382,8 @@ export default function LiquidGlassScene({
     /** Positions and redraws every surface near the viewport. Returns true while something still moves. */
     function sync(now: number): boolean {
       if (!ready || off) return false;
+      // Phones: nothing is drawn while the page moves; the rim reappears once it has settled.
+      if (touch && scrolling) return false;
       const rootRect = root!.getBoundingClientRect();
       const box = photoMode ? viewportBox() : rootRect;
 
@@ -407,9 +432,6 @@ export default function LiquidGlassScene({
         const slot = acquireSlot(surface);
         if (!slot) continue;
 
-        const left = Math.round((originX - rootRect.left) * 10) / 10;
-        const top = Math.round((originY - rootRect.top) * 10) / 10;
-
         if (w !== surface.w || h !== surface.h) {
           surface.w = w;
           surface.h = h;
@@ -425,12 +447,6 @@ export default function LiquidGlassScene({
           slot.canvas.style.height = `${canvasH}px`;
           slot.gl.resize(canvasW, canvasH, dpr());
           surface.key = "";
-        }
-        if (left !== surface.left || top !== surface.top) {
-          surface.left = left;
-          surface.top = top;
-          slot.canvas.style.left = `${left}px`;
-          slot.canvas.style.top = `${top}px`;
         }
         if (slot.backdropVersion !== backdropVersion) {
           slot.gl.setBackdrop(backdrop);
@@ -469,6 +485,7 @@ export default function LiquidGlassScene({
           soft: preset.soft,
           chroma: preset.chroma,
           opacity: surface.opacity,
+          rim: preset.rim,
           shadow: preset.shadow,
           clip: { x: 0, y: clipTop, w: canvasW, h: clipBottom - clipTop },
         };
@@ -498,8 +515,24 @@ export default function LiquidGlassScene({
 
     function onScroll() {
       lastScroll = performance.now();
-      startMonitor();
-      schedule();
+      if (!touch) {
+        startMonitor();
+        schedule();
+        return;
+      }
+      // Phone: hide the rim canvases and leave the card to the browser's own (compositor-driven) CSS glass
+      // while scrolling. That cannot stutter, whatever the GPU does.
+      if (!scrolling) {
+        scrolling = true;
+        wrapper!.dataset.scrolling = "true";
+      }
+      if (scrollTimer !== undefined) clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(() => {
+        scrollTimer = undefined;
+        scrolling = false;
+        delete wrapper!.dataset.scrolling;
+        schedule();
+      }, SCROLL_SETTLE_MS);
     }
 
     /** While scrolling, watch the real frame rate; a device that cannot keep up gets plain CSS glass. */
@@ -642,6 +675,7 @@ export default function LiquidGlassScene({
       if (frame) cancelAnimationFrame(frame);
       if (monitorFrame) cancelAnimationFrame(monitorFrame);
       if (repaintTimer !== undefined) clearTimeout(repaintTimer);
+      if (scrollTimer !== undefined) clearTimeout(scrollTimer);
       mq.removeEventListener("change", onBreakpoint);
       rootObserver.disconnect();
       observer.disconnect();

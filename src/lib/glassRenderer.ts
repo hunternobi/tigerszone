@@ -29,6 +29,8 @@ export interface GlassDrawParams {
   soft: number;
   chroma: number;
   opacity: number;
+  /** Only this band along the edge is drawn (CSS px), fading out inwards; 0 draws the whole surface. */
+  rim: number;
   shadow: number;
   /**
    * Only this part of the canvas (CSS px, relative to its top-left corner) is drawn: the visible part of a
@@ -62,6 +64,7 @@ uniform float uBlurLod;
 uniform float uSoft;
 uniform float uChroma;
 uniform float uOpacity;
+uniform float uRim;
 uniform float uShadow;
 
 float roundBox(vec2 p, vec2 b, float r) {
@@ -150,6 +153,7 @@ void main() {
   col += (fract(sin(dot(gl_FragCoord.xy, vec2(12.9898, 78.233))) * 43758.5453) - 0.5) / 255.0;
 
   float a = mask * uOpacity;
+  if (uRim > 0.0) a *= 1.0 - smoothstep(uRim * 0.3, uRim, inside);
   float alpha = a + shadow * (1.0 - mask) * uOpacity;
   outColor = vec4(col * a, alpha);
 }`;
@@ -167,6 +171,7 @@ const UNIFORMS = [
   "uSoft",
   "uChroma",
   "uOpacity",
+  "uRim",
   "uShadow",
 ] as const;
 
@@ -329,6 +334,7 @@ export class GlassGL {
     gl.uniform1f(u.uSoft, p.soft);
     gl.uniform1f(u.uChroma, p.chroma);
     gl.uniform1f(u.uOpacity, p.opacity);
+    gl.uniform1f(u.uRim, p.rim);
     gl.uniform1f(u.uShadow, p.shadow);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   }

@@ -358,31 +358,19 @@ h6 {
     border-color: rgba(255, 255, 255, 0.28);
   }
 
-  /* Surfaces in a LiquidGlassScene ([data-liquid-glass]): once the shader runs it draws the glass behind
-     them, so their own CSS glass (kept as the fallback) is switched off. Links also lose the CSS hover
-     lift, the shader's button effect takes over. */
-  .lg-scene[data-webgl="true"] [data-liquid-glass] {
-    background: none;
-    border-color: transparent;
-    box-shadow: none;
-    /* !important: without it the CSS build drops this declaration, the surface keeps its blur and
-       frosts the glass drawn behind it. */
-    backdrop-filter: none !important;
+  /* Surfaces in a LiquidGlassScene ([data-liquid-glass]) keep their normal CSS glass (blur, fill, rim). Once
+     the shader runs it adds a canvas inside the card that paints only the refracting, chromatic rim on
+     top (see lib/glassRenderer, `rim`). On phones the canvas is hidden while the page scrolls, so
+     scrolling is carried by the browser's own CSS glass alone. */
+  /* Content stays above the rim canvas (z-index 1). Absolutely/fixed placed children are left alone. */
+  .lg-scene [data-liquid-glass] > :not(canvas):not(.absolute):not(.fixed) {
+    position: relative;
+    z-index: 2;
   }
 
-  /* The big card keeps its CSS rim, inner highlight and shadow on top of the refracting glass; this
-     is what gives it a defined edge. */
-  .lg-scene[data-webgl="true"] [data-liquid-glass="card"] {
-    border-color: rgba(255, 255, 255, 0.14);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.35),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.03),
-      0 8px 32px rgba(0, 0, 0, 0.35);
-  }
-
-  .lg-scene[data-webgl="true"] a[data-liquid-glass]:hover {
-    transform: none;
-    filter: none;
+  .lg-scene[data-scrolling="true"] [data-liquid-glass] > canvas {
+    opacity: 0;
+    transition-duration: 0.06s !important;
   }
 
   /* Shared hover behaviour for every glass element (panels, pills, tiles) */
