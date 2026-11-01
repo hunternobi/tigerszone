@@ -123,11 +123,7 @@ export default async function Home() {
 
               <PartnerBar />
 
-              {/* The statistics are only open to admins on the live site for now, so the notice follows suit. */}
-              {(session?.user?.role === "admin" ||
-                process.env.VERCEL_ENV !== "production") && (
-                <StatsAnnouncement />
-              )}
+              <StatsAnnouncement />
             </div>
           </section>
 

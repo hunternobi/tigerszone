@@ -5,6 +5,7 @@ import FadingBackground from "@/components/FadingBackground";
 import LiquidGlassScene from "@/components/LiquidGlassScene";
 import ProfileTabs from "@/components/ProfileTabs";
 import PillButton from "@/components/PillButton";
+import MarienApothekeCard from "@/components/MarienApothekeCard";
 import StatsDashboard from "@/components/StatsDashboard";
 import { getDelClubName } from "@/lib/delClubs";
 import { getAllGames } from "@/lib/games";
@@ -19,14 +20,11 @@ export const metadata: Metadata = {
 };
 
 export default async function CommunityPage() {
-  // Statistiken/Umfragen are still being tried out. The league numbers are only requested when they are shown.
   const session = await auth();
-  // The statistics tab exists on the live site (production) only for admins, in previews and local development
-  // for everybody - but the numbers themselves are only shown to signed-in users.
-  const showStats =
-    session?.user?.role === "admin" || process.env.VERCEL_ENV !== "production";
+  // The statistics tab is visible to everybody, the numbers themselves only to signed-in users (the league
+  // numbers are only requested for them).
   const signedIn = Boolean(session?.user);
-  const loadStats = showStats && signedIn;
+  const loadStats = signedIn;
   const stats = loadStats ? await getLeagueStats() : null;
   const allGames = loadStats ? await getAllGames() : [];
   const recentGames = allGames.filter(
@@ -65,80 +63,80 @@ export default async function CommunityPage() {
             Community
           </h1>
 
-          {showStats && (
-            <ProfileTabs
-              tabs={[
-                {
-                  id: "statistiken",
-                  label: "Statistiken",
-                  content: (
-                    <div className="mt-6">
-                      {!signedIn ? (
-                        <div
-                          data-liquid-glass="card"
-                          className="glass-panel flex flex-wrap items-center justify-between gap-x-4 gap-y-3 p-5 sm:p-6"
-                        >
-                          <div className="min-w-0">
-                            <h3 className="font-ui text-xl font-semibold tracking-tight text-white">
-                              Statistiken nur mit Anmeldung
-                            </h3>
-                            <p className="mt-1 text-[0.9375rem] leading-snug text-white/80">
-                              Melde dich an, um Head2Head, Form, Tabelle und
-                              mehr zu sehen.
-                            </p>
-                          </div>
-                          <PillButton href="/login?callbackUrl=/community">
-                            Einloggen
-                          </PillButton>
-                        </div>
-                      ) : stats ? (
-                        <StatsDashboard
-                          stats={stats}
-                          recentGames={recentGames}
-                          opponentName={
-                            opponentId ? getDelClubName(opponentId) : null
-                          }
-                        />
-                      ) : (
-                        <div
-                          data-liquid-glass="card"
-                          className="glass-panel p-5 sm:p-6"
-                        >
+          <ProfileTabs
+            tabs={[
+              {
+                id: "statistiken",
+                label: "Statistiken",
+                content: (
+                  <div className="mt-6">
+                    {!signedIn ? (
+                      <div
+                        data-liquid-glass="card"
+                        className="glass-panel flex flex-wrap items-center justify-between gap-x-4 gap-y-3 p-5 sm:p-6"
+                      >
+                        <div className="min-w-0">
                           <h3 className="font-ui text-xl font-semibold tracking-tight text-white">
-                            Statistiken gerade nicht verfügbar
+                            Statistiken nur mit Anmeldung
                           </h3>
-                          <p className="mt-2 text-[0.9375rem] leading-snug text-white/70">
-                            Die Zahlen der Liga konnten gerade nicht geladen
-                            werden. Schau bitte später noch einmal vorbei.
+                          <p className="mt-1 text-[0.9375rem] leading-snug text-white/80">
+                            Melde dich an, um Head2Head, Form, Tabelle und mehr
+                            zu sehen.
                           </p>
                         </div>
-                      )}
-                    </div>
-                  ),
-                },
-                {
-                  id: "umfragen",
-                  label: "Umfragen",
-                  content: (
-                    <div
-                      data-liquid-glass="card"
-                      className="glass-panel mt-6 p-5 sm:p-6"
-                    >
-                      <h3 className="font-ui text-xl font-semibold tracking-tight text-white">
-                        Umfragen
-                      </h3>
-                      <p className="mt-2 text-[0.9375rem] leading-snug text-white/70">
-                        Hier entstehen bald Umfragen rund um die Tigers. Schau
-                        regelmäßig vorbei.
-                      </p>
-                    </div>
-                  ),
-                },
-              ]}
-            />
-          )}
+                        <PillButton href="/login?callbackUrl=/community">
+                          Einloggen
+                        </PillButton>
+                      </div>
+                    ) : stats ? (
+                      <StatsDashboard
+                        stats={stats}
+                        recentGames={recentGames}
+                        opponentName={
+                          opponentId ? getDelClubName(opponentId) : null
+                        }
+                      />
+                    ) : (
+                      <div
+                        data-liquid-glass="card"
+                        className="glass-panel p-5 sm:p-6"
+                      >
+                        <h3 className="font-ui text-xl font-semibold tracking-tight text-white">
+                          Statistiken gerade nicht verfügbar
+                        </h3>
+                        <p className="mt-2 text-[0.9375rem] leading-snug text-white/70">
+                          Die Zahlen der Liga konnten gerade nicht geladen
+                          werden. Schau bitte später noch einmal vorbei.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                ),
+              },
+              {
+                id: "umfragen",
+                label: "Umfragen",
+                content: (
+                  <div
+                    data-liquid-glass="card"
+                    className="glass-panel mt-6 p-5 sm:p-6"
+                  >
+                    <h3 className="font-ui text-xl font-semibold tracking-tight text-white">
+                      Umfragen
+                    </h3>
+                    <p className="mt-2 text-[0.9375rem] leading-snug text-white/70">
+                      Hier entstehen bald Umfragen rund um die Tigers. Schau
+                      regelmäßig vorbei.
+                    </p>
+                  </div>
+                ),
+              },
+            ]}
+          />
 
-          <div className={showStats ? "mt-10 sm:mt-14" : "mt-8 sm:mt-12"}>
+          <MarienApothekeCard />
+
+          <div className="mt-10 sm:mt-14">
             <Faq />
           </div>
         </section>
