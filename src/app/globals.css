@@ -202,6 +202,46 @@ h6 {
       0 10px 32px rgba(0, 0, 0, 0.42);
   }
 
+  /* Liquid-glass look in plain CSS, so it costs nothing on a phone (the browser composites it, no scripting,
+     no WebGL): the rim catches light like a thick lens - bright arc top left, softer one bottom right,
+     a faint warm/cool colour fringe, and a lit band just inside the edge. Real refraction of the photo
+     behind it needs WebGL, which stutters on phones while the page scrolls. */
+  .glass-panel::before,
+  .glass-panel::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+  }
+  .glass-panel::before {
+    padding: 1.5px;
+    background:
+      linear-gradient(
+        140deg,
+        rgba(255, 255, 255, 0.75) 0%,
+        rgba(255, 255, 255, 0.12) 28%,
+        rgba(255, 255, 255, 0) 52%,
+        rgba(255, 255, 255, 0.1) 76%,
+        rgba(190, 215, 255, 0.5) 100%
+      );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#000 0 0) content-box exclude,
+      linear-gradient(#000 0 0);
+  }
+  .glass-panel::after {
+    box-shadow:
+      inset 1px 1px 0 rgba(255, 150, 190, 0.2),
+      inset -1px -1px 0 rgba(120, 220, 255, 0.22),
+      inset 0 14px 16px -12px rgba(255, 255, 255, 0.3),
+      inset 0 -16px 18px -14px rgba(130, 170, 255, 0.35),
+      inset 0 0 26px rgba(255, 255, 255, 0.05);
+  }
+
   .glass-panel-sm {
     @apply backdrop-blur-lg backdrop-saturate-150;
     position: relative;
