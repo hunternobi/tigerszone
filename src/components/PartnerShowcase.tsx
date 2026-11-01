@@ -83,15 +83,10 @@ export default function PartnerShowcase() {
         </div>
       )}
 
-      <div className="mt-4 flex flex-wrap gap-2.5">
-        <PillButton href={partner.href} external>
-          Website besuchen
+      <div className="mt-4">
+        <PillButton href={partner.instagramUrl} external>
+          Auf Instagram ansehen
         </PillButton>
-        {partner.instagramUrl && (
-          <PillButton href={partner.instagramUrl} external>
-            Instagram
-          </PillButton>
-        )}
       </div>
     </section>
   );

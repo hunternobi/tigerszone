@@ -8,9 +8,10 @@ export interface Partner {
   name: string;
   /** Short label for the switch in the partner card. */
   shortName: string;
-  /** Website; the landing page tile and the partner card link here. */
+  /** Website; the landing page logo tile links here. */
   href: string;
-  instagramUrl?: string;
+  /** The partner card links here. */
+  instagramUrl: string;
   logoSrc: string;
   logoWidth: number;
   logoHeight: number;
@@ -43,6 +44,7 @@ export const PARTNERS: Partner[] = [
     name: "Erl Bräu",
     shortName: "Erl Bräu",
     href: "https://www.erl-braeu.de/",
+    instagramUrl: "https://www.instagram.com/erl.braeu/",
     logoSrc: "/images/partners/erl-braeu.png",
     logoWidth: 460,
     logoHeight: 519,
@@ -58,6 +60,7 @@ export const PARTNERS: Partner[] = [
     name: "Sigl Immobilien",
     shortName: "Sigl",
     href: "https://www.sigl-immobiliengruppe.de/",
+    instagramUrl: "https://www.instagram.com/sigl_immobilien/",
     logoSrc: "/images/partners/sigl-immobilien.png",
     logoWidth: 640,
     logoHeight: 341,
