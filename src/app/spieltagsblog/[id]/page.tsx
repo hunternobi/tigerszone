@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import FadingBackground from "@/components/FadingBackground";
-import LiquidGlassScene from "@/components/LiquidGlassScene";
+import Scene from "@/components/Scene";
 import { FANS_SCENE } from "@/lib/glassScenes";
 import { getBlogPostById } from "@/lib/blogPosts";
 import { formatPostDate } from "@/utils/format";
@@ -37,7 +37,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       opacity={FANS_SCENE.opacity}
       blurPx={FANS_SCENE.blurPx}
     >
-      <LiquidGlassScene background={FANS_SCENE}>
+      <Scene>
         <section className="mx-auto max-w-3xl px-7 py-10 sm:px-6 sm:py-16">
           <Link
             href="/spieltagsblog"
@@ -47,10 +47,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             Spieltagsblog
           </Link>
 
-          <article
-            data-liquid-glass="card"
-            className="glass-panel mt-2 p-5 sm:p-8"
-          >
+          <article className="glass-panel mt-2 p-5 sm:p-8">
             <p className="font-ui text-[0.6875rem] font-semibold tracking-[0.14em] text-white/60 uppercase sm:text-xs">
               {formatPostDate(post.publishedAt)}
             </p>
@@ -71,7 +68,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             </p>
           </article>
         </section>
-      </LiquidGlassScene>
+      </Scene>
     </FadingBackground>
   );
 }

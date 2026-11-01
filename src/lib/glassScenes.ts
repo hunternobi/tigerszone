@@ -1,31 +1,15 @@
-import type { SceneBackground } from "@/components/LiquidGlassScene";
+// How strongly each page photo is dimmed and blurred behind the glass cards (read by FadingBackground).
 
-// Plain module (not "use client"): server components read `opacity` and `blurPx` from here to draw the same
-// photo with FadingBackground that the glass scene refracts.
+export interface PagePhotoLook {
+  opacity: number;
+  blurPx: number;
+}
 
 /** The Spieltagsblog photo, dimmed for long texts and because the photo itself is very bright. */
-export const FANS_SCENE: SceneBackground = {
-  src: "/_next/image?url=%2Fimages%2FFans.jpg&w=1920&q=75",
-  mobileSrc: "/_next/image?url=%2Fimages%2FFans.jpg&w=1080&q=75",
-  opacity: 0.3,
-  color: "#0a0f3d",
-  blurPx: 1.5,
-};
+export const FANS_SCENE: PagePhotoLook = { opacity: 0.3, blurPx: 1.5 };
 
 /** The "Jubel" photo of the Tippgruppen pages. */
-export const JUBEL_SCENE: SceneBackground = {
-  src: "/_next/image?url=%2Fimages%2Fjubel.jpg&w=1920&q=75",
-  mobileSrc: "/_next/image?url=%2Fimages%2Fjubel.jpg&w=1080&q=75",
-  opacity: 0.38,
-  color: "#0a0f3d",
-  blurPx: 1.5,
-};
+export const JUBEL_SCENE: PagePhotoLook = { opacity: 0.38, blurPx: 1.5 };
 
 /** The photo of the Community page (light, so it is dimmed a lot). */
-export const COMMUNITY_SCENE: SceneBackground = {
-  src: "/_next/image?url=%2Fimages%2FCommunity_.jpg&w=1920&q=75",
-  mobileSrc: "/_next/image?url=%2Fimages%2FCommunity_.jpg&w=1080&q=75",
-  opacity: 0.22,
-  color: "#0a0f3d",
-  blurPx: 1.5,
-};
+export const COMMUNITY_SCENE: PagePhotoLook = { opacity: 0.22, blurPx: 1.5 };

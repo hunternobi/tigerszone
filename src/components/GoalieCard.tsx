@@ -52,7 +52,7 @@ export default function GoalieCard({ goalies }: { goalies: GoalieView[] }) {
   if (!goalie) return null;
 
   return (
-    <section data-liquid-glass="card" className="glass-panel p-4 sm:p-6">
+    <section className="glass-panel p-4 sm:p-6">
       <p className="font-ui text-[0.625rem] font-semibold tracking-[0.14em] text-white/60 uppercase">
         Torhüter
       </p>

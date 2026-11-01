@@ -76,15 +76,11 @@ export default function GruppenPageClient({
 
       {/* Every glass surface stays mounted (the shader sets them up once): the create form and the
           "nothing found" note are hidden instead of removed, as are filtered-out groups. */}
-      <div
-        data-liquid-glass="card"
-        className={`glass-panel mt-3 ${showCreateForm ? "" : "hidden"}`}
-      >
+      <div className={`glass-panel mt-3 ${showCreateForm ? "" : "hidden"}`}>
         <CreateGroupForm />
       </div>
 
       <div
-        data-liquid-glass="card"
         className={`glass-panel mt-4 p-5 text-[0.9375rem] leading-snug text-white/75 ${
           filteredGroups.length === 0 ? "" : "hidden"
         }`}

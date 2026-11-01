@@ -71,10 +71,7 @@ export default function NextGameCountdown({
   // The card itself always renders (it is a glass surface that must exist when the shader starts);
   // only the live countdown waits for the client clock.
   return (
-    <div
-      data-liquid-glass="card"
-      className="glass-panel mt-5 p-4 sm:mt-6 sm:p-5"
-    >
+    <div className="glass-panel mt-5 p-4 sm:mt-6 sm:p-5">
       <div className="flex items-baseline justify-between gap-3">
         <p className="font-ui text-[0.6875rem] font-semibold tracking-[0.14em] text-white/60 uppercase sm:text-xs">
           Nächstes Spiel

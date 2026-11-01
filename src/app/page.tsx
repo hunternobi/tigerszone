@@ -3,10 +3,7 @@ import { ChevronRight } from "lucide-react";
 import { auth } from "@/auth";
 import FadingBackground from "@/components/FadingBackground";
 import InstagramEmbed from "@/components/InstagramEmbed";
-import LiquidGlassScene, {
-  NAVY_SCENE,
-  type SceneBackground,
-} from "@/components/LiquidGlassScene";
+import Scene, { NAVY_GLOWS } from "@/components/Scene";
 import NextGameHeroCountdown from "@/components/NextGameHeroCountdown";
 import StatsAnnouncement from "@/components/StatsAnnouncement";
 import PartnerBar from "@/components/PartnerBar";
@@ -22,14 +19,6 @@ const INSTAGRAM_POSTS = ["https://www.instagram.com/p/DVG8cgaDHBf/"];
 // The page photo as FadingBackground draws it; the glass scene refracts a matching copy of it.
 const HERO_OPACITY = 0.55;
 const HERO_BLUR_PX = 1.5;
-const HERO_SCENE: SceneBackground = {
-  src: "/_next/image?url=%2Fimages%2Fhero-stadium-tinted.jpg&w=1920&q=75",
-  mobileSrc: "/_next/image?url=%2Fimages%2Fhero-stadium-mobile.jpg&w=828&q=75",
-  opacity: HERO_OPACITY,
-  color: "#0a0f3d",
-  blurPx: HERO_BLUR_PX,
-};
-
 const shortTeamName = (teamId: string) =>
   getTeamById(teamId)?.shortName ?? getTeamName(teamId);
 
@@ -45,7 +34,7 @@ export default async function Home() {
         opacity={HERO_OPACITY}
         blurPx={HERO_BLUR_PX}
       >
-        <LiquidGlassScene background={HERO_SCENE}>
+        <Scene>
           <section className="relative overflow-hidden px-7 pt-4 pb-4 sm:px-6 sm:pt-24 sm:pb-6">
             <div className="relative mx-auto max-w-4xl text-left sm:text-center">
               <h1 className="font-ui text-center text-[2.4rem] leading-[1.06] font-semibold tracking-tight text-white sm:text-6xl">
@@ -61,10 +50,7 @@ export default async function Home() {
 
               {nextGame && (
                 <Reveal>
-                  <div
-                    data-liquid-glass="card"
-                    className="glass-panel mx-auto mt-4 max-w-2xl p-3.5 text-left sm:mt-10 sm:p-7"
-                  >
+                  <div className="glass-panel mx-auto mt-4 max-w-2xl p-3.5 text-left sm:mt-10 sm:p-7">
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between sm:gap-8">
                       <div className="min-w-0">
                         <h2 className="font-ui text-[0.6875rem] font-semibold tracking-[0.14em] text-white/60 uppercase sm:text-xs">
@@ -151,11 +137,11 @@ export default async function Home() {
               </div>
             </section>
           )}
-        </LiquidGlassScene>
+        </Scene>
       </FadingBackground>
 
-      <LiquidGlassScene
-        background={NAVY_SCENE}
+      <Scene
+        glows={NAVY_GLOWS}
         className="border-t border-white/10 bg-tigers-primary"
       >
         <section className="px-7 py-12 sm:px-6 sm:py-16">
@@ -179,10 +165,7 @@ export default async function Home() {
                   </div>
                 ))}
 
-                <div
-                  data-liquid-glass="card"
-                  className="glass-panel flex flex-col justify-center p-5 text-left sm:w-80 sm:p-7"
-                >
+                <div className="glass-panel flex flex-col justify-center p-5 text-left sm:w-80 sm:p-7">
                   <h3 className="font-ui text-xl font-semibold tracking-tight text-white">
                     Werde Teil der Tigers-Zone
                   </h3>
@@ -220,7 +203,7 @@ export default async function Home() {
             <ChevronRight size={17} strokeWidth={2.25} />
           </Link>
         </section>
-      </LiquidGlassScene>
+      </Scene>
     </>
   );
 }

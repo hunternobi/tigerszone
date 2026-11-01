@@ -4,7 +4,7 @@ import { auth } from "@/auth";
 import { getMyGroups, getPublicGroups } from "./actions";
 import GruppenPageClient from "@/components/GruppenPageClient";
 import FadingBackground from "@/components/FadingBackground";
-import LiquidGlassScene from "@/components/LiquidGlassScene";
+import Scene from "@/components/Scene";
 import {
   getGroupLeaderboard,
   type GroupLeaderboardData,
@@ -43,7 +43,7 @@ export default async function GruppenPage() {
       opacity={JUBEL_SCENE.opacity}
       blurPx={JUBEL_SCENE.blurPx}
     >
-      <LiquidGlassScene background={JUBEL_SCENE}>
+      <Scene>
         <section className="mx-auto max-w-3xl px-7 py-10 sm:px-6 sm:py-16">
           <h1 className="font-ui text-[2.15rem] leading-[1.06] font-semibold tracking-tight text-white sm:text-5xl">
             Tippgruppen
@@ -57,7 +57,7 @@ export default async function GruppenPage() {
             />
           </div>
         </section>
-      </LiquidGlassScene>
+      </Scene>
     </FadingBackground>
   );
 }

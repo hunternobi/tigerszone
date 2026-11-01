@@ -268,10 +268,7 @@ function CompetitionTable({
       <h2 className="font-ui text-[1.375rem] font-semibold tracking-tight text-white sm:text-3xl">
         {title}
       </h2>
-      <div
-        data-liquid-glass="card"
-        className="glass-panel mt-3 divide-y divide-white/10 p-1.5 sm:p-2"
-      >
+      <div className="glass-panel mt-3 divide-y divide-white/10 p-1.5 sm:p-2">
         {games.map((game, index) => {
           const deadlinePassed =
             game.status !== "scheduled" || new Date(game.kickoff) <= new Date();
@@ -342,10 +339,7 @@ export default function TippspielTable({
   return (
     <div>
       {!isAuthenticated && (
-        <div
-          data-liquid-glass="card"
-          className="glass-panel mb-8 flex flex-wrap items-center justify-between gap-x-4 gap-y-3 p-4 sm:p-5"
-        >
+        <div className="glass-panel mb-8 flex flex-wrap items-center justify-between gap-x-4 gap-y-3 p-4 sm:p-5">
           <p className="font-ui text-[1.0625rem] font-semibold tracking-tight text-white">
             Melde dich an, um zu tippen.
           </p>

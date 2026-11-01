@@ -1,5 +1,5 @@
 import type { InputHTMLAttributes, ReactNode } from "react";
-import LiquidGlassScene, { NAVY_SCENE } from "@/components/LiquidGlassScene";
+import Scene, { NAVY_GLOWS } from "@/components/Scene";
 
 /**
  * Frame of all sign-in pages: centred title, one persistent glass card (the shader sets its surfaces up
@@ -18,10 +18,7 @@ export default function AuthShell({
 }) {
   return (
     // Extends under the transparent header so the glow does not end in a visible edge there.
-    <LiquidGlassScene
-      background={NAVY_SCENE}
-      className="-mt-[4.5rem] pt-[4.5rem]"
-    >
+    <Scene glows={NAVY_GLOWS} className="-mt-[4.5rem] pt-[4.5rem]">
       <section className="mx-auto max-w-md px-7 py-10 text-center sm:px-6 sm:py-20">
         <h1 className="font-ui text-[2.15rem] leading-[1.06] font-semibold tracking-tight text-balance text-white sm:text-5xl">
           {title}
@@ -32,18 +29,13 @@ export default function AuthShell({
           </p>
         )}
 
-        <div
-          data-liquid-glass="card"
-          className="glass-panel mt-8 p-5 text-left sm:p-6"
-        >
-          {children}
-        </div>
+        <div className="glass-panel mt-8 p-5 text-left sm:p-6">{children}</div>
 
         {footer && (
           <div className="mt-5 text-[0.9375rem] text-white/70">{footer}</div>
         )}
       </section>
-    </LiquidGlassScene>
+    </Scene>
   );
 }
 

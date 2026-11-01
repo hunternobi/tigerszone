@@ -108,7 +108,7 @@ export default function CustomSelect({
       </button>
 
       {/* Rendered via portal so it always paints above every other card, regardless of
-          backdrop-blur stacking contexts created by .glass-panel/.glass-select elements
+          backdrop-blur stacking contexts created by .glass-panel elements
           elsewhere on the page. */}
       {open &&
         panelPosition &&

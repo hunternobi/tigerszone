@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import BlogArchiveList from "@/components/BlogArchiveList";
 import FadingBackground from "@/components/FadingBackground";
-import LiquidGlassScene from "@/components/LiquidGlassScene";
+import Scene from "@/components/Scene";
 import { FANS_SCENE } from "@/lib/glassScenes";
 import PillButton from "@/components/PillButton";
 import { getAllBlogPosts } from "@/lib/blogPosts";
@@ -30,24 +30,18 @@ export default async function SpieltagsblogPage() {
         opacity={FANS_SCENE.opacity}
         blurPx={FANS_SCENE.blurPx}
       >
-        <LiquidGlassScene background={FANS_SCENE}>
+        <Scene>
           <section className="mx-auto max-w-3xl px-7 py-10 sm:px-6 sm:py-16">
             <h1 className="font-ui text-[2.15rem] leading-[1.06] font-semibold tracking-tight text-white sm:text-5xl">
               Spieltagsblog
             </h1>
 
             {!latestPost ? (
-              <p
-                data-liquid-glass="card"
-                className="glass-panel mt-8 p-5 text-center text-[1.0625rem] text-white/85 sm:p-8"
-              >
+              <p className="glass-panel mt-8 p-5 text-center text-[1.0625rem] text-white/85 sm:p-8">
                 Noch keine Beiträge vorhanden.
               </p>
             ) : (
-              <article
-                data-liquid-glass="card"
-                className="glass-panel mt-6 p-5 sm:mt-8 sm:p-8"
-              >
+              <article className="glass-panel mt-6 p-5 sm:mt-8 sm:p-8">
                 <p className="font-ui text-[0.6875rem] font-semibold tracking-[0.14em] text-white/60 uppercase sm:text-xs">
                   Neuester Beitrag · {formatPostDate(latestPost.publishedAt)}
                 </p>
@@ -89,7 +83,7 @@ export default async function SpieltagsblogPage() {
               </div>
             )}
           </section>
-        </LiquidGlassScene>
+        </Scene>
       </FadingBackground>
 
       <section className="relative overflow-hidden border-t border-white/10 bg-tigers-primary px-7 py-12 text-center sm:px-6 sm:py-16">

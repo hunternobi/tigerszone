@@ -146,10 +146,7 @@ export default function Faq() {
         Häufige Fragen
       </h2>
       {/* One persistent glass card with a grouped list (like iOS settings); the rows only grow and shrink. */}
-      <div
-        data-liquid-glass="card"
-        className="glass-panel mt-4 divide-y divide-white/10 p-1.5 sm:mt-5 sm:p-2"
-      >
+      <div className="glass-panel mt-4 divide-y divide-white/10 p-1.5 sm:mt-5 sm:p-2">
         {FAQ_ITEMS.map((item) => (
           <FaqRow key={item.question} item={item} />
         ))}

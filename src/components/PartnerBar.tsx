@@ -32,7 +32,6 @@ export default function PartnerBar() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={partner.name}
-                data-liquid-glass="tile"
                 className={TILE_CLASS}
               >
                 {logo}

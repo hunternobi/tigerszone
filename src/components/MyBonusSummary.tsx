@@ -77,7 +77,7 @@ export default function MyBonusSummary({
   bonusPlayoffs,
 }: MyBonusSummaryProps) {
   return (
-    <div data-liquid-glass="card" className="glass-panel mt-6 p-5 sm:p-6">
+    <div className="glass-panel mt-6 p-5 sm:p-6">
       {/* Amber wash that stays when the glass shader replaces the surface's own background. */}
       <div
         aria-hidden

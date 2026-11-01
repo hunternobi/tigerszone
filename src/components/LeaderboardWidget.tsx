@@ -64,7 +64,7 @@ export default function LeaderboardWidget({
       </div>
 
       {/* One persistent glass surface; only its content changes with the tab. */}
-      <div data-liquid-glass="card" className="glass-panel p-5">
+      <div className="glass-panel p-5">
         {tab === "global" ? (
           <Leaderboard
             bare

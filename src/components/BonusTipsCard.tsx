@@ -148,7 +148,9 @@ function BonusTipField({
   return (
     <div>
       <div className="mb-1.5 flex h-[22px] items-center justify-between gap-2">
-        <label className="text-[0.8125rem] font-medium text-white/70">{label}</label>
+        <label className="text-[0.8125rem] font-medium text-white/70">
+          {label}
+        </label>
         {status === "saved" && <SavedBadge />}
       </div>
       <CustomSelect
@@ -175,7 +177,7 @@ export default function BonusTipsCard({
   const disabled = !isAuthenticated;
 
   return (
-    <div data-liquid-glass="card" className="glass-panel p-4 sm:p-6">
+    <div className="glass-panel p-4 sm:p-6">
       {/* Amber wash that stays when the glass shader replaces the surface's own background. */}
       <div
         aria-hidden

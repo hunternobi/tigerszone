@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import BlogArchiveList from "@/components/BlogArchiveList";
 import FadingBackground from "@/components/FadingBackground";
-import LiquidGlassScene from "@/components/LiquidGlassScene";
+import Scene from "@/components/Scene";
 import { getAllBlogPosts } from "@/lib/blogPosts";
 import { FANS_SCENE } from "@/lib/glassScenes";
 
@@ -23,7 +23,7 @@ export default async function SpieltagsarchivPage() {
       opacity={FANS_SCENE.opacity}
       blurPx={FANS_SCENE.blurPx}
     >
-      <LiquidGlassScene background={FANS_SCENE}>
+      <Scene>
         <section className="mx-auto max-w-3xl px-7 py-10 sm:px-6 sm:py-16">
           <Link
             href="/spieltagsblog"
@@ -39,10 +39,7 @@ export default async function SpieltagsarchivPage() {
 
           <div className="mt-6 sm:mt-8">
             {posts.length === 0 ? (
-              <p
-                data-liquid-glass="card"
-                className="glass-panel p-5 text-center text-[1.0625rem] text-white/85 sm:p-8"
-              >
+              <p className="glass-panel p-5 text-center text-[1.0625rem] text-white/85 sm:p-8">
                 Noch keine Beiträge vorhanden.
               </p>
             ) : (
@@ -50,7 +47,7 @@ export default async function SpieltagsarchivPage() {
             )}
           </div>
         </section>
-      </LiquidGlassScene>
+      </Scene>
     </FadingBackground>
   );
 }

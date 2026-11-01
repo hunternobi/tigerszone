@@ -64,7 +64,6 @@ export default function GroupList({
         return (
           <div
             key={group._id}
-            data-liquid-glass="card"
             className={`glass-panel p-4 sm:p-5 ${visibleIds && !visibleIds.has(group._id) ? "hidden" : ""}`}
           >
             <div className="flex items-start gap-2">

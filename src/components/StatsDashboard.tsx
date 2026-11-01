@@ -40,7 +40,7 @@ function Card({
   children: ReactNode;
 }) {
   return (
-    <section data-liquid-glass="card" className="glass-panel p-5 sm:p-6">
+    <section className="glass-panel p-5 sm:p-6">
       <h3 className="font-ui text-xl font-semibold tracking-tight text-white sm:text-2xl">
         {title}
       </h3>

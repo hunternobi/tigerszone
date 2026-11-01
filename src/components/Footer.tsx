@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Feather } from "lucide-react";
-import LiquidGlassScene, { NAVY_SCENE } from "@/components/LiquidGlassScene";
+import Scene, { NAVY_GLOWS } from "@/components/Scene";
 import { SITE_DESCRIPTION, SITE_NAME } from "@/lib/constants";
 
 const QUICK_LINKS = [
@@ -47,15 +47,12 @@ function LinkColumn({
 
 export default function Footer() {
   return (
-    <LiquidGlassScene
-      background={NAVY_SCENE}
+    <Scene
+      glows={NAVY_GLOWS}
       className="border-t border-white/10 bg-tigers-primary [box-shadow:0_0_0_100vmax_#0a0f3d] [clip-path:inset(0_-100vmax_-100vmax_-100vmax)]"
     >
       <footer className="px-7 pt-10 pb-8 sm:px-6 sm:pt-14">
-        <div
-          data-liquid-glass="card"
-          className="glass-panel mx-auto grid max-w-5xl gap-7 p-5 sm:gap-10 sm:p-8 md:grid-cols-[1.4fr_1fr_1fr]"
-        >
+        <div className="glass-panel mx-auto grid max-w-5xl gap-7 p-5 sm:gap-10 sm:p-8 md:grid-cols-[1.4fr_1fr_1fr]">
           <div className="md:pr-6">
             <h3 className="font-ui text-xl font-semibold tracking-tight text-tigers-secondary">
               {SITE_NAME}
@@ -86,6 +83,6 @@ export default function Footer() {
           </p>
         </div>
       </footer>
-    </LiquidGlassScene>
+    </Scene>
   );
 }

@@ -14,11 +14,7 @@ export default function PartnerShowcase() {
   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(partner.address)}`;
 
   return (
-    <section
-      id="partner"
-      data-liquid-glass="card"
-      className="glass-panel mt-8 scroll-mt-24 p-4 sm:p-6"
-    >
+    <section id="partner" className="glass-panel mt-8 scroll-mt-24 p-4 sm:p-6">
       <p className="font-ui text-[0.625rem] font-semibold tracking-[0.14em] text-white/60 uppercase">
         Unsere Partner
       </p>

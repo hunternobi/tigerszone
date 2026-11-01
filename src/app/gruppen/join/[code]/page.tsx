@@ -4,7 +4,7 @@ import { auth } from "@/auth";
 import { getGroupPreview } from "@/app/gruppen/actions";
 import FadingBackground from "@/components/FadingBackground";
 import JoinGroupButton from "@/components/JoinGroupButton";
-import LiquidGlassScene from "@/components/LiquidGlassScene";
+import Scene from "@/components/Scene";
 import { JUBEL_SCENE } from "@/lib/glassScenes";
 
 export const metadata: Metadata = {
@@ -34,9 +34,9 @@ export default async function JoinGroupPage({ params }: JoinGroupPageProps) {
       opacity={JUBEL_SCENE.opacity}
       blurPx={JUBEL_SCENE.blurPx}
     >
-      <LiquidGlassScene background={JUBEL_SCENE}>
+      <Scene>
         <section className="mx-auto max-w-md px-7 py-16 text-center sm:px-6 sm:py-24">
-          <div data-liquid-glass="card" className="glass-panel p-6 sm:p-8">
+          <div className="glass-panel p-6 sm:p-8">
             <p className="font-ui text-[0.6875rem] font-semibold tracking-[0.14em] text-white/60 uppercase sm:text-xs">
               Einladung
             </p>
@@ -54,7 +54,7 @@ export default async function JoinGroupPage({ params }: JoinGroupPageProps) {
             </div>
           </div>
         </section>
-      </LiquidGlassScene>
+      </Scene>
     </FadingBackground>
   );
 }

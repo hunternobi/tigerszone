@@ -23,10 +23,7 @@ const FEATURES = [
 export default function StatsAnnouncement() {
   return (
     <Reveal>
-      <div
-        data-liquid-glass="card"
-        className="glass-panel relative mx-auto mt-8 max-w-2xl overflow-hidden p-6 text-center sm:mt-14 sm:p-10"
-      >
+      <div className="glass-panel relative mx-auto mt-8 max-w-2xl overflow-hidden p-6 text-center sm:mt-14 sm:p-10">
         <div
           aria-hidden
           className="pointer-events-none absolute -top-24 left-1/2 h-56 w-[120%] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(122,155,224,0.45),transparent)]"

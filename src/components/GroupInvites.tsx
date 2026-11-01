@@ -46,7 +46,6 @@ export default function GroupInvites({ invites }: GroupInvitesProps) {
 
   return (
     <div
-      data-liquid-glass="card"
       className={`glass-panel mt-6 p-5 ${visible.length === 0 ? "hidden" : ""}`}
     >
       <h2 className="font-ui text-xl font-semibold tracking-tight text-white">

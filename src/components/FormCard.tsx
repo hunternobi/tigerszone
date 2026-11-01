@@ -48,7 +48,7 @@ export default function FormCard({ games }: { games: Game[] }) {
   if (recent.length === 0) return null;
 
   return (
-    <section data-liquid-glass="card" className="glass-panel p-4 sm:p-6">
+    <section className="glass-panel p-4 sm:p-6">
       <h3 className="font-ui text-[1.25rem] font-semibold tracking-tight text-white sm:text-2xl">
         Form
       </h3>

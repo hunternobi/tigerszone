@@ -28,10 +28,7 @@ export default function PublicGroupsList({
         Diesen Gruppen kannst du ohne Einladungslink direkt beitreten.
       </p>
 
-      <div
-        data-liquid-glass="card"
-        className="glass-panel mt-3 divide-y divide-white/10"
-      >
+      <div className="glass-panel mt-3 divide-y divide-white/10">
         {groups.length === 0 ? (
           <p className="p-5 text-[0.9375rem] text-white/75">
             Keine Gruppen gefunden.

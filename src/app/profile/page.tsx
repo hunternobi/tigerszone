@@ -10,7 +10,7 @@ import {
 import { getUserPredictionHistory } from "@/lib/predictions";
 import GroupInvites from "@/components/GroupInvites";
 import FavoritePlayerSelect from "@/components/FavoritePlayerSelect";
-import LiquidGlassScene, { NAVY_SCENE } from "@/components/LiquidGlassScene";
+import Scene, { NAVY_GLOWS } from "@/components/Scene";
 import MyBonusSummary from "@/components/MyBonusSummary";
 import TipHistoryTabs from "@/components/TipHistoryTabs";
 import UsernameEditForm from "@/components/UsernameEditForm";
@@ -53,10 +53,7 @@ export default async function ProfilePage() {
 
   return (
     // Extends under the transparent header so the glow does not end in a visible edge at its bottom.
-    <LiquidGlassScene
-      background={NAVY_SCENE}
-      className="-mt-[4.5rem] pt-[4.5rem]"
-    >
+    <Scene glows={NAVY_GLOWS} className="-mt-[4.5rem] pt-[4.5rem]">
       <section className="mx-auto max-w-3xl px-7 py-10 sm:px-6 sm:py-16">
         <h1 className="font-ui text-[2.15rem] leading-[1.06] font-semibold tracking-tight text-white sm:text-5xl">
           Profil
@@ -70,10 +67,7 @@ export default async function ProfilePage() {
               content: (
                 <>
                   {/* Grouped list in one glass card, like iOS settings. */}
-                  <div
-                    data-liquid-glass="card"
-                    className="glass-panel mt-6 divide-y divide-white/10"
-                  >
+                  <div className="glass-panel mt-6 divide-y divide-white/10">
                     <div className="p-5">
                       <p className={LABEL_CLASS}>Benutzername</p>
                       <UsernameEditForm
@@ -135,6 +129,6 @@ export default async function ProfilePage() {
           ]}
         />
       </section>
-    </LiquidGlassScene>
+    </Scene>
   );
 }

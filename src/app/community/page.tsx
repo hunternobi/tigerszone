@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { auth } from "@/auth";
 import Faq from "@/components/Faq";
 import FadingBackground from "@/components/FadingBackground";
-import LiquidGlassScene from "@/components/LiquidGlassScene";
+import Scene from "@/components/Scene";
 import ProfileTabs from "@/components/ProfileTabs";
 import PillButton from "@/components/PillButton";
 import PartnerShowcase from "@/components/PartnerShowcase";
@@ -57,7 +57,7 @@ export default async function CommunityPage() {
       opacity={COMMUNITY_SCENE.opacity}
       blurPx={COMMUNITY_SCENE.blurPx}
     >
-      <LiquidGlassScene background={COMMUNITY_SCENE}>
+      <Scene>
         <section className="mx-auto max-w-3xl px-7 py-10 sm:px-6 sm:py-16">
           <h1 className="font-ui text-[2.15rem] leading-[1.06] font-semibold tracking-tight text-white sm:text-5xl">
             Community
@@ -71,10 +71,7 @@ export default async function CommunityPage() {
                 content: (
                   <div className="mt-6">
                     {!signedIn ? (
-                      <div
-                        data-liquid-glass="card"
-                        className="glass-panel flex flex-wrap items-center justify-between gap-x-4 gap-y-3 p-5 sm:p-6"
-                      >
+                      <div className="glass-panel flex flex-wrap items-center justify-between gap-x-4 gap-y-3 p-5 sm:p-6">
                         <div className="min-w-0">
                           <h3 className="font-ui text-xl font-semibold tracking-tight text-white">
                             Statistiken nur mit Anmeldung
@@ -97,10 +94,7 @@ export default async function CommunityPage() {
                         }
                       />
                     ) : (
-                      <div
-                        data-liquid-glass="card"
-                        className="glass-panel p-5 sm:p-6"
-                      >
+                      <div className="glass-panel p-5 sm:p-6">
                         <h3 className="font-ui text-xl font-semibold tracking-tight text-white">
                           Statistiken gerade nicht verfügbar
                         </h3>
@@ -117,10 +111,7 @@ export default async function CommunityPage() {
                 id: "umfragen",
                 label: "Umfragen",
                 content: (
-                  <div
-                    data-liquid-glass="card"
-                    className="glass-panel mt-6 p-5 sm:p-6"
-                  >
+                  <div className="glass-panel mt-6 p-5 sm:p-6">
                     <h3 className="font-ui text-xl font-semibold tracking-tight text-white">
                       Umfragen
                     </h3>
@@ -140,7 +131,7 @@ export default async function CommunityPage() {
             <Faq />
           </div>
         </section>
-      </LiquidGlassScene>
+      </Scene>
     </FadingBackground>
   );
 }

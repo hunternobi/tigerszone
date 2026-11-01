@@ -14,7 +14,7 @@ import TipHistoryTabs, {
 } from "@/components/TipHistoryTabs";
 import PointsHistorySection from "@/components/PointsHistorySection";
 import FadingBackground from "@/components/FadingBackground";
-import LiquidGlassScene from "@/components/LiquidGlassScene";
+import Scene from "@/components/Scene";
 import { JUBEL_SCENE } from "@/lib/glassScenes";
 
 const LABEL_CLASS =
@@ -68,7 +68,7 @@ export default async function SpielerPage({ params }: SpielerPageProps) {
       opacity={JUBEL_SCENE.opacity}
       blurPx={JUBEL_SCENE.blurPx}
     >
-      <LiquidGlassScene background={JUBEL_SCENE}>
+      <Scene>
         <section className="mx-auto max-w-3xl px-7 py-10 sm:px-6 sm:py-16">
           <Link
             href="/gruppen"
@@ -78,10 +78,7 @@ export default async function SpielerPage({ params }: SpielerPageProps) {
             Tippgruppen
           </Link>
 
-          <div
-            data-liquid-glass="card"
-            className="glass-panel mt-2 divide-y divide-white/10"
-          >
+          <div className="glass-panel mt-2 divide-y divide-white/10">
             <div className="p-5 sm:p-6">
               <p className={LABEL_CLASS}>Spieler</p>
               <h1 className="font-ui mt-1 text-[1.875rem] leading-[1.1] font-semibold tracking-tight break-words text-white sm:text-4xl">
@@ -135,7 +132,7 @@ export default async function SpielerPage({ params }: SpielerPageProps) {
             defaultTab={hauptrundeStarted ? "DEL" : "Vorbereitung"}
           />
         </section>
-      </LiquidGlassScene>
+      </Scene>
     </FadingBackground>
   );
 }

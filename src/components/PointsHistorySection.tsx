@@ -11,7 +11,7 @@ export default function PointsHistorySection({
   history,
 }: PointsHistorySectionProps) {
   return (
-    <div data-liquid-glass="card" className="glass-panel mt-6 p-4 sm:p-6">
+    <div className="glass-panel mt-6 p-4 sm:p-6">
       <h2 className="font-ui text-xl font-semibold tracking-tight text-white sm:text-2xl">
         Punkteverlauf
       </h2>

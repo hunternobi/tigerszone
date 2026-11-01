@@ -12,14 +12,10 @@ interface ArchivePost {
 
 /**
  * Blog posts as one grouped list inside a single glass card (like iOS settings), however many there are.
- * Must sit inside a LiquidGlassScene.
  */
 export default function BlogArchiveList({ posts }: { posts: ArchivePost[] }) {
   return (
-    <ul
-      data-liquid-glass="card"
-      className="glass-panel divide-y divide-white/10 p-1.5 sm:p-2"
-    >
+    <ul className="glass-panel divide-y divide-white/10 p-1.5 sm:p-2">
       {posts.map((post) => (
         <li key={post._id}>
           <Link
