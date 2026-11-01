@@ -5,7 +5,7 @@ import FadingBackground from "@/components/FadingBackground";
 import LiquidGlassScene from "@/components/LiquidGlassScene";
 import ProfileTabs from "@/components/ProfileTabs";
 import PillButton from "@/components/PillButton";
-import MarienApothekeCard from "@/components/MarienApothekeCard";
+import PartnerShowcase from "@/components/PartnerShowcase";
 import StatsDashboard from "@/components/StatsDashboard";
 import { getDelClubName } from "@/lib/delClubs";
 import { getAllGames } from "@/lib/games";
@@ -134,7 +134,7 @@ export default async function CommunityPage() {
             ]}
           />
 
-          <MarienApothekeCard />
+          <PartnerShowcase />
 
           <div className="mt-10 sm:mt-14">
             <Faq />

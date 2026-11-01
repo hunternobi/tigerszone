@@ -1,40 +1,6 @@
 import Image from "next/image";
-import Link from "next/link";
 import Reveal from "@/components/Reveal";
-
-interface Partner {
-  name: string;
-  href: string;
-  /** Internal links stay in the same tab; external ones open a new tab. */
-  internal?: boolean;
-  logoSrc: string;
-  logoWidth: number;
-  logoHeight: number;
-}
-
-const PARTNERS: Partner[] = [
-  {
-    name: "Marien Apotheke Bodenmais",
-    href: "https://www.apotheke-bodenmais.de/",
-    logoSrc: "/images/partners/marien-apotheke.png",
-    logoWidth: 460,
-    logoHeight: 498,
-  },
-  {
-    name: "Erl Bräu",
-    href: "https://www.erl-braeu.de/",
-    logoSrc: "/images/partners/erl-braeu.png",
-    logoWidth: 460,
-    logoHeight: 519,
-  },
-  {
-    name: "Sigl Immobilien",
-    href: "https://www.sigl-immobiliengruppe.de/",
-    logoSrc: "/images/partners/sigl-immobilien.png",
-    logoWidth: 640,
-    logoHeight: 341,
-  },
-];
+import { PARTNERS } from "@/lib/partners";
 
 const TILE_CLASS =
   "glass-panel glass-interactive flex h-24 min-w-0 items-center justify-center p-2.5 sm:h-40 sm:w-48 sm:p-4";
@@ -59,17 +25,7 @@ export default function PartnerBar() {
               />
             );
 
-            return partner.internal ? (
-              <Link
-                key={partner.name}
-                href={partner.href}
-                aria-label={partner.name}
-                data-liquid-glass="tile"
-                className={TILE_CLASS}
-              >
-                {logo}
-              </Link>
-            ) : (
+            return (
               <a
                 key={partner.name}
                 href={partner.href}
