@@ -157,9 +157,10 @@ main :is(.bg-white, .bg-white *) {
 }
 
 /* No rubber-band reveal of the fixed page photo below the footer: where the browser still bounces, the footer
-   paints a navy field past its bottom edge (box-shadow + clip-path in Footer.tsx), and the canvas is navy too. */
+   paints a navy field past its bottom edge (box-shadow + clip-path in Footer.tsx). Do NOT give html its own
+   background: then the body background stops propagating to the canvas, gets painted as a box and covers the
+   page photos (they sit at z-index -10). */
 html {
-  background-color: #0a0f3d;
   overscroll-behavior-y: none;
 }
 
