@@ -46,11 +46,8 @@ export default function PartnerBar() {
         <h2 className="font-ui text-center text-[1.4rem] font-semibold tracking-tight text-white sm:text-3xl">
           Unsere Partner
         </h2>
-        <p className="mx-auto mt-1.5 max-w-xl text-center text-sm text-white/65 sm:mt-3 sm:text-base">
-          Gemeinsam mit starken Partnern machen wir TigersZone möglich
-        </p>
 
-        <div className="mt-4 grid grid-cols-3 gap-2.5 sm:mt-8 sm:flex sm:flex-wrap sm:justify-center sm:gap-4">
+        <div className="mt-3 grid grid-cols-3 gap-2.5 sm:mt-8 sm:flex sm:flex-wrap sm:justify-center sm:gap-4">
           {PARTNERS.map((partner) => {
             const logo = (
               <Image
