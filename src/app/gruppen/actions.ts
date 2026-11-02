@@ -183,19 +183,21 @@ export async function getMyGroups(): Promise<MyGroup[]> {
     memberships.map((membership) => [membership.groupId.toString(), membership.role])
   );
 
-  const groups = await GroupModel.find({ _id: { $in: groupIds } }).lean<
-    {
-      _id: Types.ObjectId;
-      name: string;
-      inviteCode: string;
-      ownerUserId: Types.ObjectId;
-      isPublic: boolean;
-    }[]
-  >();
-
-  const counts = await GroupMemberModel.aggregate<{ _id: Types.ObjectId; count: number }>([
-    { $match: { groupId: { $in: groupIds } } },
-    { $group: { _id: "$groupId", count: { $sum: 1 } } },
+  // Groups and member counts only depend on the ids, so they load side by side; the owners need the groups.
+  const [groups, counts] = await Promise.all([
+    GroupModel.find({ _id: { $in: groupIds } }).lean<
+      {
+        _id: Types.ObjectId;
+        name: string;
+        inviteCode: string;
+        ownerUserId: Types.ObjectId;
+        isPublic: boolean;
+      }[]
+    >(),
+    GroupMemberModel.aggregate<{ _id: Types.ObjectId; count: number }>([
+      { $match: { groupId: { $in: groupIds } } },
+      { $group: { _id: "$groupId", count: { $sum: 1 } } },
+    ]),
   ]);
   const countMap = new Map(counts.map((entry) => [entry._id.toString(), entry.count]));
 
@@ -262,16 +264,17 @@ export async function getPublicGroups(): Promise<PublicGroup[]> {
   if (groups.length === 0) return [];
 
   const groupIds = groups.map((group) => group._id);
-  const counts = await GroupMemberModel.aggregate<{ _id: Types.ObjectId; count: number }>([
-    { $match: { groupId: { $in: groupIds } } },
-    { $group: { _id: "$groupId", count: { $sum: 1 } } },
+  const ownerIds = groups.map((group) => group.ownerUserId);
+  const [counts, owners] = await Promise.all([
+    GroupMemberModel.aggregate<{ _id: Types.ObjectId; count: number }>([
+      { $match: { groupId: { $in: groupIds } } },
+      { $group: { _id: "$groupId", count: { $sum: 1 } } },
+    ]),
+    UserModel.find({ _id: { $in: ownerIds } })
+      .select("name")
+      .lean<{ _id: Types.ObjectId; name: string }[]>(),
   ]);
   const countMap = new Map(counts.map((entry) => [entry._id.toString(), entry.count]));
-
-  const ownerIds = groups.map((group) => group.ownerUserId);
-  const owners = await UserModel.find({ _id: { $in: ownerIds } })
-    .select("name")
-    .lean<{ _id: Types.ObjectId; name: string }[]>();
   const ownerNameById = new Map(owners.map((owner) => [owner._id.toString(), owner.name]));
 
   return groups.map((group) => ({

@@ -2,6 +2,7 @@
 
 import { revalidatePath, updateTag } from "next/cache";
 import { LEADERBOARD_TAG } from "@/lib/leaderboard";
+import { GAMES_TAG } from "@/lib/games";
 import { auth } from "@/auth";
 import { dbConnect } from "@/lib/mongodb";
 import { GameModel } from "@/models/Game";
@@ -63,6 +64,7 @@ export async function saveGameResult(
   revalidatePath("/admin");
   revalidatePath("/tippspiel");
   updateTag(LEADERBOARD_TAG);
+  updateTag(GAMES_TAG);
 
   return { success: true };
 }
