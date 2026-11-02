@@ -37,6 +37,8 @@ out vec4 outColor;
 uniform sampler2D uSharp;
 uniform sampler2D uBlur;
 uniform vec2 uView;
+uniform vec2 uRegion;
+uniform float uTop;
 uniform int uCount;
 uniform vec4 uRect[${MAX_CARDS}];
 uniform vec2 uMeta[${MAX_CARDS}];
@@ -72,7 +74,9 @@ vec3 blurAt(vec2 css) {
 }
 
 void main() {
-  vec2 pos = vUv * uView;
+  // The canvas covers uRegion px of the page, starting uTop px from the top of the screen; positions are
+  // screen coordinates at the moment of drawing (the photo behind is fixed to the screen).
+  vec2 pos = vec2(vUv.x * uRegion.x, uTop + vUv.y * uRegion.y);
 
   int hit = -1;
   for (int i = 0; i < ${MAX_CARDS}; i++) {
@@ -203,6 +207,8 @@ export class SharedGlassGL {
       "uBlur",
       "uK",
       "uView",
+      "uRegion",
+      "uTop",
       "uCount",
       "uRect",
       "uMeta",
@@ -296,7 +302,18 @@ export class SharedGlassGL {
     }
   }
 
-  draw(viewW: number, viewH: number, rects: GlassRect[]) {
+  /**
+   * Draws the canvas region: `regionW` x `regionH` px of the page whose top edge lies `top` px from the top
+   * of the screen (usually negative: the region reaches above the screen). `rects` are in screen coordinates.
+   */
+  draw(
+    viewW: number,
+    viewH: number,
+    regionW: number,
+    regionH: number,
+    top: number,
+    rects: GlassRect[],
+  ) {
     if (this.lost) return;
     const { gl, loc } = this;
     const count = Math.min(rects.length, MAX_CARDS);
@@ -311,6 +328,8 @@ export class SharedGlassGL {
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.uniform2f(loc.uView, viewW, viewH);
+    gl.uniform2f(loc.uRegion, regionW, regionH);
+    gl.uniform1f(loc.uTop, top);
     gl.uniform1i(loc.uCount, count);
     gl.uniform4fv(loc.uRect, rectData);
     gl.uniform2fv(loc.uMeta, metaData);

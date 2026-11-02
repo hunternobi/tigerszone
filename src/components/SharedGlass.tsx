@@ -5,13 +5,12 @@ import { SharedGlassGL, type GlassRect, MAX_CARDS } from "@/lib/sharedGlass";
 
 const DESKTOP_QUERY = "(min-width: 640px)";
 const DISABLED_KEY = "tz-glass-off";
-// Frames are drawn for this long after anything that could move a card (scrolling, content change, resize).
-const SCROLL_ACTIVE_MS = 200;
+// After a content change frames are drawn for this long (fades and animations of the cards).
 const CHANGE_ACTIVE_MS = 1600;
-// Switch back to CSS glass after this many slow frames in a row while scrolling (never in the first seconds).
-const SLOW_FRAME_MS = 60;
-const SLOW_STREAK_LIMIT = 20;
-const STARTUP_GRACE_MS = 4000;
+// The canvas stays put on the page while scrolling (so card and glass move together, natively). It is drawn
+// again when scrolling stops and whenever the screen has left the middle part of the canvas by this fraction.
+const SETTLE_MS = 110;
+const REANCHOR_FRACTION = 0.8;
 
 function glassDisabled(): boolean {
   try {
@@ -60,18 +59,16 @@ export default function SharedGlass({
     let cancelled = false;
     let frame = 0;
     let activeUntil = 0;
-    let lastFrameTime = 0;
-    let slowStreak = 0;
-    let startedAt = 0;
     let running = false;
+    let anchorScroll = Number.NaN;
     let backdropReady = false;
     let paintedFor = { w: 0, h: 0, desktop: false };
     let image: HTMLImageElement | null = null;
-    let scrolling = 0;
 
     const photoLayer = () =>
       scope.querySelector<HTMLElement>("[data-page-background]");
-    const dpr = () => Math.min(window.devicePixelRatio || 1, 2);
+    // The canvas is three screens tall, so its resolution is kept moderate.
+    const dpr = () => Math.min(window.devicePixelRatio || 1, 1.5);
 
     function paintBackdrop(w: number, h: number) {
       if (!image) return;
@@ -125,11 +122,11 @@ export default function SharedGlass({
 
     function collect(viewW: number, viewH: number): GlassRect[] {
       const rects: GlassRect[] = [];
-      const margin = 80;
+      const margin = viewH;
       for (const el of scope!.querySelectorAll<HTMLElement>(".glass-panel")) {
         const r = el.getBoundingClientRect();
         if (r.width < 2 || r.height < 2) continue;
-        if (r.bottom < -margin || r.top > viewH + margin) continue;
+        if (r.bottom < -margin || r.top > viewH * 2) continue;
         if (r.right < 0 || r.left > viewW) continue;
         rects.push({
           x: r.left,
@@ -144,7 +141,7 @@ export default function SharedGlass({
       return rects;
     }
 
-    function render(now: number) {
+    function render() {
       frame = 0;
       if (cancelled) return;
       const layer = photoLayer();
@@ -161,34 +158,25 @@ export default function SharedGlass({
       ) {
         paintBackdrop(viewW, viewH);
       }
-      canvas!.style.left = `${box?.left ?? 0}px`;
-      canvas!.style.top = `${box?.top ?? 0}px`;
+
+      // The canvas reaches one screen above and below the screen, sits in the page flow (it scrolls with the
+      // cards) and is anchored at the current scroll position.
+      const scrollY = window.scrollY;
+      const scopeTop = scope!.getBoundingClientRect().top + scrollY;
+      const regionH = viewH * 3;
+      canvas!.style.left = "0px";
+      canvas!.style.top = `${scrollY - viewH - scopeTop}px`;
       canvas!.style.width = `${viewW}px`;
-      canvas!.style.height = `${viewH}px`;
-      gl!.resize(viewW, viewH, dpr());
-      gl!.draw(viewW, viewH, collect(viewW, viewH));
+      canvas!.style.height = `${regionH}px`;
+      gl!.resize(viewW, regionH, dpr());
+      gl!.draw(viewW, viewH, viewW, regionH, -viewH, collect(viewW, viewH));
+      anchorScroll = scrollY;
 
       if (!running) {
         running = true;
-        startedAt = now;
         scope!.dataset.webgl = "true";
       }
-
-      // Frame-rate watch while the page moves
-      if (scrolling && lastFrameTime) {
-        const delta = now - lastFrameTime;
-        const settled = now - startedAt > STARTUP_GRACE_MS;
-        if (delta > SLOW_FRAME_MS && delta < 1000 && settled) slowStreak += 1;
-        else slowStreak = 0;
-        if (slowStreak >= SLOW_STREAK_LIMIT) {
-          fallBack();
-          return;
-        }
-      }
-      lastFrameTime = now;
-
       if (performance.now() < activeUntil) schedule();
-      else lastFrameTime = 0;
     }
 
     function schedule() {
@@ -222,10 +210,17 @@ export default function SharedGlass({
     }
 
     function onScroll() {
-      scrolling = 1;
-      wake(SCROLL_ACTIVE_MS);
+      // Far enough from where the canvas was drawn: draw it again right away (the cards are still the same
+      // cards, so nothing jumps). Otherwise wait until scrolling stops.
+      const viewH = window.innerHeight;
+      if (
+        Number.isNaN(anchorScroll) ||
+        Math.abs(window.scrollY - anchorScroll) > viewH * REANCHOR_FRACTION
+      ) {
+        schedule();
+      }
       clearTimeout(scrollEnd);
-      scrollEnd = setTimeout(() => (scrolling = 0), SCROLL_ACTIVE_MS);
+      scrollEnd = setTimeout(schedule, SETTLE_MS);
     }
     let scrollEnd: ReturnType<typeof setTimeout> | undefined;
     const onResize = () => wake(CHANGE_ACTIVE_MS);
@@ -261,7 +256,7 @@ export default function SharedGlass({
     <canvas
       ref={canvasRef}
       aria-hidden
-      className="pointer-events-none fixed -z-10"
+      className="pointer-events-none absolute -z-10"
       style={{ left: 0, top: 0 }}
     />
   );
