@@ -34,34 +34,41 @@ precision highp float;
 in vec2 vUv;
 out vec4 outColor;
 
-uniform sampler2D uBackdrop;
+uniform sampler2D uSharp;
+uniform sampler2D uBlur;
 uniform vec2 uView;
 uniform int uCount;
 uniform vec4 uRect[${MAX_CARDS}];
 uniform vec2 uMeta[${MAX_CARDS}];
-uniform float uRefraction;
-uniform float uBlurLod;
-uniform float uSoft;
-uniform float uChroma;
+uniform float uK;
 
-float roundBox(vec2 p, vec2 b, float r) {
-  vec2 q = abs(p) - b + r;
-  return min(max(q.x, q.y), 0.0) + length(max(q, 0.0)) - r;
+// ---------------------------------------------------------------------------------------------------------
+// The fragment shader of ybouane/liquidglass (FS_GLASS, MIT), with its default settings (refraction 0.85,
+// chromatic aberration 0.05, edge highlight 0.05, fresnel 1, bevel 40), ported to run for many rectangles in
+// one pass. All its pixel constants are multiplied by uK, because the library tunes them for big panels
+// and a phone card is much smaller.
+// ---------------------------------------------------------------------------------------------------------
+const float REFRACT = 0.85;
+const float CHROMA = 0.05;
+const float EDGE_HL = 0.05;
+const float FRESNEL = 1.0;
+
+float rrSDF(vec2 p, vec2 b, float r) {
+  vec2 q = abs(p) - b + vec2(r);
+  return min(max(q.x, q.y), 0.0) + length(max(q, vec2(0.0))) - r;
 }
 
-vec3 backdrop(vec2 css) {
-  vec2 uv = clamp(css / uView, vec2(0.002), vec2(0.998));
-  return textureLod(uBackdrop, uv, uBlurLod).rgb;
+float bevelHeight(float d, float zR) {
+  if (d <= 0.0) return 0.0;
+  if (d >= zR) return zR;
+  return sqrt(d * (2.0 * zR - d));
 }
 
-vec3 soft(vec2 css) {
-  float s = uSoft;
-  vec3 c = backdrop(css) * 0.36;
-  c += backdrop(css + vec2(s, s)) * 0.16;
-  c += backdrop(css + vec2(-s, s)) * 0.16;
-  c += backdrop(css + vec2(s, -s)) * 0.16;
-  c += backdrop(css + vec2(-s, -s)) * 0.16;
-  return c;
+vec3 sharpAt(vec2 css) {
+  return texture(uSharp, clamp(css / uView, vec2(0.001), vec2(0.999))).rgb;
+}
+vec3 blurAt(vec2 css) {
+  return texture(uBlur, clamp(css / uView, vec2(0.001), vec2(0.999))).rgb;
 }
 
 void main() {
@@ -71,8 +78,8 @@ void main() {
   for (int i = 0; i < ${MAX_CARDS}; i++) {
     if (i >= uCount) break;
     vec2 hs = uRect[i].zw * 0.5;
-    float r = min(uMeta[i].x, min(hs.x, hs.y));
-    if (roundBox(pos - (uRect[i].xy + hs), hs, r) < 0.6) {
+    float rr = min(uMeta[i].x, min(hs.x, hs.y));
+    if (rrSDF(pos - (uRect[i].xy + hs), hs, rr) < 0.6) {
       hit = i;
       break;
     }
@@ -82,49 +89,71 @@ void main() {
     return;
   }
 
-  vec2 halfSize = uRect[hit].zw * 0.5;
-  vec2 p = pos - (uRect[hit].xy + halfSize);
-  float r = min(uMeta[hit].x, min(halfSize.x, halfSize.y));
-  float d = roundBox(p, halfSize, r);
-  float mask = 1.0 - smoothstep(-0.8, 0.6, d);
+  vec2 half_ = uRect[hit].zw * 0.5;
+  vec2 localPx = pos - (uRect[hit].xy + half_);
+  float r = min(uMeta[hit].x, min(half_.x, half_.y));
+  float sdf = rrSDF(localPx, half_, r);
 
-  float inside = max(-d, 0.0);
-  vec2 grad = vec2(
-    roundBox(p + vec2(1.0, 0.0), halfSize, r) - roundBox(p - vec2(1.0, 0.0), halfSize, r),
-    roundBox(p + vec2(0.0, 1.0), halfSize, r) - roundBox(p - vec2(0.0, 1.0), halfSize, r)
-  );
-  vec2 n = grad / max(length(grad), 1e-4);
+  float mask = 1.0 - smoothstep(-1.5, 0.5, sdf);
+  float maxD = min(half_.x, half_.y);
+  float inside = -sdf;
+  float edge = smoothstep(maxD * 0.35, 0.0, inside);
 
-  float zR = min(40.0, min(halfSize.x, halfSize.y));
-  float dd = clamp(inside, 0.5, zR);
-  float h = sqrt(dd * (2.0 * zR - dd));
-  float slope = inside >= zR ? 0.0 : (zR - dd) / h;
+  float zR = 40.0 * uK;
+  float e = 2.0 * uK;
+  float dC = inside;
+  float dR = -rrSDF(localPx + vec2(e, 0.0), half_, r);
+  float dL = -rrSDF(localPx - vec2(e, 0.0), half_, r);
+  float dU = -rrSDF(localPx + vec2(0.0, e), half_, r);
+  float dD = -rrSDF(localPx - vec2(0.0, e), half_, r);
+  float hC = bevelHeight(dC, zR);
+  vec2 hGrad = vec2(
+    bevelHeight(dR, zR) - bevelHeight(dL, zR),
+    bevelHeight(dU, zR) - bevelHeight(dD, zR)
+  ) / (2.0 * e);
+  vec3 N = normalize(vec3(-hGrad, 1.0));
   float depth = smoothstep(0.0, zR, inside);
-  float edge = smoothstep(min(halfSize.x, halfSize.y) * 0.35, 0.0, inside);
-  float nz = 1.0 / sqrt(1.0 + slope * slope);
 
-  float thickNorm = inside >= zR ? 1.0 : h / zR;
-  float refrK = (0.667 + 0.167 * thickNorm) * 30.0 * uRefraction;
-  vec2 shift = -n * min(slope * refrK, 70.0) - p / max(halfSize, vec2(1.0)) * uRefraction * 4.0 * depth;
-  vec2 ca = n * slope / sqrt(1.0 + slope * slope) * uChroma * 36.0 * (edge * 0.7 + 0.3);
+  // Refraction (biconvex: entry + exit surface + a little through the glass), as in the library
+  float ior = 1.5;
+  float refrPow = 1.0 - 1.0 / ior;
+  float thickNorm = (hC * 2.0) / max(zR * 2.0, 1.0);
+  vec2 exitRefr = hGrad * refrPow;
+  vec2 entryRefr = hGrad * refrPow;
+  vec2 throughRefr = entryRefr * thickNorm * 0.5;
+  vec2 refrPx = (exitRefr + entryRefr + throughRefr) * REFRACT * 30.0 * uK;
+  vec2 centerDir = -localPx / max(half_, vec2(1.0));
+  refrPx += centerDir * REFRACT * 4.0 * uK * depth;
 
-  vec2 base = pos + shift;
-  vec3 col;
-  col.r = soft(base + ca).r;
-  col.g = soft(base).g;
-  col.b = soft(base - ca).b;
+  float caS = CHROMA * 18.0 * (edge * 0.7 + 0.3) * 2.0 * uK;
+  vec2 caD = N.xy * caS;
+  vec2 base = pos + refrPx;
+
+  vec3 sharp = vec3(sharpAt(base + caD).r, sharpAt(base).g, sharpAt(base - caD).b);
+  vec3 blur = vec3(blurAt(base + caD).r, blurAt(base).g, blurAt(base - caD).b);
+  float edgeMix = 1.0 - edge * 0.15;
+  vec3 col = mix(sharp, blur, edgeMix);
   col *= 1.0 + 0.06 * depth;
 
-  float fres = pow(1.0 - nz, 4.0);
-  float lit = clamp(dot(n, normalize(vec2(-0.55, -0.85))) * 0.5 + 0.5, 0.0, 1.0);
-  float stroke = smoothstep(-2.5, -1.5, d) * (1.0 - smoothstep(-1.0, 0.0, d));
-  col += stroke * (0.10 + 0.30 * lit);
-  col += smoothstep(5.0, 0.0, inside) * 0.035;
-  col = mix(col, vec3(1.0), fres * 0.2);
-  col += (fract(sin(dot(gl_FragCoord.xy, vec2(12.9898, 78.233))) * 43758.5453) - 0.5) / 255.0;
+  float fres = pow(1.0 - abs(N.z), 4.0) * FRESNEL;
+
+  float borderWidth = 1.5;
+  float innerStroke = smoothstep(-borderWidth - 1.0, -borderWidth, sdf) * (1.0 - smoothstep(-1.0, 0.0, sdf));
+  float topBias = 0.5 + 0.5 * (-localPx.y / half_.y);
+  innerStroke *= (0.4 + 0.6 * topBias);
+
+  float rim = edge * EDGE_HL * 0.22;
+  float innerGlow = smoothstep(5.0, 0.0, -sdf) * EDGE_HL * 0.15;
+  float envRefl = (N.y * 0.5 + 0.5) * fres * 0.08;
+
+  vec3 fin = col;
+  fin += vec3(rim + innerGlow);
+  fin += vec3(innerStroke * EDGE_HL * 0.55);
+  fin += vec3(envRefl);
+  fin = mix(fin, vec3(1.0), fres * 0.2);
 
   float a = mask * uMeta[hit].y;
-  outColor = vec4(col * a, a);
+  outColor = vec4(fin * a, a);
 }`;
 
 function compile(
@@ -147,7 +176,8 @@ function compile(
 export class SharedGlassGL {
   private gl: WebGL2RenderingContext;
   private program: WebGLProgram;
-  private texture: WebGLTexture;
+  private sharpTexture: WebGLTexture;
+  private blurTexture: WebGLTexture;
   private loc: Record<string, WebGLUniformLocation | null> = {};
   private lost = false;
   onLost?: () => void;
@@ -169,15 +199,13 @@ export class SharedGlassGL {
     this.program = program;
     gl.useProgram(program);
     for (const name of [
-      "uBackdrop",
+      "uSharp",
+      "uBlur",
+      "uK",
       "uView",
       "uCount",
       "uRect",
       "uMeta",
-      "uRefraction",
-      "uBlurLod",
-      "uSoft",
-      "uChroma",
     ]) {
       this.loc[name] = gl.getUniformLocation(program, name);
     }
@@ -192,26 +220,23 @@ export class SharedGlassGL {
     gl.enableVertexAttribArray(0);
     gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
 
-    const texture = gl.createTexture();
-    if (!texture) throw new Error("createTexture failed");
-    this.texture = texture;
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-    gl.uniform1i(this.loc.uBackdrop, 0);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(
-      gl.TEXTURE_2D,
-      gl.TEXTURE_MIN_FILTER,
-      gl.LINEAR_MIPMAP_LINEAR,
-    );
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    const makeTexture = (unit: number, uniform: string) => {
+      const texture = gl.createTexture();
+      if (!texture) throw new Error("createTexture failed");
+      gl.activeTexture(gl.TEXTURE0 + unit);
+      gl.bindTexture(gl.TEXTURE_2D, texture);
+      gl.uniform1i(this.loc[uniform], unit);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      return texture;
+    };
+    this.sharpTexture = makeTexture(0, "uSharp");
+    this.blurTexture = makeTexture(1, "uBlur");
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-    gl.uniform1f(this.loc.uRefraction, 0.85);
-    gl.uniform1f(this.loc.uBlurLod, 0.5);
-    gl.uniform1f(this.loc.uSoft, 6);
-    gl.uniform1f(this.loc.uChroma, 0.05);
+    gl.uniform1f(this.loc.uK, 0.55);
 
     canvas.addEventListener("webglcontextlost", this.handleLost);
   }
@@ -243,14 +268,23 @@ export class SharedGlassGL {
     return this.lost;
   }
 
-  /** Uploads the backdrop (the page photo as it looks on screen) once; mipmaps give the blur for free. */
-  setBackdrop(source: HTMLCanvasElement) {
+  /** Uploads the backdrop (the page photo as it looks on screen) and a lightly blurred copy of it, once. */
+  setBackdrop(sharp: HTMLCanvasElement, blurred: HTMLCanvasElement) {
     const { gl } = this;
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, this.texture);
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source);
-    gl.generateMipmap(gl.TEXTURE_2D);
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, this.sharpTexture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, sharp);
+    gl.activeTexture(gl.TEXTURE1);
+    gl.bindTexture(gl.TEXTURE_2D, this.blurTexture);
+    gl.texImage2D(
+      gl.TEXTURE_2D,
+      0,
+      gl.RGBA,
+      gl.RGBA,
+      gl.UNSIGNED_BYTE,
+      blurred,
+    );
   }
 
   resize(cssW: number, cssH: number, dpr: number) {
@@ -286,7 +320,8 @@ export class SharedGlassGL {
   destroy() {
     this.canvas.removeEventListener("webglcontextlost", this.handleLost);
     if (!this.lost) {
-      this.gl.deleteTexture(this.texture);
+      this.gl.deleteTexture(this.sharpTexture);
+      this.gl.deleteTexture(this.blurTexture);
       this.gl.deleteProgram(this.program);
       this.gl.getExtension("WEBGL_lose_context")?.loseContext();
     }

@@ -92,7 +92,16 @@ export default function SharedGlass({
       ctx.globalAlpha = opacity;
       if (blurPx && "filter" in ctx) ctx.filter = `blur(${blurPx * ratio}px)`;
       ctx.drawImage(image, (bw - dw) / 2, (bh - dh) / 2, dw, dh);
-      gl!.setBackdrop(bg);
+      // The library blurs its copy lightly (about 4 px); here a canvas filter does it once.
+      const soft = document.createElement("canvas");
+      soft.width = bw;
+      soft.height = bh;
+      const softCtx = soft.getContext("2d");
+      if (softCtx) {
+        if ("filter" in softCtx) softCtx.filter = `blur(${4 * ratio}px)`;
+        softCtx.drawImage(bg, 0, 0);
+      }
+      gl!.setBackdrop(bg, soft);
       paintedFor = {
         w: w,
         h: h,
