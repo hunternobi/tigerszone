@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import { Types } from "mongoose";
 import { dbConnect } from "@/lib/mongodb";
 import { PredictionModel } from "@/models/Prediction";
@@ -129,9 +130,7 @@ export function topWithMe(
   return [...top, { ...entries[myIndex], rank: myIndex + 1 }];
 }
 
-export async function getGlobalLeaderboard(
-  limit?: number,
-): Promise<LeaderboardEntry[]> {
+async function computeGlobalLeaderboard(): Promise<LeaderboardEntry[]> {
   await dbConnect();
 
   const [latestBatchGameIds, vorbereitungGameIds] = await Promise.all([
@@ -211,9 +210,7 @@ export async function getGlobalLeaderboard(
     const nameB = nameById.get(b[0]) ?? "";
     return nameA.localeCompare(nameB);
   });
-  const top = limit ? sortedEntries.slice(0, limit) : sortedEntries;
-
-  return top.map(([userId, points]) => ({
+  return sortedEntries.map(([userId, points]) => ({
     userId,
     name: nameById.get(userId) ?? "Unbekannt",
     points,
@@ -221,9 +218,8 @@ export async function getGlobalLeaderboard(
   }));
 }
 
-export async function getGroupLeaderboard(
+async function computeGroupLeaderboard(
   groupId: string,
-  limit?: number,
 ): Promise<LeaderboardEntry[]> {
   await dbConnect();
 
@@ -274,7 +270,38 @@ export async function getGroupLeaderboard(
     })
     .sort((a, b) => b.points - a.points || a.name.localeCompare(b.name));
 
-  return limit ? sorted.slice(0, limit) : sorted;
+  return sorted;
+}
+
+/** Tag of every cached ranking; actions that change points, names or memberships call updateTag with it. */
+export const LEADERBOARD_TAG = "leaderboard";
+
+// A ranking sums up every prediction of the season, so it is computed at most once a minute (and again right
+// after something that changes it) instead of on every page view.
+const cachedGlobalLeaderboard = unstable_cache(
+  () => computeGlobalLeaderboard(),
+  ["global-leaderboard-v1"],
+  { revalidate: 60, tags: [LEADERBOARD_TAG] },
+);
+const cachedGroupLeaderboard = unstable_cache(
+  (groupId: string) => computeGroupLeaderboard(groupId),
+  ["group-leaderboard-v1"],
+  { revalidate: 60, tags: [LEADERBOARD_TAG] },
+);
+
+export async function getGlobalLeaderboard(
+  limit?: number,
+): Promise<LeaderboardEntry[]> {
+  const all = await cachedGlobalLeaderboard();
+  return limit ? all.slice(0, limit) : all;
+}
+
+export async function getGroupLeaderboard(
+  groupId: string,
+  limit?: number,
+): Promise<LeaderboardEntry[]> {
+  const all = await cachedGroupLeaderboard(groupId);
+  return limit ? all.slice(0, limit) : all;
 }
 
 export interface VorbereitungLeaderboardEntry {

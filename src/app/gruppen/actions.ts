@@ -2,7 +2,8 @@
 
 import { randomBytes } from "crypto";
 import { cookies } from "next/headers";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
+import { LEADERBOARD_TAG } from "@/lib/leaderboard";
 import { Types } from "mongoose";
 import { auth } from "@/auth";
 import { dbConnect } from "@/lib/mongodb";
@@ -73,6 +74,7 @@ export async function createGroup(name: string, isPublic: boolean): Promise<Acti
 
   revalidatePath("/gruppen");
   revalidatePath("/tippspiel");
+  updateTag(LEADERBOARD_TAG);
 
   return { success: true };
 }
@@ -102,6 +104,7 @@ export async function joinGroupByInviteCode(inviteCode: string): Promise<ActionR
 
   revalidatePath("/gruppen");
   revalidatePath("/tippspiel");
+  updateTag(LEADERBOARD_TAG);
 
   return { success: true };
 }
@@ -132,6 +135,7 @@ export async function joinPublicGroup(groupId: string): Promise<ActionResult> {
 
   revalidatePath("/gruppen");
   revalidatePath("/tippspiel");
+  updateTag(LEADERBOARD_TAG);
 
   return { success: true };
 }
@@ -144,6 +148,7 @@ export async function setActiveGroup(groupId: string): Promise<void> {
     path: "/",
   });
   revalidatePath("/tippspiel");
+  updateTag(LEADERBOARD_TAG);
   revalidatePath("/gruppen");
 }
 
@@ -317,6 +322,7 @@ export async function promoteToAssistant(
 
   revalidatePath("/gruppen");
   revalidatePath("/tippspiel");
+  updateTag(LEADERBOARD_TAG);
   return { success: true };
 }
 
@@ -340,6 +346,7 @@ export async function demoteAssistant(
 
   revalidatePath("/gruppen");
   revalidatePath("/tippspiel");
+  updateTag(LEADERBOARD_TAG);
   return { success: true };
 }
 
@@ -379,6 +386,7 @@ export async function renameGroup(groupId: string, name: string): Promise<Action
 
   revalidatePath("/gruppen");
   revalidatePath("/tippspiel");
+  updateTag(LEADERBOARD_TAG);
   return { success: true };
 }
 
@@ -430,6 +438,7 @@ export async function leaveGroup(groupId: string): Promise<ActionResult> {
 
   revalidatePath("/gruppen");
   revalidatePath("/tippspiel");
+  updateTag(LEADERBOARD_TAG);
   return { success: true };
 }
 
@@ -468,6 +477,7 @@ export async function kickGroupMember(
 
   revalidatePath("/gruppen");
   revalidatePath("/tippspiel");
+  updateTag(LEADERBOARD_TAG);
   return { success: true };
 }
 
@@ -629,6 +639,7 @@ export async function acceptGroupInvite(inviteId: string): Promise<ActionResult>
   revalidatePath("/profile");
   revalidatePath("/gruppen");
   revalidatePath("/tippspiel");
+  updateTag(LEADERBOARD_TAG);
   return { success: true };
 }
 
