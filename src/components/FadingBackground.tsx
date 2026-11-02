@@ -35,7 +35,7 @@ export default function FadingBackground({
             "--page-bg-blur": blurPx ? `${blurPx}px` : undefined,
           } as CSSProperties
         }
-        className={`page-bg pointer-events-none fixed inset-0 -z-10 ${scaleClassName}`}
+        className={`page-bg pointer-events-none fixed inset-x-0 top-0 -z-10 h-[100lvh] transform-gpu ${scaleClassName}`}
       >
         {mobileSrc ? (
           <>
