@@ -105,10 +105,11 @@ export default function LeaderboardWidget({
             <Leaderboard
               bare
               entries={selectedGroup?.entries ?? []}
+              // The dropdown already names the group; with a single group there is none, so the title does.
               title={
-                selectedGroup
-                  ? `Rangliste: ${selectedGroup.groupName}`
-                  : "Gruppenrangliste"
+                groupLeaderboards.length === 1 && selectedGroup
+                  ? selectedGroup.groupName
+                  : "Rangliste"
               }
             />
           </div>
