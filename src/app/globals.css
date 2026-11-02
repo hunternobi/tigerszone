@@ -384,6 +384,13 @@ h6 {
   [data-glass-scope][data-webgl="true"] .glass-panel {
     background: none;
     backdrop-filter: none !important;
+    /* No white outline: the shader draws the lit edge itself. Only the soft drop shadow stays. */
+    border-color: transparent;
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.32);
+  }
+  [data-glass-scope][data-webgl="true"] .glass-panel::before,
+  [data-glass-scope][data-webgl="true"] .glass-panel::after {
+    display: none;
   }
 
   /* Shared hover behaviour for every glass element (panels, pills, tiles) */
