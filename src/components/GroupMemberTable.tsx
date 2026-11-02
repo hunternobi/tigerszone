@@ -154,11 +154,6 @@ export default function GroupMemberTable({
           Verlassen
         </button>
       </div>
-      {canManage && (
-        <p className="mt-1 mb-2 text-[0.8125rem] text-white/60">
-          Über das Menü-Symbol neben einem Mitglied öffnest du die Optionen.
-        </p>
-      )}
       {entries.length === 0 ? (
         <p className="mt-3 text-[0.9375rem] text-white/70">
           Noch keine Einträge vorhanden.
