@@ -379,6 +379,13 @@ h6 {
       0 4px 16px rgba(0, 0, 0, 0.3);
   }
 
+  /* Where the shared glass canvas runs (SharedGlass), the cards' own CSS glass (fill and blur) is switched off:
+     the canvas behind them draws the refracting glass. The CSS rim and shadow stay for a defined edge. */
+  [data-glass-scope][data-webgl="true"] .glass-panel {
+    background: none;
+    backdrop-filter: none !important;
+  }
+
   /* Shared hover behaviour for every glass element (panels, pills, tiles) */
   .glass-interactive {
     transition:
