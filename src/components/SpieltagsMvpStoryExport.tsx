@@ -28,9 +28,7 @@ function ensurePoppinsLoaded(): Promise<void> {
         const font = new FontFace(
           "Poppins",
           `url(/fonts/poppins-${weight}.woff2)`,
-          {
-            weight: String(weight),
-          },
+          { weight: String(weight) },
         );
         await font.load();
         document.fonts.add(font);
@@ -67,58 +65,9 @@ function roundRectPath(
   ctx.closePath();
 }
 
-/**
- * Frosted glass panel like the site's cards: the blurred photo inside, a light tint, a lit rim (bright arc top
- * left, cool one bottom right) and a soft drop shadow. Browsers without canvas filters just skip the blur.
- */
-function fillGlassCard(
-  ctx: CanvasRenderingContext2D,
-  photo: HTMLImageElement,
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-  radius: number,
-) {
-  ctx.save();
-  ctx.shadowColor = "rgba(0,0,0,0.45)";
-  ctx.shadowBlur = 70;
-  ctx.shadowOffsetY = 28;
-  roundRectPath(ctx, x, y, width, height, radius);
-  ctx.fillStyle = "rgba(10,15,61,0.5)";
-  ctx.fill();
-  ctx.restore();
-
-  ctx.save();
-  roundRectPath(ctx, x, y, width, height, radius);
-  ctx.clip();
-  if ("filter" in ctx) {
-    ctx.filter = "blur(28px) saturate(1.4)";
-    drawCoverImage(ctx, photo, -60, -60, WIDTH + 120, HEIGHT + 120);
-    ctx.filter = "none";
-  }
-  const tint = ctx.createLinearGradient(x, y, x + width, y + height);
-  tint.addColorStop(0, "rgba(255,255,255,0.20)");
-  tint.addColorStop(0.5, "rgba(255,255,255,0.08)");
-  tint.addColorStop(1, "rgba(255,255,255,0.12)");
-  ctx.fillStyle = tint;
-  ctx.fillRect(x, y, width, height);
-  ctx.restore();
-
-  const rim = ctx.createLinearGradient(x, y, x + width, y + height);
-  rim.addColorStop(0, "rgba(255,255,255,0.75)");
-  rim.addColorStop(0.3, "rgba(255,255,255,0.14)");
-  rim.addColorStop(0.7, "rgba(255,255,255,0.1)");
-  rim.addColorStop(1, "rgba(190,215,255,0.55)");
-  roundRectPath(ctx, x, y, width, height, radius);
-  ctx.strokeStyle = rim;
-  ctx.lineWidth = 3;
-  ctx.stroke();
-}
-
 function drawCoverImage(
   ctx: CanvasRenderingContext2D,
-  img: HTMLImageElement,
+  img: CanvasImageSource & { width: number; height: number },
   x: number,
   y: number,
   width: number,
@@ -140,117 +89,133 @@ function drawCoverImage(
   ctx.drawImage(img, dx, dy, drawWidth, drawHeight);
 }
 
-function wrapText(
-  ctx: CanvasRenderingContext2D,
-  text: string,
-  maxWidth: number,
-): string[] {
-  const words = text.split(" ");
-  const lines: string[] = [];
-  let currentLine = "";
-  for (const word of words) {
-    const testLine = currentLine ? `${currentLine} ${word}` : word;
-    if (ctx.measureText(testLine).width > maxWidth && currentLine) {
-      lines.push(currentLine);
-      currentLine = word;
-    } else {
-      currentLine = testLine;
+// Space the library adds around each glass element for its drop shadow (its SHADOW_PAD).
+const LIB_SHADOW_PAD = 20;
+
+interface LibraryGlass {
+  canvas: HTMLCanvasElement;
+}
+
+/**
+ * The real liquid glass: the ybouane/liquidglass library itself renders the card (refraction, blur, chromatic
+ * aberration, lit edge, shadow) on a hidden stage that holds the same photo and veil, exactly as it does on
+ * the site. Speed does not matter for a still image, so the stage is given time to settle and then the
+ * library's canvas is copied. Returns null if anything fails (the caller then draws a frosted fallback).
+ */
+async function renderLibraryGlass(
+  card: { x: number; y: number; width: number; height: number; radius: number },
+  veil: string[][],
+): Promise<LibraryGlass | null> {
+  // 1x1 px window: the stage inside keeps its real size and position for the library's measurements.
+  const holder = document.createElement("div");
+  holder.style.cssText =
+    "position:fixed;left:0;top:0;width:1px;height:1px;overflow:hidden;pointer-events:none;";
+  const stage = document.createElement("div");
+  stage.style.cssText = `position:absolute;left:0;top:0;width:${WIDTH}px;height:${HEIGHT}px;overflow:hidden;background:#0a0f3d;`;
+
+  const photo = document.createElement("img");
+  photo.src = "/images/jubel.jpg";
+  photo.style.cssText =
+    "position:absolute;left:0;top:0;width:100%;height:100%;object-fit:cover;";
+  const scrim = document.createElement("div");
+  scrim.style.cssText = `position:absolute;left:0;top:0;width:100%;height:100%;background:linear-gradient(to bottom, ${veil
+    .map(([stop, color]) => `${color} ${stop}`)
+    .join(", ")});`;
+  const glass = document.createElement("div");
+  glass.style.cssText = `position:absolute;left:${card.x}px;top:${card.y}px;width:${card.width}px;height:${card.height}px;`;
+  glass.dataset.config = JSON.stringify({
+    floating: true,
+    cornerRadius: card.radius,
+    blurAmount: 0.4,
+    refraction: 0.85,
+    chromAberration: 0.05,
+  });
+
+  stage.append(photo, scrim, glass);
+  holder.append(stage);
+  document.body.append(holder);
+
+  let instance: { destroy(): void } | null = null;
+  try {
+    await photo.decode();
+    const { LiquidGlass } = await import("@/vendor/liquidglass");
+    instance = await LiquidGlass.init({ root: stage, glassElements: [glass] });
+
+    // Let the render loop draw and settle (the library paints on animation frames), then wait until the card
+    // really has pixels.
+    const glassCanvas = glass.querySelector("canvas");
+    if (!glassCanvas) return null;
+    await new Promise((resolve) => setTimeout(resolve, 1600));
+    const probe = glassCanvas.getContext("2d");
+    for (let attempt = 0; attempt < 20; attempt++) {
+      const cx = Math.floor(glassCanvas.width / 2);
+      const cy = Math.floor(glassCanvas.height / 2);
+      const alpha = probe ? probe.getImageData(cx, cy, 1, 1).data[3] : 255;
+      if (alpha > 0) break;
+      await new Promise((resolve) => setTimeout(resolve, 250));
     }
+
+    const copy = document.createElement("canvas");
+    copy.width = glassCanvas.width;
+    copy.height = glassCanvas.height;
+    copy.getContext("2d")?.drawImage(glassCanvas, 0, 0);
+    return { canvas: copy };
+  } catch (error) {
+    console.warn(
+      "Story: liquid glass library failed, using the fallback.",
+      error,
+    );
+    return null;
+  } finally {
+    instance?.destroy();
+    holder.remove();
   }
-  if (currentLine) lines.push(currentLine);
-  return lines;
 }
 
-interface GameBlock {
-  homeLines: string[];
-  awayLines: string[];
-  scoreText: string;
-  blockHeight: number;
-}
-
-function computeGameBlock(
+/** Fallback without WebGL: frosted panel with the blurred photo, a light tint, a lit rim and a soft shadow. */
+function fillFrostedCard(
   ctx: CanvasRenderingContext2D,
-  game: {
-    homeTeamId: string;
-    awayTeamId: string;
-    homeScore: number;
-    awayScore: number;
-  },
-  teamFont: string,
-  teamLineHeight: number,
-  columnWidth: number,
-): GameBlock {
-  ctx.font = teamFont;
-  const homeLines = wrapText(ctx, getTeamName(game.homeTeamId), columnWidth);
-  const awayLines = wrapText(ctx, getTeamName(game.awayTeamId), columnWidth);
-  const numLines = Math.max(homeLines.length, awayLines.length, 1);
-  return {
-    homeLines,
-    awayLines,
-    scoreText: `${game.homeScore}:${game.awayScore}`,
-    blockHeight: numLines * teamLineHeight,
-  };
-}
-
-// Score stays perfectly centered; team names are right/left-aligned toward it
-// and wrap onto extra lines instead of overflowing, mirroring the Tippabgabe layout.
-function drawGameBlock(
-  ctx: CanvasRenderingContext2D,
-  block: GameBlock,
-  centerX: number,
-  blockTopY: number,
-  centerZoneHalfWidth: number,
-  teamFont: string,
-  teamLineHeight: number,
-  scoreFont: string,
+  photo: HTMLCanvasElement,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  radius: number,
 ) {
-  const blockCenterY = blockTopY + block.blockHeight / 2;
-
-  const capsuleWidth = centerZoneHalfWidth * 2 - 36;
-  const capsuleHeight = 92;
-  roundRectPath(
-    ctx,
-    centerX - capsuleWidth / 2,
-    blockCenterY - capsuleHeight / 2,
-    capsuleWidth,
-    capsuleHeight,
-    capsuleHeight / 2,
-  );
-  ctx.fillStyle = "rgba(255,255,255,0.16)";
+  ctx.save();
+  ctx.shadowColor = "rgba(0,0,0,0.45)";
+  ctx.shadowBlur = 70;
+  ctx.shadowOffsetY = 28;
+  roundRectPath(ctx, x, y, width, height, radius);
+  ctx.fillStyle = "rgba(10,15,61,0.5)";
   ctx.fill();
-  ctx.strokeStyle = "rgba(255,255,255,0.4)";
-  ctx.lineWidth = 2.5;
+  ctx.restore();
+
+  ctx.save();
+  roundRectPath(ctx, x, y, width, height, radius);
+  ctx.clip();
+  if ("filter" in ctx) {
+    ctx.filter = "blur(28px) saturate(1.4)";
+    ctx.drawImage(photo, -60, -60, WIDTH + 120, HEIGHT + 120);
+    ctx.filter = "none";
+  }
+  const tint = ctx.createLinearGradient(x, y, x + width, y + height);
+  tint.addColorStop(0, "rgba(255,255,255,0.20)");
+  tint.addColorStop(0.5, "rgba(255,255,255,0.08)");
+  tint.addColorStop(1, "rgba(255,255,255,0.12)");
+  ctx.fillStyle = tint;
+  ctx.fillRect(x, y, width, height);
+  ctx.restore();
+
+  const rim = ctx.createLinearGradient(x, y, x + width, y + height);
+  rim.addColorStop(0, "rgba(255,255,255,0.75)");
+  rim.addColorStop(0.3, "rgba(255,255,255,0.14)");
+  rim.addColorStop(0.7, "rgba(255,255,255,0.1)");
+  rim.addColorStop(1, "rgba(190,215,255,0.55)");
+  roundRectPath(ctx, x, y, width, height, radius);
+  ctx.strokeStyle = rim;
+  ctx.lineWidth = 3;
   ctx.stroke();
-
-  ctx.font = scoreFont;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillStyle = "#ffffff";
-  ctx.fillText(block.scoreText, centerX, blockCenterY + 3);
-
-  const homeRightEdge = centerX - centerZoneHalfWidth;
-  const awayLeftEdge = centerX + centerZoneHalfWidth;
-
-  ctx.font = teamFont;
-  ctx.fillStyle = "#ffffff";
-
-  ctx.textAlign = "right";
-  const homeStartY =
-    blockCenterY -
-    (block.homeLines.length * teamLineHeight) / 2 +
-    teamLineHeight / 2;
-  block.homeLines.forEach((line, i) => {
-    ctx.fillText(line, homeRightEdge, homeStartY + i * teamLineHeight);
-  });
-
-  ctx.textAlign = "left";
-  const awayStartY =
-    blockCenterY -
-    (block.awayLines.length * teamLineHeight) / 2 +
-    teamLineHeight / 2;
-  block.awayLines.forEach((line, i) => {
-    ctx.fillText(line, awayLeftEdge, awayStartY + i * teamLineHeight);
-  });
 }
 
 interface PillItem {
@@ -264,11 +229,12 @@ function wrapPills(
   centerX: number,
   startY: number,
   maxWidth: number,
+  scale = 1,
 ): number {
-  const paddingX = 32;
-  const pillHeight = 64;
-  const gapX = 18;
-  const gapY = 18;
+  const paddingX = 32 * scale;
+  const pillHeight = 64 * scale;
+  const gapX = 18 * scale;
+  const gapY = 18 * scale;
 
   const items: PillItem[] = names.map((name) => ({
     name,
@@ -305,7 +271,7 @@ function wrapPills(
       ctx.fillStyle = "rgba(255,255,255,0.15)";
       ctx.fill();
       ctx.strokeStyle = "rgba(255,255,255,0.4)";
-      ctx.lineWidth = 2.5;
+      ctx.lineWidth = 2.5 * scale;
       ctx.stroke();
       ctx.fillStyle = "#ffffff";
       ctx.fillText(item.name, x + item.width / 2, y + pillHeight / 2 + 2);
@@ -314,6 +280,61 @@ function wrapPills(
     y += pillHeight + gapY;
   }
   return y;
+}
+
+// One game as on the tip page of a phone: home above away, the result as one box per team on the right.
+const ROW_HEIGHT = 96;
+const BOX_SIZE = 84;
+
+function drawGame(
+  ctx: CanvasRenderingContext2D,
+  game: {
+    homeTeamId: string;
+    awayTeamId: string;
+    homeScore: number;
+    awayScore: number;
+  },
+  cardX: number,
+  cardWidth: number,
+  topY: number,
+) {
+  const nameX = cardX + 56;
+  const boxX = cardX + cardWidth - 48 - BOX_SIZE;
+  const maxNameWidth = boxX - 28 - nameX;
+  const rows = [
+    { id: game.homeTeamId, score: game.homeScore },
+    { id: game.awayTeamId, score: game.awayScore },
+  ];
+
+  rows.forEach((row, index) => {
+    const centerY = topY + index * ROW_HEIGHT + ROW_HEIGHT / 2;
+    const isTigers = row.id === "straubing-tigers";
+
+    // The name shrinks a little instead of wrapping, so the two lines of a game always stay two lines.
+    let size = 40;
+    const name = getTeamName(row.id);
+    ctx.font = `${isTigers ? 800 : 600} ${size}px ${FONT}`;
+    while (ctx.measureText(name).width > maxNameWidth && size > 26) {
+      size -= 2;
+      ctx.font = `${isTigers ? 800 : 600} ${size}px ${FONT}`;
+    }
+    ctx.textAlign = "left";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = "#ffffff";
+    ctx.fillText(name, nameX, centerY + 2);
+
+    roundRectPath(ctx, boxX, centerY - BOX_SIZE / 2, BOX_SIZE, BOX_SIZE, 26);
+    ctx.fillStyle = "rgba(255,255,255,0.16)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,0.42)";
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    ctx.font = `800 52px ${FONT}`;
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#ffffff";
+    ctx.fillText(String(row.score), boxX + BOX_SIZE / 2, centerY + 3);
+  });
 }
 
 async function renderStoryCanvas(
@@ -332,16 +353,26 @@ async function renderStoryCanvas(
     ensurePoppinsLoaded(),
   ]);
 
-  drawCoverImage(ctx, bgImage, 0, 0, WIDTH, HEIGHT);
-
-  // Dark navy veil, a little lighter in the middle so the photo still shows, darker where text sits.
-  const overlay = ctx.createLinearGradient(0, 0, 0, HEIGHT);
-  overlay.addColorStop(0, "rgba(10,15,61,0.62)");
-  overlay.addColorStop(0.35, "rgba(10,15,61,0.5)");
-  overlay.addColorStop(0.7, "rgba(10,15,61,0.72)");
-  overlay.addColorStop(1, "rgba(10,15,61,0.95)");
-  ctx.fillStyle = overlay;
-  ctx.fillRect(0, 0, WIDTH, HEIGHT);
+  // Photo with a dark navy veil (a little lighter in the middle, darker where text sits). This is also what
+  // the glass card refracts, so it is kept as its own canvas, free of text.
+  const backdrop = document.createElement("canvas");
+  backdrop.width = WIDTH;
+  backdrop.height = HEIGHT;
+  const backdropCtx = backdrop.getContext("2d");
+  if (!backdropCtx) throw new Error("Canvas wird nicht unterstützt.");
+  drawCoverImage(backdropCtx, bgImage, 0, 0, WIDTH, HEIGHT);
+  const veil: string[][] = [
+    ["0%", "rgba(10,15,61,0.62)"],
+    ["35%", "rgba(10,15,61,0.5)"],
+    ["70%", "rgba(10,15,61,0.72)"],
+    ["100%", "rgba(10,15,61,0.95)"],
+  ];
+  const overlay = backdropCtx.createLinearGradient(0, 0, 0, HEIGHT);
+  for (const [stop, color] of veil)
+    overlay.addColorStop(parseFloat(stop) / 100, color);
+  backdropCtx.fillStyle = overlay;
+  backdropCtx.fillRect(0, 0, WIDTH, HEIGHT);
+  ctx.drawImage(backdrop, 0, 0);
 
   // Logo with a soft glow ring
   const logoSize = 128;
@@ -397,73 +428,67 @@ async function renderStoryCanvas(
 
   // Everything from the card down is drawn twice: once on a scratch canvas to measure how much room is
   // left, then for real, nudged down so a short list does not leave a hole above the sponsor line.
-  const drawBody = (ctx: CanvasRenderingContext2D, offset: number): number => {
+  const cardX = 60;
+  const cardWidth = WIDTH - cardX * 2;
+  const gameGap = 52;
+  const cardPaddingY = 52;
+  const gamesHeight =
+    mvp.games.length * ROW_HEIGHT * 2 +
+    gameGap * Math.max(0, mvp.games.length - 1);
+  const cardHeight = cardPaddingY * 2 + gamesHeight;
+
+  const cardRadius = 70;
+  const drawBody = (
+    target: CanvasRenderingContext2D,
+    offset: number,
+    glass: LibraryGlass | null | "dry",
+    pillScale: number,
+  ): number => {
     const cardY = headingY + 90 + offset;
+    if (glass !== "dry") {
+      if (glass) {
+        target.drawImage(
+          glass.canvas,
+          cardX - LIB_SHADOW_PAD,
+          cardY - LIB_SHADOW_PAD,
+          cardWidth + LIB_SHADOW_PAD * 2,
+          cardHeight + LIB_SHADOW_PAD * 2,
+        );
+      } else {
+        fillFrostedCard(
+          target,
+          backdrop,
+          cardX,
+          cardY,
+          cardWidth,
+          cardHeight,
+          cardRadius,
+        );
+      }
+    }
 
-    const cardPaddingX = 70;
-    const cardWidth = WIDTH - cardPaddingX * 2;
-    const cardInnerPaddingX = 40;
-    const centerZoneHalfWidth = 120;
-    const columnWidth = cardWidth / 2 - cardInnerPaddingX - centerZoneHalfWidth;
-    const teamFont = `700 34px ${FONT}`;
-    const scoreFont = `800 54px ${FONT}`;
-    const teamLineHeight = 42;
-    const gameGap = 56;
-    const cardTopPadding = 56;
-    const cardBottomPadding = 56;
-    const minRowHeight = 92;
-
-    const blocks = mvp.games.map((game) =>
-      computeGameBlock(
-        ctx,
-        game,
-        teamFont,
-        teamLineHeight,
-        Math.max(columnWidth, 120),
-      ),
-    );
-    const blocksHeight =
-      blocks.reduce(
-        (sum, block) => sum + Math.max(block.blockHeight, minRowHeight),
-        0,
-      ) +
-      gameGap * Math.max(0, blocks.length - 1);
-    const cardHeight = cardTopPadding + blocksHeight + cardBottomPadding;
-    fillGlassCard(ctx, bgImage, cardPaddingX, cardY, cardWidth, cardHeight, 56);
-
-    let blockY = cardY + cardTopPadding;
-    blocks.forEach((block, index) => {
-      const rowHeight = Math.max(block.blockHeight, minRowHeight);
-      drawGameBlock(
-        ctx,
-        { ...block, blockHeight: rowHeight },
-        WIDTH / 2,
-        blockY,
-        centerZoneHalfWidth,
-        teamFont,
-        teamLineHeight,
-        scoreFont,
-      );
-      blockY += rowHeight;
-      if (index < blocks.length - 1) {
-        const lineY = blockY + gameGap / 2;
-        ctx.strokeStyle = "rgba(255,255,255,0.18)";
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(cardPaddingX + cardInnerPaddingX, lineY);
-        ctx.lineTo(cardPaddingX + cardWidth - cardInnerPaddingX, lineY);
-        ctx.stroke();
-        blockY += gameGap;
+    let gameY = cardY + cardPaddingY;
+    mvp.games.forEach((game, index) => {
+      drawGame(target, game, cardX, cardWidth, gameY);
+      gameY += ROW_HEIGHT * 2;
+      if (index < mvp.games.length - 1) {
+        const lineY = gameY + gameGap / 2;
+        target.strokeStyle = "rgba(255,255,255,0.2)";
+        target.lineWidth = 2;
+        target.beginPath();
+        target.moveTo(cardX + 56, lineY);
+        target.lineTo(cardX + cardWidth - 56, lineY);
+        target.stroke();
+        gameY += gameGap;
       }
     });
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
 
+    target.textAlign = "center";
+    target.textBaseline = "middle";
     let y = cardY + cardHeight + 96;
-
-    ctx.font = `700 40px ${FONT}`;
-    ctx.fillStyle = "#ffffff";
-    ctx.fillText(
+    target.font = `700 40px ${FONT}`;
+    target.fillStyle = "#ffffff";
+    target.fillText(
       mvp.entries.length === 0
         ? "Diesmal war niemand exakt richtig"
         : "Exakt richtig getippt",
@@ -472,34 +497,55 @@ async function renderStoryCanvas(
     );
     y += 66;
 
-    let contentBottom = y;
+    let bottom = y;
     if (mvp.entries.length > 0) {
-      ctx.font = `600 30px ${FONT}`;
-      contentBottom = wrapPills(
-        ctx,
+      target.font = `600 ${30 * pillScale}px ${FONT}`;
+      bottom = wrapPills(
+        target,
         mvp.entries.map((entry) => entry.name),
         WIDTH / 2,
         y,
         cardWidth,
+        pillScale,
       );
     }
-    return contentBottom;
+    return bottom;
   };
+
   const scratch = document.createElement("canvas");
   scratch.width = WIDTH;
   scratch.height = HEIGHT;
   const scratchCtx = scratch.getContext("2d");
-  const measuredBottom = scratchCtx ? drawBody(scratchCtx, 0) : HEIGHT;
-  const sponsorZoneTop = HEIGHT - 64 - 52 - 96 - 58;
+  const footerY = HEIGHT - 64;
+  // Many right tippers: the pills shrink step by step until the list fits above the smallest sponsor block.
+  const smallestSponsorTop = footerY - 52 - 56 - 58;
+  let pillScale = 1;
+  let measuredBottom = HEIGHT;
+  for (const candidate of [1, 0.9, 0.8, 0.7, 0.6]) {
+    pillScale = candidate;
+    measuredBottom = scratchCtx
+      ? drawBody(scratchCtx, 0, "dry", candidate)
+      : HEIGHT;
+    if (measuredBottom <= smallestSponsorTop - 20) break;
+  }
+  const sponsorZoneTop = footerY - 52 - 96 - 58;
   const bodyOffset = Math.max(
     0,
     Math.min(150, (sponsorZoneTop - 20 - measuredBottom) * 0.45),
   );
-  const contentBottom = drawBody(ctx, bodyOffset);
+  const glass = await renderLibraryGlass(
+    {
+      x: cardX,
+      y: headingY + 90 + bodyOffset,
+      width: cardWidth,
+      height: cardHeight,
+      radius: cardRadius,
+    },
+    veil,
+  );
+  const contentBottom = drawBody(ctx, bodyOffset, glass, pillScale);
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-
-  const footerY = HEIGHT - 64;
 
   // "Präsentiert von" + Sigl Immobilien, centred above the footer line. The logo is white and sits on the
   // darkest part of the veil. With many names the free space shrinks and the logo with it.
@@ -512,7 +558,7 @@ async function renderStoryCanvas(
     Math.min(siglMaxHeight, siglBottom - (contentBottom + 20) - labelSpace),
   );
   const siglWidth = Math.min(
-    (WIDTH - 140) * 0.4,
+    cardWidth * 0.4,
     siglHeight * (siglLogo.naturalWidth / siglLogo.naturalHeight),
   );
   const siglDrawHeight =
@@ -520,7 +566,6 @@ async function renderStoryCanvas(
   const siglTop = siglBottom - siglDrawHeight;
   ctx.font = `500 26px ${FONT}`;
   ctx.fillStyle = "rgba(255,255,255,0.72)";
-  ctx.textAlign = "center";
   ctx.fillText("Präsentiert von", WIDTH / 2, siglTop - 30);
   ctx.drawImage(
     siglLogo,
