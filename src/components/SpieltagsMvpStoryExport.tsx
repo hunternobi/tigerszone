@@ -258,9 +258,10 @@ async function renderStoryCanvas(mvp: SpieltagsMvpData): Promise<HTMLCanvasEleme
   const ctx = canvas.getContext("2d");
   if (!ctx) throw new Error("Canvas wird nicht unterstützt.");
 
-  const [bgImage, logoImage] = await Promise.all([
+  const [bgImage, logoImage, siglLogo] = await Promise.all([
     loadImage("/images/jubel.jpg"),
     loadImage("/images/TigersZone_Logo.png"),
+    loadImage("/images/partners/sigl-immobilien.png"),
     ensurePoppinsLoaded(),
   ]);
 
@@ -346,9 +347,10 @@ async function renderStoryCanvas(mvp: SpieltagsMvpData): Promise<HTMLCanvasEleme
   );
   y += 70;
 
+  let contentBottom = y;
   if (mvp.entries.length > 0) {
     ctx.font = `600 30px ${FONT}`;
-    wrapPills(
+    contentBottom = wrapPills(
       ctx,
       mvp.entries.map((entry) => entry.name),
       WIDTH / 2,
@@ -357,10 +359,34 @@ async function renderStoryCanvas(mvp: SpieltagsMvpData): Promise<HTMLCanvasEleme
     );
   }
 
+  const footerY = HEIGHT - 70;
+
+  // Sigl Immobilien, centred above the footer line. The logo is white, so it reads well on the dark
+  // gradient; with many names the pills push the free space together and the logo shrinks to fit.
+  const siglBottom = footerY - 60;
+  const siglMaxHeight = 200;
+  const siglMinHeight = 90;
+  const siglHeight = Math.max(
+    siglMinHeight,
+    Math.min(siglMaxHeight, siglBottom - (contentBottom + 30))
+  );
+  const siglWidth = Math.min(
+    cardWidth * 0.62,
+    siglHeight * (siglLogo.naturalWidth / siglLogo.naturalHeight)
+  );
+  const siglDrawHeight = siglWidth * (siglLogo.naturalHeight / siglLogo.naturalWidth);
+  ctx.drawImage(
+    siglLogo,
+    WIDTH / 2 - siglWidth / 2,
+    siglBottom - siglDrawHeight,
+    siglWidth,
+    siglDrawHeight
+  );
+
   ctx.font = `500 28px ${FONT}`;
   ctx.fillStyle = "rgba(255,255,255,0.6)";
   ctx.textAlign = "center";
-  ctx.fillText("tigerszone.de · Fotos: RS-Sportfoto.de", WIDTH / 2, HEIGHT - 70);
+  ctx.fillText("tigerszone.de · Fotos: RS-Sportfoto.de", WIDTH / 2, footerY);
 
   return canvas;
 }
