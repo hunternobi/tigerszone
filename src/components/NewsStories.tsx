@@ -226,17 +226,16 @@ export default function NewsStories() {
         </button>
         <button
           type="button"
-          aria-label="Weiter"
-          onClick={next}
+          aria-label={index < count - 1 ? "Weiter" : "Schließen"}
+          onClick={index < count - 1 ? next : close}
           className="absolute inset-y-0 right-0 z-0 flex w-2/3 items-center justify-end pr-1.5"
         >
-          {index < count - 1 && (
-            <ChevronRight
-              size={28}
-              strokeWidth={2.5}
-              className="rounded-full bg-black/25 p-1 text-white/85"
-            />
-          )}
+          {/* On the last slide the arrow closes the story. */}
+          <ChevronRight
+            size={28}
+            strokeWidth={2.5}
+            className="rounded-full bg-black/25 p-1 text-white/85"
+          />
         </button>
 
         <div className="pointer-events-none relative z-10 h-full">
