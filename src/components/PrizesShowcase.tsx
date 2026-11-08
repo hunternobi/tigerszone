@@ -1,10 +1,11 @@
 import { Trophy } from "lucide-react";
+import PillButton from "@/components/PillButton";
 import Reveal from "@/components/Reveal";
 import { PLACE_STYLE, PRIZES } from "@/lib/prizes";
 
-/** The prizes on the landing page: a podium of three glass cards, gold in the middle on larger screens. */
+/** The prizes on the landing page: a podium of three glass cards, gold in the middle (phones included). */
 export default function PrizesShowcase() {
-  // Podium order on wide screens: 2nd, 1st, 3rd.
+  // Podium order: 2nd, 1st, 3rd.
   const podium = [PRIZES[1], PRIZES[0], PRIZES[2]];
 
   return (
@@ -22,36 +23,33 @@ export default function PrizesShowcase() {
           </h2>
         </div>
 
-        <ol className="mt-5 grid gap-2.5 sm:mt-8 sm:grid-cols-3 sm:items-end sm:gap-4">
+        <ol className="mt-5 grid grid-cols-3 items-end gap-2 sm:mt-8 sm:gap-4">
           {podium.map((prize) => {
             const style = PLACE_STYLE[prize.place];
             const first = prize.place === 1;
             return (
               <li
                 key={prize.place}
-                className={`glass-panel flex items-center gap-4 border text-left sm:flex-col sm:justify-center sm:gap-3 sm:text-center ${style.glow} ${
-                  first
-                    ? "order-first p-4 sm:order-none sm:px-4 sm:py-9"
-                    : "p-3.5 sm:px-4 sm:py-6"
+                className={`glass-panel flex flex-col items-center justify-center gap-2 border px-1.5 text-center sm:gap-3 sm:px-4 ${style.glow} ${
+                  first ? "py-7 sm:py-9" : "py-4 sm:py-6"
                 }`}
               >
-                {/* Same width for every badge on phones, so the texts line up. */}
-                <span className="flex w-14 shrink-0 items-center justify-center sm:w-auto">
-                  <span
-                    className={`font-ui flex items-center justify-center rounded-full bg-gradient-to-b font-bold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_4px_12px_rgba(0,0,0,0.35)] ${style.badge} ${
-                      first ? "size-14 text-2xl" : "size-11 text-lg"
-                    }`}
-                  >
-                    {prize.place}
-                  </span>
+                <span
+                  className={`font-ui flex items-center justify-center rounded-full bg-gradient-to-b font-bold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_4px_12px_rgba(0,0,0,0.35)] ${style.badge} ${
+                    first ? "size-12 text-xl sm:size-14 sm:text-2xl" : "size-9 text-base sm:size-11 sm:text-lg"
+                  }`}
+                >
+                  {prize.place}
                 </span>
                 <div className="min-w-0">
-                  <p className="text-[0.75rem] font-semibold tracking-[0.12em] text-white/65 uppercase">
+                  <p className="text-[0.625rem] font-semibold tracking-[0.12em] text-white/65 uppercase sm:text-[0.75rem]">
                     {style.label}
                   </p>
                   <p
                     className={`font-ui mt-0.5 leading-tight font-semibold tracking-tight text-balance text-white ${
-                      first ? "text-xl sm:text-2xl" : "text-lg"
+                      first
+                        ? "text-[0.9375rem] sm:text-2xl"
+                        : "text-[0.8125rem] sm:text-lg"
                     }`}
                   >
                     {prize.title}
@@ -61,6 +59,10 @@ export default function PrizesShowcase() {
             );
           })}
         </ol>
+
+        <div className="mt-5 flex justify-center">
+          <PillButton href="/preise">Preise ansehen</PillButton>
+        </div>
       </div>
     </Reveal>
   );

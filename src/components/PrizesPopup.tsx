@@ -89,8 +89,8 @@ export default function PrizesPopup() {
           Die Preise sind da!
         </h2>
         <p className="mt-3 text-[0.9375rem] leading-snug text-white/80">
-          Ein riesiges Dankeschön an alle Unterstützer und Partner, die diese
-          Preise möglich machen. Das können die besten Tipper der Saison
+          Ein riesiges Dankeschön an unsere Unterstützer, die diese Preise
+          möglich machen. Das können die besten Tipper der Hauptrunde
           gewinnen:
         </p>
 

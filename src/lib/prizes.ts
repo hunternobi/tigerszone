@@ -1,14 +1,28 @@
 export interface Prize {
   place: 1 | 2 | 3;
-  /** What the winner gets. */
+  /** Short name, as shown on the cards. */
   title: string;
+  /** Longer explanation for the prizes page. */
+  detail: string;
 }
 
 // The prizes of the season, shown in the announcement pop-up and on the landing page.
 export const PRIZES: Prize[] = [
-  { place: 1, title: "Unterschriebenes Marcel Brandt Fantrikot" },
-  { place: 2, title: "The Squad Drops Ausstattung im Wert von 150 €" },
-  { place: 3, title: "2 Kasten Erl nach eigener Wahl" },
+  {
+    place: 1,
+    title: "Marcel Brandt Fantrikot",
+    detail: "Ein unterschriebenes Fantrikot von Marcel Brandt.",
+  },
+  {
+    place: 2,
+    title: "Squad Drops Ausstattung",
+    detail: "Ausstattung von The Squad Drops im Wert von 150 €.",
+  },
+  {
+    place: 3,
+    title: "2 Kasten Erl",
+    detail: "Zwei Kasten Erl nach eigener Wahl.",
+  },
 ];
 
 /** Change this when the pop-up should be shown again to everybody (e.g. after the prizes changed). */
