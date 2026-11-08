@@ -23,7 +23,7 @@ export default function StatsPicker({
   if (!current) return null;
 
   return (
-    <div className="space-y-4">
+    <div id="statistik-auswahl" className="scroll-mt-24 space-y-4">
       <CustomSelect
         variant="panel"
         aria-label="Statistik auswählen"

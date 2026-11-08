@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import type { CSSProperties, ReactNode } from "react";
-import SharedGlass from "@/components/SharedGlass";
 
 interface FadingBackgroundProps {
   src: string;
@@ -26,7 +25,7 @@ export default function FadingBackground({
   children,
 }: FadingBackgroundProps) {
   return (
-    <div data-glass-scope className="relative -mt-[4.5rem] overflow-hidden">
+    <div className="relative -mt-[4.5rem] overflow-hidden">
       <div
         data-page-background
         style={
@@ -35,7 +34,7 @@ export default function FadingBackground({
             "--page-bg-blur": blurPx ? `${blurPx}px` : undefined,
           } as CSSProperties
         }
-        className={`page-bg pointer-events-none fixed inset-x-0 top-0 -z-10 h-[100lvh] ${scaleClassName}`}
+        className={`page-bg pointer-events-none fixed inset-0 -z-10 ${scaleClassName}`}
       >
         {mobileSrc ? (
           <>
@@ -64,13 +63,6 @@ export default function FadingBackground({
           />
         )}
       </div>
-
-      <SharedGlass
-        src={src}
-        mobileSrc={mobileSrc}
-        opacity={opacity}
-        blurPx={blurPx}
-      />
 
       {overlayClassName && (
         <div

@@ -33,6 +33,7 @@ export default async function TippspielPage() {
     history,
     bonusPrediction,
     bonusDeadline,
+    allGlobalEntries,
   ] = await Promise.all([
     getActiveGroupId(),
     getMyGroups(),
@@ -42,14 +43,14 @@ export default async function TippspielPage() {
       : Promise.resolve(null),
     isAuthenticated ? getMyBonusPrediction("hauptrunde") : Promise.resolve({}),
     getBonusDeadline("hauptrunde"),
+    getGlobalLeaderboard(),
   ]);
 
   const bonusLocked = Boolean(bonusDeadline && new Date() >= bonusDeadline);
   const resolvedBonusPrediction = bonusPrediction ?? {};
 
   const meId = session?.user?.id;
-  const [allGlobalEntries, groupLeaderboards] = await Promise.all([
-    getGlobalLeaderboard(),
+  const [groupLeaderboards] = await Promise.all([
     Promise.all<GroupLeaderboardData>(
       myGroups.map(async (group) => ({
         groupId: group._id,

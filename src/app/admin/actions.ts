@@ -1,6 +1,8 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
+import { LEADERBOARD_TAG } from "@/lib/leaderboard";
+import { GAMES_TAG } from "@/lib/games";
 import { auth } from "@/auth";
 import { dbConnect } from "@/lib/mongodb";
 import { GameModel } from "@/models/Game";
@@ -61,6 +63,8 @@ export async function saveGameResult(
 
   revalidatePath("/admin");
   revalidatePath("/tippspiel");
+  updateTag(LEADERBOARD_TAG);
+  updateTag(GAMES_TAG);
 
   return { success: true };
 }
@@ -88,6 +92,7 @@ export async function saveBonusResult(
 
   revalidatePath("/admin");
   revalidatePath("/tippspiel");
+  updateTag(LEADERBOARD_TAG);
   revalidatePath("/gruppen");
 
   return { success: true };
@@ -130,6 +135,7 @@ export async function deleteGroup(groupId: string): Promise<ActionResult> {
   revalidatePath("/admin");
   revalidatePath("/gruppen");
   revalidatePath("/tippspiel");
+  updateTag(LEADERBOARD_TAG);
 
   return { success: true };
 }
@@ -162,6 +168,7 @@ export async function deleteUser(userId: string): Promise<ActionResult> {
   revalidatePath("/admin");
   revalidatePath("/gruppen");
   revalidatePath("/tippspiel");
+  updateTag(LEADERBOARD_TAG);
 
   return { success: true };
 }

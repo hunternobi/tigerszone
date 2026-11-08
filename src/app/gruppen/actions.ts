@@ -2,7 +2,8 @@
 
 import { randomBytes } from "crypto";
 import { cookies } from "next/headers";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
+import { LEADERBOARD_TAG } from "@/lib/leaderboard";
 import { Types } from "mongoose";
 import { auth } from "@/auth";
 import { dbConnect } from "@/lib/mongodb";
@@ -73,6 +74,7 @@ export async function createGroup(name: string, isPublic: boolean): Promise<Acti
 
   revalidatePath("/gruppen");
   revalidatePath("/tippspiel");
+  updateTag(LEADERBOARD_TAG);
 
   return { success: true };
 }
@@ -102,6 +104,7 @@ export async function joinGroupByInviteCode(inviteCode: string): Promise<ActionR
 
   revalidatePath("/gruppen");
   revalidatePath("/tippspiel");
+  updateTag(LEADERBOARD_TAG);
 
   return { success: true };
 }
@@ -132,6 +135,7 @@ export async function joinPublicGroup(groupId: string): Promise<ActionResult> {
 
   revalidatePath("/gruppen");
   revalidatePath("/tippspiel");
+  updateTag(LEADERBOARD_TAG);
 
   return { success: true };
 }
@@ -144,6 +148,7 @@ export async function setActiveGroup(groupId: string): Promise<void> {
     path: "/",
   });
   revalidatePath("/tippspiel");
+  updateTag(LEADERBOARD_TAG);
   revalidatePath("/gruppen");
 }
 
@@ -178,19 +183,21 @@ export async function getMyGroups(): Promise<MyGroup[]> {
     memberships.map((membership) => [membership.groupId.toString(), membership.role])
   );
 
-  const groups = await GroupModel.find({ _id: { $in: groupIds } }).lean<
-    {
-      _id: Types.ObjectId;
-      name: string;
-      inviteCode: string;
-      ownerUserId: Types.ObjectId;
-      isPublic: boolean;
-    }[]
-  >();
-
-  const counts = await GroupMemberModel.aggregate<{ _id: Types.ObjectId; count: number }>([
-    { $match: { groupId: { $in: groupIds } } },
-    { $group: { _id: "$groupId", count: { $sum: 1 } } },
+  // Groups and member counts only depend on the ids, so they load side by side; the owners need the groups.
+  const [groups, counts] = await Promise.all([
+    GroupModel.find({ _id: { $in: groupIds } }).lean<
+      {
+        _id: Types.ObjectId;
+        name: string;
+        inviteCode: string;
+        ownerUserId: Types.ObjectId;
+        isPublic: boolean;
+      }[]
+    >(),
+    GroupMemberModel.aggregate<{ _id: Types.ObjectId; count: number }>([
+      { $match: { groupId: { $in: groupIds } } },
+      { $group: { _id: "$groupId", count: { $sum: 1 } } },
+    ]),
   ]);
   const countMap = new Map(counts.map((entry) => [entry._id.toString(), entry.count]));
 
@@ -257,16 +264,17 @@ export async function getPublicGroups(): Promise<PublicGroup[]> {
   if (groups.length === 0) return [];
 
   const groupIds = groups.map((group) => group._id);
-  const counts = await GroupMemberModel.aggregate<{ _id: Types.ObjectId; count: number }>([
-    { $match: { groupId: { $in: groupIds } } },
-    { $group: { _id: "$groupId", count: { $sum: 1 } } },
+  const ownerIds = groups.map((group) => group.ownerUserId);
+  const [counts, owners] = await Promise.all([
+    GroupMemberModel.aggregate<{ _id: Types.ObjectId; count: number }>([
+      { $match: { groupId: { $in: groupIds } } },
+      { $group: { _id: "$groupId", count: { $sum: 1 } } },
+    ]),
+    UserModel.find({ _id: { $in: ownerIds } })
+      .select("name")
+      .lean<{ _id: Types.ObjectId; name: string }[]>(),
   ]);
   const countMap = new Map(counts.map((entry) => [entry._id.toString(), entry.count]));
-
-  const ownerIds = groups.map((group) => group.ownerUserId);
-  const owners = await UserModel.find({ _id: { $in: ownerIds } })
-    .select("name")
-    .lean<{ _id: Types.ObjectId; name: string }[]>();
   const ownerNameById = new Map(owners.map((owner) => [owner._id.toString(), owner.name]));
 
   return groups.map((group) => ({
@@ -317,6 +325,7 @@ export async function promoteToAssistant(
 
   revalidatePath("/gruppen");
   revalidatePath("/tippspiel");
+  updateTag(LEADERBOARD_TAG);
   return { success: true };
 }
 
@@ -340,6 +349,7 @@ export async function demoteAssistant(
 
   revalidatePath("/gruppen");
   revalidatePath("/tippspiel");
+  updateTag(LEADERBOARD_TAG);
   return { success: true };
 }
 
@@ -379,6 +389,7 @@ export async function renameGroup(groupId: string, name: string): Promise<Action
 
   revalidatePath("/gruppen");
   revalidatePath("/tippspiel");
+  updateTag(LEADERBOARD_TAG);
   return { success: true };
 }
 
@@ -430,6 +441,7 @@ export async function leaveGroup(groupId: string): Promise<ActionResult> {
 
   revalidatePath("/gruppen");
   revalidatePath("/tippspiel");
+  updateTag(LEADERBOARD_TAG);
   return { success: true };
 }
 
@@ -468,6 +480,7 @@ export async function kickGroupMember(
 
   revalidatePath("/gruppen");
   revalidatePath("/tippspiel");
+  updateTag(LEADERBOARD_TAG);
   return { success: true };
 }
 
@@ -629,6 +642,7 @@ export async function acceptGroupInvite(inviteId: string): Promise<ActionResult>
   revalidatePath("/profile");
   revalidatePath("/gruppen");
   revalidatePath("/tippspiel");
+  updateTag(LEADERBOARD_TAG);
   return { success: true };
 }
 

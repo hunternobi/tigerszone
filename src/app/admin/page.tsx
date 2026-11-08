@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
-import { getAllGames } from "@/lib/games";
+import { getAllGamesFresh } from "@/lib/games";
 import { getAllUsersWithGroups } from "@/lib/adminUsers";
 import { getAllGroups } from "@/lib/adminGroups";
 import { getBonusResult } from "@/lib/adminBonus";
@@ -24,7 +24,7 @@ export default async function AdminPage() {
   if (session.user.role !== "admin") redirect("/");
 
   const [games, users, groups, bonusResult, spieltagsMvp, topDrei] = await Promise.all([
-    getAllGames(),
+    getAllGamesFresh(),
     getAllUsersWithGroups(),
     getAllGroups(),
     getBonusResult("hauptrunde"),
