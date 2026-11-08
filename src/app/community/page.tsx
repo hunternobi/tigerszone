@@ -19,7 +19,16 @@ export const metadata: Metadata = {
   alternates: { canonical: "/community" },
 };
 
-export default async function CommunityPage() {
+const STAT_VALUES = ["form", "strafminuten", "tabelle", "topscorer", "torhueter"];
+
+export default async function CommunityPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ stat?: string | string[] }>;
+}) {
+  const { stat } = await searchParams;
+  const initialStat =
+    typeof stat === "string" && STAT_VALUES.includes(stat) ? stat : undefined;
   const session = await auth();
   // The statistics tab is visible to everybody, the numbers themselves only to signed-in users (the league
   // numbers are only requested for them).
@@ -89,6 +98,7 @@ export default async function CommunityPage() {
                       <StatsDashboard
                         stats={stats}
                         recentGames={recentGames}
+                        initialStat={initialStat}
                         opponentName={
                           opponentId ? getDelClubName(opponentId) : null
                         }

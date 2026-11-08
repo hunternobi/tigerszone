@@ -162,7 +162,10 @@ export default function StatsDashboard({
   stats,
   opponentName,
   recentGames = [],
+  initialStat,
 }: {
+  /** Which statistic the picker shows first (from the ?stat= link on the landing page). */
+  initialStat?: string;
   stats: LeagueStats;
   /** Name of the next opponent; the Head2Head card is shown when it can be matched to a DEL team. */
   opponentName?: string | null;
@@ -212,7 +215,7 @@ export default function StatsDashboard({
     <div className="space-y-6">
       {opponent && <Head2Head stats={stats} opponent={opponent} />}
       <StatsPicker
-        initial="torhueter"
+        initial={initialStat ?? "torhueter"}
         options={[
           {
             value: "form",
