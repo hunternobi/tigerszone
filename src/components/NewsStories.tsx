@@ -3,7 +3,14 @@
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useState, type ReactNode } from "react";
-import { BarChart3, Smartphone, Trophy, X } from "lucide-react";
+import {
+  BarChart3,
+  ChevronLeft,
+  ChevronRight,
+  Smartphone,
+  Trophy,
+  X,
+} from "lucide-react";
 import { NEWS_STORIES_KEY, PLACE_STYLE, PRIZES } from "@/lib/prizes";
 
 // Pages where a pop-up would be in the way.
@@ -45,7 +52,7 @@ function SlideFrame({
   children: ReactNode;
 }) {
   return (
-    <div className="flex h-full flex-col px-6 pt-20 pb-7 text-center">
+    <div className="flex h-full flex-col px-10 pt-20 pb-7 text-center">
       <div className="flex flex-1 flex-col items-center justify-center">
         <span className="flex size-16 items-center justify-center rounded-[1.3rem] bg-gradient-to-b from-[#7a9be0] to-[#3a54a5] shadow-[inset_0_1px_0_rgba(255,255,255,0.45),0_8px_20px_rgba(0,0,0,0.35)]">
           {icon}
@@ -207,14 +214,30 @@ export default function NewsStories() {
           type="button"
           aria-label="Zurück"
           onClick={previous}
-          className="absolute inset-y-0 left-0 z-0 w-1/3"
-        />
+          className="absolute inset-y-0 left-0 z-0 flex w-1/3 items-center justify-start pl-1.5"
+        >
+          {index > 0 && (
+            <ChevronLeft
+              size={28}
+              strokeWidth={2.5}
+              className="rounded-full bg-black/25 p-1 text-white/85"
+            />
+          )}
+        </button>
         <button
           type="button"
           aria-label="Weiter"
           onClick={next}
-          className="absolute inset-y-0 right-0 z-0 w-2/3"
-        />
+          className="absolute inset-y-0 right-0 z-0 flex w-2/3 items-center justify-end pr-1.5"
+        >
+          {index < count - 1 && (
+            <ChevronRight
+              size={28}
+              strokeWidth={2.5}
+              className="rounded-full bg-black/25 p-1 text-white/85"
+            />
+          )}
+        </button>
 
         <div className="pointer-events-none relative z-10 h-full">
           <div className="pointer-events-auto absolute inset-x-0 top-0 px-4 pt-4">
