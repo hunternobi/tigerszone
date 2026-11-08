@@ -213,31 +213,22 @@ h6 {
 @layer components {
   /* Liquid Glass: frosted panel with rim-light + soft specular highlight */
   .glass-panel {
-    /* Clear, bright glass (iOS 26 look): little tint, the photo shines through softly, cool blue-white
-       light, a soft instead of a hard shadow. brightness() is part of the same filter pass, so it is free. */
-    -webkit-backdrop-filter: blur(16px) saturate(1.7) brightness(1.1);
-    backdrop-filter: blur(16px) saturate(1.7) brightness(1.1);
+    @apply backdrop-blur-lg backdrop-saturate-150;
     position: relative;
-    border-radius: 2rem;
-    border: 1px solid rgba(255, 255, 255, 0.26);
+    border-radius: 1.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.24);
     background:
       radial-gradient(
-        120% 140% at 10% -12%,
-        rgba(255, 255, 255, 0.2),
+        120% 140% at 12% -10%,
+        rgba(255, 255, 255, 0.12),
         transparent 55%
       ),
-      linear-gradient(
-        165deg,
-        rgba(200, 222, 255, 0.1),
-        rgba(255, 255, 255, 0.02) 45%,
-        rgba(120, 160, 255, 0.1)
-      ),
-      rgba(10, 18, 80, 0.12);
+      rgba(8, 12, 50, 0.14);
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.5),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.05),
-      0 2px 6px rgba(4, 8, 50, 0.18),
-      0 14px 38px rgba(4, 8, 50, 0.3);
+      inset 0 1px 0 rgba(255, 255, 255, 0.4),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+      0 1px 2px rgba(0, 0, 0, 0.3),
+      0 10px 32px rgba(0, 0, 0, 0.42);
   }
 
   /* Liquid-glass look in plain CSS, so it costs nothing on a phone (the browser composites it, no scripting,
@@ -280,28 +271,21 @@ h6 {
   }
 
   .glass-panel-sm {
-    -webkit-backdrop-filter: blur(16px) saturate(1.7) brightness(1.1);
-    backdrop-filter: blur(16px) saturate(1.7) brightness(1.1);
+    @apply backdrop-blur-lg backdrop-saturate-150;
     position: relative;
-    border-radius: 1.5rem;
-    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-radius: 1.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
     background:
       radial-gradient(
-        130% 150% at 12% -15%,
-        rgba(255, 255, 255, 0.18),
+        130% 150% at 15% -15%,
+        rgba(255, 255, 255, 0.1),
         transparent 55%
       ),
-      linear-gradient(
-        165deg,
-        rgba(200, 222, 255, 0.08),
-        rgba(255, 255, 255, 0.02) 50%,
-        rgba(120, 160, 255, 0.08)
-      ),
-      rgba(10, 18, 80, 0.1);
+      rgba(8, 12, 50, 0.12);
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.45),
-      0 2px 5px rgba(4, 8, 50, 0.16),
-      0 8px 24px rgba(4, 8, 50, 0.26);
+      inset 0 1px 0 rgba(255, 255, 255, 0.34),
+      0 1px 2px rgba(0, 0, 0, 0.28),
+      0 6px 22px rgba(0, 0, 0, 0.34);
   }
 
   /* Dark liquid-glass look in plain CSS (header "home" capsule): top sheen, bright rim, soft light
@@ -385,8 +369,7 @@ h6 {
 
   /* Liquid Glass pill: for buttons / CTAs (matches reference mockup) */
   .glass-pill {
-    -webkit-backdrop-filter: blur(12px) saturate(1.7) brightness(1.1);
-    backdrop-filter: blur(12px) saturate(1.7) brightness(1.1);
+    @apply backdrop-blur-md backdrop-saturate-150;
     position: relative;
     border-radius: 9999px;
     border: 1px solid rgba(255, 255, 255, 0.18);
