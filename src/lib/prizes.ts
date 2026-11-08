@@ -5,11 +5,10 @@ export interface Prize {
 }
 
 // The prizes of the season, shown in the announcement pop-up and on the landing page.
-// TODO: replace the placeholders with the real prizes.
 export const PRIZES: Prize[] = [
-  { place: 1, title: "Preis folgt" },
-  { place: 2, title: "Preis folgt" },
-  { place: 3, title: "Preis folgt" },
+  { place: 1, title: "Unterschriebenes Marcel Brandt Fantrikot" },
+  { place: 2, title: "The Squad Drops Ausstattung im Wert von 150 €" },
+  { place: 3, title: "2 Kasten Erl nach eigener Wahl" },
 ];
 
 /** Change this when the pop-up should be shown again to everybody (e.g. after the prizes changed). */
