@@ -8,6 +8,7 @@ import NextGameHeroCountdown from "@/components/NextGameHeroCountdown";
 import StatsAnnouncement from "@/components/StatsAnnouncement";
 import PartnerBar from "@/components/PartnerBar";
 import PillButton from "@/components/PillButton";
+import PrizesShowcase from "@/components/PrizesShowcase";
 import Reveal from "@/components/Reveal";
 import { SITE_DESCRIPTION, SITE_NAME } from "@/lib/constants";
 import { getUpcomingGames } from "@/lib/games";
@@ -106,6 +107,8 @@ export default async function Home() {
                   </div>
                 </Reveal>
               )}
+
+              <PrizesShowcase />
 
               <PartnerBar />
 
