@@ -13,6 +13,7 @@ const QUICK_LINKS = [
 
 const LEGAL_LINKS = [
   { href: "/agb", label: "AGB" },
+  { href: "/teilnahmebedingungen", label: "Teilnahmebedingungen" },
   { href: "/datenschutz", label: "Datenschutz" },
   { href: "/impressum", label: "Impressum" },
 ];

@@ -306,7 +306,11 @@ export default function AgbPage() {
           <ol className={list}>
             <li>
               Für die Durchführung der jeweiligen Tippspiele gelten die auf der Plattform
-              veröffentlichten Spiel- und Teilnahmebedingungen.
+              veröffentlichten Spiel- und{" "}
+              <a href="/teilnahmebedingungen" className="text-tigers-secondary hover:underline">
+                Teilnahmebedingungen
+              </a>
+              .
             </li>
             <li>
               Grundlage der Wertung sind grundsätzlich die offiziell festgestellten Ergebnisse
