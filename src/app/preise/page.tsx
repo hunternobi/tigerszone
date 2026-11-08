@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Trophy } from "lucide-react";
 import FadingBackground from "@/components/FadingBackground";
 import PillButton from "@/components/PillButton";
@@ -64,16 +63,8 @@ export default function PreisePage() {
             })}
           </ol>
 
-          <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
-            <PillButton href="/tippspiel/rangliste">
-              Jetzt Tabelle anzeigen
-            </PillButton>
-            <Link
-              href="/tippspiel"
-              className="text-[0.9375rem] font-medium text-white/85 transition-colors hover:text-white"
-            >
-              Zum Tippspiel
-            </Link>
+          <div className="mt-8">
+            <PillButton href="/tippspiel">Zum Tippspiel</PillButton>
           </div>
         </section>
       </Scene>
