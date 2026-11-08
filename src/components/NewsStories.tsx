@@ -1,33 +1,26 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useState, type ReactNode } from "react";
-import {
-  ArrowRight,
-  BarChart3,
-  Smartphone,
-  Sparkles,
-  Trophy,
-  X,
-} from "lucide-react";
+import { BarChart3, Smartphone, Trophy, X } from "lucide-react";
 import { NEWS_STORIES_KEY, PLACE_STYLE, PRIZES } from "@/lib/prizes";
 
 // Pages where a pop-up would be in the way.
 const QUIET_PREFIXES = ["/admin", "/login", "/register", "/verify-email"];
 const SLIDE_MS = 7000;
 
-function alreadySeen(): boolean {
+function alreadySeen(userId: string): boolean {
   try {
-    return window.localStorage.getItem(NEWS_STORIES_KEY) !== null;
+    return window.localStorage.getItem(`${NEWS_STORIES_KEY}:${userId}`) !== null;
   } catch {
     return false;
   }
 }
 
-function markSeen() {
+function markSeen(userId: string) {
   try {
-    window.localStorage.setItem(NEWS_STORIES_KEY, "1");
+    window.localStorage.setItem(`${NEWS_STORIES_KEY}:${userId}`, "1");
   } catch {
     // Private mode: the stories may come back on the next visit, which is acceptable.
   }
@@ -42,19 +35,14 @@ const STATS = [
   "Strafminuten",
 ];
 
-const ctaClass =
-  "inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-full bg-white px-5 text-[0.9375rem] font-semibold text-tigers-primary shadow-[0_6px_18px_rgba(0,0,0,0.35)] transition duration-200 hover:bg-white/90 active:scale-[0.96]";
-
 function SlideFrame({
   icon,
   title,
   children,
-  footer,
 }: {
   icon: ReactNode;
   title: string;
   children: ReactNode;
-  footer: ReactNode;
 }) {
   return (
     <div className="flex h-full flex-col px-6 pt-20 pb-7 text-center">
@@ -69,7 +57,6 @@ function SlideFrame({
           {children}
         </div>
       </div>
-      <div className="mt-5 flex justify-center">{footer}</div>
     </div>
   );
 }
@@ -80,21 +67,24 @@ function SlideFrame({
  */
 export default function NewsStories() {
   const pathname = usePathname();
+  const { data: session } = useSession();
+  const userId = session?.user?.id;
   const quiet = QUIET_PREFIXES.some((prefix) => pathname.startsWith(prefix));
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
   const count = 3;
 
   useEffect(() => {
-    if (quiet || alreadySeen()) return;
+    // Only for signed-in users, once per account (and device).
+    if (quiet || !userId || alreadySeen(userId)) return;
     const timer = setTimeout(() => setOpen(true), 900);
     return () => clearTimeout(timer);
-  }, [quiet]);
+  }, [quiet, userId]);
 
   const close = useCallback(() => {
-    markSeen();
+    if (userId) markSeen(userId);
     setOpen(false);
-  }, []);
+  }, [userId]);
 
   const next = useCallback(
     () => setIndex((current) => Math.min(current + 1, count - 1)),
@@ -105,12 +95,12 @@ export default function NewsStories() {
     [],
   );
 
-  // Automatic advance; the last slide stays until it is closed.
+  // Automatic advance; after the last slide the story closes.
   useEffect(() => {
-    if (!open || index >= count - 1) return;
-    const timer = setTimeout(next, SLIDE_MS);
+    if (!open) return;
+    const timer = setTimeout(index >= count - 1 ? close : next, SLIDE_MS);
     return () => clearTimeout(timer);
-  }, [open, index, next]);
+  }, [open, index, next, close]);
 
   useEffect(() => {
     if (!open) return;
@@ -135,12 +125,6 @@ export default function NewsStories() {
       key="prizes"
       icon={<Trophy size={32} strokeWidth={2.2} className="text-white" />}
       title="Die Preise sind da!"
-      footer={
-        <Link href="/tippspiel/rangliste" onClick={close} className={ctaClass}>
-          Jetzt Tabelle anzeigen
-          <ArrowRight size={15} strokeWidth={2.5} />
-        </Link>
-      }
     >
       <p>
         Ein riesiges Dankeschön an unsere Unterstützer, die diese Preise
@@ -172,12 +156,6 @@ export default function NewsStories() {
       key="stats"
       icon={<BarChart3 size={32} strokeWidth={2.2} className="text-white" />}
       title="Umfassende Statistiken"
-      footer={
-        <Link href="/community" onClick={close} className={ctaClass}>
-          Zu den Statistiken
-          <ArrowRight size={15} strokeWidth={2.5} />
-        </Link>
-      }
     >
       <p>
         Im Community-Bereich findest du jetzt umfassende Statistiken rund um
@@ -199,12 +177,6 @@ export default function NewsStories() {
       key="design"
       icon={<Smartphone size={32} strokeWidth={2.2} className="text-white" />}
       title="Neues Design"
-      footer={
-        <button type="button" onClick={close} className={ctaClass}>
-          Los geht&apos;s
-          <Sparkles size={15} strokeWidth={2.5} />
-        </button>
-      }
     >
       <p>
         Wir haben das Design der ganzen Seite überarbeitet und noch besser fürs
@@ -258,12 +230,9 @@ export default function NewsStories() {
                     style={{
                       width: position < index ? "100%" : "0%",
                       animation:
-                        position === index && index < count - 1
+                        position === index
                           ? `story-progress ${SLIDE_MS}ms linear forwards`
                           : undefined,
-                      ...(position === index && index === count - 1
-                        ? { width: "100%" }
-                        : {}),
                     }}
                   />
                 </span>
