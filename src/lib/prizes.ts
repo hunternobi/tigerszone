@@ -10,8 +10,9 @@ export interface Prize {
 export const PRIZES: Prize[] = [
   {
     place: 1,
-    title: "Marcel Brandt Fantrikot",
-    detail: "Ein unterschriebenes Fantrikot von Marcel Brandt.",
+    title: "Signed Marcel Brandt Fantrikot",
+    detail:
+      "Ein unterschriebenes Fantrikot von Marcel Brandt. Ob Heim, Auswärts oder Alternatives Jersey, du entscheidest!",
   },
   {
     place: 2,
@@ -21,7 +22,8 @@ export const PRIZES: Prize[] = [
   {
     place: 3,
     title: "2 Kasten Erl",
-    detail: "Zwei Kasten Erl nach eigener Wahl.",
+    detail:
+      "2 Kasten Erl nach eigener Wahl im Brauereiverkauf in Geiselhöring.",
   },
 ];
 
