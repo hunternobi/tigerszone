@@ -403,3 +403,13 @@ h6 {
       0 4px 12px rgba(0, 0, 0, 0.5);
   }
 }
+
+/* Progress bar of the current slide in the news stories. */
+@keyframes story-progress {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}

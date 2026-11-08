@@ -4,7 +4,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { SessionProvider } from "next-auth/react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import PrizesPopup from "@/components/PrizesPopup";
+import NewsStories from "@/components/NewsStories";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/constants";
 import { auth } from "@/auth";
 import { getMyGroupInvites } from "@/app/gruppen/actions";
@@ -109,7 +109,7 @@ export default async function RootLayout({
           <Header invites={invites} notifications={notifications} />
           <main className="flex-1 pt-[4.5rem]">{children}</main>
           <Footer />
-          <PrizesPopup />
+          <NewsStories />
         </SessionProvider>
         <Analytics />
       </body>

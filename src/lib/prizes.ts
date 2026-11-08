@@ -6,7 +6,7 @@ export interface Prize {
   detail: string;
 }
 
-// The prizes of the season, shown in the announcement pop-up and on the landing page.
+// The prizes of the season, shown in the news stories and on the landing page.
 export const PRIZES: Prize[] = [
   {
     place: 1,
@@ -27,8 +27,8 @@ export const PRIZES: Prize[] = [
   },
 ];
 
-/** Change this when the pop-up should be shown again to everybody (e.g. after the prizes changed). */
-export const PRIZES_POPUP_KEY = "tz-prizes-popup-v1";
+/** Change this when the news stories should be shown again to everybody. */
+export const NEWS_STORIES_KEY = "tz-news-stories-v2";
 
 /** Look of each place: medal colours for the badge and the glow behind the card. */
 export const PLACE_STYLE: Record<
