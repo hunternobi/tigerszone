@@ -250,6 +250,65 @@ main .hero-wordmark {
   }
 }
 
+/* Ranking lists: the first three places in gold, silver and bronze with a soft glow, and every few seconds a
+   light glides across the name (one after the other). Most of the cycle nothing changes, so nothing is
+   repainted; the glow itself is static. */
+@keyframes podiumShine {
+  0%,
+  55% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: 0% 0;
+  }
+}
+
+.podium-gold {
+  --podium: #f6c445;
+  --podium-light: #fff6d6;
+}
+.podium-silver {
+  --podium: #b9c3d6;
+  --podium-light: #ffffff;
+  animation-delay: 0.35s;
+}
+.podium-bronze {
+  --podium: #d58a4a;
+  --podium-light: #ffe2c4;
+  animation-delay: 0.7s;
+}
+
+main .podium-shine {
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none;
+  text-decoration-color: var(--podium);
+  background-image: linear-gradient(
+    105deg,
+    var(--podium) 0%,
+    var(--podium) 42%,
+    var(--podium-light) 50%,
+    var(--podium) 58%,
+    var(--podium) 100%
+  );
+  background-size: 300% 100%;
+  background-position: 0% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  filter: drop-shadow(0 1px 1.5px rgb(0 0 0 / 0.55))
+    drop-shadow(0 0 7px color-mix(in srgb, var(--podium) 45%, transparent));
+  animation-name: podiumShine;
+  animation-duration: 5s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  main .podium-shine {
+    animation: none;
+  }
+}
+
 /* White pill buttons carry dark text: no halo there. */
 main :is(.bg-white, .bg-white *) {
   text-shadow: none;

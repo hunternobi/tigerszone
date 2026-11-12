@@ -27,8 +27,13 @@ interface LeaderboardProps {
   highlightUserId?: string;
 }
 
-// Gold, silver and bronze for the names of the first three places (used by every ranking list).
-const PODIUM_COLORS = ["text-[#f6c445]", "text-[#aeb8cc]", "text-[#d58a4a]"];
+// Gold, silver and bronze for the names of the first three places (used by every ranking list). The colours
+// and the slow light sweep across them live in globals.css (.podium-shine).
+const PODIUM_COLORS = [
+  "podium-shine podium-gold",
+  "podium-shine podium-silver",
+  "podium-shine podium-bronze",
+];
 
 /** Text colour of a rank (0-based): podium colour for the first three, white otherwise. */
 export function rankColor(index: number): string {
