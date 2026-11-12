@@ -24,6 +24,9 @@ export default function FadingBackground({
   scaleClassName = "scale-100",
   children,
 }: FadingBackgroundProps) {
+  // The photo is fixed to the screen and as high as the screen with the browser toolbars collapsed (100lvh). With
+  // inset-0 it was resized every time Safari's toolbars slid in or out while scrolling, and the browser had to
+  // scale and redraw the whole picture again, which showed as stutter.
   return (
     <div className="relative -mt-[4.5rem] overflow-hidden">
       <div
@@ -34,7 +37,7 @@ export default function FadingBackground({
             "--page-bg-blur": blurPx ? `${blurPx}px` : undefined,
           } as CSSProperties
         }
-        className={`page-bg pointer-events-none fixed inset-0 -z-10 ${scaleClassName}`}
+        className={`page-bg pointer-events-none fixed inset-x-0 top-0 -z-10 h-[100lvh] ${scaleClassName}`}
       >
         {mobileSrc ? (
           <>
@@ -67,7 +70,7 @@ export default function FadingBackground({
       {overlayClassName && (
         <div
           style={{ opacity }}
-          className={`pointer-events-none fixed inset-0 -z-10 ${overlayClassName}`}
+          className={`pointer-events-none fixed inset-x-0 top-0 -z-10 h-[100lvh] ${overlayClassName}`}
         />
       )}
 
