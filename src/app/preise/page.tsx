@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Trophy } from "lucide-react";
 import FadingBackground from "@/components/FadingBackground";
 import PillButton from "@/components/PillButton";
@@ -66,6 +67,16 @@ export default function PreisePage() {
           <div className="mt-8">
             <PillButton href="/tippspiel">Zum Tippspiel</PillButton>
           </div>
+          <p className="mt-4 text-[0.75rem] leading-snug text-white/75">
+            Es gelten die{" "}
+            <Link
+              href="/teilnahmebedingungen"
+              className="font-semibold underline underline-offset-2"
+            >
+              Teilnahmebedingungen
+            </Link>
+            .
+          </p>
         </section>
       </Scene>
     </FadingBackground>

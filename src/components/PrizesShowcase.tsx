@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Trophy } from "lucide-react";
 import PillButton from "@/components/PillButton";
 import Reveal from "@/components/Reveal";
@@ -63,6 +64,16 @@ export default function PrizesShowcase() {
         <div className="mt-5 flex justify-center">
           <PillButton href="/preise">Preise ansehen</PillButton>
         </div>
+        <p className="mt-3 text-center text-[0.75rem] leading-snug text-white/75">
+          Es gelten die{" "}
+          <Link
+            href="/teilnahmebedingungen"
+            className="font-semibold underline underline-offset-2"
+          >
+            Teilnahmebedingungen
+          </Link>
+          .
+        </p>
       </div>
     </Reveal>
   );
