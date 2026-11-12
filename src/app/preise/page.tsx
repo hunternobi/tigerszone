@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Trophy } from "lucide-react";
 import FadingBackground from "@/components/FadingBackground";
 import PillButton from "@/components/PillButton";
+import PlaceNumber from "@/components/PlaceNumber";
 import Scene from "@/components/Scene";
 import { PLACE_STYLE, PRIZES } from "@/lib/prizes";
 
@@ -43,11 +44,10 @@ export default function PreisePage() {
                   key={prize.place}
                   className={`glass-panel flex items-center gap-4 border p-4 sm:p-5 ${style.glow}`}
                 >
-                  <span
-                    className={`font-ui flex size-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-b text-xl font-bold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_4px_12px_rgba(0,0,0,0.35)] ${style.badge}`}
-                  >
-                    {prize.place}
-                  </span>
+                  <PlaceNumber
+                    place={prize.place}
+                    className="w-12 shrink-0 text-[56px] sm:w-16 sm:text-[72px]"
+                  />
                   <div className="min-w-0">
                     <p className="text-[0.75rem] font-semibold tracking-[0.12em] text-white/65 uppercase">
                       {style.label}

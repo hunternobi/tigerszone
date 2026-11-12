@@ -11,6 +11,7 @@ import {
   Trophy,
   X,
 } from "lucide-react";
+import PlaceNumber from "@/components/PlaceNumber";
 import { NEWS_STORIES_KEY, PLACE_STYLE, PRIZES } from "@/lib/prizes";
 
 // Pages where a pop-up would be in the way.
@@ -145,11 +146,10 @@ export default function NewsStories() {
               key={prize.place}
               className={`flex items-center gap-3 rounded-2xl border bg-white/10 p-2.5 ${style.glow}`}
             >
-              <span
-                className={`font-ui flex size-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-b text-base font-bold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] ${style.badge}`}
-              >
-                {prize.place}
-              </span>
+              <PlaceNumber
+                place={prize.place}
+                className="w-9 shrink-0 text-[40px]"
+              />
               <p className="font-ui text-[1rem] leading-tight font-semibold text-white">
                 {prize.title}
               </p>

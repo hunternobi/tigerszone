@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Trophy } from "lucide-react";
 import PillButton from "@/components/PillButton";
+import PlaceNumber from "@/components/PlaceNumber";
 import Reveal from "@/components/Reveal";
 import { PLACE_STYLE, PRIZES } from "@/lib/prizes";
 
@@ -35,13 +36,10 @@ export default function PrizesShowcase() {
                   first ? "py-7 sm:py-9" : "py-4 sm:py-6"
                 }`}
               >
-                <span
-                  className={`font-ui flex items-center justify-center rounded-full bg-gradient-to-b font-bold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_4px_12px_rgba(0,0,0,0.35)] ${style.badge} ${
-                    first ? "size-12 text-xl sm:size-14 sm:text-2xl" : "size-9 text-base sm:size-11 sm:text-lg"
-                  }`}
-                >
-                  {prize.place}
-                </span>
+                <PlaceNumber
+                  place={prize.place}
+                  className={first ? "text-[64px] sm:text-[80px]" : "text-[46px] sm:text-[58px]"}
+                />
                 <div className="min-w-0">
                   <p className="text-[0.625rem] font-semibold tracking-[0.12em] text-white/65 uppercase sm:text-[0.75rem]">
                     {style.label}

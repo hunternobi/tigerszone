@@ -30,23 +30,26 @@ export const PRIZES: Prize[] = [
 /** Change this when the news stories should be shown again to everybody. */
 export const NEWS_STORIES_KEY = "tz-news-stories-v2";
 
-/** Look of each place: medal colours for the badge and the glow behind the card. */
+/** Look of each place: gold / silver / bronze gradient of the number (a bit see-through at the bottom) and the glow behind the card. */
 export const PLACE_STYLE: Record<
   Prize["place"],
-  { badge: string; glow: string; label: string }
+  { numberGradient: string; glow: string; label: string }
 > = {
   1: {
-    badge: "from-[#fde68a] via-[#fbbf24] to-[#b45309]",
+    numberGradient:
+      "linear-gradient(180deg, #fff3c4 0%, #fbbf24 48%, rgba(245, 158, 11, 0.65) 100%)",
     glow: "shadow-[0_0_40px_rgba(251,191,36,0.35)] border-amber-300/50",
     label: "1. Preis",
   },
   2: {
-    badge: "from-[#f1f5f9] via-[#cbd5e1] to-[#64748b]",
+    numberGradient:
+      "linear-gradient(180deg, #ffffff 0%, #cbd5e1 48%, rgba(148, 163, 184, 0.65) 100%)",
     glow: "border-slate-200/35",
     label: "2. Preis",
   },
   3: {
-    badge: "from-[#fdba74] via-[#d97706] to-[#7c2d12]",
+    numberGradient:
+      "linear-gradient(180deg, #ffdcb4 0%, #e8913a 48%, rgba(217, 119, 6, 0.65) 100%)",
     glow: "border-orange-300/35",
     label: "3. Preis",
   },
