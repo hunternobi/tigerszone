@@ -41,16 +41,14 @@ export default function PrizesShowcase() {
                   className={first ? "text-[64px] sm:text-[80px]" : "text-[46px] sm:text-[58px]"}
                 />
                 <div className="min-w-0">
-                  <p className="text-[0.625rem] font-semibold tracking-[0.12em] text-white/65 uppercase sm:text-[0.75rem]">
-                    {style.label}
-                  </p>
                   <p
-                    className={`font-ui mt-0.5 leading-tight font-semibold tracking-tight text-balance text-white ${
+                    className={`font-ui leading-tight font-semibold tracking-tight text-balance text-white ${
                       first
                         ? "text-[0.9375rem] sm:text-2xl"
                         : "text-[0.8125rem] sm:text-lg"
                     }`}
                   >
+                    <span className="sr-only">{style.label}: </span>
                     {prize.title}
                   </p>
                 </div>
