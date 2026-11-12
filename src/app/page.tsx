@@ -38,9 +38,10 @@ export default async function Home() {
         <Scene>
           <section className="relative overflow-hidden px-7 pt-4 pb-4 sm:px-6 sm:pt-24 sm:pb-6">
             <div className="relative mx-auto max-w-4xl text-left sm:text-center">
-              <h1 className="font-ui text-center text-[2.4rem] leading-[1.06] font-semibold tracking-tight text-white sm:text-6xl">
-                Willkommen in der
-                <span className="script-heading block text-tigers-secondary">
+              {/* Sized with the viewport on phones so "Willkommen in der" always fits on one line. */}
+              <h1 className="font-ui text-center text-[min(9vw,3.2rem)] leading-[1.06] font-semibold tracking-tight text-white sm:text-7xl">
+                <span className="hero-title-line block">Willkommen in der</span>
+                <span className="hero-wordmark block text-[1.18em]">
                   {SITE_NAME}
                 </span>
               </h1>
