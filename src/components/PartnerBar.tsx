@@ -3,13 +3,13 @@ import Reveal from "@/components/Reveal";
 import { PARTNERS } from "@/lib/partners";
 
 const TILE_CLASS =
-  "glass-panel glass-interactive flex h-24 min-w-0 items-center justify-center p-2.5 sm:h-40 sm:w-48 sm:p-4";
+  "glass-panel glass-interactive flex h-28 min-w-0 items-center justify-center p-2.5 sm:h-40 sm:w-48 sm:p-4";
 
 export default function PartnerBar() {
   return (
     <Reveal>
       <div className="mx-auto mt-6 max-w-2xl sm:mt-12">
-        <h2 className="font-ui text-center text-[1.4rem] font-semibold tracking-tight text-white sm:text-3xl">
+        <h2 className="font-ui text-center text-[1.6rem] font-semibold tracking-tight text-white sm:text-3xl">
           Unsere Partner
         </h2>
 

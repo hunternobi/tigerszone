@@ -109,9 +109,10 @@ export default async function Home() {
                 </Reveal>
               )}
 
-              <PrizesShowcase />
-
+              {/* Partners first: on a phone they must be on the first screen, the prizes follow right below. */}
               <PartnerBar />
+
+              <PrizesShowcase />
 
               <StatsAnnouncement />
             </div>
