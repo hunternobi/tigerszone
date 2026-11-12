@@ -306,6 +306,11 @@ main .podium-shine {
   animation-iteration-count: infinite;
 }
 
+/* Standing still the light keeps gliding; while the page scrolls it waits (see ScrollAnimationPause). */
+html[data-scrolling] main .podium-shine {
+  animation-play-state: paused;
+}
+
 @media (prefers-reduced-motion: reduce) {
   main .podium-shine {
     animation: none;

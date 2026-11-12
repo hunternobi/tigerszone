@@ -5,6 +5,7 @@ import { SessionProvider } from "next-auth/react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import NewsStories from "@/components/NewsStories";
+import ScrollAnimationPause from "@/components/ScrollAnimationPause";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/constants";
 import { auth } from "@/auth";
 import { getMyGroupInvites } from "@/app/gruppen/actions";
@@ -110,6 +111,7 @@ export default async function RootLayout({
           <main className="flex-1 pt-[4.5rem]">{children}</main>
           <Footer />
           <NewsStories />
+          <ScrollAnimationPause />
         </SessionProvider>
         <Analytics />
       </body>
