@@ -49,11 +49,8 @@ export default function PreisePage() {
                     className="w-12 shrink-0 text-[56px] sm:w-16 sm:text-[72px]"
                   />
                   <div className="min-w-0">
-                    <h2 className="font-ui text-xl leading-tight font-semibold tracking-tight text-white sm:text-2xl">
+                    <p className="text-[1.0625rem] leading-snug font-medium text-white sm:text-lg">
                       <span className="sr-only">{style.label}: </span>
-                      {prize.title}
-                    </h2>
-                    <p className="mt-1 text-[0.9375rem] leading-snug text-white/80">
                       {prize.detail}
                     </p>
                   </div>
