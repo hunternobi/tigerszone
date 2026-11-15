@@ -317,6 +317,42 @@ html[data-scrolling] main .podium-shine {
   }
 }
 
+/* Liquid glass card (LiquidGlassCard): a WebGL canvas over the card's whole border box draws the glass. Until
+   its first frame, and whenever WebGL is not available, the card is the normal CSS glass panel; after that
+   the CSS glass (blur, tint, rim layers) is switched off so the phone does not pay for both. */
+.liquid-glass {
+  isolation: isolate;
+}
+
+.liquid-glass-canvas {
+  position: absolute;
+  inset: -1px;
+  width: calc(100% + 2px);
+  height: calc(100% + 2px);
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.liquid-glass[data-liquid="on"] {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: none;
+  border-color: transparent;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.28),
+    0 12px 34px rgba(0, 0, 0, 0.4);
+}
+
+.liquid-glass[data-liquid="on"]::before,
+.liquid-glass[data-liquid="on"]::after {
+  display: none;
+}
+
+.liquid-glass[data-liquid="on"] > .liquid-glass-canvas {
+  opacity: 1;
+}
+
 /* White pill buttons carry dark text: no halo there. */
 main :is(.bg-white, .bg-white *) {
   text-shadow: none;
