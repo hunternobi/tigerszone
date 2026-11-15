@@ -148,7 +148,7 @@ export default function GroupMemberTable({
           type="button"
           onClick={handleLeave}
           disabled={isPending}
-          className="inline-flex min-h-[36px] shrink-0 items-center gap-1.5 rounded-full px-3 text-[0.875rem] font-semibold text-red-300 transition hover:bg-white/10 active:bg-white/15 disabled:opacity-50"
+          className="inline-flex min-h-[44px] sm:min-h-[36px] shrink-0 items-center gap-1.5 rounded-full px-3 text-[0.875rem] font-semibold text-red-300 transition hover:bg-white/10 active:bg-white/15 disabled:opacity-50"
         >
           <LogOut size={14} />
           Verlassen
@@ -172,7 +172,7 @@ export default function GroupMemberTable({
                 key={entry.userId}
                 data-me={isMe ? "" : undefined}
                 onContextMenu={(e) => handleContextMenu(e, entry)}
-                className={`flex items-center justify-between gap-3 py-2.5 ${
+                className={`flex items-center justify-between gap-3 py-[11px] sm:py-2.5 ${
                   manageable ? "cursor-context-menu" : ""
                 } ${isMe ? MY_ROW_CLASS : ""}`}
               >
@@ -185,7 +185,7 @@ export default function GroupMemberTable({
                     </span>
                     <Link
                       href={`/spieler/${entry.userId}`}
-                      className={`-my-2 inline-block py-2 break-words hover:underline ${rankColor(index)} ${index < 3 ? "font-semibold" : ""}`}
+                      className={`-mx-[8px] -my-[11px] inline-block px-[8px] py-[11px] break-words sm:-my-2 sm:py-2 hover:underline ${rankColor(index)} ${index < 3 ? "font-semibold" : ""}`}
                     >
                       {entry.name}
                     </Link>
@@ -221,7 +221,7 @@ export default function GroupMemberTable({
         <button
           type="button"
           onClick={() => setShowAll((v) => !v)}
-          className="mt-2 flex min-h-[40px] w-full items-center justify-center gap-1 rounded-xl text-[0.9375rem] font-semibold text-white/80 transition hover:bg-white/10 hover:text-white"
+          className="mt-2 flex min-h-[44px] w-full items-center justify-center gap-1 rounded-xl text-[0.9375rem] font-semibold text-white/80 transition hover:bg-white/10 hover:text-white"
         >
           {showAll ? "Weniger anzeigen" : `Alle ${entries.length} anzeigen`}
           <ChevronDown

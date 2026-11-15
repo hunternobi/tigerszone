@@ -164,7 +164,7 @@ export default function PartnerGallery({ images, placeholderCount = 4 }: Partner
             type="button"
             onClick={() => scrollStrip(-1)}
             aria-label="Vorherige Bilder"
-            className="glass-pill glass-interactive absolute top-1/2 left-2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center text-white sm:left-3"
+            className="glass-pill glass-interactive absolute top-1/2 left-2 z-10 flex h-[44px] w-[44px] -translate-y-1/2 sm:h-10 sm:w-10 items-center justify-center text-white sm:left-3"
           >
             <ChevronLeft size={22} />
           </button>
@@ -174,7 +174,7 @@ export default function PartnerGallery({ images, placeholderCount = 4 }: Partner
             type="button"
             onClick={() => scrollStrip(1)}
             aria-label="Weitere Bilder"
-            className="glass-pill glass-interactive absolute top-1/2 right-2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center text-white sm:right-3"
+            className="glass-pill glass-interactive absolute top-1/2 right-2 z-10 flex h-[44px] w-[44px] -translate-y-1/2 sm:h-10 sm:w-10 items-center justify-center text-white sm:right-3"
           >
             <ChevronRight size={22} />
           </button>

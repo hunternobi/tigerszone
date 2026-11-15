@@ -39,7 +39,7 @@ export default function CreateGroupForm() {
         onChange={(e) => setName(e.target.value)}
         placeholder="Gruppenname"
         aria-label="Gruppenname"
-        className="mt-3 h-11 w-full rounded-xl border border-white/20 bg-white/15 px-3.5 text-[1rem] text-white placeholder:text-white/50 focus:border-white/60 focus:outline-none"
+        className="mt-3 h-[46px] w-full rounded-xl sm:h-11 border border-white/20 bg-white/15 px-3.5 text-[1rem] text-white placeholder:text-white/50 focus:border-white/60 focus:outline-none"
       />
 
       {/* Segmented control, iOS style */}
@@ -54,7 +54,7 @@ export default function CreateGroupForm() {
             role="tab"
             aria-selected={isPublic === value}
             onClick={() => setIsPublic(value)}
-            className={`min-h-[36px] flex-1 rounded-full text-[0.9375rem] font-semibold transition ${
+            className={`min-h-[44px] sm:min-h-[36px] flex-1 rounded-full text-[0.9375rem] font-semibold transition ${
               isPublic === value
                 ? "bg-white text-tigers-primary shadow-[0_2px_8px_rgba(0,0,0,0.3)]"
                 : "text-white/75 hover:text-white"

@@ -268,7 +268,7 @@ export default function NewsStories() {
             type="button"
             onClick={close}
             aria-label="Schließen"
-            className="pointer-events-auto absolute top-6 right-2 flex size-11 items-center justify-center rounded-full text-white/85 transition hover:bg-white/15 hover:text-white"
+            className="pointer-events-auto absolute top-6 right-2 flex size-[44px] items-center justify-center rounded-full text-white/85 transition hover:bg-white/15 hover:text-white"
           >
             <X size={22} />
           </button>

@@ -52,7 +52,7 @@ export default function LeaderboardWidget({
             role="tab"
             aria-selected={tab === value}
             onClick={() => setTab(value)}
-            className={`min-h-[36px] flex-1 rounded-full text-[0.9375rem] font-semibold transition ${
+            className={`min-h-[44px] sm:min-h-[36px] flex-1 rounded-full text-[0.9375rem] font-semibold transition ${
               tab === value
                 ? "bg-white text-tigers-primary shadow-[0_2px_8px_rgba(0,0,0,0.3)]"
                 : "text-white/75 hover:text-white"

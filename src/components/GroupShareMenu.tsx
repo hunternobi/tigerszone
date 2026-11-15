@@ -89,7 +89,7 @@ export default function GroupShareMenu({ group }: GroupShareMenuProps) {
         type="button"
         onClick={toggleMenu}
         aria-label="Gruppe teilen"
-        className="glass-icon-button relative h-10 w-10 shrink-0 appearance-none rounded-full text-white sm:flex sm:h-10 sm:w-auto sm:items-center sm:justify-center sm:gap-1.5 sm:px-4"
+        className="glass-icon-button relative h-[44px] w-[44px] shrink-0 appearance-none rounded-full text-white sm:flex sm:h-10 sm:w-auto sm:items-center sm:justify-center sm:gap-1.5 sm:px-4"
       >
         {/* Phone: no flexbox on the button, the icon is absolutely centred (flex centring in a fixed-size <button> was off-centre in iOS Safari). */}
         {copied ? (
@@ -236,7 +236,7 @@ function InviteSearchModal({
           </button>
         </div>
 
-        <div className="mt-4 flex h-11 items-center gap-2 rounded-xl border border-white/15 bg-white/10 px-3.5 focus-within:border-white/50">
+        <div className="mt-4 flex h-[46px] items-center gap-2 sm:h-11 rounded-xl border border-white/15 bg-white/10 px-3.5 focus-within:border-white/50">
           <Search size={17} className="shrink-0 text-white/60" />
           <input
             type="text"

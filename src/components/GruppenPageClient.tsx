@@ -37,7 +37,7 @@ export default function GruppenPageClient({
   return (
     <div>
       {/* iOS search field */}
-      <div className="flex h-11 items-center gap-2 rounded-xl border border-white/15 bg-white/10 px-3.5 focus-within:border-white/50">
+      <div className="flex h-[46px] items-center gap-2 sm:h-11 rounded-xl border border-white/15 bg-white/10 px-3.5 focus-within:border-white/50">
         <Search size={18} className="shrink-0 text-white/60" />
         <input
           type="search"
@@ -67,7 +67,7 @@ export default function GruppenPageClient({
           type="button"
           onClick={() => setShowCreateForm((open) => !open)}
           aria-expanded={showCreateForm}
-          className="inline-flex min-h-[36px] items-center gap-1 rounded-full border border-white/20 bg-white/10 pr-3.5 pl-3 text-[0.875rem] font-semibold text-white transition hover:bg-white/15 active:scale-[0.96]"
+          className="inline-flex min-h-[44px] sm:min-h-[36px] items-center gap-1 rounded-full border border-white/20 bg-white/10 pr-3.5 pl-3 text-[0.875rem] font-semibold text-white transition hover:bg-white/15 active:scale-[0.96]"
         >
           {showCreateForm ? <X size={16} /> : <Plus size={16} />}
           {showCreateForm ? "Schließen" : "Neue Gruppe"}

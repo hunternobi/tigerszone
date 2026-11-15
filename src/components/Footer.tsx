@@ -19,7 +19,7 @@ const LEGAL_LINKS = [
 ];
 
 const LINK_CLASS =
-  "flex min-h-[40px] items-center text-[0.9375rem] text-white/65 transition-colors hover:text-white sm:min-h-0 sm:py-1 sm:text-sm";
+  "flex min-h-[44px] items-center text-[0.9375rem] text-white/65 transition-colors hover:text-white sm:min-h-0 sm:py-1 sm:text-sm";
 
 function LinkColumn({
   title,

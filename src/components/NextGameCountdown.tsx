@@ -122,7 +122,7 @@ export default function NextGameCountdown({
           <button
             type="button"
             onClick={() => focusTipField(gameId)}
-            className="font-ui min-h-[36px] shrink-0 rounded-full border border-white/25 bg-white/15 px-4 text-[0.8125rem] font-semibold text-white transition active:scale-[0.96]"
+            className="font-ui min-h-[44px] sm:min-h-[36px] shrink-0 rounded-full border border-white/25 bg-white/15 px-4 text-[0.8125rem] font-semibold text-white transition active:scale-[0.96]"
           >
             {prediction ? "Ändern" : "Jetzt tippen"}
           </button>

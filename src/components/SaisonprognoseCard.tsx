@@ -76,7 +76,7 @@ export default function SaisonprognoseCard({
             href="#story-export"
             aria-label="Hilfe zum Story-Export"
             title="Hilfe zum Story-Export"
-            className="glass-pill glass-interactive flex h-8 w-8 shrink-0 items-center justify-center text-white"
+            className="glass-pill glass-interactive relative flex h-[36px] w-[36px] shrink-0 items-center justify-center text-white after:absolute after:-inset-[4px] after:content-[''] sm:h-8 sm:w-8"
           >
             <HelpCircle size={16} />
           </a>

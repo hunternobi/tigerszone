@@ -78,7 +78,7 @@ export default function GroupList({
                       value={nameDraft}
                       onChange={(e) => setNameDraft(e.target.value)}
                       autoFocus
-                      className="h-10 min-w-0 flex-1 rounded-xl border border-white/20 bg-white/15 px-3 text-[1rem] text-white focus:border-white/60 focus:outline-none"
+                      className="h-[44px] min-w-0 flex-1 rounded-xl sm:h-10 border border-white/20 bg-white/15 px-3 text-[1rem] text-white focus:border-white/60 focus:outline-none"
                     />
                     <button
                       type="submit"
@@ -138,7 +138,7 @@ export default function GroupList({
                 aria-label={
                   isOpen ? "Rangliste einklappen" : "Rangliste ausklappen"
                 }
-                className="glass-icon-button relative h-10 w-10 shrink-0 appearance-none rounded-full text-white"
+                className="glass-icon-button relative h-[44px] w-[44px] shrink-0 appearance-none rounded-full text-white sm:h-10 sm:w-10"
               >
                 <ChevronDown
                   size={18}

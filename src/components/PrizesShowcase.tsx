@@ -64,7 +64,7 @@ export default function PrizesShowcase() {
           Es gelten die{" "}
           <Link
             href="/teilnahmebedingungen"
-            className="font-semibold underline underline-offset-2"
+            className="-my-[15px] inline-block py-[15px] font-semibold underline underline-offset-2"
           >
             Teilnahmebedingungen
           </Link>

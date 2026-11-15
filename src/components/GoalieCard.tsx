@@ -70,7 +70,7 @@ export default function GoalieCard({ goalies }: { goalies: GoalieView[] }) {
               role="tab"
               aria-selected={active}
               onClick={() => setSelected(g.id)}
-              className={`font-ui min-w-0 flex-1 truncate rounded-full px-2 py-1.5 text-[0.8125rem] font-semibold transition ${
+              className={`font-ui min-h-[44px] min-w-0 flex-1 truncate rounded-full px-2 py-1.5 text-[0.8125rem] font-semibold transition sm:min-h-0 ${
                 active
                   ? "bg-white text-tigers-primary shadow-[0_2px_8px_rgba(0,0,0,0.3)]"
                   : "text-white/80"

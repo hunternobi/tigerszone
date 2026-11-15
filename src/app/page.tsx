@@ -202,7 +202,7 @@ export default async function Home() {
         <section className="border-t border-white/10 px-7 py-8 text-center sm:px-6">
           <Link
             href="/community#faq"
-            className="inline-flex items-center gap-1 text-[0.9375rem] font-medium text-white/85 transition-colors hover:text-white"
+            className="inline-flex min-h-[44px] items-center gap-1 text-[0.9375rem] font-medium text-white/85 transition-colors hover:text-white"
           >
             Fragen? Schau in unserem FAQ-Bereich vorbei
             <ChevronRight size={17} strokeWidth={2.25} />

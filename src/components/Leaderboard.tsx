@@ -118,7 +118,7 @@ export default function Leaderboard({
               <li
                 key={entry.userId}
                 data-me={isMe ? "" : undefined}
-                className={`flex items-center justify-between gap-3 py-2.5 ${isMe ? MY_ROW_CLASS : ""}`}
+                className={`flex items-center justify-between gap-3 py-[11px] sm:py-2.5 ${isMe ? MY_ROW_CLASS : ""}`}
               >
                 <span className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-1 text-white">
                   <span className="flex min-w-0 items-center gap-2">
@@ -129,7 +129,7 @@ export default function Leaderboard({
                     </span>
                     <Link
                       href={`/spieler/${entry.userId}`}
-                      className={`-my-2 inline-block py-2 break-words hover:underline ${rankColor(index)} ${index < 3 ? "font-semibold" : ""}`}
+                      className={`-mx-[8px] -my-[11px] inline-block px-[8px] py-[11px] break-words sm:-my-2 sm:py-2 hover:underline ${rankColor(index)} ${index < 3 ? "font-semibold" : ""}`}
                     >
                       {entry.name}
                     </Link>
