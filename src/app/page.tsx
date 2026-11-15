@@ -3,7 +3,6 @@ import { ChevronRight } from "lucide-react";
 import { auth } from "@/auth";
 import FadingBackground from "@/components/FadingBackground";
 import InstagramEmbed from "@/components/InstagramEmbed";
-import LiquidGlassCard from "@/components/LiquidGlassCard";
 import Scene, { NAVY_GLOWS } from "@/components/Scene";
 import NextGameHeroCountdown from "@/components/NextGameHeroCountdown";
 import StatsAnnouncement from "@/components/StatsAnnouncement";
@@ -53,7 +52,7 @@ export default async function Home() {
 
               {nextGame && (
                 <Reveal>
-                  <LiquidGlassCard className="mx-auto mt-4 max-w-2xl p-3.5 text-left sm:mt-10 sm:p-7">
+                  <div className="glass-panel mx-auto mt-4 max-w-2xl p-3.5 text-left sm:mt-10 sm:p-7">
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between sm:gap-8">
                       <div className="min-w-0">
                         <h2 className="font-ui text-[0.6875rem] font-semibold tracking-[0.14em] text-white/60 uppercase sm:text-xs">
@@ -106,7 +105,7 @@ export default async function Home() {
                         <PillButton href="/tippspiel">Jetzt tippen</PillButton>
                       </div>
                     </div>
-                  </LiquidGlassCard>
+                  </div>
                 </Reveal>
               )}
 

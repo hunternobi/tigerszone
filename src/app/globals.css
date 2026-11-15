@@ -317,39 +317,6 @@ html[data-scrolling] main .podium-shine {
   }
 }
 
-/* Liquid glass card (LiquidGlassCard): a WebGL canvas over the card's whole border box draws refracting glass
-   while the page stands still (data-liquid="on"). While it scrolls, and whenever WebGL is not available, the
-   card is the normal CSS glass panel underneath; the canvas only fades (an opacity change costs nothing). */
-.liquid-glass {
-  isolation: isolate;
-}
-
-.liquid-glass-canvas {
-  position: absolute;
-  inset: -1px;
-  width: calc(100% + 2px);
-  height: calc(100% + 2px);
-  border-radius: inherit;
-  pointer-events: none;
-  opacity: 0;
-  will-change: opacity;
-  transition: opacity 0.1s linear;
-}
-
-/* The inset glows of the CSS panel lie above the canvas; they make way for the shader's own rim. */
-.liquid-glass::after {
-  transition: opacity 0.2s ease-out;
-}
-
-.liquid-glass[data-liquid="on"]::after {
-  opacity: 0;
-}
-
-.liquid-glass[data-liquid="on"] > .liquid-glass-canvas {
-  opacity: 1;
-  transition: opacity 0.3s ease-out;
-}
-
 /* White pill buttons carry dark text: no halo there. */
 main :is(.bg-white, .bg-white *) {
   text-shadow: none;
