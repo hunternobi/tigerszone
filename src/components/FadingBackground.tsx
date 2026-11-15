@@ -1,6 +1,4 @@
-"use client";
-
-import Image from "next/image";
+import { getImageProps } from "next/image";
 import type { CSSProperties, ReactNode } from "react";
 
 interface FadingBackgroundProps {
@@ -14,6 +12,22 @@ interface FadingBackgroundProps {
   children: ReactNode;
 }
 
+/** From this width on the wide photo is shown (Tailwind's sm). */
+const WIDE_QUERY = "(min-width: 640px)";
+const NARROW_QUERY = "(max-width: 639.98px)";
+
+// The photos lie dimmed behind the page, so a lower quality than the default 75 is not visible.
+const photoProps = (src: string, alt: string) =>
+  getImageProps({
+    src,
+    alt,
+    fill: true,
+    sizes: "100vw",
+    quality: 60,
+    loading: "eager",
+    fetchPriority: "high",
+  }).props;
+
 export default function FadingBackground({
   src,
   mobileSrc,
@@ -24,11 +38,35 @@ export default function FadingBackground({
   scaleClassName = "scale-100",
   children,
 }: FadingBackgroundProps) {
+  const wide = photoProps(src, alt);
+  const narrow = mobileSrc ? photoProps(mobileSrc, alt) : null;
+
   // The photo is fixed to the screen and as high as the screen with the browser toolbars collapsed (100lvh). With
   // inset-0 it was resized every time Safari's toolbars slid in or out while scrolling, and the browser had to
   // scale and redraw the whole picture again, which showed as stutter.
   return (
     <div className="relative -mt-[4.5rem] overflow-hidden">
+      {/* One <picture> instead of two images, so a phone only downloads the phone photo (two <Image>s were
+          both preloaded, the hidden one included). The preloads carry the same media queries. */}
+      <link
+        rel="preload"
+        as="image"
+        imageSrcSet={wide.srcSet}
+        imageSizes="100vw"
+        media={narrow ? WIDE_QUERY : undefined}
+        fetchPriority="high"
+      />
+      {narrow && (
+        <link
+          rel="preload"
+          as="image"
+          imageSrcSet={narrow.srcSet}
+          imageSizes="100vw"
+          media={NARROW_QUERY}
+          fetchPriority="high"
+        />
+      )}
+
       <div
         data-page-background
         style={
@@ -39,32 +77,17 @@ export default function FadingBackground({
         }
         className={`page-bg pointer-events-none fixed inset-x-0 top-0 -z-10 h-[100lvh] ${scaleClassName}`}
       >
-        {mobileSrc ? (
-          <>
-            <Image
-              src={mobileSrc}
-              alt={alt}
-              fill
-              priority
-              className="object-cover object-center sm:hidden"
-            />
-            <Image
-              src={src}
-              alt={alt}
-              fill
-              priority
-              className="hidden object-cover object-center sm:block"
-            />
-          </>
-        ) : (
-          <Image
-            src={src}
+        <picture>
+          {narrow && (
+            <source media={WIDE_QUERY} srcSet={wide.srcSet} sizes="100vw" />
+          )}
+          {/* The props come from next/image (getImageProps), so this is still an optimised image. */}
+          <img
+            {...(narrow ?? wide)}
             alt={alt}
-            fill
-            priority
             className="object-cover object-center"
           />
-        )}
+        </picture>
       </div>
 
       {overlayClassName && (

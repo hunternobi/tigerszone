@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Suspense } from "react";
+import { Geist } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SessionProvider } from "next-auth/react";
 import Header from "@/components/Header";
@@ -14,11 +15,6 @@ import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
@@ -63,9 +59,6 @@ export const metadata: Metadata = {
     description: SITE_DESCRIPTION,
     images: ["/images/hero-stadium-og.jpg"],
   },
-  icons: {
-    icon: "/images/TigersZone_Logo.png",
-  },
 };
 
 export const viewport: Viewport = {
@@ -73,23 +66,27 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
+/** The header with the signed-in user's invitations and notifications (two database round trips). */
+async function HeaderWithInbox({ userId }: { userId: string }) {
+  const [invites, notifications] = await Promise.all([
+    getMyGroupInvites(userId),
+    getMyNotifications(userId),
+  ]);
+  return <Header invites={invites} notifications={notifications} />;
+}
+
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Reading the session only decodes the cookie; nothing here waits for the database.
   const session = await auth();
-  const [invites, notifications] = session?.user
-    ? await Promise.all([
-        getMyGroupInvites(session.user.id),
-        getMyNotifications(session.user.id),
-      ])
-    : [[], []];
 
   return (
     <html
       lang="de"
-      className={`${geistSans.variable} ${geistMono.variable} scroll-smooth antialiased`}
+      className={`${geistSans.variable} scroll-smooth antialiased`}
     >
       <body className="flex min-h-dvh flex-col bg-tigers-primary">
         <script
@@ -107,7 +104,15 @@ export default async function RootLayout({
           }}
         />
         <SessionProvider session={session}>
-          <Header invites={invites} notifications={notifications} />
+          {/* The page no longer waits for the inbox: the header shows at once with an empty bell and the
+              invitations and notifications stream in when their queries are done. */}
+          {session?.user ? (
+            <Suspense fallback={<Header invites={[]} notifications={[]} />}>
+              <HeaderWithInbox userId={session.user.id} />
+            </Suspense>
+          ) : (
+            <Header invites={[]} notifications={[]} />
+          )}
           <main className="flex-1 pt-[4.5rem]">{children}</main>
           <Footer />
           <NewsStories />

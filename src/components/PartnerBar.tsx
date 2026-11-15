@@ -21,6 +21,8 @@ export default function PartnerBar() {
                 alt={partner.name}
                 width={partner.logoWidth}
                 height={partner.logoHeight}
+                // Three tiles per row on a phone, 12rem tiles from sm up.
+                sizes="(min-width: 640px) 192px, 33vw"
                 className="h-full w-full object-contain"
               />
             );

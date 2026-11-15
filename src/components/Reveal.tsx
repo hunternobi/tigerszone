@@ -1,7 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 
 interface RevealProps {
   children: ReactNode;
@@ -9,16 +8,44 @@ interface RevealProps {
   className?: string;
 }
 
+/**
+ * Fades and lifts its content in (see .reveal in globals.css).
+ *
+ * The animation is plain CSS and starts with the first paint, so the server HTML carries no hidden state and
+ * the content shows without waiting for scripts. Once scripts run, blocks that are still below the screen are
+ * held back and play when they scroll into view.
+ */
 export default function Reveal({ children, delay = 0, className }: RevealProps) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element || !("IntersectionObserver" in window)) return;
+    if (element.getBoundingClientRect().top < window.innerHeight) return;
+
+    element.classList.add("reveal-wait");
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        element.classList.remove("reveal-wait");
+        observer.disconnect();
+      },
+      { threshold: 0.2 },
+    );
+    observer.observe(element);
+    return () => {
+      observer.disconnect();
+      element.classList.remove("reveal-wait");
+    };
+  }, []);
+
   return (
-    <motion.div
-      className={className}
-      initial={{ opacity: 0, y: 32, scale: 0.96 }}
-      whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.6, delay, ease: "easeOut" }}
+    <div
+      ref={ref}
+      className={className ? `reveal ${className}` : "reveal"}
+      style={delay ? { animationDelay: `${delay}s` } : undefined}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }

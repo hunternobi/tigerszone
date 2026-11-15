@@ -154,15 +154,16 @@ export default function Header({ invites, notifications }: HeaderProps) {
           href="/"
           aria-label={`${SITE_NAME} – zur Startseite`}
           onClick={() => setMobileOpen(false)}
-          className={`glass-capsule flex min-h-[40px] items-center gap-2 rounded-full py-1 pl-1 ${isHome ? "pr-1" : "pr-4"} active:scale-[0.96]`}
+          className={`glass-capsule flex min-h-[44px] items-center gap-2 rounded-full py-1 pl-1 ${isHome ? "pr-1" : "pr-4"} active:scale-[0.96]`}
         >
           <Image
             src="/images/TigersZone_Logo_transparent.png"
             alt=""
             width={36}
             height={36}
-            className="h-9 w-9 drop-shadow-[0_1px_3px_rgba(5,0,70,0.75)]"
-            priority
+            // Fixed px: rem sizes shrink on phones, and the logo is the way back to the start page.
+            className="size-[36px] drop-shadow-[0_1px_3px_rgba(5,0,70,0.75)]"
+            loading="eager"
           />
           {!isHome && (
             <span className="font-ui text-[0.9375rem] font-semibold tracking-tight text-white">

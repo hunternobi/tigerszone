@@ -33,21 +33,41 @@ export default function InstagramEmbed({ url }: InstagramEmbedProps) {
     return () => observer.disconnect();
   }, []);
 
+  // Instagram's script (and the frame it builds) is only loaded once the post comes near the screen: it sits
+  // far down the page and is heavy for a phone that never scrolls there.
   useEffect(() => {
+    const box = boxRef.current;
+    if (!box) return;
     const scriptId = "instagram-embed-script";
 
-    if (window.instgrm) {
-      window.instgrm.Embeds.process();
+    const load = () => {
+      if (window.instgrm) {
+        window.instgrm.Embeds.process();
+        return;
+      }
+      if (document.getElementById(scriptId)) return;
+
+      const script = document.createElement("script");
+      script.id = scriptId;
+      script.src = "https://www.instagram.com/embed.js";
+      script.async = true;
+      document.body.appendChild(script);
+    };
+
+    if (!("IntersectionObserver" in window)) {
+      load();
       return;
     }
-
-    if (document.getElementById(scriptId)) return;
-
-    const script = document.createElement("script");
-    script.id = scriptId;
-    script.src = "https://www.instagram.com/embed.js";
-    script.async = true;
-    document.body.appendChild(script);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        observer.disconnect();
+        load();
+      },
+      { rootMargin: "600px 0px" },
+    );
+    observer.observe(box);
+    return () => observer.disconnect();
   }, [url]);
 
   return (

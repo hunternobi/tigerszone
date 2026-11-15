@@ -51,6 +51,7 @@ export default function PartnerShowcase() {
             alt=""
             width={partner.logoWidth}
             height={partner.logoHeight}
+            sizes="80px"
             className="h-full w-full object-contain"
           />
         </span>
