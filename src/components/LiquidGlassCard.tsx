@@ -3,8 +3,10 @@
 import { useEffect, useRef, type ReactNode } from "react";
 import { LiquidGlassRenderer } from "@/lib/liquidGlass";
 
-/** How long frames keep being drawn after the last scroll or resize event (covers momentum scrolling). */
+/** How long frames keep being drawn after a resize or layout change. */
 const ACTIVE_MS = 250;
+/** The page counts as standing still this long after the last scroll event (covers momentum scrolling). */
+const REST_MS = 140;
 /** The card fades and rises in when the page appears (Reveal); frames are drawn until that has settled. */
 const INTRO_MS = 1600;
 
@@ -24,8 +26,12 @@ function findPagePhoto(): { layer: HTMLElement; image: HTMLImageElement } | null
 }
 
 /**
- * A glass panel with real refraction of the fixed page photo (see lib/liquidGlass). It starts as the normal
- * CSS glass panel; once WebGL has drawn its first frame the CSS glass is switched off (data-liquid="on").
+ * A glass panel with real refraction of the fixed page photo (see lib/liquidGlass), shown while the page
+ * stands still (data-liquid="on" fades the canvas in over the normal CSS glass panel).
+ *
+ * While the page scrolls the canvas is hidden and nothing is drawn: the photo is fixed and the card moves, so
+ * the refraction would have to be redrawn for every frame, and on a phone scrolling runs ahead of scripts,
+ * which made the picture in the glass trail behind. Standing still, one frame is drawn and faded back in.
  * Without WebGL2, after a lost context, or with "reduce transparency" set, it simply stays the CSS panel.
  */
 export default function LiquidGlassCard({
@@ -54,6 +60,8 @@ export default function LiquidGlassCard({
     let onScreen = true;
     let photoReady = false;
     let lastKey = "";
+    let scrolling = false;
+    let restTimer: ReturnType<typeof setTimeout> | undefined;
 
     const fallBack = () => {
       if (!destroyed) delete card.dataset.liquid;
@@ -137,7 +145,7 @@ export default function LiquidGlassCard({
     function frame(now: number) {
       frameId = 0;
       if (destroyed || renderer.lost) return;
-      if (onScreen && (photoReady || image.getClientRects().length === 0)) draw();
+      if (!scrolling && onScreen && (photoReady || image.getClientRects().length === 0)) draw();
       if (now < activeUntil) frameId = requestAnimationFrame(frame);
     }
 
@@ -146,10 +154,22 @@ export default function LiquidGlassCard({
       if (!frameId) frameId = requestAnimationFrame(frame);
     }
 
-    const onScrollOrResize = () => wake();
-    window.addEventListener("scroll", onScrollOrResize, { passive: true });
-    window.addEventListener("resize", onScrollOrResize);
-    window.visualViewport?.addEventListener("resize", onScrollOrResize);
+    const onScroll = () => {
+      if (!scrolling) {
+        scrolling = true;
+        delete card.dataset.liquid;
+      }
+      clearTimeout(restTimer);
+      restTimer = setTimeout(() => {
+        scrolling = false;
+        lastKey = "";
+        wake();
+      }, REST_MS);
+    };
+    const onResize = () => wake();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onResize);
+    window.visualViewport?.addEventListener("resize", onResize);
 
     const sizeObserver = new ResizeObserver(() => wake());
     sizeObserver.observe(card);
@@ -164,9 +184,10 @@ export default function LiquidGlassCard({
     return () => {
       destroyed = true;
       cancelAnimationFrame(frameId);
-      window.removeEventListener("scroll", onScrollOrResize);
-      window.removeEventListener("resize", onScrollOrResize);
-      window.visualViewport?.removeEventListener("resize", onScrollOrResize);
+      clearTimeout(restTimer);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
+      window.visualViewport?.removeEventListener("resize", onResize);
       image.removeEventListener("load", start);
       sizeObserver.disconnect();
       viewObserver.disconnect();
