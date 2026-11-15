@@ -68,10 +68,17 @@ export const viewport: Viewport = {
 
 /** The header with the signed-in user's invitations and notifications (two database round trips). */
 async function HeaderWithInbox({ userId }: { userId: string }) {
+  // A failing inbox query must not take the page down (the header sits outside the page's error boundary).
   const [invites, notifications] = await Promise.all([
     getMyGroupInvites(userId),
     getMyNotifications(userId),
-  ]);
+  ]).catch((error) => {
+    console.error("Header inbox failed:", error);
+    return [[], []] as [
+      Awaited<ReturnType<typeof getMyGroupInvites>>,
+      Awaited<ReturnType<typeof getMyNotifications>>,
+    ];
+  });
   return <Header invites={invites} notifications={notifications} />;
 }
 
