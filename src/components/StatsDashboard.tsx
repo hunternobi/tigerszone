@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import type { Game } from "@/types";
 import FormCard from "@/components/FormCard";
 import GoalieCard, { type GoalieView } from "@/components/GoalieCard";
+import SegmentedSwitch from "@/components/SegmentedSwitch";
 import StatsPicker from "@/components/StatsPicker";
 import Head2Head, { findOpponent } from "@/components/Head2Head";
 import {
@@ -179,8 +180,46 @@ export default function StatsDashboard({
   const tigersSkaters = players.filter(
     (player) => player.teamId === STRAUBING_TEAM_ID && player.position !== "G",
   );
-  const scorers = topBy(tigersSkaters, (p) => p.points, 5);
-  const scorerMax = scorers[0]?.points || 1;
+  // Every outfield player of the Tigers, ranked by points, goals or assists (equal values share a rank).
+  const scorerLists = (
+    [
+      { value: "gesamt", label: "Gesamt", caption: "Tore und Assists zusammen", pick: (p: PlayerStat) => p.points },
+      { value: "tore", label: "Tore", caption: "Die meisten Tore", pick: (p: PlayerStat) => p.goals },
+      { value: "assists", label: "Assists", caption: "Die meisten Assists", pick: (p: PlayerStat) => p.assists },
+    ] as const
+  ).map(({ value, label, caption, pick }) => {
+    const sorted = [...tigersSkaters].sort(
+      (a, b) => pick(b) - pick(a) || b.points - a.points,
+    );
+    const best = pick(sorted[0]) || 1;
+    return {
+      value,
+      label,
+      caption,
+      content: (
+        <ol>
+          {sorted.map((player, index) => {
+            const rank = sorted.findIndex((p) => pick(p) === pick(player)) + 1;
+            return (
+              <BarRow
+                key={player.id ?? player.name}
+                rank={rank}
+                name={player.name}
+                detail={
+                  value === "gesamt"
+                    ? `${player.goals} T · ${player.assists} A`
+                    : undefined
+                }
+                value={fmt(pick(player))}
+                fraction={pick(player) / best}
+                highlight={rank === 1 && index === 0}
+              />
+            );
+          })}
+        </ol>
+      ),
+    };
+  });
 
   const pimLeaders = topBy(tigersSkaters, (p) => p.pim, 10).filter(
     (p) => p.pim > 0,
@@ -258,23 +297,11 @@ export default function StatsDashboard({
               value: "topscorer",
               label: "Topscorer",
               content: (
-                <Card
-                  title="Topscorer der Tigers"
-                  subtitle="Tore und Assists zusammen"
-                >
-                  <ol>
-                    {scorers.map((player, index) => (
-                      <BarRow
-                        key={player.id ?? player.name}
-                        rank={index + 1}
-                        name={player.name}
-                        detail={`${player.goals} T · ${player.assists} A`}
-                        value={fmt(player.points)}
-                        fraction={player.points / scorerMax}
-                        highlight={index === 0}
-                      />
-                    ))}
-                  </ol>
+                <Card title="Topscorer der Tigers">
+                  <SegmentedSwitch
+                    ariaLabel="Topscorer nach"
+                    options={scorerLists}
+                  />
                 </Card>
               ),
             },
