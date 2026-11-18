@@ -182,7 +182,7 @@ export default function StatsDashboard({
   const scorers = topBy(tigersSkaters, (p) => p.points, 5);
   const scorerMax = scorers[0]?.points || 1;
 
-  const pimLeaders = topBy(tigersSkaters, (p) => p.pim, 3).filter(
+  const pimLeaders = topBy(tigersSkaters, (p) => p.pim, 10).filter(
     (p) => p.pim > 0,
   );
 
@@ -232,7 +232,7 @@ export default function StatsDashboard({
               content: (
                 <Card
                   title="Strafminuten"
-                  subtitle="Die meisten Strafminuten bei den Tigers"
+                  subtitle="Die Top 10 mit den meisten Strafminuten bei den Tigers"
                 >
                   <ol>
                     {pimLeaders.map((player, index) => (
