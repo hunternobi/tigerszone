@@ -241,46 +241,50 @@ export default function Head2Head({
   if (!tigers || rows.length === 0) return null;
 
   return (
-    <section className="glass-panel p-4 sm:p-6">
-      <p className="font-ui text-[0.625rem] font-semibold tracking-[0.14em] text-white/60 uppercase">
-        Head2Head
-      </p>
-      <div className="mt-2 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-x-2">
-        <h3 className="font-ui text-[0.9375rem] leading-tight font-semibold tracking-tight break-words text-white sm:text-2xl">
-          {tigers.name}
-        </h3>
-        <span className="text-[0.6875rem] font-medium text-white/50">vs.</span>
-        <h3 className="font-ui text-right text-[0.9375rem] leading-tight font-semibold tracking-tight break-words text-white sm:text-2xl">
-          {opponent.name}
-        </h3>
-      </div>
+    <section>
+      <h2 className="font-ui text-[1.375rem] font-semibold tracking-tight text-white sm:text-3xl">
+        Direkter Vergleich
+      </h2>
+      <div className="glass-panel mt-3 p-4 sm:p-6">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-x-2">
+          <h3 className="font-ui text-[0.9375rem] leading-tight font-semibold tracking-tight break-words text-white sm:text-2xl">
+            {tigers.name}
+          </h3>
+          <span className="text-[0.6875rem] font-medium text-white/50">
+            vs.
+          </span>
+          <h3 className="font-ui text-right text-[0.9375rem] leading-tight font-semibold tracking-tight break-words text-white sm:text-2xl">
+            {opponent.name}
+          </h3>
+        </div>
 
-      <ul className="mt-4 divide-y divide-white/10">
-        {rows.map((row) => {
-          const tigersBetter = row.tigers.rank < row.opponent.rank;
-          const opponentBetter = row.opponent.rank < row.tigers.rank;
-          return (
-            <li key={row.label} className="py-3 first:pt-1.5 last:pb-0">
-              <p className="font-ui mb-2 text-center text-[0.6875rem] font-semibold tracking-[0.12em] text-white/70 uppercase">
-                {row.label}
-              </p>
-              <div className="grid grid-cols-2 gap-x-3">
-                <SideCell
-                  side={row.tigers}
-                  better={tigersBetter}
-                  align="left"
-                />
-                <SideCell
-                  side={row.opponent}
-                  better={opponentBetter}
-                  align="right"
-                />
-              </div>
-              <CompareBar left={row.tigers} right={row.opponent} />
-            </li>
-          );
-        })}
-      </ul>
+        <ul className="mt-4 divide-y divide-white/10">
+          {rows.map((row) => {
+            const tigersBetter = row.tigers.rank < row.opponent.rank;
+            const opponentBetter = row.opponent.rank < row.tigers.rank;
+            return (
+              <li key={row.label} className="py-3 first:pt-1.5 last:pb-0">
+                <p className="font-ui mb-2 text-center text-[0.6875rem] font-semibold tracking-[0.12em] text-white/70 uppercase">
+                  {row.label}
+                </p>
+                <div className="grid grid-cols-2 gap-x-3">
+                  <SideCell
+                    side={row.tigers}
+                    better={tigersBetter}
+                    align="left"
+                  />
+                  <SideCell
+                    side={row.opponent}
+                    better={opponentBetter}
+                    align="right"
+                  />
+                </div>
+                <CompareBar left={row.tigers} right={row.opponent} />
+              </li>
+            );
+          })}
+        </ul>
+      </div>
     </section>
   );
 }

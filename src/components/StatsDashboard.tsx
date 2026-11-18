@@ -214,73 +214,78 @@ export default function StatsDashboard({
   return (
     <div className="space-y-6">
       {opponent && <Head2Head stats={stats} opponent={opponent} />}
-      <StatsPicker
-        initial={initialStat ?? "torhueter"}
-        options={[
-          {
-            value: "form",
-            label: "Form",
-            content: <FormCard games={recentGames} />,
-          },
-          {
-            value: "strafminuten",
-            label: "Strafminuten",
-            content: (
-              <Card
-                title="Strafminuten"
-                subtitle="Die meisten Strafminuten bei den Tigers"
-              >
-                <ol>
-                  {pimLeaders.map((player, index) => (
-                    <BarRow
-                      key={player.id ?? player.name}
-                      rank={index + 1}
-                      name={player.name}
-                      value={`${fmt(player.pim)} Min.`}
-                      fraction={player.pim / (pimLeaders[0]?.pim || 1)}
-                      highlight={index === 0}
-                    />
-                  ))}
-                </ol>
-              </Card>
-            ),
-          },
-          {
-            value: "tabelle",
-            label: "Tabelle",
-            content: <StandingsCard standings={standings} />,
-          },
-          {
-            value: "topscorer",
-            label: "Topscorer",
-            content: (
-              <Card
-                title="Topscorer der Tigers"
-                subtitle="Tore und Assists zusammen"
-              >
-                <ol>
-                  {scorers.map((player, index) => (
-                    <BarRow
-                      key={player.id ?? player.name}
-                      rank={index + 1}
-                      name={player.name}
-                      detail={`${player.goals} T · ${player.assists} A`}
-                      value={fmt(player.points)}
-                      fraction={player.points / scorerMax}
-                      highlight={index === 0}
-                    />
-                  ))}
-                </ol>
-              </Card>
-            ),
-          },
-          {
-            value: "torhueter",
-            label: "Torhüter",
-            content: <GoalieCard goalies={tigersGoalies} />,
-          },
-        ]}
-      />
+      <div>
+        <h2 className="font-ui mb-3 text-[1.375rem] font-semibold tracking-tight text-white sm:text-3xl">
+          Weitere Statistiken
+        </h2>
+        <StatsPicker
+          initial={initialStat ?? "torhueter"}
+          options={[
+            {
+              value: "form",
+              label: "Form",
+              content: <FormCard games={recentGames} />,
+            },
+            {
+              value: "strafminuten",
+              label: "Strafminuten",
+              content: (
+                <Card
+                  title="Strafminuten"
+                  subtitle="Die meisten Strafminuten bei den Tigers"
+                >
+                  <ol>
+                    {pimLeaders.map((player, index) => (
+                      <BarRow
+                        key={player.id ?? player.name}
+                        rank={index + 1}
+                        name={player.name}
+                        value={`${fmt(player.pim)} Min.`}
+                        fraction={player.pim / (pimLeaders[0]?.pim || 1)}
+                        highlight={index === 0}
+                      />
+                    ))}
+                  </ol>
+                </Card>
+              ),
+            },
+            {
+              value: "tabelle",
+              label: "Tabelle",
+              content: <StandingsCard standings={standings} />,
+            },
+            {
+              value: "topscorer",
+              label: "Topscorer",
+              content: (
+                <Card
+                  title="Topscorer der Tigers"
+                  subtitle="Tore und Assists zusammen"
+                >
+                  <ol>
+                    {scorers.map((player, index) => (
+                      <BarRow
+                        key={player.id ?? player.name}
+                        rank={index + 1}
+                        name={player.name}
+                        detail={`${player.goals} T · ${player.assists} A`}
+                        value={fmt(player.points)}
+                        fraction={player.points / scorerMax}
+                        highlight={index === 0}
+                      />
+                    ))}
+                  </ol>
+                </Card>
+              ),
+            },
+            {
+              value: "torhueter",
+              label: "Torhüter",
+              content: <GoalieCard goalies={tigersGoalies} />,
+            },
+          ]}
+        />
+      </div>
 
       <p className="px-2 text-center text-[0.75rem] leading-relaxed text-white/50">
         Stand {formatDate(stats.fetchedAt)} Uhr · Quelle: penny-del.org

@@ -1,5 +1,6 @@
 import { getImageProps } from "next/image";
 import type { CSSProperties, ReactNode } from "react";
+import { PHOTO_PLACEHOLDERS } from "@/lib/photoPlaceholders";
 
 interface FadingBackgroundProps {
   src: string;
@@ -17,8 +18,8 @@ const WIDE_QUERY = "(min-width: 640px)";
 const NARROW_QUERY = "(max-width: 639.98px)";
 
 // The photos lie dimmed behind the page, so a lower quality than the default 75 is not visible.
-const photoProps = (src: string, alt: string) =>
-  getImageProps({
+const photoProps = (src: string, alt: string) => {
+  const { props } = getImageProps({
     src,
     alt,
     fill: true,
@@ -26,7 +27,22 @@ const photoProps = (src: string, alt: string) =>
     quality: 60,
     loading: "eager",
     fetchPriority: "high",
-  }).props;
+  });
+  // A tiny blurred copy of the photo sits behind the real one (same placement), so the background is there
+  // from the first frame and the photo only sharpens when it arrives.
+  const placeholder = PHOTO_PLACEHOLDERS[src];
+  return placeholder
+    ? {
+        ...props,
+        style: {
+          ...props.style,
+          backgroundImage: `url("${placeholder}")`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        },
+      }
+    : props;
+};
 
 export default function FadingBackground({
   src,
