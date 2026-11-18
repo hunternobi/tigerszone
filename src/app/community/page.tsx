@@ -19,7 +19,15 @@ export const metadata: Metadata = {
   alternates: { canonical: "/community" },
 };
 
-const STAT_VALUES = ["form", "strafminuten", "tabelle", "topscorer", "torhueter"];
+const STAT_VALUES = [
+  "form",
+  "strafminuten",
+  "tabelle",
+  "topscorer",
+  "schuesse",
+  "bullys",
+  "torhueter",
+];
 
 export default async function CommunityPage({
   searchParams,

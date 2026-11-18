@@ -49,6 +49,9 @@ export interface PlayerStat {
   distanceKm: number | null;
   topShot: number | null;
   shots: number | null;
+  /** Faceoffs won and the win rate in % (from playerstats/basis), null if the page has no such column. */
+  faceoffsWon: number | null;
+  faceoffPct: number | null;
 }
 
 /** Power play / penalty kill and shooting numbers of one team. */
@@ -308,6 +311,20 @@ function parsePlayerTab(pageHtml: string): PlayerTab {
   return tab;
 }
 
+/** Value of the first column of a player record whose header matches (headers differ a little between pages). */
+function pickColumn(
+  record: Record<string, string> | undefined,
+  pattern: RegExp,
+): string | undefined {
+  if (!record) return undefined;
+  const key = Object.keys(record).find((head) => pattern.test(head));
+  return key ? record[key] : undefined;
+}
+
+// Faceoff columns of playerstats/basis: "FOW" / "FOW%" (or "FO%"), German pages say "Bully ...".
+const FACEOFF_WON = /^(FO\s?W|FOW|FO\s?\+|Bullys?\s+gew\w*)$/i;
+const FACEOFF_PCT = /^(FO\s?W?\s?%|FOW\s?%|Bully\w*\s*%|Bully\w*\s+Quote)$/i;
+
 function fullName(lastFirst: string): string {
   const [last, first] = lastFirst.split(",").map((part) => part.trim());
   return first ? `${first} ${last}` : last;
@@ -379,8 +396,22 @@ async function loadLeagueStats(): Promise<LeagueStats> {
       distanceKm: distance === null ? null : distance / 1000,
       topShot: decimal(shotsRecord?.["Top Shot (km/h)"]),
       shots: shotsRecord ? integer(shotsRecord.Shots) : null,
+      faceoffsWon: (() => {
+        const won = pickColumn(record, FACEOFF_WON);
+        return won === undefined ? null : integer(won);
+      })(),
+      faceoffPct: decimal(pickColumn(record, FACEOFF_PCT)),
     };
   });
+
+  if (!players.some((player) => player.faceoffPct !== null)) {
+    // The Bullys statistic hides itself; the headers show how the page's columns are really named.
+    const sample = basis.values().next().value;
+    console.warn(
+      "penny-del.org playerstats/basis: no faceoff column found, headers:",
+      sample ? Object.keys(sample).join(" | ") : "(no rows)",
+    );
+  }
 
   const special = parseSpecialTeams(specialHtml);
   const shooting = parseShooting(teamShotsHtml);
@@ -413,7 +444,7 @@ const cachedLeagueStats = unstable_cache(
     void day;
     return loadLeagueStats();
   },
-  ["penny-del-league-stats-v4"],
+  ["penny-del-league-stats-v5"],
   {
     revalidate: CACHE_SECONDS_MAX,
     tags: ["del-stats"],

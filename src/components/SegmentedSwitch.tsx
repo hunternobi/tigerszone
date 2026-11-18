@@ -40,7 +40,7 @@ export default function SegmentedSwitch({
               role="tab"
               aria-selected={active}
               onClick={() => setValue(option.value)}
-              className={`font-ui min-h-[44px] min-w-0 flex-1 truncate rounded-full px-2 py-1.5 text-[0.875rem] font-semibold transition sm:min-h-[36px] ${
+              className={`font-ui min-h-[44px] min-w-0 flex-1 truncate rounded-full px-1 py-1.5 text-[0.8125rem] font-semibold transition sm:min-h-[36px] sm:text-[0.875rem] ${
                 active
                   ? "bg-white text-tigers-primary shadow-[0_2px_8px_rgba(0,0,0,0.3)]"
                   : "text-white/80"

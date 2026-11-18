@@ -1,8 +1,9 @@
-import type { ReactNode } from "react";
 import type { Game } from "@/types";
 import FormCard from "@/components/FormCard";
 import GoalieCard, { type GoalieView } from "@/components/GoalieCard";
 import SegmentedSwitch from "@/components/SegmentedSwitch";
+import { buildFaceoffList, buildShotOptions } from "@/components/ShotStats";
+import { BarRow, Card, fmt, signed } from "@/components/StatsParts";
 import StatsPicker from "@/components/StatsPicker";
 import Head2Head, { findOpponent } from "@/components/Head2Head";
 import {
@@ -13,15 +14,6 @@ import {
   type TeamStanding,
 } from "@/lib/pennyDel";
 
-const fmt = (value: number, digits = 0) =>
-  value.toLocaleString("de-DE", {
-    minimumFractionDigits: digits,
-    maximumFractionDigits: digits,
-  });
-
-const signed = (value: number, digits = 0) =>
-  `${value > 0 ? "+" : ""}${fmt(value, digits)}`;
-
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleString("de-DE", {
     day: "numeric",
@@ -31,81 +23,6 @@ const formatDate = (iso: string) =>
     timeZone: "Europe/Berlin",
   });
 
-function Card({
-  title,
-  subtitle,
-  children,
-}: {
-  title: string;
-  subtitle?: string;
-  children: ReactNode;
-}) {
-  return (
-    <section className="glass-panel p-5 sm:p-6">
-      <h3 className="font-ui text-xl font-semibold tracking-tight text-white sm:text-2xl">
-        {title}
-      </h3>
-      {subtitle && (
-        <p className="mt-1 text-[0.875rem] leading-snug text-white/60">
-          {subtitle}
-        </p>
-      )}
-      <div className="mt-4">{children}</div>
-    </section>
-  );
-}
-
-/** One row of a ranking: rank, name, value, and a bar relative to the best value of the list. */
-function BarRow({
-  rank,
-  name,
-  detail,
-  value,
-  fraction,
-  highlight,
-}: {
-  rank: number;
-  name: string;
-  detail?: string;
-  value: string;
-  fraction: number;
-  highlight: boolean;
-}) {
-  return (
-    <li className="py-2.5 first:pt-0 last:pb-0">
-      <div className="flex items-baseline justify-between gap-3">
-        <span className="flex min-w-0 items-baseline gap-2">
-          <span className="w-5 shrink-0 text-[0.875rem] font-semibold text-white/50 tabular-nums">
-            {rank}
-          </span>
-          <span
-            className={`font-ui truncate text-[1rem] tracking-tight ${
-              highlight
-                ? "font-semibold text-white"
-                : "font-medium text-white/85"
-            }`}
-          >
-            {name}
-          </span>
-          {detail && (
-            <span className="shrink-0 text-[0.75rem] text-white/50">
-              {detail}
-            </span>
-          )}
-        </span>
-        <span className="font-ui shrink-0 text-[1.0625rem] font-semibold text-white tabular-nums">
-          {value}
-        </span>
-      </div>
-      <div className="mt-1.5 ml-7 h-1.5 overflow-hidden rounded-full bg-white/10">
-        <div
-          className={`h-full rounded-full ${highlight ? "bg-white" : "bg-white/35"}`}
-          style={{ width: `${Math.max(4, Math.round(fraction * 100))}%` }}
-        />
-      </div>
-    </li>
-  );
-}
 
 function topBy(
   players: PlayerStat[],
@@ -173,6 +90,7 @@ export default function StatsDashboard({
   /** Finished Tigers games, oldest first. */
   recentGames?: Game[];
 }) {
+  const faceoffList = buildFaceoffList(stats);
   const opponent = opponentName
     ? findOpponent(stats.standings, opponentName)
     : null;
@@ -305,6 +223,34 @@ export default function StatsDashboard({
                 </Card>
               ),
             },
+            {
+              value: "schuesse",
+              label: "Schüsse",
+              content: (
+                <Card title="Schüsse">
+                  <SegmentedSwitch
+                    ariaLabel="Schüsse nach"
+                    options={buildShotOptions(stats)}
+                  />
+                </Card>
+              ),
+            },
+            ...(faceoffList
+              ? [
+                  {
+                    value: "bullys",
+                    label: "Bullys",
+                    content: (
+                      <Card
+                        title="Bullys"
+                        subtitle="Gewonnene Bullys in %, Spieler ab 30 Bullys. Der Platz in der Liga steht hinter dem Namen."
+                      >
+                        {faceoffList}
+                      </Card>
+                    ),
+                  },
+                ]
+              : []),
             {
               value: "torhueter",
               label: "Torhüter",
