@@ -243,7 +243,7 @@ export default function StatsDashboard({
                     content: (
                       <Card
                         title="Bullys"
-                        subtitle="Gewonnene Bullys in %, Spieler ab 30 Bullys. Der Platz in der Liga steht hinter dem Namen."
+                        subtitle="Gewonnene Bullys in %, Spieler ab 30 Bullys."
                       >
                         {faceoffList}
                       </Card>

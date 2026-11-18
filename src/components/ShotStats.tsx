@@ -112,7 +112,7 @@ export function buildShotOptions(stats: LeagueStats): SegmentedOption[] {
     {
       value: "effizienz",
       label: "Effizienz",
-      caption: `Schusseffizienz: Tore pro Schuss. Spieler ab ${MIN_SHOTS} Schüssen, ihr Platz in der Liga steht hinter dem Namen.`,
+      caption: `Schusseffizienz: Tore pro Schuss, Spieler ab ${MIN_SHOTS} Schüssen.`,
       content: (
         <div className="space-y-4">
           {tigersShooting && (
@@ -137,7 +137,7 @@ export function buildShotOptions(stats: LeagueStats): SegmentedOption[] {
       value: "xg",
       label: "Exp. Goals",
       caption:
-        "Expected Goals (xG): wie viele Tore die Schüsse nach Lage und Art im Schnitt ergeben. Hinter dem Namen: echte Tore und Unterschied zur Erwartung.",
+        "Expected Goals (xG): wie viele Tore die Schüsse nach Lage und Art im Schnitt ergeben.",
       content: (
         <div className="space-y-4">
           {tigers && (
@@ -168,7 +168,7 @@ export function buildShotOptions(stats: LeagueStats): SegmentedOption[] {
       value: "staerke",
       label: "Schussstärke",
       caption:
-        "Der härteste Schuss der Saison in km/h, der Platz in der Liga steht hinter dem Namen.",
+        "Der härteste Schuss der Saison in km/h.",
       content: (
         <PlayerList
           rows={hardest}
