@@ -1,7 +1,8 @@
 import type { MetadataRoute } from "next";
 import { SITE_DESCRIPTION, SITE_NAME } from "@/lib/constants";
 
-// Lets phones put the site on the home screen with the TigersZone logo and open it like an app.
+// Lets phones put the site on the home screen with the TigersZone logo. "browser" keeps the normal browser bars
+// (reload, share, address), which matters for group invitation links; "standalone" would open it like an app.
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: SITE_NAME,
@@ -9,7 +10,7 @@ export default function manifest(): MetadataRoute.Manifest {
     description: SITE_DESCRIPTION,
     lang: "de",
     start_url: "/",
-    display: "standalone",
+    display: "browser",
     background_color: "#0a0f3d",
     theme_color: "#0a0f3d",
     icons: [
