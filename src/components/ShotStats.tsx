@@ -78,13 +78,9 @@ function PlayerList({
 
 /** The three selections of the "Schüsse" statistic. */
 export function buildShotOptions(stats: LeagueStats): SegmentedOption[] {
-  const { players, standings, teamStats } = stats;
+  const { players, standings } = stats;
 
   // Schusseffizienz: goals per shot
-  const teamShooting = teamStats.map((team) => team.shootingPct);
-  const tigersShooting = teamStats.find(
-    (team) => team.teamId === STRAUBING_TEAM_ID,
-  );
   const efficiency = rankTigers(
     players,
     (player) => (player.shots ? (player.goals / player.shots) * 100 : null),
@@ -114,23 +110,11 @@ export function buildShotOptions(stats: LeagueStats): SegmentedOption[] {
       label: "Effizienz",
       caption: `Schusseffizienz: Tore pro Schuss, Spieler ab ${MIN_SHOTS} Schüssen.`,
       content: (
-        <div className="space-y-4">
-          {tigersShooting && (
-            <StatTile
-              label="Tigers"
-              value={`${fmt(tigersShooting.shootingPct, 1)} %`}
-              sub={placeOf(
-                place(teamShooting, tigersShooting.shootingPct),
-                teamShooting.length,
-              )}
-            />
-          )}
-          <PlayerList
-            rows={efficiency}
-            format={(value) => `${fmt(value, 1)} %`}
-            detail={(row) => `Platz ${row.leaguePlace}`}
-          />
-        </div>
+        <PlayerList
+          rows={efficiency}
+          format={(value) => `${fmt(value, 1)} %`}
+          detail={(row) => `Platz ${row.leaguePlace}`}
+        />
       ),
     },
     {
