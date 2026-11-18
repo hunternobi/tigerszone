@@ -12,7 +12,9 @@ import PillButton from "@/components/PillButton";
 import SavedBadge, { SAVED_BADGE_MS } from "@/components/SavedBadge";
 import { deletePrediction, submitPrediction } from "@/app/tippspiel/actions";
 import { SCORING } from "@/lib/constants";
+import TeamFormButton from "@/components/TeamFormButton";
 import { getTeamName } from "@/lib/teams";
+import type { TeamFormEntry } from "@/lib/teamForm";
 import { formatGameTime, formatPostDate } from "@/utils/format";
 import type { Game } from "@/types";
 
@@ -25,6 +27,8 @@ interface TippspielTableProps {
   hauptrundeGames: Game[];
   predictions: Record<string, PredictionInfo>;
   isAuthenticated: boolean;
+  /** Last results per team id, for the form pop-up behind the team names. */
+  formByTeam: Record<string, TeamFormEntry[]>;
 }
 
 function sanitizeDigits(value: string): string {
@@ -60,6 +64,7 @@ interface TippspielRowProps {
   /** Not signed in: the fields are shown but tapping one leads to the login. */
   needsLogin: boolean;
   started: boolean;
+  formByTeam: Record<string, TeamFormEntry[]>;
 }
 
 function TippspielRow({
@@ -69,6 +74,7 @@ function TippspielRow({
   disabled,
   needsLogin,
   started,
+  formByTeam,
 }: TippspielRowProps) {
   const router = useRouter();
   const [home, setHome] = useState(
@@ -199,8 +205,12 @@ function TippspielRow({
         </span>
       </div>
       <div className="mt-2 grid grid-cols-[minmax(0,1fr)_52px] items-center gap-x-3 gap-y-2 sm:mt-1 sm:grid-cols-[minmax(0,1fr)_2.75rem_auto_2.75rem_minmax(0,1fr)] sm:gap-x-2.5 sm:gap-y-0">
-        <span className="col-start-1 row-start-1 text-left font-ui text-[1.0625rem] font-medium tracking-tight text-white sm:col-auto sm:row-auto sm:text-right sm:text-base">
+        <span className="col-start-1 row-start-1 flex items-center gap-2 text-left font-ui text-[1.0625rem] font-medium tracking-tight text-white sm:col-auto sm:row-auto sm:justify-end sm:text-right sm:text-base">
           {getTeamName(game.homeTeamId)}
+          <TeamFormButton
+            teamId={game.homeTeamId}
+            entries={formByTeam[game.homeTeamId] ?? []}
+          />
         </span>
         <input
           type="text"
@@ -231,8 +241,12 @@ function TippspielRow({
           aria-label={`Tipp Auswärtstore ${getTeamName(game.awayTeamId)}`}
           className={`col-start-2 row-start-2 sm:col-auto sm:row-auto ${inputClass(isDraw)}`}
         />
-        <span className="col-start-1 row-start-2 text-left font-ui text-[1.0625rem] font-medium tracking-tight text-white sm:col-auto sm:row-auto sm:text-base">
+        <span className="col-start-1 row-start-2 flex items-center gap-2 text-left font-ui text-[1.0625rem] font-medium tracking-tight text-white sm:col-auto sm:row-auto sm:text-base">
           {getTeamName(game.awayTeamId)}
+          <TeamFormButton
+            teamId={game.awayTeamId}
+            entries={formByTeam[game.awayTeamId] ?? []}
+          />
         </span>
       </div>
 
@@ -255,11 +269,13 @@ function CompetitionTable({
   games,
   predictions,
   isAuthenticated,
+  formByTeam,
 }: {
   title: string;
   games: Game[];
   predictions: Record<string, PredictionInfo>;
   isAuthenticated: boolean;
+  formByTeam: Record<string, TeamFormEntry[]>;
 }) {
   if (games.length === 0) return null;
 
@@ -281,6 +297,7 @@ function CompetitionTable({
               disabled={deadlinePassed}
               needsLogin={!isAuthenticated}
               started={deadlinePassed}
+              formByTeam={formByTeam}
             />
           );
         })}
@@ -335,6 +352,7 @@ export default function TippspielTable({
   hauptrundeGames,
   predictions,
   isAuthenticated,
+  formByTeam,
 }: TippspielTableProps) {
   return (
     <div>
@@ -352,6 +370,7 @@ export default function TippspielTable({
         games={hauptrundeGames}
         predictions={predictions}
         isAuthenticated={isAuthenticated}
+        formByTeam={formByTeam}
       />
     </div>
   );

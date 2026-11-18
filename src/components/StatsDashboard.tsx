@@ -1,5 +1,3 @@
-import type { Game } from "@/types";
-import FormCard from "@/components/FormCard";
 import GoalieCard, { type GoalieView } from "@/components/GoalieCard";
 import SegmentedSwitch from "@/components/SegmentedSwitch";
 import { buildFaceoffList, buildShotOptions } from "@/components/ShotStats";
@@ -79,7 +77,6 @@ function StandingsCard({ standings }: { standings: TeamStanding[] }) {
 export default function StatsDashboard({
   stats,
   opponentName,
-  recentGames = [],
   initialStat,
 }: {
   /** Which statistic the picker shows first (from the ?stat= link on the landing page). */
@@ -87,8 +84,6 @@ export default function StatsDashboard({
   stats: LeagueStats;
   /** Name of the next opponent; the Head2Head card is shown when it can be matched to a DEL team. */
   opponentName?: string | null;
-  /** Finished Tigers games, oldest first. */
-  recentGames?: Game[];
 }) {
   const faceoffList = buildFaceoffList(stats);
   const opponent = opponentName
@@ -178,11 +173,6 @@ export default function StatsDashboard({
         <StatsPicker
           initial={initialStat ?? "torhueter"}
           options={[
-            {
-              value: "form",
-              label: "Form",
-              content: <FormCard games={recentGames} />,
-            },
             {
               value: "strafminuten",
               label: "Strafminuten",

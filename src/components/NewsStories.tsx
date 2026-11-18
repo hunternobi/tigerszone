@@ -39,7 +39,6 @@ function markSeen(userId: string) {
 
 const STATS = [
   "Head2Head",
-  "Form",
   "Torhüter",
   "Tabelle",
   "Topscorer",

@@ -10,6 +10,7 @@ import {
   type GroupLeaderboardData,
 } from "@/lib/leaderboard";
 import { getUserPredictionHistory } from "@/lib/predictions";
+import { buildTeamForm, type TeamFormEntry } from "@/lib/teamForm";
 import {
   getBonusDeadline,
   getMyBonusPrediction,
@@ -77,6 +78,13 @@ export default async function TippspielPage() {
         berlinDay(new Date(game.kickoff)) >= today,
     )
     .slice(0, 3);
+  // Form pop-up behind the team names of the listed games.
+  const formByTeam: Record<string, TeamFormEntry[]> = {};
+  for (const game of hauptrundeGames) {
+    for (const teamId of [game.homeTeamId, game.awayTeamId]) {
+      formByTeam[teamId] ??= buildTeamForm(allGames, teamId);
+    }
+  }
   const nextGame =
     allGames.find(
       (game) =>
@@ -109,6 +117,7 @@ export default async function TippspielPage() {
       bonusPrediction={resolvedBonusPrediction}
       bonusLocked={bonusLocked}
       bonusDeadline={bonusDeadline ? bonusDeadline.toISOString() : null}
+      formByTeam={formByTeam}
     />
   );
 }

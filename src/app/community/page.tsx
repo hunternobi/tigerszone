@@ -20,7 +20,6 @@ export const metadata: Metadata = {
 };
 
 const STAT_VALUES = [
-  "form",
   "strafminuten",
   "tabelle",
   "topscorer",
@@ -44,12 +43,6 @@ export default async function CommunityPage({
   const loadStats = signedIn;
   const stats = loadStats ? await getLeagueStats() : null;
   const allGames = loadStats ? await getAllGames() : [];
-  const recentGames = allGames.filter(
-    (game) =>
-      game.status === "finished" &&
-      game.competition !== "Vorbereitung" &&
-      game.homeScore !== undefined,
-  );
   // Head2Head shows the opponent of the next match day, and a match day only counts as over at midnight
   // (German time) - the same moment the statistics are refreshed.
   const berlinDay = (date: Date) =>
@@ -94,7 +87,7 @@ export default async function CommunityPage({
                             Statistiken nur mit Anmeldung
                           </h3>
                           <p className="mt-1 text-[0.9375rem] leading-snug text-white/80">
-                            Melde dich an, um Head2Head, Form, Tabelle und mehr
+                            Melde dich an, um den Direkten Vergleich, die Tabelle und mehr
                             zu sehen.
                           </p>
                         </div>
@@ -105,7 +98,6 @@ export default async function CommunityPage({
                     ) : stats ? (
                       <StatsDashboard
                         stats={stats}
-                        recentGames={recentGames}
                         initialStat={initialStat}
                         opponentName={
                           opponentId ? getDelClubName(opponentId) : null

@@ -11,6 +11,7 @@ import type { Game } from "@/types";
 import type { LeaderboardEntry } from "@/components/Leaderboard";
 import type { GroupLeaderboardData } from "@/lib/leaderboard";
 import type { MyBonusPrediction } from "@/app/tippspiel/bonusActions";
+import type { TeamFormEntry } from "@/lib/teamForm";
 
 // Darker than the other pages (0.55): the tip fields on a phone have to stay easy to read.
 const PAGE_OPACITY = 0.38;
@@ -35,6 +36,7 @@ interface TippspielInteractiveProps {
   bonusPrediction: MyBonusPrediction;
   bonusLocked: boolean;
   bonusDeadline: string | null;
+  formByTeam: Record<string, TeamFormEntry[]>;
 }
 
 export default function TippspielInteractive({
@@ -48,6 +50,7 @@ export default function TippspielInteractive({
   bonusPrediction,
   bonusLocked,
   bonusDeadline,
+  formByTeam,
 }: TippspielInteractiveProps) {
   return (
     <FadingBackground
@@ -87,6 +90,7 @@ export default function TippspielInteractive({
                   hauptrundeGames={hauptrundeGames}
                   predictions={predictions}
                   isAuthenticated={isAuthenticated}
+                  formByTeam={formByTeam}
                 />
               </div>
             </div>

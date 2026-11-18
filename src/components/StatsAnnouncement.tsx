@@ -1,6 +1,5 @@
 import Link from "next/link";
 import {
-  Activity,
   BarChart3,
   ChevronRight,
   Hand,
@@ -22,12 +21,6 @@ const FEATURES = [
     href: "/community",
     Icon: Swords,
     tint: "from-[#7a9be0] to-[#3a54a5]",
-  },
-  {
-    label: "Form",
-    href: statLink("form"),
-    Icon: Activity,
-    tint: "from-[#4ade80] to-[#15803d]",
   },
   {
     label: "Torhüter",
