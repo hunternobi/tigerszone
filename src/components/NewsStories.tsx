@@ -17,6 +17,9 @@ import { NEWS_STORIES_KEY, PLACE_STYLE, PRIZES } from "@/lib/prizes";
 // Pages where a pop-up would be in the way.
 const QUIET_PREFIXES = ["/admin", "/login", "/register", "/verify-email"];
 const SLIDE_MS = 7000;
+// The news (Deutschland-Cup break) stop popping up from Sunday 22.11.2026, German time. Checked in the browser,
+// so no deployment is needed on that day. The component can be deleted afterwards.
+const SHOW_UNTIL = Date.parse("2026-11-22T00:00:00+01:00");
 
 function alreadySeen(userId: string): boolean {
   try {
@@ -84,6 +87,7 @@ export default function NewsStories() {
 
   useEffect(() => {
     // Only for signed-in users, once per account (and device).
+    if (Date.now() >= SHOW_UNTIL) return;
     if (quiet || !userId || alreadySeen(userId)) return;
     const timer = setTimeout(() => setOpen(true), 900);
     return () => clearTimeout(timer);
